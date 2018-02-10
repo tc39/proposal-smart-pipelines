@@ -9,19 +9,19 @@ contributors: J. S. Choi
 <script src="ecmarkup.js" defer></script>
 <link rel="stylesheet" href="ecmarkup.css">
 
-<emu-intro id="introduction">
+<emu-intro id=introduction>
   <h1>Introduction</h1>
 
   <p>Background explanatory material for this specification can be found in the <a href="https://github.com/tc39/proposal-dynamic-import">tc39/proposal-dynamic-import</a> repository. See also the <a href="https://github.com/tc39/proposal-dynamic-import/issues">issues</a> and the <a href="https://github.com/tc39/proposal-dynamic-import/blob/master/HTML%20Integration.md">HTML integration spec</a> that builds on top of the below JavaScript specification.</p>
 </emu-intro>
 
-<emu-clause id="sec-modules">
+<emu-clause id=sec-modules>
   <h1>Modules</h1>
 
-  <emu-clause id="sec-module-semantics">
+  <emu-clause id=sec-module-semantics>
     <h1>Module Semantics</h1>
 
-    <emu-clause id="sec-hostresolveimportedmodule" aoid="HostResolveImportedModule">
+    <emu-clause id=sec-hostresolveimportedmodule aoid=HostResolveImportedModule>
       <h1>Runtime Semantics: HostResolveImportedModule ( <del>_referencingModule_</del><ins>_referencingScriptOrModule_</ins>, _specifier_ )</h1>
 
       <p>HostResolveImportedModule is an implementation defined abstract operation that provides the concrete Module Record subclass instance that corresponds to the |ModuleSpecifier| String, _specifier_, occurring within the context of the <ins>script or </ins>module represented by the <ins>Script Record or </ins>Module Record <del>_referencingModule_</del><ins>_referencingScriptOrModule_</ins>.</p>
@@ -42,7 +42,7 @@ contributors: J. S. Choi
       <p>Multiple different <del>_referencingModule_</del><ins>_referencingScriptOrModule_</ins>, _specifier_ pairs may map to the same Module Record instance. The actual mapping semantic is implementation defined but typically a normalization process is applied to _specifier_ as part of the mapping process. A typical normalization process would include actions such as alphabetic case folding and expansion of relative and abbreviated path specifiers.</p>
     </emu-clause>
 
-    <emu-clause id="sec-hostimportmoduledynamically" aoid="HostImportModuleDynamically">
+    <emu-clause id=sec-hostimportmoduledynamically aoid=HostImportModuleDynamically>
       <h1><ins>Runtime Semantics: HostImportModuleDynamically ( _referencingScriptOrModule_, _specifier_, _promiseCapability_ )</ins></h1>
 
       <p>HostImportModuleDynamically is an implementation defined abstract operation that performs any necessary setup work in order to make available the module corresponding to the |ModuleSpecifier| String, _specifier_, occurring within the context of the script or module represented by the Script Record or Module Record _referencingScriptOrModule_. It then performs FinishDynamicImport to finish the dynamic import process.</p>
@@ -90,7 +90,7 @@ contributors: J. S. Choi
       <p>The actual process performed is implementation defined, but typically consists of performing whatever I/O operations are necessary to allow HostResolveImportedModule to synchronously retrieve the appropriate Module Record, and then calling its ModuleEvaluation concrete method. This might require performing similar normalization as HostResolveImportedModule does.</p>
     </emu-clause>
 
-    <emu-clause id="sec-finishdynamicimport" aoid="FinishDynamicImport">
+    <emu-clause id=sec-finishdynamicimport aoid=FinishDynamicImport>
       <h1><ins>Runtime Semantics: FinishDynamicImport ( _referencingScriptOrModule_, _specifier_, _promiseCapability_, _completion_ )</ins></h1>
 
       <p>FinishDynamicImport completes the process of a dynamic import originally started by an `import()` call, resolving or rejecting the promise returned by that call as appropriate according to _completion_. It is performed by host environments as part of HostImportModuleDynamically.</p>
@@ -109,7 +109,7 @@ contributors: J. S. Choi
   </emu-clause>
 </emu-clause>
 
-<emu-clause id="sec-left-hand-side-expressions">
+<emu-clause id=sec-left-hand-side-expressions>
   <h1>Left-Hand-Side Expressions</h1>
   <h2>Syntax</h2>
   <emu-grammar>
@@ -126,10 +126,10 @@ contributors: J. S. Choi
       `import` `(` AssignmentExpression[+In, ?Yield] `)`</ins>
   </emu-grammar>
 
-  <emu-clause id="sec-static-semantics">
+  <emu-clause id=sec-static-semantics>
     <h1>Static Semantics</h1>
 
-    <emu-clause id="sec-static-semantics-static-semantics-isfunctiondefinition">
+    <emu-clause id=sec-static-semantics-static-semantics-isfunctiondefinition>
       <h1>Static Semantics: IsFunctionDefinition</h1>
       <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
       <emu-grammar>
@@ -158,7 +158,7 @@ contributors: J. S. Choi
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-static-semantics-static-semantics-isdestructuring">
+    <emu-clause id=sec-static-semantics-static-semantics-isdestructuring>
       <h1>Static Semantics: IsDestructuring</h1>
       <emu-see-also-para op="IsDestructuring"></emu-see-also-para>
       <emu-grammar>MemberExpression : PrimaryExpression</emu-grammar>
@@ -192,7 +192,7 @@ contributors: J. S. Choi
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-static-semantics-static-semantics-isvalidsimpleassignmenttarget">
+    <emu-clause id=sec-static-semantics-static-semantics-isvalidsimpleassignmenttarget>
       <h1>Static Semantics: IsValidSimpleAssignmentTarget</h1>
       <emu-see-also-para op="IsValidSimpleAssignmentTarget"></emu-see-also-para>
       <emu-grammar>
@@ -232,10 +232,10 @@ contributors: J. S. Choi
     </emu-clause>
   </emu-clause>
 
-  <emu-clause id="sec-import-calls">
+  <emu-clause id=sec-import-calls>
     <h1><ins>Import Calls</ins></h1>
 
-    <emu-clause id="sec-import-call-runtime-semantics-evaluation">
+    <emu-clause id=sec-import-call-runtime-semantics-evaluation>
       <h1>Runtime Semantics: Evaluation</h1>
 
       <emu-grammar>ImportCall : `import` `(` AssignmentExpression `)`</emu-grammar>
@@ -254,7 +254,7 @@ contributors: J. S. Choi
   </emu-clause>
 </emu-clause>
 
-<emu-clause id="sec-forbidden-extensions">
+<emu-clause id=sec-forbidden-extensions>
   <h1>Forbidden Extensions</h1>
 
   <p>An implementation must not extend this specification in the following ways:</p>
