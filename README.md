@@ -1,8 +1,13 @@
-# import()
+# Smart pipelines
 
-This repository contains a proposal for adding a "function-like" `import()` module loading syntactic form to JavaScript. It is currently in stage 3 of [the TC39 process](https://tc39.github.io/process-document/). Previously it was discussed with the module-loading community in [whatwg/loader#149](https://github.com/whatwg/loader/issues/149).
+This repository contains a proposal for adding a "smart pipeline operator" `|>` to JavaScript. It is currently not even in Stage 0 of the [TC39 process](https://tc39.github.io/process-document/). It resulted from [previous discussions about pipeline placeholders in the previous pipe-operator proposal](https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder), which culminated in an [invitation by Daniel Ehrenberg, champion on the current pipe proposal, to try writing a text draft](https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394) of one of the new proposed pipe variants. This variant is listed as [Proposal 4: Smart Mix on the pipe-proposal wiki](https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix).
+
+These are early days.
+
+<!--
 
 You can view the in-progress [spec draft](https://tc39.github.io/proposal-dynamic-import/) and take part in the discussions on the [issue tracker](https://github.com/tc39/proposal-dynamic-import/issues).
+
 
 ## Motivation and use cases
 
@@ -135,3 +140,5 @@ This proposal would be a small expansion of the existing JavaScript and HTML cap
 The ideas in the Loader specification would largely stay the same, although probably this would either supplant the current `System.loader.import()` proposal or make `System.loader.import()` a lower-level version that is used in specialized circumstances. The Loader specification would continue to work on prototyping more general ideas for pluggable loading pipelines and reflective modules, which over time could be used to generalize HTML and Node's host-specific pipelines.
 
 Concretely, this repository is intended as a TC39 proposal to advance through the stages process, specifying the `import()` syntax and the relevant host environment hooks. It also contains [an outline of proposed changes to the HTML Standard](HTML%20Integration.md) that would integrate with this proposal.
+
+-->
