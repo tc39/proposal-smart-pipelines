@@ -1,10 +1,10 @@
 {
   "private": true,
-  "name": "proposal-dynamic-import",
-  "description": "import() proposal for JavaScript (build setup only)",
-  "author": "Domenic Denicola <d@domenic.me> (https://domenic.me/)",
+  "name": "proposal-smart-pipelines",
+  "description": "Draft specification for smart pipelines.",
+  "author": "J. S. Choi <jschoi@jschoi.org> (https://jschoi.org/)",
   "license": "MIT",
-  "repository": "tc39/proposal-dynamic-import",
+  "repository": "js-choi/proposal-smart-pipelines",
   "scripts": {
     "spec": "ecmarkup spec.html out/index.html --js out/ecmarkup.js --css out/ecmarkup.css",
     "watch": "ecmarkup --watch spec.html out/index.html --js out/ecmarkup.js --css out/ecmarkup.css"
