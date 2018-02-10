@@ -2,7 +2,7 @@
 
 This repository contains a proposal for adding a “smart pipeline operator” `|>` to JavaScript. It is currently not even in Stage 0 of the [TC39 process](https://tc39.github.io/process-document/). It resulted from [previous discussions about pipeline placeholders in the previous pipe-operator proposal](https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder), which culminated in an [invitation by Daniel Ehrenberg, champion on the current pipe proposal, to try writing a text draft](https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394) of one of the new proposed pipe variants. This variant is listed as [Proposal 4: Smart Mix on the pipe-proposal wiki](https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix).
 
-These are early days.
+The operator is a backwards-compatible way of chaining nested expressions in a readable, left-to-right manner. It is similar to [Hack’s `|>` and `$$`](https://docs.hhvm.com/hack/operators/pipe-operator), [F#’s `|>`](https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining), [OCaml’s `|>`](http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html), [Elixir/Erlang’s `|>`](https://elixir-lang.org/getting-started/enumerables-and-streams.html), [Elm’s `|>`](http://elm-lang.org/docs/syntax#infix-operators), [Julia’s `|>`](https://docs.julialang.org/en/stable/stdlib/base/#Base.:|>), [LiveScript’s `|>`](http://livescript.net/#operators-piping), and [Unix’s `|`](https://en.wikipedia.org/wiki/Pipeline_(Unix)).
 
 <!--
 
