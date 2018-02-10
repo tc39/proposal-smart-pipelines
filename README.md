@@ -1,8 +1,116 @@
 # Smart pipelines
+ECMAScript Stage-−1 Proposal by J. S. Choi, 2018-02.
 
-This repository contains a proposal for adding a “smart pipeline operator” `|>` to JavaScript. It is currently not even in Stage 0 of the [TC39 process](https://tc39.github.io/process-document/). It resulted from [previous discussions about pipeline placeholders in the previous pipe-operator proposal](https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder), which culminated in an [invitation by Daniel Ehrenberg, champion on the current pipe proposal, to try writing a text draft](https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394) of one of the new proposed pipe variants. This variant is listed as [Proposal 4: Smart Mix on the pipe-proposal wiki](https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix).
+This repository contains the formal specification for a proposed “smart pipeline operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC39 process](https://tc39.github.io/process-document/) but it may eventually be presented to TC39.
 
-The operator is a backwards-compatible way of chaining nested expressions in a readable, left-to-right manner. It is similar to [Hack’s `|>` and `$$`](https://docs.hhvm.com/hack/operators/pipe-operator), [F#’s `|>`](https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining), [OCaml’s `|>`](http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html), [Elixir/Erlang’s `|>`](https://elixir-lang.org/getting-started/enumerables-and-streams.html), [Elm’s `|>`](http://elm-lang.org/docs/syntax#infix-operators), [Julia’s `|>`](https://docs.julialang.org/en/stable/stdlib/base/#Base.:|>), [LiveScript’s `|>`](http://livescript.net/#operators-piping), and [Unix’s `|`](https://en.wikipedia.org/wiki/Pipeline_(Unix)).
+## Background
+The operator is a backwards-compatible way of chaining nested expressions in a readable, left-to-right manner. Nested transformations become untangled into short steps. It is similar to [Hack’s `|>` and `$$`](https://docs.hhvm.com/hack/operators/pipe-operator), [F#’s `|>`](https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining), [OCaml’s `|>`](http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html), [Elixir/Erlang’s `|>`](https://elixir-lang.org/getting-started/enumerables-and-streams.html), [Elm’s `|>`](http://elm-lang.org/docs/syntax#infix-operators), [Julia’s `|>`](https://docs.julialang.org/en/stable/stdlib/base/#Base.:|>), [LiveScript’s `|>`](http://livescript.net/#operators-piping), and [Unix’s `|`](https://en.wikipedia.org/wiki/Pipeline_(Unix)).
+
+The proposal is a variant of a [previous pipeline-operator proposal](https://github.com/tc39/proposal-pipeline-operator) championed by [Daniel Ehrenberg of Igalia](https://github.com/littledan). This variant is listed as [Proposal 4: Smart Mix on the pipe-proposal wiki](https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix). The variant resulted from [previous discussions about pipeline placeholders in the previous pipe-operator proposal](https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder), which culminated in an [invitation by Daniel Ehrenberg, champion on the current pipe proposal, to try writing a specification draft](https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394). A prototype Babel plugin is also pending.
+
+You can take part in the discussions on the [GitHub issue tracker](https://github.com/tc39/proposal-dynamic-import/issues). When you file an issue, please note in it that you are talking specifically about “Proposal 4: Smart Mix”.
+
+## Motivation
+Let these two functions be defined:
+
+```js
+function doubleSay (string) {
+  return `${string}, ${string}`
+}
+
+function capitalize (string) {
+  return string[0].toUpperCase() + string.substring(1)
+}
+```
+
+This nested expression is quite messy, requiring many levels of indentation and reading both on the left and right of each subexpression to understand the flow of data.
+
+```js
+capitalizedString(
+  doubledString(
+    (await stringPromise)
+      ?? throw new TypeError(`Expected string from ${stringPromise}`)
+  )
+) + '!'
+```
+
+## Proposed solution
+It would become much terser with pipes, making both reading and writing considerably easier.
+
+```js
+stringPromise
+  |> await #
+  |> # ?? throw new TypeError()
+  |> doubleSay // a tacit unary function call
+  |> capitalize // also a tacit unary function call
+  |> # + '!'
+```
+
+This same use case appears numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions.
+
+## Syntactic sugar for nested `do`s
+The example above is roughly equivalent to nested `do` expressions, each with a variable binding and a transformation of that variable’s value.
+
+```js
+do {
+  const # = do {
+    const # = do {
+      const # = do {
+        const # = await stringPromise;
+        # ?? throw new TypeError()
+      };
+      doubleSay(#)
+    };
+    capitalize(#)
+  };
+  # + '!'
+}
+```
+
+The pipe operation is left associative, and its precedence is [TO DO].
+
+1. For each pipe operation, the left-hand side (LHS) is evaluated.
+2. Then it is bound to a placeholder `#`: a nullary variable that acts as a variable. This variable is only defined within the pipe’s right-hand side (RHS), which acts as an inner lexical scope.
+3. With this binding, the RHS is then evaluated too.
+
+## Tacit unary function calls
+As a further abbreviation, you may omit the placeholder if the operation is just a call of a named unary function. This is called [“tacit” or “point-free style”](https://en.wikipedia.org/wiki/Tacit_programming). This is the “smart” part of these “smart pipeline operators”.
+
+If the RHS expression is merely a single identifier (as with `… |> doubleSay` or `… |> capitalize`), then that identifier is assumed to be a unary function, which is then called with `#` (<i lang=lt>i.e.</i>, `… |> doubleSay(#)` or `… |> capitalize(#)`). For example:
+
+```js
+'hello'
+  |> await #
+  |> # ?? throw new TypeError(`Expected string from ${#}`)
+  |> doubleSay
+  |> capitalize
+  |> # + '!'
+```
+
+…is equivalent to:
+```js
+'hello'
+  |> await #
+  |> # ?? throw new TypeError(`Expected string from ${#}`)
+  |> doubleSay(#)
+  |> capitalize(#)
+  |> # + '!'
+```
+
+## Multiple placeholders in RHS
+The placeholder may be used multiple times in the RHS, but each use refers to the same value. Because it is bound to the result of the LHS, the LHS is still only ever evaluated once.
+
+```js
+… |> f(#, #)
+// equivalent to:
+// do { const # = …; f(#, #) }
+```
+
+```js
+… |> [#, # * 2, # * 3]
+// equivalent to:
+// do { const # = …; [#, # * 2, # * 3] }
+```
 
 <!--
 
@@ -73,7 +181,7 @@ Note the differences here compared to the usual `import` declaration:
 
 There are a number of other ways of potentially accomplishing the above use cases. Here we explain why we believe `import()` is the best possibility.
 
-### Using host-specific mechanisms
+## Using host-specific mechanisms
 
 It's possible to dynamically load modules in certain host environments, such as web browsers, by abusing host-specific mechanisms for doing so. Using HTML's `<script type="module">`, the following code would give similar functionality to `import()`:
 
@@ -111,13 +219,13 @@ Another clear problem is that this is host-specific. Node.js code cannot use the
 
 Finally, it isn't standardized, meaning people will need to pull in or write their own version each time they want to add dynamic code loading to their app. This could be fixed by adding it as a standard method in HTML (`window.importModule`), but if we're going to standardize something, let's instead standardize `import()`, which is nicer for the above reasons.
 
-### An actual function
+## An actual function
 
 Drafts of the [Loader](https://whatwg.github.io/loader/) ideas collection have at various times had actual functions (not just function-like syntactic forms) named `System.import()` or `System.loader.import()` or similar, which accomplish the same use cases.
 
 The biggest problem here, as previously noted by the spec's editors, is how to interpret the specifier argument to these functions. Since these are just functions, which are the same across the entire Realm and do not vary per script or module, the function must interpret its argument the same no matter from where it is called. (Unless something truly weird like stack inspection is implemented.) So likely this runs into similar problems as the document base URL issue for the `importModule` function above, where relative module specifiers become a bug farm and mismatch any nearby `import` declarations.
 
-### A new binding form
+## A new binding form
 
 At the July 2016 TC39 meeting, in a [discussion](https://github.com/benjamn/reify/blob/master/PROPOSAL.md) of a proposal for [nested `import` declarations](https://github.com/benjamn/reify/blob/master/PROPOSAL.md), the original proposal was rejected, but an alternative of `await import` was proposed as a potential path forward. This would be a new binding form (i.e. a new way of introducing names into the given scope), which would work only inside async functions.
 

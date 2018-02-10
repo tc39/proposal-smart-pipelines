@@ -12,10 +12,87 @@ contributors: J. S. Choi
 <emu-intro id=introduction>
 
 <h1>Introduction</h1>
+<p>The operator is a backwards-compatible way of chaining nested expressions in a readable, left-to-right manner. Nested transformations become untangled into short steps. It is similar to <a href="https://docs.hhvm.com/hack/operators/pipe-operator">Hack’s <code>|&gt;</code> and <code>$$</code></a>, <a href="https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining">F#’s <code>|&gt;</code></a>, <a href="http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html">OCaml’s <code>|&gt;</code></a>, <a href="https://elixir-lang.org/getting-started/enumerables-and-streams.html">Elixir/Erlang’s <code>|&gt;</code></a>, <a href="http://elm-lang.org/docs/syntax#infix-operators">Elm’s <code>|&gt;</code></a>, <a href="https://docs.julialang.org/en/stable/stdlib/base/#Base.:%7C%3E">Julia’s <code>|&gt;</code></a>, <a href="http://livescript.net/#operators-piping">LiveScript’s <code>|&gt;</code></a>, and <a href="https://en.wikipedia.org/wiki/Pipeline_(Unix)">Unix’s <code>|</code></a>.</p>
+<p>The proposal is a variant of a <a href="https://github.com/tc39/proposal-pipeline-operator">previous pipeline-operator proposal</a> championed by <a href="https://github.com/littledan">Daniel Ehrenberg of Igalia</a>. This variant is listed as <a href="https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix">Proposal 4: Smart Mix on the pipe-proposal wiki</a>. The variant resulted from <a href="https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder">previous discussions about pipeline placeholders in the previous pipe-operator proposal</a>, which culminated in an <a href="https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394">invitation by Daniel Ehrenberg, champion on the current pipe proposal, to try writing a specification draft</a>. A prototype Babel plugin is also pending.</p>
+<p>You can take part in the discussions on the <a href="https://github.com/tc39/proposal-dynamic-import/issues">GitHub issue tracker</a>. When you file an issue, please note in it that you are talking specifically about “Proposal 4: Smart Mix”.</p>
+<h2>Motivation</h2>
+<p>Let these two functions be defined:</p>
+<pre><code class="language-js">function doubleSay (string) {
+  return `${string}, ${string}`
+}
 
-<p>This repository contains a proposal for adding a “smart pipeline operator” <code>|&gt;</code> to JavaScript. It is currently not even in Stage 0 of the <a href="https://tc39.github.io/process-document/">TC39 process</a>. It resulted from <a href="https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder">previous discussions about pipeline placeholders in the previous pipe-operator proposal</a> in 2018-01, which culminated in an <a href="https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394">invitation by Daniel Ehrenberg</a> in 2018-02, the champion on the current pipe proposal, to try writing a text draft of one of the new proposed pipe variants. This variant is listed as <a href="https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix">Proposal 4: Smart Mix on the pipe-proposal wiki</a>.</p>
-
-<p>The operator is a backwards-compatible way of chaining nested expressions in a readable, left-to-right manner. It is similar to <a href="https://docs.hhvm.com/hack/operators/pipe-operator">Hack’s <code>|&gt;</code> and <code>$$</code></a>, <a href="https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining">F#’s <code>|&gt;</code></a>, <a href="http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html">OCaml’s <code>|&gt;</code></a>, <a href="https://elixir-lang.org/getting-started/enumerables-and-streams.html">Elixir/Erlang’s <code>|&gt;</code></a>, <a href="http://elm-lang.org/docs/syntax#infix-operators">Elm’s <code>|&gt;</code></a>, <a href="https://docs.julialang.org/en/stable/stdlib/base/#Base.:|">Julia’s <code>|&gt;</code></a>, <a href="http://livescript.net/#operators-piping">LiveScript’s <code>|&gt;</code></a>, and <a href="https://en.wikipedia.org/wiki/Pipeline_(Unix">Unix’s <code>|</code></a>).</p>
+function capitalize (string) {
+  return string[0].toUpperCase() + string.substring(1)
+}
+</code></pre>
+<p>This nested expression is quite messy, requiring many levels of indentation and reading both on the left and right of each subexpression to understand the flow of data.</p>
+<pre><code class="language-js">capitalizedString(
+  doubledString(
+    (await stringPromise)
+      ?? throw new TypeError(`Expected string from ${stringPromise}`)
+  )
+) + '!'
+</code></pre>
+<h2>Proposed solution</h2>
+<p>It would become much terser with pipes, making both reading and writing considerably easier.</p>
+<pre><code class="language-js">stringPromise
+  |&gt; await #
+  |&gt; # ?? throw new TypeError()
+  |&gt; doubleSay // a tacit unary function call
+  |&gt; capitalize // also a tacit unary function call
+  |&gt; # + '!'
+</code></pre>
+<p>This same use case appears numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, arithmetic operations, logical operations, bitwise operations, <code>typeof</code>, <code>instanceof</code>, <code>await</code>, <code>yield</code> and <code>yield *</code>, and <code>throw</code> expressions.</p>
+<h2>Syntactic sugar for nested <code>do</code>s</h2>
+<p>The example above is roughly equivalent to nested <code>do</code> expressions, each with a variable binding and a transformation of that variable’s value.</p>
+<pre><code class="language-js">do {
+  const # = do {
+    const # = do {
+      const # = do {
+        const # = await stringPromise;
+        # ?? throw new TypeError()
+      };
+      doubleSay(#)
+    };
+    capitalize(#)
+  };
+  # + '!'
+}
+</code></pre>
+<p>The pipe operation is left associative, and its precedence is [TO DO].</p>
+<ol>
+<li>For each pipe operation, the left-hand side (LHS) is evaluated.</li>
+<li>Then it is bound to a placeholder <code>#</code>: a nullary variable that acts as a variable. This variable is only defined within the pipe’s right-hand side (RHS), which acts as an inner lexical scope.</li>
+<li>With this binding, the RHS is then evaluated too.</li>
+</ol>
+<h2>Tacit unary function calls</h2>
+<p>As a further abbreviation, you may omit the placeholder if the operation is just a call of a named unary function. This is called <a href="https://en.wikipedia.org/wiki/Tacit_programming">“tacit” or “point-free style”</a>. This is the “smart” part of these “smart pipeline operators”.</p>
+<p>If the RHS expression is merely a single identifier (as with <code>… |&gt; doubleSay</code> or <code>… |&gt; capitalize</code>), then that identifier is assumed to be a unary function, which is then called with <code>#</code> (<i lang=lt>i.e.</i>, <code>… |&gt; doubleSay(#)</code> or <code>… |&gt; capitalize(#)</code>). For example:</p>
+<pre><code class="language-js">'hello'
+  |&gt; await #
+  |&gt; # ?? throw new TypeError(`Expected string from ${#}`)
+  |&gt; doubleSay
+  |&gt; capitalize
+  |&gt; # + '!'
+</code></pre>
+<p>…is equivalent to:</p>
+<pre><code class="language-js">'hello'
+  |&gt; await #
+  |&gt; # ?? throw new TypeError(`Expected string from ${#}`)
+  |&gt; doubleSay(#)
+  |&gt; capitalize(#)
+  |&gt; # + '!'
+</code></pre>
+<h2>Multiple placeholders in RHS</h2>
+<p>The placeholder may be used multiple times in the RHS, but each use refers to the same value. Because it is bound to the result of the LHS, the LHS is still only ever evaluated once.</p>
+<pre><code class="language-js">… |&gt; f(#, #)
+// equivalent to:
+// do { const # = …; f(#, #) }
+</code></pre>
+<pre><code class="language-js">… |&gt; [#, # * 2, # * 3]
+// equivalent to:
+// do { const # = …; [#, # * 2, # * 3] }
+</code></pre>
 
 </emu-intro>
 
