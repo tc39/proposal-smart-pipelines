@@ -12,7 +12,6 @@ You can take part in the discussions on the [GitHub issue tracker](https://githu
 
 ## Motivation
 Let these two functions be defined:
-
 ```js
 function doubleSay (string, separatorString) {
   return `${string}${separatorString}${string}`
@@ -24,7 +23,6 @@ function capitalize (string) {
 ```
 
 Now look at the nested expression below. Expressions like this happen often in JavaScript: whenever any value must be passed through a series of transformations, whether they be operations, functions, or constructors. Unfortunately, this nested expression—and many like it—are quite messy spaghetti. Writing it requires many levels of indentation, and reading it requires checking both the left and right of each subexpression to understand its data flow.
-
 ```js
 new User.Message(
   capitalizedString(
@@ -37,7 +35,6 @@ new User.Message(
 ```
 
 The code above could be much terser and (literally) straightforward. This proposal’s smart pipe operator would allow the piping of data through expressions. This terseness would make both reading and writing easier for the JavaScript programmer. It is statically rewritable into already valid code, it has zero runtime cost.
-
 ```js
 stringPromise
   |> await #
@@ -51,7 +48,6 @@ stringPromise
 Similar use cases appear numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, object constructions, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions. The smart pipe operator can handle them all.
 
 Note also that it was not necessary to include parentheses for `capitalize` or `new User.Message`; they were implicitly included as a unary function call and a unary constructor call, respectively. That is, the preceding example is equivalent to:
-
 ```js
 'hello'
   |> await #
@@ -67,7 +63,6 @@ Now following are various examples adapted from useful, real-world code.
 
 ### Underscore.js
 Adapted from [Underscore.js 1.8.3](http://underscorejs.org) by Jeremy Ashkenas et al. under MIT License.
-
 ```js
 _.find = _.detect = function(obj, predicate, context) {
   var key;
@@ -86,7 +81,6 @@ _.find = _.detect = function(obj, predicate, context) {
     |> (# !== void 0 && # !== -1) ? obj[#] : undefined;
 };
 ```
-
 ```js
 _.reject = function(obj, predicate, context) {
   return _.filter(obj,
@@ -102,7 +96,6 @@ _.reject = function(obj, predicate, context) {
     |> _.filter(obj, #, context)
 };
 ```
-
 ```js
 var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
   if (!(callingContext instanceof boundFunc))
@@ -124,7 +117,6 @@ var executeBound = function(sourceFunc, boundFunc, context, callingContext, args
     |> _.isObject(#) ? # : self;
 };
 ```
-
 ```js
 _.size = function(obj) {
   if (obj == null) return 0;
@@ -143,7 +135,6 @@ _.size = function(obj) {
 
 ### Pify
 Adapted from [Pify 3.0.0](https://github.com/sindresorhus/pify) by Sindre Sorhus under MIT License.
-
 ```js
 pify(fs.readFile)('package.json', 'utf8').then(data => {
     console.log(JSON.parse(data).name);
@@ -157,7 +148,6 @@ console.log(JSON.parse((await pify(fs.readFile)('package.json', 'utf8')).name));
   |> #.name
   |> console.log
 ```
-
 ```js
 return opts.include
   ? opts.include.some(match)
@@ -170,7 +160,6 @@ return opts.include
 
 ### Fetch Standard
 Adapted from [Fetch, the living web standard](https://fetch.spec.whatwg.org) by WHATWG under Creative Commons BY.
-
 ```js
 fetch("/music/pk/altes-kamuffel.flac")
   .then(res => res.blob())
@@ -183,7 +172,6 @@ playBlob(await (await fetch("/music/pk/altes-kamuffel.flac")).blob())
   |> await #.blob()
   |> playBlob
 ```
-
 ```js
 fetch("/", {method:"HEAD"})
   .then(res => log(res.headers.get("strict-transport-security")))
@@ -195,7 +183,6 @@ fetch("/", {method:"HEAD"})
   |> await fetch(#, {method:"HEAD"})
   |> #.headers.get("strict-transport-security")
 ```
-
 ```js
 fetch("https://pk.example/berlin-calling.json", {mode:"cors"})
   .then(res => {
@@ -247,7 +234,6 @@ Alternatively, you may omit the RHS’s topic variables if the RHS is just a sim
 
 ### Tokens
 The rule for <var>Punctuator</var> tokens would be modified: a new token, `#`, would be added to the Punctuators:
-
 ```
 Punctuator :: one of
   `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==`
@@ -257,9 +243,6 @@ Punctuator :: one of
 ```
 
 ### Pipe expressions
-
-
-
 ```
 ```
 
@@ -308,12 +291,10 @@ If a pipe RHS *never* uses topic variable, then it must be a permitted tacit una
 
 ### Multiple topic variables in a pipeline’s RHS
 The topic variable may be used multiple times in a pipeline’s RHS. Each use refers to the same value (wherever the topic variable is not overridden by another, inner pipeline’s RHS scope). Because it is bound to the result of the LHS, the LHS is still only ever evaluated once. The lines in each of the following are equivalent:
-
 ```js
 … |> f(#, #)
 do { const $ = …; f($, $) }
 ```
-
 ```js
 … |> [#, # * 2, # * 3]
 do { const $ = …; [$, $ * 2, $ * 3] }
@@ -321,7 +302,6 @@ do { const $ = …; [$, $ * 2, $ * 3] }
 
 ### Inner functions
 Both the LHS and the RHS of a pipeline may contain nested inner functions. This also works as expected. The lines in the following are equivalent:
-
 ```js
 … |> settimeout(() => # * 500)
 do { const $ = …; settimeout(() => # * 500) }
@@ -361,7 +341,6 @@ The first way to illustrate the operator’s semantics is to replace each pipe e
 Let us say that each pipe expression autogenerates a new, lexically hygienic variable (`#₀`, `#₁`, `#₂`, `#₃`, …), which in turn replaces each use of the topic variable `#` in each pipe’s RHS. (These `#ₙ` variables are not true syntax; it is merely for illustrative purposes. You cannot actually assign or use `#ₙ` variables.) Let us also group the expressions with left associativity (although this is arbitrary [TO DO: Link to associativity section when written]).
 
 With this notation, each line in this example would be equivalent to the other lines.
-
 ```js
 1 |> # + 2 |> # * 3
 
@@ -378,7 +357,6 @@ do { do { 3 * 3 } }
 ```
 
 Consider also the motivating first example above:
-
 ```js
 stringPromise
   |> await #
@@ -389,7 +367,6 @@ stringPromise
 ```
 
 Under left associativity, this would be statically equivalent to the following:
-
 ```js
 do {
   const #₃ = do {
@@ -416,7 +393,6 @@ In general, for each pipe expression `lhs |> rhs`, assuming that `rhs` is in top
 The other way to demonstrate topic-variable style is to use two variables: the topic variable `#` and single lexically hygienic dummy variable `•`. It should be noted that `const # = …` is not a valid statement under this proposal’s actual syntax; likewise, `•` is not a part of the proposal’s syntax. Both forms are for illustrative purposes here only.
 
 With this notation, no variable autogeneration is required; instead, the nested `do` expressions will redeclare the same variables `#` and `•`, shadowing the external variables of the same name as needed. The number example above becomes the following. Each line is still equivalent to the other lines.
-
 ```js
 1 |> # + 2 |> # * 3
 
@@ -473,7 +449,6 @@ For each pipe expression, evaluated left associatively and inside to outside, th
 The pipe operator is presented above as a left-associative operator. However, it is theoretically [bidirectionally associative](https://en.wikipedia.org/wiki/Associative_property): how a pipeline’s expressions are particularly grouped is functionally arbitrary. One could force right associativity by parenthesizing a pipeline, such that it itself becomes the RHS of another, outer pipeline.
 
 Consider the above example `1 |> # + 2 |> # * 3`, whose syntax was statically rewritten using left associativity and autogenerated hygienic variables.
-
 ```js
 // With left associativity and autogenerated hygienic variables.
 1 |> # + 2 |> # * 3
@@ -491,7 +466,6 @@ do { do { 3 * 3 } }
 ```
 
 But if right associativity is forced with `1 |> (# + 2 |> # * 3)`, then the result would be the same: `9`:
-
 ```js
 // With right associativity and autogenerated hygienic variables.
 1 |> # + 2 |> # * 3
@@ -509,7 +483,6 @@ do { do { 3 * 3 } }
 ```
 
 Similarly, `1 |> # + 2 |> # * 3` was also statically rewritten using a different method: under left associativity and a single dummy variable.
-
 ```js
 // With left associativity and single dummy variable.
 1 |> # + 2 |> # * 3
@@ -529,7 +502,6 @@ do { do { 3 * 3 } }
 ```
 
 If right associativity is forced with `1 |> (# + 2 |> # * 3)`, then the result would be the same: `9`:
-
 ```js
 // With right associativity and single dummy variable.
 1 |> # + 2 |> # * 3
