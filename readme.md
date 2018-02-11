@@ -63,8 +63,7 @@ Note also that it was not necessary to include parentheses for `capitalize` or `
 
 Being able to automatically detect this tacit style is the “smart” part of these “smart pipeline operators”; for more information, see the [“smart RHS syntax” section](#smart-rhs-syntax).
 
-<details>
-<summary>Other examples adapted from real code are also useful illustrations.</summary>
+Now following are various examples adapted from useful, real-world code.
 
 ### Underscore.js
 Adapted from 1.8.3 by Jeremy Ashkenas et al. under MIT License.
@@ -234,8 +233,6 @@ do {
     : throw new TypeError()
   |> processJSON
 ```
-
-</details>
 
 ## Nomenclature
 The binary operator itself may be referred to as a <dfn>pipe</dfn>, a <dfn>pipe operator</dfn>, or a <dfn>pipeline operator</dfn>; all these names are equivalent. This specification will prefer the term “pipe operator”.
