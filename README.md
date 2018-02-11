@@ -118,7 +118,7 @@ If a pipe RHS has *no* placeholder, then it must be a permitted tacit unary func
 | `'2018' \|> new global.Date()` | syntax error; missing `#` |
 | `'2018' \|> (new global.Date)` | syntax error; missing `#` |
 
-This rule minimizes the parsing lookahead that the compiler must check before it can distinguish between tacit style and placeholder style. By restricting the space of valid tacit RHS expressions without placeholders, the rule prevents [garden-path syntax](https://en.wikipedia.org/wiki/Garden_path_sentence) that would otherwise be possible: <i lang=lt>e.g.</i>, `2018 |> compose(f, g, h, i, j, k, $)`.
+This rule minimizes the parsing lookahead that the compiler must check before it can distinguish between tacit style and placeholder style. By restricting the space of valid tacit RHS expressions without placeholders, the rule prevents [garden-path syntax](https://en.wikipedia.org/wiki/Garden_path_sentence) that would otherwise be possible: <i lang=lt>e.g.</i>, `2018 |> compose(f, g, h, i, j, k, #)`.
 
 The rule also statically prevents a writing JavaScript programmer from accidentally omitting a placeholder where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the writer intended. The JavaScript programmer is encouraged to avoid using tacit style where its meaning may be visually confusing to the reader.
 
