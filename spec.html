@@ -14,14 +14,32 @@ contributors: J. S. Choi
 <p>This is the formal specification for a proposed “smart pipe operator” <code>|&gt;</code> in JavaScript. <a href=https://github.com/js-choi/proposal-smart-pipelines/blob/master/readme.md>See the proposal’s explainer for an introduction</a>.</p>
 </emu-intro>
 
-<emu-clause id=syntax>
-
-<h1>Lexical Syntax</h1>
-
+<emu-clause id=punctuators>
+<h1>Punctuators</h1>
 <emu-grammar>
 Punctuator :: one of
   `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` <ins>`#`</ins> `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
 </emu-grammar>
+</emu-clause>
+
+<emu-clause id=pipeline-operator>
+<h1>Pipeline Operator</h1>
+
+<emu-clause id=pipeline-operator-syntax>
+<h1>Syntax</h1>
+<emu-grammar>
+PipelineExpression :
+  PipelineExpression[?In, ?Yield, ?Await] `|>` ConditionalExpression[?In, ?Yield, ?Await]
+</emu-grammar>
+</emu-clause>
+
+<emu-clause id=pipeline-operator-static-semantics-isfunctiondefinition>
+<h1>Static Semantics: IsFunctionDefinition</h1>
+<emu-grammar>PipelineExpression : PipelineExpression `|>` ConditionalExpression</emu-grammar>
+<emu-alg>
+1. Return IsFunctionDefinition of _ConditionalExpression_.
+</emu-alg>
+</emu-clause>
 
 </emu-clause>
 
