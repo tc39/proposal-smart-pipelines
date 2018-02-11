@@ -256,10 +256,19 @@ Punctuator :: one of
   `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
 ```
 
+### Pipe expressions
+
+
+
+```
+```
+
 ### Loose precedence
 The pipe operator’s precedence is quite loose. It is tighter than assignment (`=`, `+=`, …), generator `yield` and `yield *`, and sequence `,`; and it is looser than logical ternary conditional (`… ? … : …`), logical and/or `&&`/`||`, bitwise and/or/xor, `&`/`|`/`^`, equality/inequality `==`/`===`/`!=`/`!==`, and every other type of expression.
 
 Being any tighter than this level would require its RHS to be parenthesized for many frequent types of expressions. However, the result of a pipeline is also expected to often serve as the RHS of a variable assignment `=`.
+
+Thus, [TO DO: Add to expression rule]
 
 ### Smart RHS syntax
 When the parser checks the RHS, it must determine what style it is in. There are four outcomes: tacit constructor, tacit function, parameterized expression, or invalid RHS.
