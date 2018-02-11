@@ -99,7 +99,7 @@ do { const #₁ = do { const #₀ = 1; # + 2 }; #₁ * 3 }
 
 // Runtime evaluation
 do { const #₀ = do { 1 + 2 }; #₀ * 3 }
-do { const #₀️ = 3; #₀ * 3 }
+do { const #₀ = 3; #₀ * 3 }
 do { do { 3 * 3 } }
 9
 ```
@@ -120,8 +120,8 @@ With left associativity, this would be statically equivalent to the following:
 ```js
 do {
   const #₃ = do {
-    const #️₂ = do {
-      const #₁️ = do {
+    const #₂ = do {
+      const #₁ = do {
         const #₀ = await stringPromise;
         #₀ ?? throw new TypeError()
       };
@@ -149,11 +149,11 @@ With this notation, no variable autogeneration is required; instead, the nested 
 
 // Static rewriting
 (1 |> # + 2) |> # * 3
-do { const •️ = 1; do { const # = •️; # + 2 } } |> # * 3
-do { const • = (do { const •️ = 1; do { const # = •️; # + 2 } }); do { const # = •; # * 3 } }
+do { const • = 1; do { const # = •; # + 2 } } |> # * 3
+do { const • = (do { const • = 1; do { const # = •; # + 2 } }); do { const # = •; # * 3 } }
 
 // Runtime evaluation
-do { const • = do { do { const # = 1️; # + 2 } }; do { const # = •; # * 3 } }
+do { const • = do { do { const # = 1; # + 2 } }; do { const # = •; # * 3 } }
 do { const • = do { do { const 1 + 2 } }; do { const # = •; # * 3 } }
 do { const • = 3; do { const # = •; # * 3 } }
 do { do { const # = 3; # * 3 } }
@@ -174,13 +174,13 @@ stringPromise
 With left associativity, this would be statically equivalent to the following:
 ```js
 do {
-  const •️ = do {
-    const •️ = do {
-      const •️ = do {
+  const • = do {
+    const • = do {
+      const • = do {
         const • = await stringPromise;
-        do { const # = •️; # ?? throw new TypeError() }
+        do { const # = •; # ?? throw new TypeError() }
       };
-      do { const # = •️; doubleSay(#) }
+      do { const # = •; doubleSay(#) }
     };
     do { const # = •; capitalize(#) }
   };
@@ -340,7 +340,7 @@ The reason why the right-associative expansion would be invalid is because varia
 
 It should be noted that the `#` does not have to act this way. Indeed, in other languages such as Clojure, a lexical constant may be redeclared with the same name as a constant from an outer lexical context, yet its assignment may depend on that outer context’s constant. This may be simulated in JavaScript using *double nested `do` expressions* using dummy variables, which in turn would enable the use of placeholders in LHSes.
 
-This may be demonstrated using a dummy placeholder `•️`. If the transformation above of `(1 |> # + 2) |> # * 3`:
+This may be demonstrated using a dummy placeholder `•`. If the transformation above of `(1 |> # + 2) |> # * 3`:
 
 ```js
 // With left associativity.
@@ -353,15 +353,15 @@ do { 3 * 3 }
 9
 ```
 
-…was instead written with double nested `do` expressions with a dummy placeholder `•️`, then it would be equivalent:
+…was instead written with double nested `do` expressions with a dummy placeholder `•`, then it would be equivalent:
 
 ```js
 // With left associativity.
 (1 |> # + 2) |> # * 3
-(do { const •️ = 1; do { const # = •️; # + 2 } }) |> # * 3
-do { const •️ = (do { const # = 1; # + 2 }); do { const # = •️; # * 3 } }
-do { const •️ = (do { 1 + 2 }); do { const # = •️; # * 3 } }
-do { const •️ = 3; do { const # = •️; # * 3 } }
+(do { const • = 1; do { const # = •; # + 2 } }) |> # * 3
+do { const • = (do { const # = 1; # + 2 }); do { const # = •; # * 3 } }
+do { const • = (do { 1 + 2 }); do { const # = •; # * 3 } }
+do { const • = 3; do { const # = •; # * 3 } }
 do { do { const # = 3; # * 3 } }
 do { do { 3 * 3 } }
 9
@@ -377,15 +377,15 @@ do { const # = 1; do { const # = # + 2; # * 3 } }
 // ReferenceError: Cannot access uninitialized variable.
 ```
 
-…was similarly rewritten with double nested `do` expressions with a dummy placeholder `•️`, then it would become valid (and equivalent):
+…was similarly rewritten with double nested `do` expressions with a dummy placeholder `•`, then it would become valid (and equivalent):
 
 ```js
 // With right associativity.
 1 |> (# + 2 |> # * 3)
-1 |> do { const •️ = # + 2; do { const # = •️; # * 3 } }
-do { const •️ = 1; do { const # = •; do { const •️ = # + 2; do { const # = •️; # * 3 } } } }
-do { do { const # = 1; do { const •️ = # + 2; do { const # = •️; # * 3 } } } }
-do { do { do { const •️ = 1 + 2; do { const # = •️; # * 3 } } } }
+1 |> do { const • = # + 2; do { const # = •; # * 3 } }
+do { const • = 1; do { const # = •; do { const • = # + 2; do { const # = •; # * 3 } } } }
+do { do { const # = 1; do { const • = # + 2; do { const # = •; # * 3 } } } }
+do { do { do { const • = 1 + 2; do { const # = •; # * 3 } } } }
 do { do { do { do { const # = 3; # * 3 } } } }
 do { do { do { do { 3 * 3 } } } }
 9
