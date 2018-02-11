@@ -81,6 +81,7 @@ _.find = _.detect = function(obj, predicate, context) {
     |> (# !== void 0 && # !== -1) ? obj[#] : undefined;
 };
 ```
+***
 ```js
 _.reject = function(obj, predicate, context) {
   return _.filter(obj,
@@ -96,6 +97,7 @@ _.reject = function(obj, predicate, context) {
     |> _.filter(obj, #, context)
 };
 ```
+***
 ```js
 var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
   if (!(callingContext instanceof boundFunc))
@@ -117,6 +119,7 @@ var executeBound = function(sourceFunc, boundFunc, context, callingContext, args
     |> _.isObject(#) ? # : self;
 };
 ```
+***
 ```js
 _.size = function(obj) {
   if (obj == null) return 0;
@@ -148,6 +151,7 @@ console.log(JSON.parse((await pify(fs.readFile)('package.json', 'utf8')).name));
   |> #.name
   |> console.log
 ```
+***
 ```js
 return opts.include
   ? opts.include.some(match)
@@ -172,6 +176,7 @@ playBlob(await (await fetch("/music/pk/altes-kamuffel.flac")).blob())
   |> await #.blob()
   |> playBlob
 ```
+***
 ```js
 fetch("/", {method:"HEAD"})
   .then(res => log(res.headers.get("strict-transport-security")))
@@ -183,6 +188,7 @@ fetch("/", {method:"HEAD"})
   |> await fetch(#, {method:"HEAD"})
   |> #.headers.get("strict-transport-security")
 ```
+***
 ```js
 fetch("https://pk.example/berlin-calling.json", {mode:"cors"})
   .then(res => {
@@ -244,6 +250,7 @@ Punctuator :: one of
 
 ### Pipe expressions
 ```
+***
 ```
 
 ### Loose precedence
@@ -295,6 +302,7 @@ The topic variable may be used multiple times in a pipeline’s RHS. Each use re
 … |> f(#, #)
 do { const $ = …; f($, $) }
 ```
+***
 ```js
 … |> [#, # * 2, # * 3]
 do { const $ = …; [$, $ * 2, $ * 3] }
