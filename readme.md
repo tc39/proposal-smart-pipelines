@@ -66,7 +66,7 @@ Being able to automatically detect this tacit style is the “smart” part of t
 Now following are various examples adapted from useful, real-world code.
 
 ### Underscore.js
-Adapted from 1.8.3 by Jeremy Ashkenas et al. under MIT License.
+Adapted from [Underscore.js 1.8.3](http://underscorejs.org) by Jeremy Ashkenas et al. under MIT License.
 
 ```js
 _.find = _.detect = function(obj, predicate, context) {
@@ -142,7 +142,7 @@ _.size = function(obj) {
 ```
 
 ### Pify
-Pify 3.0.0 by Sindre Sorhus under MIT License.
+Adapted from [Pify 3.0.0](https://github.com/sindresorhus/pify) by Sindre Sorhus under MIT License.
 
 ```js
 pify(fs.readFile)('package.json', 'utf8').then(data => {
@@ -169,7 +169,7 @@ return opts.include
 ```
 
 ### Fetch Standard
-Living standard by WHATWG under Creative Commons BY.
+Adapted from [Fetch, the living web standard](https://fetch.spec.whatwg.org) by WHATWG under Creative Commons BY.
 
 ```js
 fetch("/music/pk/altes-kamuffel.flac")
