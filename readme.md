@@ -245,6 +245,17 @@ Alternatively, you may omit the RHS’s topic variables if the RHS is just a sim
 
 ## Syntax
 
+### Tokens
+The rule for <var>Punctuator</var> tokens would be modified: a new token, `#`, would be added to the Punctuators:
+
+```
+Punctuator :: one of
+  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==`
+  `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||`
+  `?` `:` `#`
+  `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
+```
+
 ### Loose precedence
 The pipe operator’s precedence is quite loose. It is tighter than assignment (`=`, `+=`, …), generator `yield` and `yield *`, and sequence `,`; and it is looser than logical ternary conditional (`… ? … : …`), logical and/or `&&`/`||`, bitwise and/or/xor, `&`/`|`/`^`, equality/inequality `==`/`===`/`!=`/`!==`, and every other type of expression.
 
