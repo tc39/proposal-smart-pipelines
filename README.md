@@ -1,12 +1,12 @@
 # Smart pipelines
 ECMAScript Stage-−1 Proposal by J. S. Choi, 2018-02.
 
-This repository contains the formal specification for a proposed “smart pipeline operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC39 process](https://tc39.github.io/process-document/) but it may eventually be presented to TC39.
+This repository contains the formal specification for a proposed “smart pipe operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC39 process](https://tc39.github.io/process-document/) but it may eventually be presented to TC39.
 
 ## Background
 The operator is a backwards-compatible way of chaining nested expressions in a readable, left-to-right manner. Nested transformations become untangled into short steps. It is similar to [Hack’s `|>` and `$$`](https://docs.hhvm.com/hack/operators/pipe-operator), [F#’s `|>`](https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining), [OCaml’s `|>`](http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html), [Elixir/Erlang’s `|>`](https://elixir-lang.org/getting-started/enumerables-and-streams.html), [Elm’s `|>`](http://elm-lang.org/docs/syntax#infix-operators), [Julia’s `|>`](https://docs.julialang.org/en/stable/stdlib/base/#Base.:|>), [LiveScript’s `|>`](http://livescript.net/#operators-piping), and [Unix’s `|`](https://en.wikipedia.org/wiki/Pipeline_(Unix)).
 
-The proposal is a variant of a [previous pipeline-operator proposal](https://github.com/tc39/proposal-pipeline-operator) championed by [Daniel Ehrenberg of Igalia](https://github.com/littledan). This variant is listed as [Proposal 4: Smart Mix on the pipe-proposal wiki](https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix). The variant resulted from [previous discussions about pipeline placeholders in the previous pipe-operator proposal](https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder), which culminated in an [invitation by Daniel Ehrenberg, champion on the current pipe proposal, to try writing a specification draft](https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394). A prototype Babel plugin is also pending.
+The proposal is a variant of a [previous pipe-operator proposal](https://github.com/tc39/proposal-pipeline-operator) championed by [Daniel Ehrenberg of Igalia](https://github.com/littledan). This variant is listed as [Proposal 4: Smart Mix on the pipe-proposal wiki](https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix). The variant resulted from [previous discussions about pipeline placeholders in the previous pipe-operator proposal](https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder), which culminated in an [invitation by Daniel Ehrenberg, champion on the current pipe proposal, to try writing a specification draft](https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394). A prototype Babel plugin is also pending.
 
 You can take part in the discussions on the [GitHub issue tracker](https://github.com/tc39/proposal-dynamic-import/issues). When you file an issue, please note in it that you are talking specifically about “Proposal 4: Smart Mix”.
 
@@ -35,7 +35,7 @@ capitalizedString(
 ```
 
 ## Proposed solution
-The code above would become much terser with pipes, making both reading and writing considerably easier.
+The code above would become much terser with a binary operator that allows the piping of data through expressions. This terseness would make both reading and writing easier for the JavaScript programmer.
 
 ```js
 stringPromise
@@ -48,28 +48,123 @@ stringPromise
 
 This same use case appears numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, object constructions, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions.
 
-## Syntactic sugar for nested `do`s
-The example above is roughly equivalent to nested `do` expressions, each with a variable binding and a transformation of that variable’s value.
+## Nomenclature
+The binary operator itself may be referred to as a **pipe**, a **pipe operator**, or a **pipeline operator**; all these names are equivalent. This specification will prefer the term “pipe operator”.
+
+A pipe operator between two expressions forms a **pipe expression**. One or more pipe expressions in a chain form a **pipeline**. For each pipe expression, the expression before the pipe is the pipeline’s **left-hand side (LHS)**; the expression after the pipe is its **right-hand side (RHS)**. The pipe operator is said **to pipeline** the LHS’s value **through** the RHS expression, where “pipeline” here is used as a verb.
+
+The special token `#` is a nullary operator that acts as a special variable. A pipeline’s RHS forms an inner lexical scope—called the pipeline’s **RHS scope**—within which `#` is implicitly bound to the value of the LHS.
+
+## Semantics with autogenerated variables
+A pipeline’s semantics are roughly equivalent to a nested `do` expression. There are two ways to illustrate this equivalency. The first way is to replace each pipe expression’s placeholders with an autogenerated variable, which must be guaranteed to not conflict with other variables. (The alternative way is to use two variables: the placeholder `#` and a dummy variable [TO DO: Link to dummy-variable method’s section when written].)
+
+Let us say that each pipe expression autogenerates a new variable (`#₀`, `#₁`, `#₂`, `#₃`, …), which in turn replaces the placeholders `#` in each pipe’s RHS. Let us also group the expressions with left associativity (although this is arbitrary [TO DO: Link to associativity section when written]).
+
+With this notation, each line in this example would be equivalent to the others.
+
+```js
+1 |> # + 2 |> # * 3
+(1 |> # + 2) |> # * 3
+do { const #₀️ = (1 |> # + 2); #₀️ * 3 }
+do { const #₀️ = (do { const #₁ = 1; #₁ + 2 }); #₀️ * 3 }
+do { const #₀️ = (do { const #₁ = 1; #₁ + 2 }); #₀️ * 3 }
+do { const #₀ = (do { 1 + 2 }); #₀ * 3 }
+do { const #₀️ = 3; #₀ * 3 }
+do { do { 3 * 3 } }
+9
+```
+
+Consider also the example above:
+
+```js
+stringPromise
+  |> await #
+  |> # ?? throw new TypeError()
+  |> doubleSay // a tacit unary function call
+  |> capitalize // also a tacit unary function call
+  |> # + '!'
+```
+
+With left associativity, this would be equivalent to the following:
 
 ```js
 do {
-  const # = do {
-    const # = do {
-      const # = do {
-        const # = await stringPromise;
-        # ?? throw new TypeError()
+  const #₀️ = do {
+    const #₁️ = do {
+      const #₂️ = do {
+        const #₃ = await stringPromise;
+        do { const #₃ = •️; #₃ ?? throw new TypeError() }
       };
-      doubleSay(#)
+      do { const #₂ = •️; doubleSay(#) }
+    };
+    capitalize(#₁)
+  };
+  #₀ + '!'
+}
+```
+
+For each pipe expression, the steps of the computation would be roughly:
+
+1. The LHS expression is first evaluated in the current lexical context.
+2. In a new inner lexical context, the value of the LHS is bound to an autogenerated placeholder variable, `#ₙ`, where `n` is a number that would not conflict with the name of any other autogenerated placeholder variable.
+3. The pipe’s RHS expression is evaluated within this inner lexical context, where each instance of `#` is replaced by `#ₙ`, except in any inner pipe expression’s RHS within this pipe’s RHS.
+5. The pipe’s result is the result of its RHS’s evaluation.
+
+<!--
+autogeneration , `do`. Instead, for illustrative purposes, we will pretend that we can bind `#` `const # = …` is *not* a valid statement, because `#` is not actually a variable identifier. However, for illustrative purposes, it is useful to pretend that we can bind `#`. We will also consider a dummy special variable `•`. `•` is not actually part of the syntax of this proposal; it is also merely an illustrative tool to demonstrate the semantics of the pipe operator in terms of `do` expressions.
+
+The example above:
+
+```js
+stringPromise
+  |> await #
+  |> # ?? throw new TypeError()
+  |> doubleSay // a tacit unary function call
+  |> capitalize // also a tacit unary function call
+  |> # + '!'
+```
+
+…would be equivalent to the following:
+
+```js
+do {
+  const •️ = do {
+    const •️ = do {
+      const •️ = do {
+        const • = await stringPromise;
+        do { const # = •️; # ?? throw new TypeError() }
+      };
+      do { const # = •️; doubleSay(#) }
     };
     capitalize(#)
   };
   # + '!'
 }
 ```
+ -->
 
-1. For each pipe operation, the left-hand side (LHS) is evaluated.
-2. Then it is bound to a placeholder `#`: a nullary variable that acts as a variable. This variable is only defined within the pipe’s right-hand side (RHS), which acts as an inner lexical scope.
-3. With this binding, the RHS is then evaluated too.
+<!--
+For each pipe operation, the steps are roughly:
+
+1. The LHS expression is first evaluated in the current lexical context.
+2. The LHS’s result is bound to a hidden special variable `•`.
+3. In a new inner lexical context, the value of `•` is bound to the placeholder variable `#`.
+4. The pipe’s RHS expression is evaluated within this inner lexical context.
+5. The pipe’s result is the result of the RHS.
+
+Here is another example using numbers, showing each step of syntactic expansion and runtime evaluation. Each line is equivalent to the others:
+
+```js
+1 |> # + 2 |> # * 3
+do { const •️ = 1; do { const # = •️; # + 2 } } |> # * 3
+do { const •️ = do { const # = 1; # + 2 }; do { const # = •️; # * 3 } }
+do { const •️ = do { 1 + 2 }; do { const # = •️; # * 3 } }
+do { const •️ = 3; do { const # = •️; # * 3 } }
+do { do { const # = 3; # * 3 } }
+do { do { 3 * 3 } }
+9
+```
+ -->
 
 ## Tacit unary function calls
 As a further abbreviation, you may omit the placeholder if the operation is just a call of a named unary function. This is called [“tacit” or “point-free style”](https://en.wikipedia.org/wiki/Tacit_programming). This is the “smart” part of these “smart pipeline operators”.
@@ -137,18 +232,135 @@ The placeholder may be used multiple times in the RHS, but each use refers to th
 // do { const # = …; [#, # * 2, # * 3] }
 ```
 
-## Nested inner lexical contexts
-Inner lexical contexts in general are allowed in both sides of the pipe operator. [To do]
-
-## RHS-nested pipe placeholders
-The pipe operator is left associative. However, it is still possible to force right associativity by putting a pipeline in another… [TO DO]
-
-## Associativity and precedence
-The pipe operation is left associative, as its LHS-then-RHS evaluation order requires.
-
-Its precedence is quite loose. It is tighter than assignment (`=`, `+=`, …), generator `yield` and `yield *`, and sequence `,`; and it is looser than logical ternary conditional (`… ? … : …`), logical and/or `&&`/`||`, bitwise and/or/xor, `&`/`|`/`^`, equality/inequality `==`/`===`/`!=`/`!==`, and every other type of expression.
+## Loose precedence
+The pipe operator’s precedence is quite loose. It is tighter than assignment (`=`, `+=`, …), generator `yield` and `yield *`, and sequence `,`; and it is looser than logical ternary conditional (`… ? … : …`), logical and/or `&&`/`||`, bitwise and/or/xor, `&`/`|`/`^`, equality/inequality `==`/`===`/`!=`/`!==`, and every other type of expression.
 
 Being any tighter than this level would require its RHS to be parenthesized for many frequent types of expressions. However, the result of a pipeline is also expected to often serve as the RHS of a variable assignment `=`.
+
+## Inner functions
+Both the LHS and the RHS of a pipe may contain nested inner functions. This works as may be expected:
+
+[TO DO]
+
+## Bidirectional associativity
+The pipe operator is presented above as a left-associative operator. However, it is theoretically [bidirectionally associative](https://en.wikipedia.org/wiki/Associative_property): how a pipeline’s expressions are particularly grouped is arbitrary. One could force right associativity by parenthesizing a pipeline, such that it itself becomes the RHS of another, outer pipeline.
+
+[TO DO]
+
+<!--
+There are two **open questions** that are equivalent:
+
+* Should the pipe operator be required to be left associative or may it be [bidirectionally associative](https://en.wikipedia.org/wiki/Associative_property)?
+* Should placeholders be forbidden in a pipeline’s LHS, unless that placeholder is within the RHS of another pipeline within that LHS?
+
+The pipe operator is currently specified to have left associativity. It is easiest to interpret the pipe operator as left associative; the discussion above interprets the operator using left associativity.
+
+Relatedly, placeholders are *not* allowed in a pipeline’s LHS, unless the placeholders are within the RHS of a pipeline within the LHS. This is true even when there is a surrounding outer pipeline that would have made `#` resolve.
+
+For example, `/*A*/ 1 |> (() => /*B*/ # |> # + 2)` is not allowed, because the inner function’s inner pipe (`/*B*/`)’s LHS’s `#` is not within the RHS, despite . But `(1 |> #) |> # + 2` is allowed.
+
+Theoretically, the pipe operator could be [bidirectionally associative](https://en.wikipedia.org/wiki/Associative_property), in which the grouping of a chained pipeline would be arbitrary. Assuming this hypothetical, one could therefore force right associativity by parenthesizing a pipeline, then placing it in the RHS of another, outer pipeline.
+
+However, the reason why this might be unnatural in JavaScript may be observed by comparing the syntactic expansions of left associativity and right associativity.
+
+Consider the valid `(1 |> # + 2) |> # * 3` versus the invalid `1 |> (# + 2 |> # * 3)`.
+
+```js
+// With left associativity.
+(1 |> # + 2) |> # * 3
+(do { const # = 1; # + 2 }) |> # * 3
+do { const # = (do { const # = 1; # + 2 }); # * 3 }
+do { const # = (do { 1 + 2 }); # * 3 }
+do { const # = 3; # * 3 }
+do { 3 * 3 }
+9
+```
+
+```js
+// With right associativity.
+1 |> (# + 2 |> # * 3)
+1 |> do { const # = # + 2; # * 3 }
+do { const # = 1; do { const # = # + 2; # * 3 } }
+// ReferenceError: Cannot access uninitialized variable.
+```
+
+The reason why the right-associative expansion would be invalid is because variable declarations shadow outer variables of the same name *no matter where they are declared in the inner context*; that’s how the static analysis of variables works in JavaScript. At the point of the inner `do` block’s `const # = # + 2`, that inner block’s `#` has already shadowed the outer block’s `#` with an uninitialized variable. To put it in terms of [IIFEs](https://developer.mozilla.org/en-US/docs/Glossary/IIFE):
+
+```js
+// Returns 9.
+(function () {
+  const $ = (function () {
+    const $ = 1;
+    return $ + 2
+  })();
+  return $ * 3
+})()
+```
+
+```js
+// Throws ReferenceError: Cannot access uninitialized variable.
+(function () {
+  const $ = 1;
+  return (function () {
+    const $ = $ + 2;
+    return $ * 3
+  })()
+})()
+```
+
+It should be noted that the `#` does not have to act this way. Indeed, in other languages such as Clojure, a lexical constant may be redeclared with the same name as a constant from an outer lexical context, yet its assignment may depend on that outer context’s constant. This may be simulated in JavaScript using *double nested `do` expressions* using dummy variables, which in turn would enable the use of placeholders in LHSes.
+
+This may be demonstrated using a dummy placeholder `•️`. If the transformation above of `(1 |> # + 2) |> # * 3`:
+
+```js
+// With left associativity.
+(1 |> # + 2) |> # * 3
+(do { const # = 1; # + 2 }) |> # * 3
+do { const # = (do { const # = 1; # + 2 }); # * 3 }
+do { const # = (do { 1 + 2 }); # * 3 }
+do { const # = 3; # * 3 }
+do { 3 * 3 }
+9
+```
+
+…was instead written with double nested `do` expressions with a dummy placeholder `•️`, then it would be equivalent:
+
+```js
+// With left associativity.
+(1 |> # + 2) |> # * 3
+(do { const •️ = 1; do { const # = •️; # + 2 } }) |> # * 3
+do { const •️ = (do { const # = 1; # + 2 }); do { const # = •️; # * 3 } }
+do { const •️ = (do { 1 + 2 }); do { const # = •️; # * 3 } }
+do { const •️ = 3; do { const # = •️; # * 3 } }
+do { do { const # = 3; # * 3 } }
+do { do { 3 * 3 } }
+9
+```
+
+But if the transformation above of `(1 |> # + 2) |> # * 3`:
+
+```js
+// With right associativity.
+1 |> (# + 2 |> # * 3)
+1 |> do { const # = # + 2; # * 3 }
+do { const # = 1; do { const # = # + 2; # * 3 } }
+// ReferenceError: Cannot access uninitialized variable.
+```
+
+…was similarly rewritten with double nested `do` expressions with a dummy placeholder `•️`, then it would become valid (and equivalent):
+
+```js
+// With right associativity.
+1 |> (# + 2 |> # * 3)
+1 |> do { const •️ = # + 2; do { const # = •️; # * 3 } }
+do { const •️ = 1; do { const # = •; do { const •️ = # + 2; do { const # = •️; # * 3 } } } }
+do { do { const # = 1; do { const •️ = # + 2; do { const # = •️; # * 3 } } } }
+do { do { do { const •️ = 1 + 2; do { const # = •️; # * 3 } } } }
+do { do { do { do { const # = 3; # * 3 } } } }
+do { do { do { do { 3 * 3 } } } }
+9
+```
+ -->
 
 ## Alternative solutions explored
 There are a number of other ways of potentially accomplishing the above use cases. However, the authors of this proposal believe that the smart pipe operator may be the best choice. [TO DO]
