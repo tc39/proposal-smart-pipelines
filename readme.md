@@ -4,7 +4,7 @@ ECMAScript Stage-−1 Proposal by J. S. Choi, 2018-02.
 This repository contains the formal specification for a proposed “smart pipe operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC39 process](https://tc39.github.io/process-document/) but it may eventually be presented to TC39.
 
 ## Background
-The operator is a backwards-compatible way of chaining nested expressions in a readable, left-to-right manner. Nested transformations become untangled into short steps. It is similar to [Hack’s `|>` and `$$`](https://docs.hhvm.com/hack/operators/pipe-operator), [F#’s `|>`](https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining), [OCaml’s `|>`](http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html), [Elixir/Erlang’s `|>`](https://elixir-lang.org/getting-started/enumerables-and-streams.html), [Elm’s `|>`](http://elm-lang.org/docs/syntax#infix-operators), [Julia’s `|>`](https://docs.julialang.org/en/stable/stdlib/base/#Base.:|>), [LiveScript’s `|>`](http://livescript.net/#operators-piping), [R / magrittr’s `%>%`](https://cran.r-project.org/web/packages/magrittr/index.html), [Perl 6’s `==>`](https://docs.perl6.org/language/operators#infix_==&gt;) and [Unix shells’ and PowerShell’s `|`](https://en.wikipedia.org/wiki/Pipeline_(Unix)). It is conceptually similar but should not be confused with [WHATWG-stream piping](https://streams.spec.whatwg.org/#pipe-chains) and [Node-stream piping](https://nodejs.org/api/stream.html#stream_readable_pipe_destination_options).
+The binary operator proposed here would provide a backwards- and forwards-compatible style of chaining nested expressions into a readable, left-to-right manner. Nested transformations become untangled into short steps in a zero-cost abstraction. The operator is similar to [Hack’s `|>` and `$$`](https://docs.hhvm.com/hack/operators/pipe-operator), [F#’s `|>`](https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining), [OCaml’s `|>`](http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html), [Elixir/Erlang’s `|>`](https://elixir-lang.org/getting-started/enumerables-and-streams.html), [Elm’s `|>`](http://elm-lang.org/docs/syntax#infix-operators), [Julia’s `|>`](https://docs.julialang.org/en/stable/stdlib/base/#Base.:|>), [LiveScript’s `|>`](http://livescript.net/#operators-piping), [R / magrittr’s `%>%`](https://cran.r-project.org/web/packages/magrittr/index.html), [Perl 6’s `==>`](https://docs.perl6.org/language/operators#infix_==&gt;) and [Unix shells’ and PowerShell’s `|`](https://en.wikipedia.org/wiki/Pipeline_(Unix)). It is conceptually similar but should not be confused with [WHATWG-stream piping](https://streams.spec.whatwg.org/#pipe-chains) and [Node-stream piping](https://nodejs.org/api/stream.html#stream_readable_pipe_destination_options).
 
 The proposal is a variant of a [previous pipe-operator proposal](https://github.com/tc39/proposal-pipeline-operator) championed by [Daniel Ehrenberg of Igalia](https://github.com/littledan). This variant is listed as [Proposal 4: Smart Mix on the pipe-proposal wiki](https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix). The variant resulted from [previous discussions about pipeline placeholders in the previous pipe-operator proposal](https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder), which culminated in an [invitation by Daniel Ehrenberg, champion on the current pipe proposal, to try writing a specification draft](https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394). A prototype Babel plugin is also pending.
 
@@ -36,7 +36,7 @@ new User.Message(
 )
 ```
 
-The code above could be much terser and (literally) straightforward. This proposal’s smart pipe operator would allow the piping of data through expressions. This terseness would make both reading and writing easier for the JavaScript programmer.
+The code above could be much terser and (literally) straightforward. This proposal’s smart pipe operator would allow the piping of data through expressions. This terseness would make both reading and writing easier for the JavaScript programmer. It is statically rewritable into already valid code, it has zero runtime cost.
 
 ```js
 stringPromise
@@ -48,7 +48,7 @@ stringPromise
   |> new User.Message // a tacit unary constructor call
 ```
 
-This same use case appears numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, object constructions, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions. The smart pipe operator can handle them all.
+Similar use cases appear numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, object constructions, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions. The smart pipe operator can handle them all.
 
 Note also that it was not necessary to include parentheses for `capitalize` or `new User.Message`; they were implicitly included as a unary function call and a unary constructor call, respectively. That is, the preceding example is equivalent to:
 
@@ -243,12 +243,14 @@ The special token `#` is a <dfn>topic variable</dfn>: it is a nullary operator t
 
 Alternatively, you may omit the RHS’s topic variables if the RHS is just a simple reference to a function or constructor, such as with `… |> capitalize` and `… |> new User.Message` from the preceding example. The RHS would then be called as a unary function or constructor, without having to use the topic variable as an explicit argument. This is called [<dfn>tacit style</dfn> or <dfn>point-free style</dfn>](https://en.wikipedia.org/wiki/Tacit_programming). When a pipe is in tacit style, the RHS is called a <dfn>tacit function</dfn> or a <dfn>tacit constructor</dfn>, depending on if it starts with `new`.
 
-## Loose precedence
+## Syntax
+
+### Loose precedence
 The pipe operator’s precedence is quite loose. It is tighter than assignment (`=`, `+=`, …), generator `yield` and `yield *`, and sequence `,`; and it is looser than logical ternary conditional (`… ? … : …`), logical and/or `&&`/`||`, bitwise and/or/xor, `&`/`|`/`^`, equality/inequality `==`/`===`/`!=`/`!==`, and every other type of expression.
 
 Being any tighter than this level would require its RHS to be parenthesized for many frequent types of expressions. However, the result of a pipeline is also expected to often serve as the RHS of a variable assignment `=`.
 
-## Smart RHS syntax
+### Smart RHS syntax
 When the parser checks the RHS, it must determine what style it is in. There are four outcomes: tacit constructor, tacit function, parameterized expression, or invalid RHS.
 
 The goal here is to minimize the parsing lookahead that the compiler must check before it can distinguish between tacit style and topic-token style. By restricting the space of valid tacit RHS expressions without topic variables, the rule prevents [garden-path syntax](https://en.wikipedia.org/wiki/Garden_path_sentence) that would otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
@@ -261,7 +263,7 @@ The parsing rules are such that:
 
 2. If the RHS starts with `new`, followed by mere identifier, optionally with a chain of properties, and with no parentheses or brackets, then that identifier is assumed to be a **tacit constructor**.
 
-3. Otherwise, the RHS is now an arbitrary expression. Because the expression is not in tacit style, it must use that pipe’s topic variable. ([TO DO: Formalize this static semantic as `usesOuterTopic()`.] Topic variables from the RHS scopes of other, inner pipelines do not count.) If there is no such topic variable in the expression, then a syntax error is thrown.
+3. Otherwise, the RHS is now an arbitrary expression. Because the expression is not in tacit style, it must use that pipe’s topic variable. ([TO DO: Formalize this static semantic as `usesTopic()`.] Topic variables from the RHS scopes of other, inner pipelines do not count.) If there is no such topic variable in the expression, then a syntax error is thrown.
 
 If a pipe RHS *never* uses topic variable, then it must be a permitted tacit unary function (single identifier or simple property chain). Otherwise, it is a syntax error. In particular, tacit style *never* uses parentheses. If they need to have parentheses, then they need to have use the topic variable. The following table summarizes these rules.
 
@@ -284,27 +286,28 @@ If a pipe RHS *never* uses topic variable, then it must be a permitted tacit una
 |   `'2018' \|> new global.Date()`      |   syntax error: missing `#`     |
 |   `'2018' \|> (new global.Date)`      |   syntax error: missing `#`     |
 
-## Multiple topic variables in a pipeline’s RHS
-The topic variable may be used multiple times in a pipeline’s RHS. Each use refers to the same value (wherever the topic variable is not overridden by another, inner pipeline’s RHS scope). Because it is bound to the result of the LHS, the LHS is still only ever evaluated once.
+### Multiple topic variables in a pipeline’s RHS
+The topic variable may be used multiple times in a pipeline’s RHS. Each use refers to the same value (wherever the topic variable is not overridden by another, inner pipeline’s RHS scope). Because it is bound to the result of the LHS, the LHS is still only ever evaluated once. The lines in each of the following are equivalent:
 
 ```js
 … |> f(#, #)
-// equivalent to:
-// do { const # = …; f(#, #) }
+do { const $ = …; f($, $) }
 ```
 
 ```js
 … |> [#, # * 2, # * 3]
-// equivalent to:
-// do { const # = …; [#, # * 2, # * 3] }
+do { const $ = …; [$, $ * 2, $ * 3] }
 ```
 
-## Inner functions
-Both the LHS and the RHS of a pipeline may contain nested inner functions. This works as may be expected:
+### Inner functions
+Both the LHS and the RHS of a pipeline may contain nested inner functions. This also works as expected. The lines in the following are equivalent:
 
-[TO DO]
+```js
+… |> settimeout(() => # * 500)
+do { const $ = …; settimeout(() => # * 500) }
+```
 
-## General static semantics
+### General static semantics
 A pipe expression’s semantics are:
 
 1. The LHS is evaluated into the LHS’s value; call this `lhsValue`.
@@ -329,7 +332,7 @@ A pipe expression’s semantics are:
 
 The topic-variable expression case can be further explained with a nested `do` expression. There are two ways to illustrate this equivalency. The first way is to replace each pipe expression’s topic variables with an autogenerated variable, which must be guaranteed to be lexically hygienic and to not conflict with other variables. The alternative way is to use two variables—the topic variable `#` and a single dummy variable—which also preserves lexical sanitation. [TO DO: Link to both sections.]
 
-### Topic-variable semantics by replacing them with autogenerated variables
+#### Topic-variable semantics by replacing them with autogenerated variables
 The first way to illustrate the operator’s semantics is to replace each pipe expression’s topic variables with an autogenerated variable, which must be guaranteed to not conflict with other variables.
 
 Let us say that each pipe expression autogenerates a new, lexically hygienic variable (`#₀`, `#₁`, `#₂`, `#₃`, …), which in turn replaces each use of the topic variable `#` in each pipe’s RHS. (These `#ₙ` variables are not true syntax; it is merely for illustrative purposes. You cannot actually assign or use `#ₙ` variables.) Let us also group the expressions with left associativity (although this is arbitrary [TO DO: Link to associativity section when written]).
@@ -362,7 +365,7 @@ stringPromise
   |> # + '!'
 ```
 
-With left associativity, this would be statically equivalent to the following:
+Under left associativity, this would be statically equivalent to the following:
 
 ```js
 do {
@@ -386,7 +389,7 @@ In general, for each pipe expression `lhs |> rhs`, assuming that `rhs` is in top
 * Also let `rhsSubstituted` be `rhs` but with all instances of `#` replaced with `#ₙ`.
 * Then the static syntax rewriting (left associative and inside to outside) would simply be: `do { const #ₙ = lhs; rhsSubstituted }`. This `do` expression would act as at the RHS scope.
 
-### Topic-variable semantics by alternating lexical shadowing with dummy variable
+#### Topic-variable semantics by alternating lexical shadowing with dummy variable
 The other way to demonstrate topic-variable style is to use two variables: the topic variable `#` and single lexically hygienic dummy variable `•`. It should be noted that `const # = …` is not a valid statement under this proposal’s actual syntax; likewise, `•` is not a part of the proposal’s syntax. Both forms are for illustrative purposes here only.
 
 With this notation, no variable autogeneration is required; instead, the nested `do` expressions will redeclare the same variables `#` and `•`, shadowing the external variables of the same name as needed. The number example above becomes the following. Each line is still equivalent to the other lines.
@@ -418,7 +421,7 @@ stringPromise
   |> # + '!'
 ```
 
-With left associativity, this would be statically equivalent to the following:
+Under left associativity, this would be statically equivalent to the following:
 ```js
 do {
   const • = do {
@@ -443,7 +446,7 @@ For each pipe expression, evaluated left associatively and inside to outside, th
 4. The pipe’s RHS expression is evaluated within this inner lexical context.
 5. The pipe’s result is the result of the RHS.
 
-## Bidirectional associativity
+### Bidirectional associativity
 The pipe operator is presented above as a left-associative operator. However, it is theoretically [bidirectionally associative](https://en.wikipedia.org/wiki/Associative_property): how a pipeline’s expressions are particularly grouped is functionally arbitrary. One could force right associativity by parenthesizing a pipeline, such that it itself becomes the RHS of another, outer pipeline.
 
 [TO DO]
@@ -488,6 +491,14 @@ do { do { do { do { 3 * 3 } } } }
 9
 ```
  -->
+
+### Deeply nested pipelines
+
+[TO DO]
+
+## Runtime semantics
+
+[TO DO]
 
 ## Alternative solutions explored
 There are a number of other ways of potentially accomplishing the above use cases. However, the authors of this proposal believe that the smart pipe operator may be the best choice. [TO DO]
