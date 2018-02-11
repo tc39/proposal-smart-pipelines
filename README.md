@@ -126,7 +126,7 @@ Its precedence is quite loose. It is tighter than assignment (`=`, `+=`, …), g
 Being any tighter than this level would require its RHS to be parenthesized for many frequent types of expressions. However, the result of a pipeline is also expected to often serve as the RHS of a variable assignment `=`.
 
 ## Alternative solutions explored
-There are a number of other ways of potentially accomplishing the above use cases. However, the authors of this proposal believe that the smart pipe operator is the best choice. [TO DO]
+There are a number of other ways of potentially accomplishing the above use cases. However, the authors of this proposal believe that the smart pipe operator may be the best choice. [TO DO]
 
 ## Relation to existing work
 [TO DO]
