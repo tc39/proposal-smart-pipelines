@@ -120,7 +120,7 @@ If a pipe RHS has *no* placeholder, then it must be a permitted tacit unary func
 
 This rule minimizes the parsing lookahead that the compiler must check before it can distinguish between tacit style and placeholder style. By restricting the space of valid tacit RHS expressions without placeholders, the rule prevents [garden-path syntax](https://en.wikipedia.org/wiki/Garden_path_sentence) that would otherwise be possible: <i lang=lt>e.g.</i>, `… |> compose(f, g, h, i, j, k, #)`.
 
-The rule also statically prevents a writing JavaScript programmer from accidentally omitting a placeholder where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the writer intended. The JavaScript programmer is encouraged to avoid using tacit style where its meaning may be visually confusing to the reader.
+The rule also statically prevents a writing JavaScript programmer from accidentally omitting a placeholder where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the writer intended. The JavaScript programmer is encouraged to use placeholders and avoid tacit style, where tacit style may be visually confusing to the reader.
 
 ## Multiple placeholders in RHS
 The placeholder may be used multiple times in the RHS, but each use refers to the same value. Because it is bound to the result of the LHS, the LHS is still only ever evaluated once.
