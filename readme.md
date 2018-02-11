@@ -239,12 +239,12 @@ Alternatively, you may omit the RHS’s topic variables if the RHS is just a sim
 ## Syntax
 
 ### Tokens
-The rule for <var>Punctuator</var> tokens would be modified: a new token, `#`, would be added to the Punctuators:
+The rule for <var>Punctuator</var> tokens would be modified: two new tokens, `|>` and `#`, would be added to the Punctuators:
 ```
 Punctuator :: one of
   `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==`
   `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||`
-  `?` `:` `#`
+  `?` `:` `|>` `#`
   `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
 ```
 
