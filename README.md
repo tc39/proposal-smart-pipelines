@@ -23,7 +23,7 @@ function capitalize (string) {
 }
 ```
 
-This nested expression is quite messy, requiring many levels of indentation and reading both on the left and right of each subexpression to understand the flow of data.
+This nested expression is quite messy. It is spaghetti that requires many levels of indentation. Reading this code requires checking both the left and right of each subexpression to understand the flow of data.
 
 ```js
 capitalizedString(
@@ -35,7 +35,7 @@ capitalizedString(
 ```
 
 ## Proposed solution
-It would become much terser with pipes, making both reading and writing considerably easier.
+The code above would become much terser with pipes, making both reading and writing considerably easier.
 
 ```js
 stringPromise
