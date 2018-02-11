@@ -36,7 +36,6 @@ new User.Message(
 )
 ```
 
-## Proposed solution
 The code above could be much terser and (literally) straightforward. This proposal’s smart pipe operator would allow the piping of data through expressions. This terseness would make both reading and writing easier for the JavaScript programmer.
 
 ```js
@@ -63,6 +62,180 @@ Note also that it was not necessary to include parentheses for `capitalize` or `
 ```
 
 Being able to automatically detect this tacit style is the “smart” part of these “smart pipeline operators”; for more information, see the [“smart RHS syntax” section](#smart-rhs-syntax).
+
+<details>
+<summary>Other examples adapted from real code are also useful illustrations.</summary>
+
+### Underscore.js
+Adapted from 1.8.3 by Jeremy Ashkenas et al. under MIT License.
+
+```js
+_.find = _.detect = function(obj, predicate, context) {
+  var key;
+  if (isArrayLike(obj)) {
+    key = _.findIndex(obj, predicate, context);
+  } else {
+    key = _.findKey(obj, predicate, context);
+  }
+  if (key !== void 0 && key !== -1) return obj[key];
+};
+
+_.find = _.detect = function(obj, predicate, context) {
+  return obj
+    |> isArrayLike(#) ? _.findIndex : _.findKey
+    |> #(obj, predicate, context)
+    |> (# !== void 0 && # !== -1) ? obj[#] : undefined;
+};
+```
+
+```js
+_.reject = function(obj, predicate, context) {
+  return _.filter(obj,
+    _.negate(cb(predicate)),
+    context
+  )
+};
+
+_.reject = function(obj, predicate, context) {
+  return predicate
+    |> cb
+    |> _.negate
+    |> _.filter(obj, #, context)
+};
+```
+
+```js
+var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
+  if (!(callingContext instanceof boundFunc))
+    return sourceFunc.apply(context, args);
+  var self = baseCreate(sourceFunc.prototype);
+  var result = sourceFunc.apply(self, args);
+  if (_.isObject(result)) return result;
+  return self;
+};
+
+var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
+  if (callingContext |> # instanceof boundFunc |> !#)
+    return sourceFunc.apply(context, args);
+  var self = sourceFunc
+    |> #.prototype
+    |> baseCreate;
+  return self
+    |> sourceFunc.apply(#, args)
+    |> _.isObject(#) ? # : self;
+};
+```
+
+```js
+_.size = function(obj) {
+  if (obj == null) return 0;
+  return isArrayLike(obj)
+    ? obj.length
+    : _.keys(obj).length;
+};
+
+_.size = function(obj) {
+  if (obj == null) return 0;
+  return obj |> isArrayLike
+    ? obj.length
+    : obj |> _.keys |> #.length;
+};
+```
+
+### Pify
+Pify 3.0.0 by Sindre Sorhus under MIT License.
+
+```js
+pify(fs.readFile)('package.json', 'utf8').then(data => {
+    console.log(JSON.parse(data).name);
+});
+
+console.log(JSON.parse((await pify(fs.readFile)('package.json', 'utf8')).name));
+
+'package.json'
+  |> await pify(fs.readFile)(#, 'utf8')
+  |> JSON.parse
+  |> #.name
+  |> console.log
+```
+
+```js
+return opts.include
+  ? opts.include.some(match)
+  : !opts.exclude.some(match);
+
+return opts.include
+  ? opts.include.some(match)
+  : opts.exclude.some(match) |> !#
+```
+
+### Fetch Standard
+Living standard by WHATWG under Creative Commons BY.
+
+```js
+fetch("/music/pk/altes-kamuffel.flac")
+  .then(res => res.blob())
+  .then(playBlob)
+
+playBlob(await (await fetch("/music/pk/altes-kamuffel.flac")).blob())
+
+"/music/pk/altes-kamuffel.flac"
+  |> await fetch(#)
+  |> await #.blob()
+  |> playBlob
+```
+
+```js
+fetch("/", {method:"HEAD"})
+  .then(res => log(res.headers.get("strict-transport-security")))
+
+(await fetch("/", {method:"HEAD"}))
+  .headers.get("strict-transport-security")
+
+"/"
+  |> await fetch(#, {method:"HEAD"})
+  |> #.headers.get("strict-transport-security")
+```
+
+```js
+fetch("https://pk.example/berlin-calling.json", {mode:"cors"})
+  .then(res => {
+    if (res.headers.get("content-type")??.toLowerCase()
+      .indexOf("application/json") >= 0
+    ) {
+      return res.json()
+    } else {
+      throw new TypeError()
+    }
+  }).then(processJSON)
+
+do {
+  const res = await fetch("https://pk.example/berlin-calling.json", {
+    mode: "cors"
+  });
+  processJSON(await do {
+    if (res.headers.get("content-type")??.toLowerCase()
+      .indexOf("application/json") >= 0
+    ) {
+      res.json()
+    } else {
+      throw new TypeError()
+    }
+  })
+}
+
+"https://pk.example/berlin-calling.json"
+  |> await fetch(#, {mode: "cors"})
+  |>
+    #.headers.get("content-type")
+      ??.toLowerCase().indexOf("application/json")
+      >= 0
+    ? #.json()
+    : throw new TypeError()
+  |> processJSON
+```
+
+</details>
 
 ## Nomenclature
 The binary operator itself may be referred to as a <dfn>pipe</dfn>, a <dfn>pipe operator</dfn>, or a <dfn>pipeline operator</dfn>; all these names are equivalent. This specification will prefer the term “pipe operator”.
