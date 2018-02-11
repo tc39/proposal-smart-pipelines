@@ -140,8 +140,8 @@ _.size = function(obj) {
 Adapted from [Pify 3.0.0](https://github.com/sindresorhus/pify) by Sindre Sorhus under MIT License.
 ```js
 pify(fs.readFile)('package.json', 'utf8').then(data => {
-    console.log(JSON.parse(data).name);
-});
+  console.log(JSON.parse(data).name)
+})
 
 console.log(JSON.parse((await pify(fs.readFile)('package.json', 'utf8')).name));
 
@@ -155,7 +155,7 @@ console.log(JSON.parse((await pify(fs.readFile)('package.json', 'utf8')).name));
 ```js
 return opts.include
   ? opts.include.some(match)
-  : !opts.exclude.some(match);
+  : !opts.exclude.some(match)
 
 return opts.include
   ? opts.include.some(match)
@@ -178,19 +178,19 @@ playBlob(await (await fetch("/music/pk/altes-kamuffel.flac")).blob())
 ```
 ***
 ```js
-fetch("/", {method:"HEAD"})
+fetch("/", { method: "HEAD" })
   .then(res => log(res.headers.get("strict-transport-security")))
 
-(await fetch("/", {method:"HEAD"}))
+(await fetch("/", { method: "HEAD" }))
   .headers.get("strict-transport-security")
 
 "/"
-  |> await fetch(#, {method:"HEAD"})
+  |> await fetch(#, { method: "HEAD" })
   |> #.headers.get("strict-transport-security")
 ```
 ***
 ```js
-fetch("https://pk.example/berlin-calling.json", {mode:"cors"})
+fetch("https://pk.example/berlin-calling.json", { mode: "cors" })
   .then(res => {
     if (res.headers.get("content-type")??.toLowerCase()
       .indexOf("application/json") >= 0
@@ -217,7 +217,7 @@ do {
 }
 
 "https://pk.example/berlin-calling.json"
-  |> await fetch(#, {mode: "cors"})
+  |> await fetch(#, { mode: "cors" })
   |>
     #.headers.get("content-type")
       ??.toLowerCase().indexOf("application/json")
