@@ -14,8 +14,8 @@ You can take part in the discussions on the [GitHub issue tracker](https://githu
 Let these two functions be defined:
 
 ```js
-function doubleSay (string) {
-  return `${string}, ${string}`
+function doubleSay (string, separatorString) {
+  return `${string}${separatorString}${string}`
 }
 
 function capitalize (string) {
@@ -23,46 +23,123 @@ function capitalize (string) {
 }
 ```
 
-This nested expression is quite messy. It is spaghetti that requires many levels of indentation. Reading this code requires checking both the left and right of each subexpression to understand the flow of data.
+Now look at the nested expression below. Expressions like this happen often in JavaScript: whenever any value must be passed through a series of transformations, whether they be operations, functions, or constructors. Unfortunately, this nested expression—and many like it—are quite messy spaghetti. Writing it requires many levels of indentation, and reading it requires checking both the left and right of each subexpression to understand its data flow.
 
 ```js
-capitalizedString(
-  doubledString(
-    (await stringPromise)
-      ?? throw new TypeError(`Expected string from ${stringPromise}`)
-  )
-) + '!'
+new User.Message(
+  capitalizedString(
+    doubledString(
+      (await stringPromise)
+        ?? throw new TypeError(`Expected string from ${stringPromise}`)
+    )
+  ) + '!'
+)
 ```
 
 ## Proposed solution
-The code above would become much terser with a binary operator that allows the piping of data through expressions. This terseness would make both reading and writing easier for the JavaScript programmer.
+The code above could be much terser and (literally) straightforward. This proposal’s smart pipe operator would allow the piping of data through expressions. This terseness would make both reading and writing easier for the JavaScript programmer.
 
 ```js
 stringPromise
   |> await #
   |> # ?? throw new TypeError()
-  |> doubleSay  // a tacit unary function call
-  |> capitalize // also a tacit unary function call
+  |> doubleSay(#, ', ')
+  |> capitalize // a tacit unary function call
+  |> # + '!'
+  |> new User.Message // a tacit unary constructor call
+```
+
+This same use case appears numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, object constructions, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions. The smart pipe operator can handle them all.
+
+Note also that it was not necessary to include parentheses for `capitalize` or `new User.Message`; they were implicitly included as a unary function call and a unary constructor call, respectively. That is, the preceding example is equivalent to:
+
+```js
+'hello'
+  |> await #
+  |> # ?? throw new TypeError(`Expected string from ${#}`)
+  |> doubleSay(#, ', ')
+  |> capitalize(#)
   |> # + '!'
 ```
 
-This same use case appears numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, object constructions, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions.
+Being able to automatically detect this tacit style is the “smart” part of these “smart pipeline operators”; for more information, see the [“smart RHS syntax” section](#smart-rhs-syntax).
 
 ## Nomenclature
 The binary operator itself may be referred to as a <dfn>pipe</dfn>, a <dfn>pipe operator</dfn>, or a <dfn>pipeline operator</dfn>; all these names are equivalent. This specification will prefer the term “pipe operator”.
 
 A pipe operator between two expressions forms a <dfn>pipe expression</dfn>. One or more pipe expressions in a chain form a <dfn>pipeline</dfn>. For each pipe expression, the expression before the pipe is the pipeline’s <dfn>left-hand side (LHS)</dfn>; the expression after the pipe is its <dfn>right-hand side (RHS)</dfn>. The pipe operator is said <dfn>to pipeline</dfn> the LHS’s value <dfn>through</dfn> the RHS expression, where “pipeline” here is used as a verb.
 
-The special token `#` is a nullary operator that acts as a special variable. A pipeline’s RHS forms an inner lexical scope—called the pipeline’s <dfn>RHS scope</dfn>—within which `#` is implicitly bound to the value of the LHS.
+The special token `#` is a <dfn>placeholder</dfn>: it is a nullary operator that acts as a special variable. A pipeline’s RHS may form an inner lexical scope—called the pipeline’s <dfn>RHS scope</dfn>—within which the placeholder is implicitly bound to the value of the LHS. When
 
-[TO DO: Define RHS type, tacit expression, and placeholder expression.]
+Alternatively, you may omit the RHS’s placeholders if the RHS is just a simple reference to a function or constructor, such as with `|> capitalize` and `|> new User.Message` from the preceding example. The RHS would then be called as a unary function or constructor, without having to use the placeholder as an explicit argument. This is called [<dfn>tacit style</dfn> or <dfn>point-free style</dfn>](https://en.wikipedia.org/wiki/Tacit_programming). When a pipe is in tacit style, the RHS is called a <dfn>tacit function</dfn> or a <dfn>tacit constructor</dfn>, depending on if it starts with `new`.
+
+## Loose precedence
+The pipe operator’s precedence is quite loose. It is tighter than assignment (`=`, `+=`, …), generator `yield` and `yield *`, and sequence `,`; and it is looser than logical ternary conditional (`… ? … : …`), logical and/or `&&`/`||`, bitwise and/or/xor, `&`/`|`/`^`, equality/inequality `==`/`===`/`!=`/`!==`, and every other type of expression.
+
+Being any tighter than this level would require its RHS to be parenthesized for many frequent types of expressions. However, the result of a pipeline is also expected to often serve as the RHS of a variable assignment `=`.
+
+## Smart RHS syntax
+When the parser checks the RHS, it must determine what style it is in. There are four outcomes: tacit constructor, tacit function, parameterized expression, or invalid RHS.
+
+The goal here is to minimize the parsing lookahead that the compiler must check before it can distinguish between tacit style and placeholder style. By restricting the space of valid tacit RHS expressions without placeholders, the rule prevents [garden-path syntax](https://en.wikipedia.org/wiki/Garden_path_sentence) that would otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
+
+Another goal is to statically prevents a writing JavaScript programmer from accidentally omitting a placeholder where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the writer intended. The JavaScript programmer is encouraged to use placeholders and avoid tacit style, where tacit style may be visually confusing to the reader.
+
+The parsing rules are such that:
+
+1. If the RHS is a mere identifier, optionally with a chain of properties, and with no parentheses or brackets, then that identifier is assumed to be a **tacit function**.
+
+2. If the RHS starts with `new`, followed by mere identifier, optionally with a chain of properties, and with no parentheses or brackets, then that identifier is assumed to be a **tacit constructor**.
+
+3. Otherwise, the RHS is now an arbitrary expression. Because the expression is not in tacit style, it must contain a placeholder. If there is no placeholder in the expression, then a syntax error is thrown.
+
+If a pipe RHS has *no* placeholder, then it must be a permitted tacit unary function (single identifier or simple property chain). Otherwise, it is a syntax error. In particular, tacit style *never* uses parentheses. If they need to have parentheses, then they need to have a placeholder. The following table summarizes these rules.
+
+| Expression                            | Result                          |
+| ------------------------------------- | ------------------------------- |
+| **`'2018' \|> Date(#)`**              | **`Date('2018')`**              |
+| **`'2018' \|> Date`**                 | **`Date('2018')`**              |
+|   `'2018' \|> Date()`                 |   syntax error: missing `#`     |
+|   `'2018' \|> (Date)`                 |   syntax error: missing `#`     |
+| **`'2018' \|> Date.parse(#)`**        | **`Date.parse('2018')`**        |
+| **`'2018' \|> Date.parse`**           | **`Date.parse('2018')`**        |
+|   `'2018' \|> Date.parse()`           |   syntax error: missing `#`     |
+|   `'2018' \|> (Date.parse)`           |   syntax error: missing `#`     |
+| **`'2018' \|> global.Date.parse(#)`** | **`global.Date.parse('2018')`** |
+| **`'2018' \|> global.Date.parse`**    | **`global.Date.parse('2018')`** |
+|   `'2018' \|> global.Date.parse()`    |   syntax error: missing `#`     |
+|   `'2018' \|> (global.Date.parse)`    |   syntax error: missing `#`     |
+| **`'2018' \|> new global.Date(#)`**   | **`new Date('2018')`**          |
+| **`'2018' \|> new global.Date`**      | **`new Date('2018')`**          |
+|   `'2018' \|> new global.Date()`      |   syntax error: missing `#`     |
+|   `'2018' \|> (new global.Date)`      |   syntax error: missing `#`     |
+
+## Multiple placeholders in RHS
+The placeholder may be used multiple times in the RHS. Each use refers to the same value. Because it is bound to the result of the LHS, the LHS is still only ever evaluated once.
+
+```js
+… |> f(#, #)
+// equivalent to:
+// do { const # = …; f(#, #) }
+```
+
+```js
+… |> [#, # * 2, # * 3]
+// equivalent to:
+// do { const # = …; [#, # * 2, # * 3] }
+```
+
+## Inner functions
+Both the LHS and the RHS of a pipe may contain nested inner functions. This works as may be expected:
+
+[TO DO]
 
 ## General semantics
 A pipe expression’s semantics are:
 
 1. The LHS is evaluated into the LHS’s value; call this `lhsValue`.
 
-2. The RHS is tested for its type: is it a a tacit function, a tacit constructor, placeholder expression, or an invalid RHS? [TO DO: Link to section on RHS types and tacit expressions.]
+2. The RHS is tested for its type: is it a tacit function, a tacit constructor, placeholder expression, or an invalid RHS? [TO DO: Link to section on RHS types and tacit expressions.]
 
   * If the RHS is a tacit function (such as `f` and `M.f`):
     1. The RHS is evaluated (in the current lexical context); call this value the `rhsFunction`.
@@ -195,82 +272,6 @@ For each pipe expression, evaluated left associatively and inside to outside, th
 3. In a new inner lexical context, the value of `•` is bound to the placeholder variable `#`.
 4. The pipe’s RHS expression is evaluated within this inner lexical context.
 5. The pipe’s result is the result of the RHS.
-
-## Tacit unary function calls
-As a further abbreviation, you may omit the placeholder if the operation is just a call of a named unary function. This is called [“tacit” or “point-free style”](https://en.wikipedia.org/wiki/Tacit_programming). This is the “smart” part of these “smart pipeline operators”.
-
-If the RHS expression is merely an identifier (as with `… |> doubleSay` or `… |> capitalize`), possibly in a property chain (<i lang=lt>e.g.</i>, `… |> Symbol.for`), and possibly with a `new` operator (<i lang=lt>e.g.</i>, `… |> new global.Date`), then that identifier is assumed to be a unary function or unary constructor, which is then called with `#` (<i lang=lt>i.e.</i>, `… |> doubleSay(#)` or `… |> capitalize(#)`). For example:
-
-```js
-'hello'
-  |> await #
-  |> # ?? throw new TypeError(`Expected string from ${#}`)
-  |> doubleSay
-  |> capitalize
-  |> # + '!'
-```
-
-…is equivalent to:
-```js
-'hello'
-  |> await #
-  |> # ?? throw new TypeError(`Expected string from ${#}`)
-  |> doubleSay(#)
-  |> capitalize(#)
-  |> # + '!'
-```
-
-Tacit style is not permitted with expressions more complex than single identifiers or simple property chain with no method calls.
-
-If a pipe RHS has *no* placeholder, then it must be a permitted tacit unary function (single identifier or simple property chain). Otherwise, it is a syntax error. In particular, tacit function calls *never* have parentheses. If they need to have parentheses, then they need to have a placeholder.
-
-| Expression                            | Result                          |
-| ------------------------------------- | ------------------------------- |
-| **`'2018' \|> Date(#)`**              | **`Date('2018')`**              |
-| **`'2018' \|> Date`**                 | **`Date('2018')`**              |
-|   `'2018' \|> Date()`                 |   syntax error: missing `#`     |
-|   `'2018' \|> (Date)`                 |   syntax error: missing `#`     |
-| **`'2018' \|> Date.parse(#)`**        | **`Date.parse('2018')`**        |
-| **`'2018' \|> Date.parse`**           | **`Date.parse('2018')`**        |
-|   `'2018' \|> Date.parse()`           |   syntax error: missing `#`     |
-|   `'2018' \|> (Date.parse)`           |   syntax error: missing `#`     |
-| **`'2018' \|> global.Date.parse(#)`** | **`global.Date.parse('2018')`** |
-| **`'2018' \|> global.Date.parse`**    | **`global.Date.parse('2018')`** |
-|   `'2018' \|> global.Date.parse()`    |   syntax error: missing `#`     |
-|   `'2018' \|> (global.Date.parse)`    |   syntax error: missing `#`     |
-| **`'2018' \|> new global.Date(#)`**   | **`new Date('2018')`**          |
-| **`'2018' \|> new global.Date`**      | **`new Date('2018')`**          |
-|   `'2018' \|> new global.Date()`      |   syntax error: missing `#`     |
-|   `'2018' \|> (new global.Date)`      |   syntax error: missing `#`     |
-
-This rule minimizes the parsing lookahead that the compiler must check before it can distinguish between tacit style and placeholder style. By restricting the space of valid tacit RHS expressions without placeholders, the rule prevents [garden-path syntax](https://en.wikipedia.org/wiki/Garden_path_sentence) that would otherwise be possible: <i lang=lt>e.g.</i>, `… |> compose(f, g, h, i, j, k, #)`.
-
-The rule also statically prevents a writing JavaScript programmer from accidentally omitting a placeholder where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the writer intended. The JavaScript programmer is encouraged to use placeholders and avoid tacit style, where tacit style may be visually confusing to the reader.
-
-## Multiple placeholders in RHS
-The placeholder may be used multiple times in the RHS. Each use refers to the same value. Because it is bound to the result of the LHS, the LHS is still only ever evaluated once.
-
-```js
-… |> f(#, #)
-// equivalent to:
-// do { const # = …; f(#, #) }
-```
-
-```js
-… |> [#, # * 2, # * 3]
-// equivalent to:
-// do { const # = …; [#, # * 2, # * 3] }
-```
-
-## Loose precedence
-The pipe operator’s precedence is quite loose. It is tighter than assignment (`=`, `+=`, …), generator `yield` and `yield *`, and sequence `,`; and it is looser than logical ternary conditional (`… ? … : …`), logical and/or `&&`/`||`, bitwise and/or/xor, `&`/`|`/`^`, equality/inequality `==`/`===`/`!=`/`!==`, and every other type of expression.
-
-Being any tighter than this level would require its RHS to be parenthesized for many frequent types of expressions. However, the result of a pipeline is also expected to often serve as the RHS of a variable assignment `=`.
-
-## Inner functions
-Both the LHS and the RHS of a pipe may contain nested inner functions. This works as may be expected:
-
-[TO DO]
 
 ## Bidirectional associativity
 The pipe operator is presented above as a left-associative operator. However, it is theoretically [bidirectionally associative](https://en.wikipedia.org/wiki/Associative_property): how a pipeline’s expressions are particularly grouped is arbitrary. One could force right associativity by parenthesizing a pipeline, such that it itself becomes the RHS of another, outer pipeline.
