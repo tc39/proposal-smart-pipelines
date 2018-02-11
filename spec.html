@@ -28,14 +28,14 @@ Punctuator :: one of
 <emu-clause id=pipeline-operator-syntax>
 <h1>Syntax</h1>
 <emu-grammar>
-PipelineExpression :
-  PipelineExpression[?In, ?Yield, ?Await] `|>` ConditionalExpression[?In, ?Yield, ?Await]
+PipeExpression :
+  PipeExpression[?In, ?Yield, ?Await] `|>` ConditionalExpression[?In, ?Yield, ?Await]
 </emu-grammar>
 </emu-clause>
 
 <emu-clause id=pipeline-operator-static-semantics-isfunctiondefinition>
 <h1>Static Semantics: IsFunctionDefinition</h1>
-<emu-grammar>PipelineExpression : PipelineExpression `|>` ConditionalExpression</emu-grammar>
+<emu-grammar>PipeExpression : PipeExpression `|>` ConditionalExpression</emu-grammar>
 <emu-alg>
 1. Return IsFunctionDefinition of _ConditionalExpression_.
 </emu-alg>
