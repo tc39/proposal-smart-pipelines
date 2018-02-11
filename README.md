@@ -46,7 +46,7 @@ stringPromise
   |> # + '!'
 ```
 
-This same use case appears numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions.
+This same use case appears numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, object constructions, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions.
 
 ## Syntactic sugar for nested `do`s
 The example above is roughly equivalent to nested `do` expressions, each with a variable binding and a transformation of that variable’s value.
@@ -74,7 +74,7 @@ do {
 ## Tacit unary function calls
 As a further abbreviation, you may omit the placeholder if the operation is just a call of a named unary function. This is called [“tacit” or “point-free style”](https://en.wikipedia.org/wiki/Tacit_programming). This is the “smart” part of these “smart pipeline operators”.
 
-If the RHS expression is merely a single identifier (as with `… |> doubleSay` or `… |> capitalize`), then that identifier is assumed to be a unary function, which is then called with `#` (<i lang=lt>i.e.</i>, `… |> doubleSay(#)` or `… |> capitalize(#)`). For example:
+If the RHS expression is merely an identifier (as with `… |> doubleSay` or `… |> capitalize`), possibly in a property chain (<i lang=lt>e.g.</i>, `… |> Symbol.for`), and possibly with a `new` operator (<i lang=lt>e.g.</i>, `… |> new global.Date`), then that identifier is assumed to be a unary function or unary constructor, which is then called with `#` (<i lang=lt>i.e.</i>, `… |> doubleSay(#)` or `… |> capitalize(#)`). For example:
 
 ```js
 'hello'
@@ -95,7 +95,30 @@ If the RHS expression is merely a single identifier (as with `… |> doubleSay` 
   |> # + '!'
 ```
 
-Tacit unary function calls are not permitted with expressions more complex than single identifiers. [To do]
+Tacit style is not permitted with expressions more complex than single identifiers or simple property chain with no method calls.
+
+If a pipe RHS has *no* placeholder, then it must be a permitted tacit unary function (single identifier or simple property chain). Otherwise, it is a syntax error. In particular, tacit function calls *never* have parentheses. If they need to have parentheses, then they need to have a placeholder.
+
+| Expression | Result |
+| --- | --- |
+| **`'2018' \|> Date(#)`** | **`Date('2018')`** |
+| **`'2018' \|> Date`** | **`Date('2018')`** |
+| `'2018' \|> Date()` | syntax error; missing `#` |
+| `'2018' \|> (Date)` | syntax error; missing `#` |
+| **`'2018' \|> Date.parse(#)`** | **`Date.parse('2018')`** |
+| **`'2018' \|> Date.parse`** | **`Date.parse('2018')`** |
+| `'2018' \|> Date.parse()` | syntax error; missing `#` |
+| `'2018' \|> (Date.parse)` | syntax error; missing `#` |
+| **`'2018' \|> global.Date.parse(#)`** | **`global.Date.parse('2018')`** |
+| **`'2018' \|> global.Date.parse`** | **`global.Date.parse('2018')`** |
+| `'2018' \|> global.Date.parse()` | syntax error; missing `#` |
+| `'2018' \|> (global.Date.parse)` | syntax error; missing `#` |
+| **`'2018' \|> new global.Date(#)`** | **`new Date('2018')`** |
+| **`'2018' \|> new global.Date`** | **`new Date('2018')`** |
+| `'2018' \|> new global.Date()` | syntax error; missing `#` |
+| `'2018' \|> (new global.Date)` | syntax error; missing `#` |
+
+This rule statically prevents a writing JavaScript programmer from accidentally omitting a placeholder where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the writer intended. The JavaScript programmer is encouraged to avoid using tacit style where its meaning may be visually confusing to the reader.
 
 ## Multiple placeholders in RHS
 The placeholder may be used multiple times in the RHS, but each use refers to the same value. Because it is bound to the result of the LHS, the LHS is still only ever evaluated once.
