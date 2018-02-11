@@ -18,7 +18,46 @@ function doubleSay (string, separatorString) {
 }
 
 function capitalize (string) {
-  return string[0].toUpperCase() + string.substring(1)}```Now look at the nested expression below. Expressions like this happen often in JavaScript: whenever any value must be passed through a series of transformations, whether they be operations, functions, or constructors. Unfortunately, this nested expression—and many like it—are quite messy spaghetti. Writing it requires many levels of indentation, and reading it requires checking both the left and right of each subexpression to understand its data flow.```jsnew User.Message(  capitalizedString(    doubledString(      (await stringPromise)        ?? throw new TypeError(`Expected string from ${stringPromise}`)    )  ) + '!')```The code above could be much terser and (literally) straightforward. This proposal’s smart pipe operator would allow the piping of data through expressions. This terseness would make both reading and writing easier for the JavaScript programmer. It is statically rewritable into already valid code, it has zero runtime cost.```jsstringPromise  |> await #  |> # ?? throw new TypeError()  |> doubleSay(#, ', ')  |> capitalize // a tacit unary function call  |> # + '!'  |> new User.Message // a tacit unary constructor call```Similar use cases appear numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, object constructions, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions. The smart pipe operator can handle them all.Note also that it was not necessary to include parentheses for `capitalize` or `new User.Message`; they were implicitly included as a unary function call and a unary constructor call, respectively. That is, the preceding example is equivalent to:```js'hello'  |> await #  |> # ?? throw new TypeError(`Expected string from ${#}`)  |> doubleSay(#, ', ')  |> capitalize(#)  |> # + '!'```Being able to automatically detect this tacit style is the “smart” part of these “smart pipeline operators”; for more information, see the [“smart RHS syntax” section][20].
+  return string[0].toUpperCase() + string.substring(1)
+}
+```
+
+Now look at the nested expression below. Expressions like this happen often in JavaScript: whenever any value must be passed through a series of transformations, whether they be operations, functions, or constructors. Unfortunately, this nested expression—and many like it—are quite messy spaghetti. Writing it requires many levels of indentation, and reading it requires checking both the left and right of each subexpression to understand its data flow.
+```js
+new User.Message(
+  capitalizedString(
+    doubledString(
+      (await stringPromise)
+        ?? throw new TypeError(`Expected string from ${stringPromise}`)
+    )
+  ) + '!'
+)
+```
+
+The code above could be much terser and (literally) straightforward. This proposal’s smart pipe operator would allow the piping of data through expressions. This terseness would make both reading and writing easier for the JavaScript programmer. It is statically rewritable into already valid code, it has zero runtime cost.
+```js
+stringPromise
+  |> await #
+  |> # ?? throw new TypeError()
+  |> doubleSay(#, ', ')
+  |> capitalize // a tacit unary function call
+  |> # + '!'
+  |> new User.Message // a tacit unary constructor call
+```
+
+Similar use cases appear numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, object constructions, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions. The smart pipe operator can handle them all.
+
+Note also that it was not necessary to include parentheses for `capitalize` or `new User.Message`; they were implicitly included as a unary function call and a unary constructor call, respectively. That is, the preceding example is equivalent to:
+```js
+'hello'
+  |> await #
+  |> # ?? throw new TypeError(`Expected string from ${#}`)
+  |> doubleSay(#, ', ')
+  |> capitalize(#)
+  |> # + '!'
+```
+
+Being able to automatically detect this tacit style is the “smart” part of these “smart pipeline operators”; for more information, see the [“smart RHS syntax” section][20].
 
 Now following are various examples adapted from useful, real-world code.
 
@@ -32,7 +71,73 @@ _.find = _.detect = function(obj, predicate, context) {
   } else {
     key = _.findKey(obj, predicate, context);
   }
-  if (key !== void 0 && key !== -1) return obj[key];};_.find = _.detect = function(obj, predicate, context) {  return obj    |> isArrayLike(#) ? _.findIndex : _.findKey    |> #(obj, predicate, context)    |> (# !== void 0 && # !== -1) ? obj[#] : undefined;};```***```js_.reject = function(obj, predicate, context) {  return _.filter(obj,    _.negate(cb(predicate)),    context  )};_.reject = function(obj, predicate, context) {  return predicate    |> cb    |> _.negate    |> _.filter(obj, #, context)};```***```jsvar executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {  if (!(callingContext instanceof boundFunc))    return sourceFunc.apply(context, args);  var self = baseCreate(sourceFunc.prototype);  var result = sourceFunc.apply(self, args);  if (_.isObject(result)) return result;  return self;};var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {  if (callingContext |> # instanceof boundFunc |> !#)    return sourceFunc.apply(context, args);  var self = sourceFunc    |> #.prototype    |> baseCreate;  return self    |> sourceFunc.apply(#, args)    |> _.isObject(#) ? # : self;};```***```js_.size = function(obj) {  if (obj == null) return 0;  return isArrayLike(obj)    ? obj.length    : _.keys(obj).length;};_.size = function(obj) {  if (obj == null) return 0;  return obj |> isArrayLike    ? obj.length    : obj |> _.keys |> #.length;};```### PifyAdapted from [Pify 3.0.0][22] by Sindre Sorhus under MIT License.
+  if (key !== void 0 && key !== -1) return obj[key];
+};
+
+_.find = _.detect = function(obj, predicate, context) {
+  return obj
+    |> isArrayLike(#) ? _.findIndex : _.findKey
+    |> #(obj, predicate, context)
+    |> (# !== void 0 && # !== -1) ? obj[#] : undefined;
+};
+```
+***
+```js
+_.reject = function(obj, predicate, context) {
+  return _.filter(obj,
+    _.negate(cb(predicate)),
+    context
+  )
+};
+
+_.reject = function(obj, predicate, context) {
+  return predicate
+    |> cb
+    |> _.negate
+    |> _.filter(obj, #, context)
+};
+```
+***
+```js
+var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
+  if (!(callingContext instanceof boundFunc))
+    return sourceFunc.apply(context, args);
+  var self = baseCreate(sourceFunc.prototype);
+  var result = sourceFunc.apply(self, args);
+  if (_.isObject(result)) return result;
+  return self;
+};
+
+var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
+  if (callingContext |> # instanceof boundFunc |> !#)
+    return sourceFunc.apply(context, args);
+  var self = sourceFunc
+    |> #.prototype
+    |> baseCreate;
+  return self
+    |> sourceFunc.apply(#, args)
+    |> _.isObject(#) ? # : self;
+};
+```
+***
+```js
+_.size = function(obj) {
+  if (obj == null) return 0;
+  return isArrayLike(obj)
+    ? obj.length
+    : _.keys(obj).length;
+};
+
+_.size = function(obj) {
+  if (obj == null) return 0;
+  return obj |> isArrayLike
+    ? obj.length
+    : obj |> _.keys |> #.length;
+};
+```
+
+### Pify
+Adapted from [Pify 3.0.0][22] by Sindre Sorhus under MIT License.
 ```js
 pify(fs.readFile)('package.json', 'utf8').then(data => {
   console.log(JSON.parse(data).name)
@@ -137,8 +242,24 @@ Alternatively, you may omit the RHS’s topic variables if the RHS is just a sim
 The rule for <var>Punctuator</var> tokens would be modified: two new tokens, `|>` and `#`, would be added to the Punctuators:
 ```
 Punctuator :: one of
-  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==`  `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||`  `?` `:` `|>` `#`  `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>````### Pipe expressions```***```### Loose precedenceThe pipe operator’s precedence is quite loose. It is tighter than assignment (`=`, `+=`, …), generator `yield` and `yield *`, and sequence `,`; and it is looser than logical ternary conditional (`… ? … : …`), logical and/or `&&`/`||`, bitwise and/or/xor, `&`/`|`/`^`, equality/inequality `==`/`===`/`!=`/`!==`, and every other type of expression.Being any tighter than this level would require its RHS to be parenthesized for many frequent types of expressions. However, the result of a pipeline is also expected to often serve as the RHS of a variable assignment `=`.Thus, [TO DO: Add to expression rule]### Smart RHS syntaxWhen the parser checks the RHS, it must determine what style it is in. There are four outcomes: tacit constructor, tacit function, parameterized expression, or invalid RHS.The goal here is to minimize the parsing lookahead that the compiler must check before it can distinguish between tacit style and topic-token style. By restricting the space of valid tacit RHS expressions without topic variables, the rule prevents [garden-path syntax][25] that would otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
+  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==`  `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||`  `?` `:` `|>` `#`  `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
+```
 
+### Pipe expressions
+[TO DO]
+
+### Loose precedence
+The pipe operator’s precedence is quite loose. It is tighter than assignment (`=`, `+=`, …), generator `yield` and `yield *`, and sequence `,`; and it is looser than logical ternary conditional (`… ? … : …`), logical and/or `&&`/`||`, bitwise and/or/xor, `&`/`|`/`^`, equality/inequality `==`/`===`/`!=`/`!==`, and every other type of expression.
+
+Being any tighter than this level would require its RHS to be parenthesized for many frequent types of expressions. However, the result of a pipeline is also expected to often serve as the RHS of a variable assignment `=`.
+
+Thus, [TO DO: Add to expression rule]
+
+### Smart RHS syntax
+When the parser checks the RHS, it must determine what style it is in. There are four outcomes: tacit constructor, tacit function, parameterized expression, or invalid RHS.
+
+The goal here is to minimize the parsing lookahead that the compiler must check before it can distinguish between tacit style and topic-token style. By restricting the space of valid tacit RHS expressions without topic variables, the rule prevents [garden-path syntax][25] that would otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
+``
 Another goal is to statically prevents a writing JavaScript programmer from accidentally omitting a topic variable where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the writer intended. The JavaScript programmer is encouraged to use topic variables and avoid tacit style, where tacit style may be visually confusing to the reader.
 
 The parsing rules are such that:
@@ -147,7 +268,55 @@ The parsing rules are such that:
 
 2. If the RHS starts with `new`, followed by mere identifier, optionally with a chain of properties, and with no parentheses or brackets, then that identifier is assumed to be a **tacit constructor**.
 
-3. Otherwise, the RHS is now an arbitrary expression. Because the expression is not in tacit style, it must use that pipe’s topic variable. ([TO DO: Formalize this static semantic as `usesTopic()`.] Topic variables from the RHS scopes of other, inner pipelines do not count.) If there is no such topic variable in the expression, then a syntax error is thrown.If a pipe RHS *never* uses topic variable, then it must be a permitted tacit unary function (single identifier or simple property chain). Otherwise, it is a syntax error. In particular, tacit style *never* uses parentheses. If they need to have parentheses, then they need to have use the topic variable. The following table summarizes these rules.| Expression                            | Result                          || ------------------------------------- | ------------------------------- || **`'2018' \|> Date(#)`**              | **`Date('2018')`**              || **`'2018' \|> Date`**                 | **`Date('2018')`**              ||   `'2018' \|> Date()`                 |   syntax error: missing `#`     ||   `'2018' \|> (Date)`                 |   syntax error: missing `#`     || **`'2018' \|> Date.parse(#)`**        | **`Date.parse('2018')`**        || **`'2018' \|> Date.parse`**           | **`Date.parse('2018')`**        ||   `'2018' \|> Date.parse()`           |   syntax error: missing `#`     ||   `'2018' \|> (Date.parse)`           |   syntax error: missing `#`     || **`'2018' \|> global.Date.parse(#)`** | **`global.Date.parse('2018')`** || **`'2018' \|> global.Date.parse`**    | **`global.Date.parse('2018')`** ||   `'2018' \|> global.Date.parse()`    |   syntax error: missing `#`     ||   `'2018' \|> (global.Date.parse)`    |   syntax error: missing `#`     || **`'2018' \|> new global.Date(#)`**   | **`new Date('2018')`**          || **`'2018' \|> new global.Date`**      | **`new Date('2018')`**          ||   `'2018' \|> new global.Date()`      |   syntax error: missing `#`     ||   `'2018' \|> (new global.Date)`      |   syntax error: missing `#`     |### Multiple topic variables in a pipeline’s RHSThe topic variable may be used multiple times in a pipeline’s RHS. Each use refers to the same value (wherever the topic variable is not overridden by another, inner pipeline’s RHS scope). Because it is bound to the result of the LHS, the LHS is still only ever evaluated once. The lines in each of the following are equivalent:```js… |> f(#, #)do { const $ = …; f($, $) }```***```js… |> [#, # * 2, # * 3]do { const $ = …; [$, $ * 2, $ * 3] }```### Inner functionsBoth the LHS and the RHS of a pipeline may contain nested inner functions. This also works as expected. The lines in the following are equivalent:```js… |> settimeout(() => # * 500)do { const $ = …; settimeout(() => # * 500) }```### Deeply nested pipelines[TO DO]### General static semanticsA pipe expression’s semantics are:1. The LHS is evaluated into the LHS’s value; call this `lhsValue`.2. [The RHS is tested for its type][26]: Is it in tacit style (as a tacit function or a tacit constructor), is it in topic-variable style, or is it an invalid RHS?
+3. Otherwise, the RHS is now an arbitrary expression. Because the expression is not in tacit style, it must use that pipe’s topic variable. ([TO DO: Formalize this static semantic as `usesTopic()`.] Topic variables from the RHS scopes of other, inner pipelines do not count.) If there is no such topic variable in the expression, then a syntax error is thrown.
+
+If a pipe RHS *never* uses topic variable, then it must be a permitted tacit unary function (single identifier or simple property chain). Otherwise, it is a syntax error. In particular, tacit style *never* uses parentheses. If they need to have parentheses, then they need to have use the topic variable. The following table summarizes these rules.
+
+| Expression                            | Result                          |
+| ------------------------------------- | ------------------------------- |
+| **`'2018' \|> Date(#)`**              | **`Date('2018')`**              |
+| **`'2018' \|> Date`**                 | **`Date('2018')`**              |
+|   `'2018' \|> Date()`                 |   syntax error: missing `#`     |
+|   `'2018' \|> (Date)`                 |   syntax error: missing `#`     |
+| **`'2018' \|> Date.parse(#)`**        | **`Date.parse('2018')`**        |
+| **`'2018' \|> Date.parse`**           | **`Date.parse('2018')`**        |
+|   `'2018' \|> Date.parse()`           |   syntax error: missing `#`     |
+|   `'2018' \|> (Date.parse)`           |   syntax error: missing `#`     |
+| **`'2018' \|> global.Date.parse(#)`** | **`global.Date.parse('2018')`** |
+| **`'2018' \|> global.Date.parse`**    | **`global.Date.parse('2018')`** |
+|   `'2018' \|> global.Date.parse()`    |   syntax error: missing `#`     |
+|   `'2018' \|> (global.Date.parse)`    |   syntax error: missing `#`     |
+| **`'2018' \|> new global.Date(#)`**   | **`new Date('2018')`**          |
+| **`'2018' \|> new global.Date`**      | **`new Date('2018')`**          |
+|   `'2018' \|> new global.Date()`      |   syntax error: missing `#`     |
+|   `'2018' \|> (new global.Date)`      |   syntax error: missing `#`     |
+
+### Multiple topic variables in a pipeline’s RHS
+The topic variable may be used multiple times in a pipeline’s RHS. Each use refers to the same value (wherever the topic variable is not overridden by another, inner pipeline’s RHS scope). Because it is bound to the result of the LHS, the LHS is still only ever evaluated once. The lines in each of the following are equivalent:
+```js
+… |> f(#, #)
+do { const $ = …; f($, $) }
+```
+***
+```js
+… |> [#, # * 2, # * 3]
+do { const $ = …; [$, $ * 2, $ * 3] }
+```
+
+### Inner functions
+Both the LHS and the RHS of a pipeline may contain nested inner functions. This also works as expected. The lines in the following are equivalent:
+```js
+… |> settimeout(() => # * 500)
+do { const $ = …; settimeout(() => # * 500) }
+```
+
+### Deeply nested pipelines
+[TO DO]
+
+### General static semantics
+A pipe expression’s semantics are:
+1. The LHS is evaluated into the LHS’s value; call this `lhsValue`.
+2. [The RHS is tested for its type][26]: Is it in tacit style (as a tacit function or a tacit constructor), is it in topic-variable style, or is it an invalid RHS?
 
   * If the RHS is a tacit function (such as `f` and `M.f`):
     1. The RHS is evaluated (in the current lexical context); call this value the `rhsFunction`.
@@ -163,7 +332,9 @@ The parsing rules are such that:
     3. Within this inner context, with the variable binding to `lhsValue`, the RHS is evaluated; call the resulting value `rhsValue`.
     4. The entire pipeline’s value is `rhsValue`.
 
-  * Otherwise, if the RHS is an invalid RHS (such as `f()`, `f(n)`, `o[s]`, `+ n`, and `n`), then throw a syntax error explaining that the pipeline’s topic variable is missing from its RHS.The topic-variable expression case can be further explained with a nested `do` expression. There are two ways to illustrate this equivalency. The first way is to [replace each pipe expression’s topic variables with an autogenerated variable][28], which must be guaranteed to be [lexically hygienic][29] and to not conflict with other variables. The alternative way is to [use two variables—the topic variable `#` and a single dummy variable][30]—which also preserves [lexical hygiene][31].
+  * Otherwise, if the RHS is an invalid RHS (such as `f()`, `f(n)`, `o[s]`, `+ n`, and `n`), then throw a syntax error explaining that the pipeline’s topic variable is missing from its RHS.
+
+The topic-variable RHS case can be further explained with a nested `do` expression. There are two ways to illustrate this equivalency. The first way is to [replace each pipe expression’s topic variables with an autogenerated variable][28], which must be guaranteed to be [lexically hygienic][29] and to not conflict with other variables. The alternative way is to [use two variables—the topic variable `#` and a single dummy variable][30]—which also preserves [lexical hygiene][31].
 
 #### Topic-variable semantics by replacing them with autogenerated variables
 The first way to illustrate the operator’s semantics is to replace each pipe expression’s topic variables with an autogenerated variable, which must be guaranteed to not conflict with other variables.
