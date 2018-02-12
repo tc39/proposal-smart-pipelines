@@ -337,7 +337,7 @@ An expression is a pipeline-level expression (a `PipelineExpression`) only if:
 
 ```
 // New rule
-PipelineExpression[In, Yield, Await]:
+PipelineExpression[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
   PipelineExpression[?In, ?Yield, ?Await] `|>`
     PipelineBody[?In, ?Yield, ?Await]
@@ -348,9 +348,9 @@ When the parser checks the RHS/body expression, it must determine what style it 
 
 ```
 // New rule
-PipelineBody[In, Yield, Await]:
-  PipelineTacitConstructor
+PipelineBody[In, Yield, Await] :
   PipelineTacitFunction
+  PipelineTacitConstructor
   PipelineTopicalBody[In, Yield, Await]
 ```
 
@@ -358,11 +358,21 @@ The goal here is to minimize the parsing lookahead that the compiler must check 
 
 Another goal is to statically prevents a writing JavaScript programmer from accidentally omitting a topic variable where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the writer intended. The JavaScript programmer is encouraged to use topic variables and avoid tacit style, where tacit style may be visually confusing to the reader.
 
-1. If the body is a mere identifier, optionally with a chain of properties, and with no parentheses or brackets, then that identifier is assumed to be a **tacit function**.
+1. If the body is a mere identifier, optionally with a chain of properties, and with no parentheses or brackets, then that identifier is interpreted to be a **tacit function**.
+  ```
+  PipelineTacitFunction :
+    SimpleMemberExpression
+  ```
 
-2. If the body starts with `new`, followed by mere identifier, optionally with a chain of properties, and with no parentheses or brackets, then that identifier is assumed to be a **tacit constructor**.
+2. If the body starts with `new`, followed by mere identifier, optionally with a chain of properties, and with no parentheses or brackets, then that identifier is interpreted to be a **tacit constructor**.
+  ```
+  PipelineTacitConstructor :
+  `new` SimpleMemberExpression
+  ```
 
 3. Otherwise, the body is now an arbitrary expression. Because the expression is not in tacit style, it must use that pipe’s topic variable. ([TO DO: Formalize this static semantic as `usesTopic()`.] Topic variables from the body scopes of other, inner pipelines do not count.) If there is no such topic variable in the expression, then a syntax error is thrown.
+
+  `PipelineTopicalBody` will be defined in the next section.
 
 If a pipeline body *never* uses a topic variable, then it must be a permitted tacit unary function (single identifier or simple property chain). Otherwise, it is a syntax error. In particular, tacit style *never* uses parentheses. If they need to have parentheses, then they need to have use the topic variable. The following table summarizes these rules.
 
