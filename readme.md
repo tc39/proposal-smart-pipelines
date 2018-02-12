@@ -1,10 +1,10 @@
 # Smart pipelines
-ECMAScript Stage-−1 Proposal by J. S. Choi, 2018-02.
+ECMAScript Stage-(−1) Proposal by J. S. Choi, 2018-02.
 
 This repository contains the formal specification for a proposed “smart pipe operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC39 process][TC39 process] but it may eventually be presented to TC39.
 
 ## Background
-The binary operator proposed here would provide a backwards- and forwards-compatible style of chaining nested expressions into a readable, left-to-right manner. Nested transformations become untangled into short steps in a zero-cost abstraction. The operator is similar to [Hack’s `|>` and `$$`][Hack pipe], [F#’s `|>`][F# pipe], [OCaml’s `|>`][OCaml pipe], [Elixir/Erlang’s `|>`][Elixir pipe], [Elm’s `|>`][6], [Julia’s `|>`][7], [LiveScript’s `|>`][8], [R / magrittr’s `%>%`][9], [Perl 6’s `==>`][10], [Clojure’s `->` and `as->`][Clojure pipe] and [Unix shells’ and PowerShell’s `|`][11]). It is conceptually similar but should not be confused with [WHATWG-stream piping][12] and [Node-stream piping][13].
+The binary operator proposed here would provide a backwards- and forwards-compatible style of chaining nested expressions into a readable, left-to-right manner. Nested transformations become untangled into short steps in a zero-cost abstraction. The operator is similar to [Hack’s `|>` and `$$`][Hack pipe], [F#’s `|>`][F# pipe], [OCaml’s `|>`][OCaml pipe], [Elixir/Erlang’s `|>`][Elixir pipe], [Elm’s `|>`][6], [Julia’s `|>`][7], [LiveScript’s `|>`][8], [R / magrittr’s `%>%`][9], [Perl 6’s `==>`][10], [Clojure’s `->` and `as->`][Clojure pipe], and [Unix shells’ and PowerShell’s `|`][11]). It is conceptually similar but should not be confused with [WHATWG-stream piping][12] and [Node-stream piping][13].
 
 The proposal is a variant of a [previous pipe-operator proposal][14] championed by [Daniel Ehrenberg of Igalia][15]. This variant is listed as [Proposal 4: Smart Mix on the pipe-proposal wiki][16]. The variant resulted from [previous discussions about pipeline placeholders in the previous pipe-operator proposal][17], which culminated in an [invitation by Ehrenberg to try writing a specification draft][18]. A prototype Babel plugin is also pending.
 
