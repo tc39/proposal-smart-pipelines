@@ -24,6 +24,7 @@ function capitalize (string) {
 }
 ```
 
+Now look at the nested expression below. Expressions like this happen often in JavaScript: whenever any value must be passed through a series of transformations, whether they be operations, functions, or constructors. Unfortunately, this nested expression—and many like it—are quite messy spaghetti. Writing and editing the code requires many levels of indentation. Reading the code requires checking both the left and right of each subexpression to understand its data flow.
 ```js
 new User.Message(
   capitalizedString(
@@ -35,7 +36,7 @@ new User.Message(
 )
 ```
 
-The code above could be much terser and (literally) straightforward. This proposal’s smart pipe operator would allow the piping of data through expressions. This terseness would make both reading and writing easier for the JavaScript programmer. It is statically rewritable into already valid code, it has zero runtime cost.
+With the smart pipe operator, the code above could be much terser and (literally) straightforward. Data values would be through expressions in a much flattened syntax tree. This terseness and flatness would make both reading and editing easier for the JavaScript programmer. It is statically rewritable into already valid code, with theoretically zero runtime cost.
 ```js
 stringPromise
   |> await #
@@ -45,6 +46,8 @@ stringPromise
   |> # + '!'
   |> new User.Message // a tacit unary constructor call
 ```
+
+The flattened tree of operations is easier for the reader to keep track of the flow of data. But it also makes it easier for the editor to add steps at the beginning, end, or middle of the edata flow, without changing the indentation of many nearby, unrelated lines.
 
 Similar use cases appear numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, object constructions, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions. The smart pipe operator can handle them all.
 
@@ -392,7 +395,7 @@ PipelineBody[In, Yield, Await] :
 
 The goal here is to minimize the parsing lookahead that the compiler must check before it can distinguish between tacit style and topic-token style. By restricting the space of valid tacit-style pipeline bodies (that is, without topic variables), the rule prevents [garden-path syntax][25] that would otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
 
-Another goal is to statically prevents a writing JavaScript programmer from accidentally omitting a topic variable where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the writer intended. The JavaScript programmer is encouraged to use topic variables and avoid tacit style, where tacit style may be visually confusing to the reader.
+Another goal is to help the editing JavaScript programmer: statically preventing them from accidentally omitting a topic variable where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the editor intended. The JavaScript programmer is encouraged to use topic variables and avoid tacit style, where tacit style may be visually confusing to the reader.
 
 1. If the body is a mere identifier, optionally with a chain of properties, and with no parentheses or brackets, then that identifier is interpreted to be a **tacit function**.
   ```
