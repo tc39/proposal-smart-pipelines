@@ -670,7 +670,7 @@ There are a number of other ways of potentially accomplishing the above use case
 [16]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
 [17]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
 [18]: https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394
-[19]: https://github.com/tc39/proposal-dynamic-import/issues
+[19]: https://github.com/tc39/proposal-pipeline-operator/issues
 [21]: http://underscorejs.org
 [22]: https://github.com/sindresorhus/pify
 [23]: https://fetch.spec.whatwg.org
