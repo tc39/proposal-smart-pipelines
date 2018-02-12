@@ -4,9 +4,21 @@ ECMAScript Stage-(−1) Proposal by J. S. Choi, 2018-02.
 This repository contains the formal specification for a proposed “smart pipe operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC39 process][TC39 process] but it may eventually be presented to TC39.
 
 ## Background
-The binary operator proposed here would provide a backwards- and forwards-compatible style of chaining nested expressions into a readable, left-to-right manner. Nested transformations become untangled into short steps in a zero-cost abstraction. The operator is similar to pipe/feed operators from numerous other languages: [Hack’s `|>` and `$$`][Hack pipe], [F#’s `|>`][F# pipe], [OCaml’s `|>`][OCaml pipe], [Elixir/Erlang’s `|>`][Elixir pipe], [Elm’s `|>`][Elm pipe], [Julia’s `|>`][Julia pipe], [LiveScript’s `|>`][LiveScript pipe], [R / magrittr’s `%>%`][R pipe], [Perl 6’s `==>`][Perl 6 pipe], [Clojure’s `->` and `as->`][Clojure pipe], and [Unix shells’ and PowerShell’s `|` ][Unix pipe]).
+The binary operator proposed here would provide a backwards- and forwards-compatible style of chaining nested expressions into a readable, left-to-right manner. Nested transformations become untangled into short steps in a zero-cost abstraction. The operator is similar to pipe/feed operators from numerous other languages:
 
-It is conceptually similar but should not be confused with [WHATWG-stream piping][] and [Node-stream piping][].
+* [Clojure’s `->` and `as->`][Clojure pipe]
+* [Elixir/Erlang’s `|>`][Elixir pipe]
+* [Elm’s `|>`][Elm pipe]
+* [F#’s `|>`][F# pipe]
+* [Hack’s `|>` and `$$`][Hack pipe]
+* [Julia’s `|>`][Julia pipe]
+* [LiveScript’s `|>`][LiveScript pipe]
+* [OCaml’s `|>`][OCaml pipe]
+* [Perl 6’s `==>`][Perl 6 pipe]
+* [R / magrittr’s `%>%`][R pipe]
+* [Unix shells’ and PowerShell’s `|` ][Unix pipe]).
+
+It is also conceptually similar to [WHATWG-stream piping][] and [Node-stream piping][].
 
 The proposal is a variant of a [previous pipe-operator proposal][] championed by [Daniel “littledan” Ehrenberg of Igalia][]. This variant is listed as [Proposal 4: Smart Mix on the pipe-proposal wiki][]. The variant resulted from [previous discussions about pipeline placeholders in the previous pipe-operator proposal][previous pipeline-placeholder discussions], which culminated in an [invitation by Ehrenberg to try writing a specification draft][littledan invitation]. A prototype Babel plugin is also pending.
 
