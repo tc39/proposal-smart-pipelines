@@ -700,3 +700,4 @@ There are a number of other ways of potentially accomplishing the above use case
 [Clojure pipe]: https://clojuredocs.org/clojure.core/as-%3E
 [property-chained tacit style]: #property-chained-tacit-style
 [smart body syntax]: #smart-body-syntax
+[tacit style]: #tacit-style
