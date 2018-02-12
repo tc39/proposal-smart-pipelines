@@ -4,11 +4,13 @@ ECMAScript Stage-(−1) Proposal by J. S. Choi, 2018-02.
 This repository contains the formal specification for a proposed “smart pipe operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC39 process][TC39 process] but it may eventually be presented to TC39.
 
 ## Background
-The binary operator proposed here would provide a backwards- and forwards-compatible style of chaining nested expressions into a readable, left-to-right manner. Nested transformations become untangled into short steps in a zero-cost abstraction. The operator is similar to [Hack’s `|>` and `$$`][Hack pipe], [F#’s `|>`][F# pipe], [OCaml’s `|>`][OCaml pipe], [Elixir/Erlang’s `|>`][Elixir pipe], [Elm’s `|>`][6], [Julia’s `|>`][7], [LiveScript’s `|>`][8], [R / magrittr’s `%>%`][9], [Perl 6’s `==>`][10], [Clojure’s `->` and `as->`][Clojure pipe], and [Unix shells’ and PowerShell’s `|`][11]). It is conceptually similar but should not be confused with [WHATWG-stream piping][12] and [Node-stream piping][13].
+The binary operator proposed here would provide a backwards- and forwards-compatible style of chaining nested expressions into a readable, left-to-right manner. Nested transformations become untangled into short steps in a zero-cost abstraction. The operator is similar to pipe/feed operators from numerous other languages: [Hack’s `|>` and `$$`][Hack pipe], [F#’s `|>`][F# pipe], [OCaml’s `|>`][OCaml pipe], [Elixir/Erlang’s `|>`][Elixir pipe], [Elm’s `|>`][Elm pipe], [Julia’s `|>`][Julia pipe], [LiveScript’s `|>`][LiveScript pipe], [R / magrittr’s `%>%`][R pipe], [Perl 6’s `==>`][Perl 6 pipe], [Clojure’s `->` and `as->`][Clojure pipe], and [Unix shells’ and PowerShell’s `|` ][Unix pipe]).
 
-The proposal is a variant of a [previous pipe-operator proposal][14] championed by [Daniel Ehrenberg of Igalia][15]. This variant is listed as [Proposal 4: Smart Mix on the pipe-proposal wiki][16]. The variant resulted from [previous discussions about pipeline placeholders in the previous pipe-operator proposal][17], which culminated in an [invitation by Ehrenberg to try writing a specification draft][18]. A prototype Babel plugin is also pending.
+It is conceptually similar but should not be confused with [WHATWG-stream piping][] and [Node-stream piping][].
 
-You can take part in the discussions on the [GitHub issue tracker][19]. When you file an issue, please note in it that you are talking specifically about “Proposal 4: Smart Mix”.
+The proposal is a variant of a [previous pipe-operator proposal][] championed by [Daniel “littledan” Ehrenberg of Igalia][]. This variant is listed as [Proposal 4: Smart Mix on the pipe-proposal wiki][]. The variant resulted from [previous discussions about pipeline placeholders in the previous pipe-operator proposal][previous pipeline-placeholder discussions], which culminated in an [invitation by Ehrenberg to try writing a specification draft][littledan invitation]. A prototype Babel plugin is also pending.
+
+You can take part in the discussions on the [GitHub issue tracker][]. When you file an issue, please note in it that you are talking specifically about “Proposal 4: Smart Mix”.
 
 Note that the use of `#` as the topic variable is up for debate. `@` would be similarly terse, visually distinguishable, and easily typeable. [Bikeshedding over what characters to use for the topic token is occurring in a GitHub issue](https://github.com/tc39/proposal-pipeline-operator/issues/91).
 
@@ -36,7 +38,7 @@ new User.Message(
 )
 ```
 
-With the smart pipe operator, the code above could be much terser and (literally) straightforward. Data values would be through expressions in a much flattened syntax tree. This terseness and flatness would make both reading and editing easier for the JavaScript programmer. It is statically rewritable into already valid code, with theoretically zero runtime cost.
+With the smart pipe operator, the code above could be much terser and (literally) straightforward. Data values would be through expressions in a much flattened syntax tree. This terseness and flatness would make both reading and editing easier for the JavaScript programmer. It is statically term rewritable into already valid code, with theoretically zero runtime cost.
 ```js
 stringPromise
   |> await #
@@ -66,7 +68,7 @@ Being able to automatically detect this tacit style is the “smart” part of t
 Now following are various examples adapted from useful, real-world code.
 
 ### Underscore.js
-Adapted from [Underscore.js 1.8.3][21] by Jeremy Ashkenas et al., under MIT License.
+Adapted from [Underscore.js][] 1.8.3 by Jeremy Ashkenas et al., under MIT License.
 ```js
 _.find = _.detect = function(obj, predicate, context) {
   var key;
@@ -145,7 +147,7 @@ _.size = function(obj) {
 ```
 
 ### Pify
-Adapted from [Pify 3.0.0][22] by Sindre Sorhus, under MIT License.
+Adapted from [Pify][] 3.0.0 by Sindre Sorhus, under MIT License.
 ```js
 pify(fs.readFile)('package.json', 'utf8').then(data => {
   console.log(JSON.parse(data).name)
@@ -174,7 +176,7 @@ return opts.include
 ```
 
 ### Fetch Standard
-Adapted from [Fetch, the living web standard][23] by WHATWG, under Creative Commons BY.
+Adapted from [Fetch, the living web standard by WHATWG][WHATWG Fetch], under Creative Commons BY.
 ```js
 fetch("/music/pk/altes-kamuffel.flac")
   .then(res => res.blob())
@@ -262,7 +264,7 @@ Alternatively, you may omit the body expression’s topic variables if the body 
 
 The body expression would then be called as a unary function or constructor, without having to use the topic variable as an explicit argument.
 
-This is called [<dfn>tacit style</dfn> or <dfn>point-free style</dfn>][24]. When a pipe is in tacit style, the body expression is called a <dfn>tacit function</dfn> or a <dfn>tacit constructor</dfn>, depending on if it starts with `new`. Either way, the body must otherwise consist of only a <dfn>simple property chain</dfn>, which is simply an identifier (like `abc`), optionally chained with member properties (like `abc.property`). They are more formally defined in [smart body syntax][].
+This is called [<dfn>tacit style</dfn> or <dfn>point-free style</dfn>][tacit programming]. When a pipe is in tacit style, the body expression is called a <dfn>tacit function</dfn> or a <dfn>tacit constructor</dfn>, depending on if it starts with `new`. Either way, the body must otherwise consist of only a <dfn>simple property chain</dfn>, which is simply an identifier (like `abc`), optionally chained with member properties (like `abc.property`). They are more formally defined in [smart body syntax][].
 
 Tacit style never has parentheses in the pipeline body (that is, do this `… |> fetch` and not this `… |> fetch()`). If you need parentheses, you must use a topic variable (like this `… |> fetch(#, { method: 'options' })`).
 
@@ -322,10 +324,10 @@ do { const $ = …; settimeout(() => $ |> f |> # * 500) }
 |   `'2018' \|> (new global.Date)`      |   syntax error: missing `#`     |
 
 ## Grammar
-This proposal uses the [same grammar notation as that from the ES standard][es-grammar].
+This proposal uses the [same grammar notation as that from the ES standard][ES grammar notation].
 
 ### Lexing
-The lexical rule for [`Punctuator` tokens][es-punctuators] would be modified. Two new tokens, `|>` for the binary pipe and `#` for the topic variable, would be added to the Punctuators:
+The lexical rule for [punctuator tokens][] would be modified. Two new tokens, `|>` for the binary pipe and `#` for the topic variable, would be added to the Punctuators:
 ```
 Punctuator :: one of
   `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==`
@@ -393,7 +395,7 @@ PipelineBody[In, Yield, Await] :
   PipelineTopicalBody[In, Yield, Await]
 ```
 
-The goal here is to minimize the parsing lookahead that the compiler must check before it can distinguish between tacit style and topic-token style. By restricting the space of valid tacit-style pipeline bodies (that is, without topic variables), the rule prevents [garden-path syntax][25] that would otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
+The goal here is to minimize the parsing lookahead that the compiler must check before it can distinguish between tacit style and topic-token style. By restricting the space of valid tacit-style pipeline bodies (that is, without topic variables), the rule prevents [garden-path syntax][] that would otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
 
 Another goal is to help the editing JavaScript programmer: statically preventing them from accidentally omitting a topic variable where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the editor intended. The JavaScript programmer is encouraged to use topic variables and avoid tacit style, where tacit style may be visually confusing to the reader.
 
@@ -420,7 +422,7 @@ If a pipeline body *never* uses a topic variable, then it must be a permitted ta
 
 A pipe expression’s semantics are:
 1. The topic expression is evaluated into the topic’s value; call this `topicValue`.
-2. [The body expression is tested for its type][26]: Is it in tacit style (as a tacit function or a tacit constructor), is it in topical style, or is it an invalid body?
+2. [The body expression is tested for its type][smart body syntax]: Is it in tacit style (as a tacit function or a tacit constructor), is it in topical style, or is it an invalid body?
 
   * If the body is a tacit function (such as `f` and `M.f`):
     1. The body is evaluated (in the current lexical context); call this value the `bodyFunction`.
@@ -438,18 +440,18 @@ A pipe expression’s semantics are:
 
   * Otherwise, if the body is an invalid body (such as `f()`, `f(n)`, `o[s]`, `+ n`, and `n`), then throw a syntax error explaining that the pipeline’s topic variable is missing from its body.
 
-Body expressions in topical style can be further explained with a nested `do` expression. There are two ways to illustrate this equivalency. The first way is to [replace each pipe expression’s topic variables with an autogenerated variable][28], which must be guaranteed to be [lexically hygienic][29] and to not conflict with other variables. The alternative way is to [use two variables—the topic variable `#` and a single dummy variable][30]—which also preserves [lexical hygiene][31].
+Body expressions in topical style can be further explained with a nested `do` expression. There are two ways to illustrate this equivalency. The first way is to [replace each pipe expression’s topic variables with an autogenerated variable][term rewriting with autogenerated variables], which must be guaranteed to be [lexically hygienic][] and to not conflict with other variables. The alternative way is to [use two variables—the topic variable `#` and a single dummy variable][term rewriting with single dummy variable]—which also preserves [lexical hygiene][lexically hygienic].
 
-#### Topic-variable semantics by replacing them with autogenerated variables
+#### Term rewriting with autogenerated variables
 The first way to illustrate the operator’s semantics is to replace each pipe expression’s topic variables with an autogenerated variable, which must be guaranteed to not conflict with other variables.
 
-Let us say that each pipe expression autogenerates a new, [lexically hygienic][32] variable (`#₀`, `#₁`, `#₂`, `#₃`, …), which in turn replaces each use of the topic variable `#` in each pipe’s body. (These `#ₙ` variables are not true syntax; it is merely for illustrative purposes. You cannot actually assign or use `#ₙ` variables.) Let us also group the expressions with left associativity (although this is arbitrary, because [right associativity would also work][bidirectional associativity]).
+Let us say that each pipe expression autogenerates a new, [lexically hygienic][] variable (`#₀`, `#₁`, `#₂`, `#₃`, …), which in turn replaces each use of the topic variable `#` in each pipe’s body. (These `#ₙ` variables are not true syntax; it is merely for illustrative purposes. You cannot actually assign or use `#ₙ` variables.) Let us also group the expressions with left associativity (although this is arbitrary, because [right associativity would also work][bidirectional associativity]).
 
 With this notation, each line in this example would be equivalent to the other lines.
 ```js
 1 |> # + 2 |> # * 3
 
-// Static rewriting
+// Static term rewriting
 (1 |> # + 2) |> # * 3
 do { const #₀ = 1; # + 2 } |> # * 3
 do { const #₁ = do { const #₀ = 1; # + 2 }; #₁ * 3 }
@@ -490,18 +492,18 @@ do {
 
 In general, for each pipe expression `topic |> body`, assuming that `body` is in topical style, that is, assuming that `body` contains an unshadowed topic variable:
 
-* Let `#ₙ` be a [hygienically autogenerated][34] topic variable, `#ₙ`, where <var>n</var> is a number that would not conflict with the name of any other autogenerated topic variable in the scope of the entire pipe expression.
+* Let `#ₙ` be a [hygienically autogenerated][lexically hygienic] topic variable, `#ₙ`, where <var>n</var> is a number that would not conflict with the name of any other autogenerated topic variable in the scope of the entire pipe expression.
 * Also let `substitutedBody` be `body` but with all instances of `#` replaced with `#ₙ`.
-* Then the static syntax rewriting (left associative and inside to outside) would simply be: `do { const #ₙ = topic; substitutedBody }`. This `do` expression would act as at the body scope.
+* Then the static term rewriting (left associative and inside to outside) would simply be: `do { const #ₙ = topic; substitutedBody }`. This `do` expression would act as at the body scope.
 
-#### Topic-variable semantics by alternating lexical shadowing with dummy variable
-The other way to demonstrate topical style is to use two variables: the topic variable `#` and single [lexically hygienic][35] dummy variable `•`. It should be noted that `const # = …` is not a valid statement under this proposal’s actual syntax; likewise, `•` is not a part of the proposal’s syntax. Both forms are for illustrative purposes here only.
+#### Term rewriting with single dummy variable
+The other way to demonstrate topical style is to use two variables: the topic variable `#` and single [lexically hygienic][] dummy variable `•`. It should be noted that `const # = …` is not a valid statement under this proposal’s actual syntax; likewise, `•` is not a part of the proposal’s syntax. Both forms are for illustrative purposes here only.
 
 With this notation, no variable autogeneration is required; instead, the nested `do` expressions will redeclare the same variables `#` and `•`, shadowing the external variables of the same name as needed. The number example above becomes the following. Each line is still equivalent to the other lines.
 ```js
 1 |> # + 2 |> # * 3
 
-// Static rewriting
+// Static term rewriting
 (1 |> # + 2) |> # * 3
 do { const • = 1; do { const # = •; # + 2 } } |> # * 3
 do { const • = (do { const • = 1; do { const # = •; # + 2 } }); do { const # = •; # * 3 } }
@@ -551,14 +553,14 @@ For each pipe expression, evaluated left associatively and inside to outside, th
 5. The pipe’s result is the result of the body.
 
 ### Bidirectional associativity
-The pipe operator is presented above as a left-associative operator. However, it is theoretically [bidirectionally associative][36]: how a pipeline’s expressions are particularly grouped is functionally arbitrary. One could force right associativity by parenthesizing a pipeline, such that it itself becomes the body of another, outer pipeline.
+The pipe operator is presented above as a left-associative operator. However, it is theoretically [bidirectionally associative][associative property]: how a pipeline’s expressions are particularly grouped is functionally arbitrary. One could force right associativity by parenthesizing a pipeline, such that it itself becomes the body of another, outer pipeline.
 
-Consider the above example `1 |> # + 2 |> # * 3`, whose syntax was statically rewritten using left associativity and autogenerated [hygienic variables][37].
+Consider the above example `1 |> # + 2 |> # * 3`, whose terms were statically rewritten using left associativity and autogenerated, [lexically hygienic][] variables.
 ```js
 // With left associativity and autogenerated hygienic variables.
 1 |> # + 2 |> # * 3
 
-// Static rewriting
+// Static term rewriting
 (1 |> # + 2) |> # * 3
 do { const #₀ = 1; # + 2 } |> # * 3
 do { const #₁ = do { const #₀ = 1; # + 2 }; #₁ * 3 }
@@ -575,7 +577,7 @@ But if right associativity is forced with `1 |> (# + 2 |> # * 3)`, then the resu
 // With right associativity and autogenerated hygienic variables.
 1 |> # + 2 |> # * 3
 
-// Static rewriting
+// Static term rewriting
 1 |> (# + 2 |> # * 3)
 1 |> do { const #₀ = # + 2; #₀ * 3 }
 do { const #₁ = 1; do { const #₀ = #₁ + 2; #₀ * 3 } }
@@ -587,12 +589,12 @@ do { do { 3 * 3 } }
 9
 ```
 
-Similarly, `1 |> # + 2 |> # * 3` was also statically rewritten using a different method: under left associativity and a single dummy variable.
+Similarly, `1 |> # + 2 |> # * 3` was also statically term rewritten using a different method: under left associativity and a single dummy variable.
 ```js
 // With left associativity and single dummy variable.
 1 |> # + 2 |> # * 3
 
-// Static rewriting
+// Static term rewriting
 (1 |> # + 2) |> # * 3
 do { const • = 1; do { const # = •; # + 2 } } |> # * 3
 do { const • = (do { const • = 1; do { const # = •; # + 2 } }); do { const # = •; # * 3 } }
@@ -611,7 +613,7 @@ If right associativity is forced with `1 |> (# + 2 |> # * 3)`, then the result w
 // With right associativity and single dummy variable.
 1 |> # + 2 |> # * 3
 
-// Static rewriting
+// Static term rewriting
 1 |> (# + 2 |> # * 3)
 1 |> do { const • = # + 2; do { const # = •; # * 3 } }
 do { • = 1; do { const # = •; do { const • = # + 2; do { const # = •; # * 3 } } } }
@@ -652,52 +654,87 @@ There are a number of other ways of potentially accomplishing the above use case
 
 [TO DO: Include commentary on why “topic variable” instead of “placeholder”—because verbally confusing with partial-application placeholders—and because forward compatibility with extending the topic concept to other syntax, such as `for { … }`, `matches { … }`, and `given (…) { … }`.]
 
-[TC39 process]: https://tc39.github.io/process-document/
-[Hack pipe]: https://docs.hhvm.com/hack/operators/pipe-operator
-[F# pipe]: https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining
-[OCaml pipe]: http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html
-[Elixir pipe]: https://elixir-lang.org/getting-started/enumerables-and-streams.html
-[6]: http://elm-lang.org/docs/syntax#infix-operators
-[7]: https://docs.julialang.org/en/stable/stdlib/base/#Base.:|>
-[8]: http://livescript.net/#operators-piping
-[9]: https://cran.r-project.org/web/packages/magrittr/index.html
-[10]: https://docs.perl6.org/language/operators#infix_==&gt;
-[11]: https://en.wikipedia.org/wiki/Pipeline_(Unix
-[12]: https://streams.spec.whatwg.org/#pipe-chains
-[13]: https://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
-[14]: https://github.com/tc39/proposal-pipeline-operator
-[15]: https://github.com/littledan
-[16]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
-[17]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
-[18]: https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394
-[19]: https://github.com/tc39/proposal-pipeline-operator/issues
-[21]: http://underscorejs.org
-[22]: https://github.com/sindresorhus/pify
-[23]: https://fetch.spec.whatwg.org
-[24]: https://en.wikipedia.org/wiki/Tacit_programming
-[nomenclature]: #nomenclature
-[pipeline syntax]: #pipeline-syntax
-[es-grammar]: https://tc39.github.io/ecma262/#sec-syntactic-and-lexical-grammars
-[es-lexical-grammar]: https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar
-[es-punctuators]: https://tc39.github.io/ecma262/#sec-punctuators
-[`in` relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
 [`for` iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
+
+[`in` relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
+
 [assignment operator]: https://tc39.github.io/ecma262/#sec-assignment-operators
-[25]: https://en.wikipedia.org/wiki/Garden_path_sentence
-[26]: #smart-body-syntax
-[28]: #topic-variable-semantics-by-replacing-them-with-autogenerated-variables
-[29]: https://en.wikipedia.org/wiki/Hygienic_macro
-[30]: #topic-variable-semantics-by-alternating-lexical-shadowing-with-dummy-variable
-[31]: https://en.wikipedia.org/wiki/Hygienic_macro
-[32]: https://en.wikipedia.org/wiki/Hygienic_macro
+
+[associative property]: https://en.wikipedia.org/wiki/Associative_property
+
 [bidirectional associativity]: #bidirectional-associativity
-[34]: https://en.wikipedia.org/wiki/Hygienic_macro
-[35]: https://en.wikipedia.org/wiki/Hygienic_macro
-[36]: https://en.wikipedia.org/wiki/Associative_property
-[37]: https://en.wikipedia.org/wiki/Hygienic_macro
-[MDN’s guide on expressions and operators]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
-[formal grammar]: #grammar
+
 [Clojure pipe]: https://clojuredocs.org/clojure.core/as-%3E
+
+[Daniel “littledan” Ehrenberg of Igalia]: https://github.com/littledan
+
+[Elixir pipe]: https://elixir-lang.org/getting-started/enumerables-and-streams.html
+
+[Elm pipe]: http://elm-lang.org/docs/syntax#infix-operators
+
+[ES grammar notation]: https://tc39.github.io/ecma262/#sec-syntactic-and-lexical-grammars
+
+[F# pipe]: https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining
+
+[formal grammar]: #grammar
+
+[garden-path syntax]: https://en.wikipedia.org/wiki/Garden_path_sentence
+
+[GitHub issue tracker]: https://github.com/tc39/proposal-pipeline-operator/issues
+
+[Hack pipe]: https://docs.hhvm.com/hack/operators/pipe-operator
+
+[Julia pipe]: https://docs.julialang.org/en/stable/stdlib/base/#Base.:|>
+
+[lexically hygienic]: https://en.wikipedia.org/wiki/Hygienic_macro
+
+[littledan invitation]: https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394
+
+[LiveScript pipe]: http://livescript.net/#operators-piping
+
+[MDN’s guide on expressions and operators]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
+
+[Node-stream piping]: https://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
+
+[nomenclature]: #nomenclature
+
+[OCaml pipe]: http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html
+
+[Perl 6 pipe]: https://docs.perl6.org/language/operators#infix_==&gt;
+
+[Pify]: https://github.com/sindresorhus/pify
+
+[pipeline syntax]: #pipeline-syntax
+
+[previous pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator
+
+[previous pipeline-placeholder discussions]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
+
 [property-chained tacit style]: #property-chained-tacit-style
+
+[Proposal 4: Smart Mix on the pipe-proposal wiki]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
+
+[punctuator tokens]: https://tc39.github.io/ecma262/#sec-punctuators
+
+[R pipe]: https://cran.r-project.org/web/packages/magrittr/index.html
+
 [smart body syntax]: #smart-body-syntax
+
+[tacit programming]: https://en.wikipedia.org/wiki/Tacit_programming
+
 [tacit style]: #tacit-style
+
+[TC39 process]: https://tc39.github.io/process-document/
+
+[term rewriting with autogenerated variables]: #term-rewriting-with-single-dummy-variable
+
+[term rewriting with single dummy variable]: #term-rewriting-with-single-dummy-variable
+
+[Underscore.js]: http://underscorejs.org
+
+[Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
+
+[WHATWG Fetch]: https://fetch.spec.whatwg.org
+
+[WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
+
