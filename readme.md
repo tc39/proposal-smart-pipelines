@@ -4,9 +4,10 @@ ECMAScript Stage-(−1) Proposal by J. S. Choi, 2018-02.
 This repository contains the formal specification for a proposed “smart pipe operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC39 process][TC39 process] but it may eventually be presented to TC39.
 
 ## Background
-The binary operator proposed here would provide a backwards- and forwards-compatible style of chaining nested expressions into a readable, left-to-right manner. Nested transformations become untangled into short steps in a zero-cost abstraction. The operator is similar to pipe/feed operators from numerous other languages:
+The binary operator proposed here would provide a backwards- and forwards-compatible style of chaining nested expressions into a readable, left-to-right manner. Nested transformations become untangled into short steps in a zero-cost abstraction. The operator is similar to operators from numerous other languages, variously called “pipeline”, “threading”, and “feed” operators:
 
 * [Clojure’s `->` and `as->`][Clojure pipe]
+* [Forth’s, Joy’s, Factor’s, Onyx’s, PostScript’s, and RPL’s term concatenation][concatenative programming]
 * [Elixir/Erlang’s `|>`][Elixir pipe]
 * [Elm’s `|>`][Elm pipe]
 * [F#’s `|>`][F# pipe]
@@ -20,7 +21,7 @@ The binary operator proposed here would provide a backwards- and forwards-compat
 
 It is also conceptually similar to [WHATWG-stream piping][] and [Node-stream piping][].
 
-The proposal is a variant of a [previous pipe-operator proposal][] championed by [Daniel “littledan” Ehrenberg of Igalia][]. This variant is listed as [Proposal 4: Smart Mix on the pipe-proposal wiki][]. The variant resulted from [previous discussions about pipeline placeholders in the previous pipe-operator proposal][previous pipeline-placeholder discussions], which culminated in an [invitation by Ehrenberg to try writing a specification draft][littledan invitation]. A prototype Babel plugin is also pending.
+The proposal is a variant of a [previous pipe-operator proposal][] championed by [Daniel “littledan” Ehrenberg of Igalia][]. This variant is listed as [Proposal 4: Smart Mix on the pipe-proposal wiki][]. The variant resulted from [previous discussions about pipeline placeholders in the previous pipe-operator proposal][previous pipeline-placeholder discussions], which culminated in an [invitation by Ehrenberg to try writing a specification draft][littledan invitation]. A prototype Babel plugin is also brewing.
 
 You can take part in the discussions on the [GitHub issue tracker][]. When you file an issue, please note in it that you are talking specifically about “Proposal 4: Smart Mix”.
 
@@ -38,7 +39,7 @@ function capitalize (string) {
 }
 ```
 
-Now look at the nested expression below. Expressions like this happen often in JavaScript: whenever any value must be passed through a series of transformations, whether they be operations, functions, or constructors. Unfortunately, this nested expression—and many like it—are quite messy spaghetti. Writing and editing the code requires many levels of indentation. Reading the code requires checking both the left and right of each subexpression to understand its data flow.
+Now look at the nested expression below. Expressions like this happen often in JavaScript: whenever any value must be passed through a series of transformations, whether they be operations, functions, or constructors. Unfortunately, this nested expression—and many like it—can be quite messy spaghetti code, due to its mixing of prefix, infix, and postfix expressions together. Writing the code requires many nested levels of indentation. Reading the code requires checking both the left and right of each subexpression to understand its data flow.
 ```js
 new User.Message(
   capitalizedString(
@@ -50,7 +51,7 @@ new User.Message(
 )
 ```
 
-With the smart pipe operator, the code above could be much terser and (literally) straightforward. Data values would be through expressions in a much flattened syntax tree. This terseness and flatness would make both reading and editing easier for the JavaScript programmer. It is statically term rewritable into already valid code, with theoretically zero runtime cost.
+With the smart pipe operator, the code above could be terser and, literally, straightforward. Prefix, infix, and postfix expressions would be less tangled together in threads of spaghetti. Instead, data values would be piped from left to right through a single flat thread of postfix expressions, essentially forming a [Reverse Polish notation][]. The syntax statically is [term rewritable into already valid code][term rewriting] with theoretically zero runtime cost.
 ```js
 stringPromise
   |> await #
@@ -61,9 +62,9 @@ stringPromise
   |> new User.Message // a tacit unary constructor call
 ```
 
-The flattened tree of operations is easier for the reader to keep track of the flow of data. But it also makes it easier for the editor to add steps at the beginning, end, or middle of the edata flow, without changing the indentation of many nearby, unrelated lines.
+This code’s terseness and flatness may be both easier for the JavaScript programmer to read and to edit. The reader may follow the flow of data more easily through this single flattened thread of postfix operations. And the editor may more easily add or remove operations at the beginning, end, or middle of the thread, without changing the indentation of many nearby, unrelated lines.
 
-Similar use cases appear numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, object constructions, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions. The smart pipe operator can handle them all.
+Similar use cases appear numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, object constructions, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions. In particular, the styles of [functional programming][], [dataflow programming][], and [tacit programming][] may benefit from pipelining. The smart pipe operator can simply handle them all.
 
 Note also that it was not necessary to include parentheses for `capitalize` or `new User.Message`; they were implicitly included as a unary function call and a unary constructor call, respectively. That is, the preceding example is equivalent to:
 ```js
@@ -452,6 +453,7 @@ A pipe expression’s semantics are:
 
   * Otherwise, if the body is an invalid body (such as `f()`, `f(n)`, `o[s]`, `+ n`, and `n`), then throw a syntax error explaining that the pipeline’s topic variable is missing from its body.
 
+### Term rewriting topical style
 Body expressions in topical style can be further explained with a nested `do` expression. There are two ways to illustrate this equivalency. The first way is to [replace each pipe expression’s topic variables with an autogenerated variable][term rewriting with autogenerated variables], which must be guaranteed to be [lexically hygienic][] and to not conflict with other variables. The alternative way is to [use two variables—the topic variable `#` and a single dummy variable][term rewriting with single dummy variable]—which also preserves [lexical hygiene][lexically hygienic].
 
 #### Term rewriting with autogenerated variables
@@ -678,7 +680,11 @@ There are a number of other ways of potentially accomplishing the above use case
 
 [Clojure pipe]: https://clojuredocs.org/clojure.core/as-%3E
 
+[concatenative programming]: https://en.wikipedia.org/wiki/Concatenative_programming_language
+
 [Daniel “littledan” Ehrenberg of Igalia]: https://github.com/littledan
+
+[dataflow programming]: https://en.wikipedia.org/wiki/Dataflow_programming
 
 [Elixir pipe]: https://elixir-lang.org/getting-started/enumerables-and-streams.html
 
@@ -689,6 +695,8 @@ There are a number of other ways of potentially accomplishing the above use case
 [F# pipe]: https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining
 
 [formal grammar]: #grammar
+
+[functional programming]: https://en.wikipedia.org/wiki/Functional_programming
 
 [garden-path syntax]: https://en.wikipedia.org/wiki/Garden_path_sentence
 
@@ -728,6 +736,8 @@ There are a number of other ways of potentially accomplishing the above use case
 
 [punctuator tokens]: https://tc39.github.io/ecma262/#sec-punctuators
 
+[reverse Polish notation]: https://en.wikipedia.org/wiki/Reverse_Polish_notation
+
 [R pipe]: https://cran.r-project.org/web/packages/magrittr/index.html
 
 [smart body syntax]: #smart-body-syntax
@@ -737,6 +747,12 @@ There are a number of other ways of potentially accomplishing the above use case
 [tacit style]: #tacit-style
 
 [TC39 process]: https://tc39.github.io/process-document/
+
+[term rewriting]: https://en.wikipedia.org/wiki/Term_rewriting
+
+[term rewriting topical style]: #term-rewriting-topical-style
+
+[term rewriting with autogenerated variables]: #term-rewriting-with-single-dummy-variable
 
 [term rewriting with autogenerated variables]: #term-rewriting-with-single-dummy-variable
 
