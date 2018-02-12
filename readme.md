@@ -234,10 +234,54 @@ A pipe operator between two expressions forms a <dfn>pipe expression</dfn>. One 
 
 A <dfn>`PipelineExpression`</dfn> or <dfn>pipeline-level expression</dfn> is an expression at the same [precedence level of the pipe operator][pipeline syntax]. Although all pipelines are `PipelineExpression`s, most `PipelineExpression`s are not actually pipelines; conditional operations, logical-or operations, or any other expressions that have tighter syntactic precedence than the pipe operation—those are also `PipelineExpression`s.
 
-The special token `#` is a <dfn>topic variable</dfn>: it is a nullary operator that acts as a special variable. The topic variable is *not* an identifier and cannot be manually declared (`const #` is a syntax error), nor can it be assigned with a value (`# = 3` is a syntax error). Instead, the topic variable may be implicitly, lexically bound using a pipeline. When a pipeline’s body expression is in <dnf>topical style</dfn>, the body expression forms an inner lexical scope—called the pipeline’s <dfn>body scope</dfn>—within which the topic variable is implicitly bound to the value of the topic, acting as a **placeholder** for the topic’s value.
+### Topical style
+The special token `#` is a <dfn>topic variable</dfn>: it is a nullary operator that acts as a special variable.
 
-Alternatively, you may omit the body expression’s topic variables if the body expression is just a simple reference to a function or constructor, such as with `… |> capitalize` and `… |> new User.Message` from the preceding example. The body expression would then be called as a unary function or constructor, without having to use the topic variable as an explicit argument. This is called [<dfn>tacit style</dfn> or <dfn>point-free style</dfn>][24]. When a pipe is in tacit style, the body expression is called a <dfn>tacit function</dfn> or a <dfn>tacit constructor</dfn>, depending on if it starts with `new`.
+The topic variable is *not* an identifier and cannot be manually declared (`const #` is a syntax error), nor can it be assigned with a value (`# = 3` is a syntax error). Instead, the topic variable may be implicitly, lexically bound using a pipeline.
 
+When a pipeline’s body expression is in <dnf>topical style</dfn>, the body expression forms an inner lexical scope—called the pipeline’s <dfn>body scope</dfn>—within which the topic variable is implicitly bound to the value of the topic, acting as a **placeholder** for the topic’s value.
+
+### Tacit style
+Alternatively, you may omit the body expression’s topic variables if the body expression is just a <dfn>simple reference</dfn> to a function or constructor, such as with `… |> capitalize` and `… |> new User.Message`.
+
+The body expression would then be called as a unary function or constructor, without having to use the topic variable as an explicit argument.
+
+This is called [<dfn>tacit style</dfn> or <dfn>point-free style</dfn>][24]. When a pipe is in tacit style, the body expression is called a <dfn>tacit function</dfn> or a <dfn>tacit constructor</dfn>, depending on if it starts with `new`.
+
+Tacit style never has parentheses in the pipeline body (that is, do this `… |> fetch` and not this `… |> fetch()`). If you need parentheses, you must use a topic variable (like this `… |> fetch(#, { method: 'options' })`).
+
+## Informative edge cases
+These edge cases are natural results of the rules in the [formal grammar][]
+
+### Multiple topic variables in a pipeline body
+The topic variable may be used multiple times in a pipeline body. Each use refers to the same value (wherever the topic variable is not overridden by another, inner pipeline’s body scope). Because it is bound to the result of the topic, the topic is still only ever evaluated once. The lines in each of the following are equivalent:
+```js
+do { const $ = …; f($, $) }
+… |> f(#, #)
+```
+***
+```js
+do { const $ = …; [$, $ * 2, $ * 3] }
+… |> [#, # * 2, # * 3]
+```
+
+### Inner functions
+Both the topic expression and the body expression of a pipeline may contain nested inner functions. The lines in the following are equivalent:
+```js
+do { const $ = …; settimeout(() => $ * 500) }
+… |> settimeout(() => # * 500)
+```
+
+### Deeply nested pipelines
+Both the topic expression and the body expression of a pipeline may contain nested inner functions. This is not encouraged, but it is still permitted. All lines in the following are equivalent:
+```js
+do { const $ = …; settimeout(() => f($) * 500) }
+do { const $ = …; settimeout(() => f($) |> # * 500) }
+do { const $ = …; settimeout(() => $ |> f |> # * 500) }
+… |> settimeout(() => f(#) * 500)
+… |> settimeout(() => f(#) |> # * 500)
+… |> settimeout(() => # |> f |> # * 500)
+```
 ## Grammar
 This proposal uses the [same grammar notation as that from the ES standard][es-grammar].
 
@@ -340,28 +384,6 @@ If a pipeline body *never* uses a topic variable, then it must be a permitted ta
 | **`'2018' \|> new global.Date`**      | **`new Date('2018')`**          |
 |   `'2018' \|> new global.Date()`      |   syntax error: missing `#`     |
 |   `'2018' \|> (new global.Date)`      |   syntax error: missing `#`     |
-
-### Multiple topic variables in a pipeline body
-The topic variable may be used multiple times in a pipeline body. Each use refers to the same value (wherever the topic variable is not overridden by another, inner pipeline’s body scope). Because it is bound to the result of the topic, the topic is still only ever evaluated once. The lines in each of the following are equivalent:
-```js
-… |> f(#, #)
-do { const $ = …; f($, $) }
-```
-***
-```js
-… |> [#, # * 2, # * 3]
-do { const $ = …; [$, $ * 2, $ * 3] }
-```
-
-### Inner functions
-Both the topic expression and the body expression of a pipeline may contain nested inner functions. This also works as expected. The lines in the following are equivalent:
-```js
-… |> settimeout(() => # * 500)
-do { const $ = …; settimeout(() => # * 500) }
-```
-
-### Deeply nested pipelines
-[TO DO]
 
 ### General static semantics
 A pipe expression’s semantics are:
@@ -628,3 +650,4 @@ There are a number of other ways of potentially accomplishing the above use case
 [36]: https://en.wikipedia.org/wiki/Associative_property
 [37]: https://en.wikipedia.org/wiki/Hygienic_macro
 [MDN’s guide on expressions and operators]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
+[formal grammar]: #grammar
