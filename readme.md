@@ -16,7 +16,7 @@ The binary operator proposed here would provide a backwards- and forwards-compat
 * [OCaml’s `|>`][OCaml pipe]
 * [Perl 6’s `==>`][Perl 6 pipe]
 * [R / magrittr’s `%>%`][R pipe]
-* [Unix shells’ and PowerShell’s `|` ][Unix pipe]).
+* [Unix shells’ and PowerShell’s `|` ][Unix pipe]
 
 It is also conceptually similar to [WHATWG-stream piping][] and [Node-stream piping][].
 
