@@ -25,7 +25,7 @@ The proposal is a variant of a [previous pipe-operator proposal][] championed by
 
 You can take part in the discussions on the [GitHub issue tracker][]. When you file an issue, please note in it that you are talking specifically about “Proposal 4: Smart Mix”.
 
-Note that the use of `#` as the topic variable is up for debate. `@` would be similarly terse, visually distinguishable, and easily typeable. [Bikeshedding over what characters to use for the topic token is occurring in a GitHub issue](https://github.com/tc39/proposal-pipeline-operator/issues/91).
+This specification uses `#` as its topic token, but note that this is not set in stone. In particular, `@` could also be used. would be similarly terse, visually distinguishable, and easily typeable. [Bikeshedding over what characters to use for the topic token is occurring in a GitHub issue](https://github.com/tc39/proposal-pipeline-operator/issues/91).
 
 ## Motivation
 Let these two functions be defined:
@@ -78,7 +78,7 @@ Note also that it was not necessary to include parentheses for `capitalize` or `
 
 Being able to automatically detect this tacit style is the “smart” part of this “smart pipe operator”; for more information, see the explanation of “[tacit style][]” and of “[smart body syntax][]”.
 
-Now following are various examples adapted from useful, real-world code.
+Here are some examples adapted from useful, real-world code.
 
 ### Underscore.js
 Adapted from [Underscore.js][] 1.8.3 by Jeremy Ashkenas et al., under MIT License.
@@ -259,33 +259,52 @@ response
 ```
 
 ## Nomenclature
-The binary operator itself may be referred to as a <dfn>pipe</dfn>, a <dfn>pipe operator</dfn>, or a <dfn>pipeline operator</dfn>; all these names are equivalent. This specification will prefer the term “pipe operator”.
+The binary operator itself `|>` may be referred to as a **pipe**, a **pipe operator**, or a **pipeline operator**; all these names are equivalent. This specification will prefer the term “pipe operator”.
 
-A pipe operator between two expressions forms a <dfn>pipe expression</dfn>. One or more pipe expressions in a chain form a <dfn>pipeline</dfn>. For each pipe expression, the expression before the pipe is the pipeline’s <dfn>left-hand side (LHS)</dfn>, also known as its <dfn>topic expression</dfn> or its <dfn>topic</dfn>; the expression after the pipe is its <dfn>right-hand side (RHS)</dfn>, also known as its <dfn>body expression</dfn> or its <dfn>body</dfn>. The pipe operator is said <dfn>to pipeline</dfn> the LHS/topic’s value <dfn>through</dfn> the RHS/body expression, where “pipeline” here is used as a verb.
+A pipe operator between two expressions forms a **pipe expression**. One or more pipe expressions in a chain form a **pipeline**.
 
-A <dfn>`PipelineExpression`</dfn> or <dfn>pipeline-level expression</dfn> is an expression at the same [precedence level of the pipe operator][pipeline syntax]. Although all pipelines are `PipelineExpression`s, most `PipelineExpression`s are not actually pipelines; conditional operations, logical-or operations, or any other expressions that have tighter syntactic precedence than the pipe operation—those are also `PipelineExpression`s.
+For each pipe expression, the expression before the pipe is the pipeline’s **head**. A pipeline’s head may also be called its **left-hand side (LHS)**, because it’s left to the pipe. (The head could also be referred to as the pipe’s **topic expression**, the pipe’s **[antecedent][]**, or the pipe’s **[binder][binding]**.) The *value* to which the head evaluates may be referred to as the **topic value**, **head value**, or **LHS value**.
 
-### Topical style
-The special token `#` is a <dfn>topic variable</dfn>: it is a nullary operator that acts as a special variable.
+The expression after a pipe is the pipeline’s **body**. A pipeline’s body may also be called its **right-hand side (RHS)**, because it’s to the right of the pipe. When the body is evaluated according to its [runtime semantics][], that value may be referred to as the pipeline’s **rheme value** or simply as the **pipeline value**.
 
-The topic variable is *not* an identifier and cannot be manually declared (`const #` is a syntax error), nor can it be assigned with a value (`# = 3` is a syntax error). Instead, the topic variable may be implicitly, lexically bound using a pipeline.
+Where “pipeline” is used as a verb, the pipe operator is said **to pipeline its topic through its body**, resulting in a rheme value.
 
-When a pipeline’s body expression is in <dnf>topical style</dfn>, the body expression forms an inner lexical scope—called the pipeline’s <dfn>body scope</dfn>—within which the topic variable is implicitly bound to the value of the topic, acting as a **placeholder** for the topic’s value.
+A **`PipelineExpression`** or **pipeline-level expression** is an expression at the same [precedence level of the pipe operator][pipeline syntax]. Although all pipelines are `PipelineExpression`s, most `PipelineExpression`s are not actually pipelines; conditional operations, logical-or operations, or any other expressions that have tighter syntactic precedence than the pipe operation—those are also `PipelineExpression`s.
+
+### Anaphoric style
+The special token `#` is a **topic anaphor**, a **topic bindee**, or **topic placeholder**: it is a nullary operator that acts like a special variable: implicitly bound to its value, but still lexically scoped.
+
+The topic anaphor could also be called a “**topic variable**”, but this phrase is a misnomer. The topic anaphor is *not* actually a variable identifier and cannot be manually declared (`const #` is a syntax error), nor can it be assigned with a value (`# = 3` is a syntax error). Instead, the topic anaphor is implicitly, lexically bound only within pipeline bodies.
+
+When a pipeline’s body is in this **anaphoric style**, it itself can be also referred to as an **anaphora**. A pipeline body in anaphoric style forms an inner lexical scope—called the pipeline’s **anaphoric scope**—within which the topic anaphor is implicitly bound to the value of the topic, acting as a **placeholder** for the topic’s value.
 
 ### Tacit style
-Alternatively, you may omit the body expression’s topic variables if the body expression is just a <dfn>simple reference</dfn> to a function or constructor, such as with `… |> capitalize` and `… |> new User.Message`.
+Alternatively, you may omit the topic anaphors entirely, if the body is just a **simple reference** to a function or constructor, such as with `… |> capitalize` and `… |> new User.Message`.
 
-The body expression would then be called as a unary function or constructor, without having to use the topic variable as an explicit argument.
+The body’s value would then be called as a unary function or constructor, without having to use the topic anaphor as an explicit argument.
 
-This is called [<dfn>tacit style</dfn> or <dfn>point-free style</dfn>][tacit programming]. When a pipe is in tacit style, the body expression is called a <dfn>tacit function</dfn> or a <dfn>tacit constructor</dfn>, depending on if it starts with `new`. Either way, the body must otherwise consist of only a <dfn>simple property chain</dfn>, which is simply an identifier (like `abc`), optionally chained with member properties (like `abc.property`). They are more formally defined in [smart body syntax][].
+This is called [**tacit style** or **point-free style**][tacit programming]. When a pipe is in tacit style, we refer to the body as a **tacit function** or a **tacit constructor**, depending on if it starts with `new`. Either way, the body must otherwise consist of only a **simple property chain**, which is simply an identifier (like `abc`), optionally chained with member properties (like `abc.property`). They are more formally defined in [smart body syntax][].
 
-Tacit style never has parentheses in the pipeline body (that is, do this `… |> fetch` and not this `… |> fetch()`). If you need parentheses, you must use a topic variable (like this `… |> fetch(#, { method: 'options' })`).
+Tacit style *never* has parentheses in the pipeline body (that is, prefer this `… |> fetch` to this `… |> fetch()`). If you need parentheses, you must use a topic anaphor (like this `… |> fetch(#, { method: 'options' })`).
+
+### Explanation of conventions
+The terms [“**topic**” and “**rheme**” come from linguistics][topic and rheme] and have precedent in prior programming languages’ use of “topic variables”.
+
+The terms “**topic expression**” and “**antecedent**” are preferred instead of “**LHS**” because, in the future, the [topic concept could be extended to other syntax][possible future extensions to topic anaphora], not just pipelines. However, “LHS” is still a fine and acceptable name for topic expression in the pipeline operator. “Topic” is also preferred to the related linguistic term “**theme**”, because its meaning in computer programming is clearer—indeed, [“topic” is a term already used by many other languages to denote an implicitly bound variable][topic variables in other languages]
+
+The term “**topic anaphor**” is preferred to the phrase “**topic variable**” because the latter is a misnomer. The topic anaphor is *not* a variable identifier. Unlike variables, it cannot be manually declared (`const #` is a syntax error), nor can it be assigned with a value (`# = 3` is a syntax error).
+
+“Topic anaphor” is also preferred to “**topic placeholder**”, to avoid confusion with the placeholders of another TC39 proposal—[syntactic partial application][]. These placeholders (currently denoted by nullary `?`) are of a different nature than topic anaphors. Instead of referring to a single value bound earlier in the surrounding lexical context, these **parameter placeholders** act as the parameter to a new function. When this new function is called, those parameter placeholders will be bound to multiple argument values.
+
+The term “**body**” is preferred instead of “**RHS**” because “topic” is preferred to “LHS”. However, “RHS” is still a fine and acceptable name for the body of the pipeline operator. should be used instead of “rheme” wherever “LHS” is used.
+
+The term “**rheme value**” is equally preferable to “**pipeline value**”. But both are preferred to the alternative linguistic terms “**comment value**” or “**focus value**”. Even though the terms [“comment” and “focus” are the usual linguistic opposite to “topic”][topic and rheme], neither make much sense for the pipeline operator.
 
 ## Informative edge cases
 These edge cases are natural results of the rules in the [formal grammar][]
 
-### Multiple topic variables in a pipeline body
-The topic variable may be used multiple times in a pipeline body. Each use refers to the same value (wherever the topic variable is not overridden by another, inner pipeline’s body scope). Because it is bound to the result of the topic, the topic is still only ever evaluated once. The lines in each of the following are equivalent:
+### Multiple topic anaphors in a pipeline body
+The topic anaphor may be used multiple times in a pipeline body. Each use refers to the same value (wherever the topic anaphor is not overridden by another, inner pipeline’s anaphoric scope). Because it is bound to the result of the topic, the topic is still only ever evaluated once. The lines in each of the following are equivalent:
 ```js
 do { const $ = …; f($, $) }
 … |> f(#, #)
@@ -297,14 +316,14 @@ do { const $ = …; [$, $ * 2, $ * 3] }
 ```
 
 ### Inner functions
-Both the topic expression and the body expression of a pipeline may contain nested inner functions. The lines in the following are equivalent:
+Both the topic expression and the body of a pipeline may contain nested inner functions. The lines in the following are equivalent:
 ```js
 do { const $ = …; settimeout(() => $ * 500) }
 … |> settimeout(() => # * 500)
 ```
 
 ### Deeply nested pipelines
-Both the topic expression and the body expression of a pipeline may contain nested inner functions. This is not encouraged, but it is still permitted. All lines in the following are equivalent:
+Both the topic expression and the body of a pipeline may contain nested inner functions. This is not encouraged, but it is still permitted. All lines in the following are equivalent:
 ```js
 do { const $ = …; settimeout(() => f($) * 500) }
 do { const $ = …; settimeout(() => f($) |> # * 500) }
@@ -340,7 +359,7 @@ do { const $ = …; settimeout(() => $ |> f |> # * 500) }
 This proposal uses the [same grammar notation as that from the ES standard][ES grammar notation].
 
 ### Lexing
-The lexical rule for [punctuator tokens][] would be modified. Two new tokens, `|>` for the binary pipe and `#` for the topic variable, would be added to the Punctuators:
+The lexical rule for [punctuator tokens][] would be modified. Two new tokens, `|>` for the binary pipe and `#` for the topic anaphor, would be added to the Punctuators:
 ```
 Punctuator :: one of
   `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==`
@@ -352,9 +371,9 @@ Punctuator :: one of
 ### Syntax parameters
 In the ES standard, expressions in general are parameterized with three flags:
 
-* <dfn>`In`</dfn>: Whether the current context allows the [`in` relational operator][], which is false only in the headers of [`for` iteration statements][].
-* <dfn>`Yield`</dfn>: Whether the current context is within a `yield` expression/declaration.
-* <dfn>`Await`</dfn>: Whether the current context is within an `await` expression/declaration.
+* **`In`**: Whether the current context allows the [`in` relational operator][], which is false only in the headers of [`for` iteration statements][].
+* **`Yield`**: Whether the current context is within a `yield` expression/declaration.
+* **`Await`**: Whether the current context is within an `await` expression/declaration.
 
 ### Pipeline syntax
 A pipeline `topic |> body` is a left-associative (though see [bidirectional associativity][]) binary operation with a loose precedence.
@@ -398,19 +417,19 @@ PipelineExpression[In, Yield, Await] :
 ```
 
 ### Smart body syntax
-When the parser checks the RHS/body expression, it must determine what style it is in. There are four outcomes for each pipeline body: tacit constructor, tacit function, topical-style expression, or syntax error.
+When the parser checks the body/RHS, it must determine what style it is in. There are four outcomes for each pipeline body: tacit constructor, tacit function, anaphora, or syntax error.
 
 ```
 // New rule
 PipelineBody[In, Yield, Await] :
   PipelineTacitFunction
   PipelineTacitConstructor
-  PipelineTopicalBody[In, Yield, Await]
+  PipelineAnaphora[In, Yield, Await]
 ```
 
-The goal here is to minimize the parsing lookahead that the compiler must check before it can distinguish between tacit style and topic-token style. By restricting the space of valid tacit-style pipeline bodies (that is, without topic variables), the rule prevents [garden-path syntax][] that would otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
+The goal here is to minimize the parsing lookahead that the compiler must check before it can distinguish between tacit style and topic-token style. By restricting the space of valid tacit-style pipeline bodies (that is, without topic anaphors), the rule prevents [garden-path syntax][] that would otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
 
-Another goal is to help the editing JavaScript programmer: statically preventing them from accidentally omitting a topic variable where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the editor intended. The JavaScript programmer is encouraged to use topic variables and avoid tacit style, where tacit style may be visually confusing to the reader.
+Another goal is to help the editing JavaScript programmer: statically preventing them from accidentally omitting a topic anaphor where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the editor intended. The JavaScript programmer is encouraged to use topic anaphors and avoid tacit style, where tacit style may be visually confusing to the reader.
 
 1. If the body is a mere identifier, optionally with a chain of properties, and with no parentheses or brackets, then that identifier is interpreted to be a **tacit function**.
   ```
@@ -424,18 +443,18 @@ Another goal is to help the editing JavaScript programmer: statically preventing
     `new` SimpleMemberExpression
   ```
 
-3. Otherwise, the body is now an arbitrary expression. Because the expression is not in tacit style, it must use that pipe’s topic variable. ([TO DO: Formalize this static semantic as `usesTopic()`.] Topic variables from the body scopes of other, inner pipelines do not count.) If there is no such topic variable in the expression, then a syntax error is thrown.
+3. Otherwise, the body is now an arbitrary expression. Because the expression is not in tacit style, it must use that pipe’s topic anaphor. ([TO DO: Formalize this static semantic as `usesTopic()`.] Topic anaphors from the anaphoric scopes of other, inner pipelines do not count.) If there is no such topic anaphor in the expression, then a syntax error is thrown.
 
-  `PipelineTopicalBody` will be defined in the next section.
+  `PipelineAnaphora` will be defined in the next section.
 
-If a pipeline body *never* uses a topic variable, then it must be a permitted tacit unary function (single identifier or simple property chain). Otherwise, it is a syntax error. In particular, tacit style *never* uses parentheses. If they need to have parentheses, then they need to have use the topic variable. See also [property-chained tacit style][].
+If a pipeline body *never* uses a topic anaphor, then it must be a permitted tacit unary function (single identifier or simple property chain). Otherwise, it is a syntax error. In particular, tacit style *never* uses parentheses. If they need to have parentheses, then they need to have use the topic anaphor. See also [property-chained tacit style][].
 
 ### General semantics
 [TO DO: Rewrite this section to the conventions of the ES specification.]
 
 A pipe expression’s semantics are:
 1. The topic expression is evaluated into the topic’s value; call this `topicValue`.
-2. [The body expression is tested for its type][smart body syntax]: Is it in tacit style (as a tacit function or a tacit constructor), is it in topical style, or is it an invalid body?
+2. [The body is tested for its type][smart body syntax]: Is it in tacit style (as a tacit function or a tacit constructor), is it in anaphoric style, or is it an invalid body?
 
   * If the body is a tacit function (such as `f` and `M.f`):
     1. The body is evaluated (in the current lexical context); call this value the `bodyFunction`.
@@ -445,21 +464,21 @@ A pipe expression’s semantics are:
     1. The portion of the body after `new` is evaluated (in the current lexical context); call this value the `BodyConstructor`.
     2. The entire pipeline’s value is `new BodyConstructor(topicValue)`.
 
-  * If the body is in topical style (such as `f(#, n)`, `o[s][#]`, `# + n`, and `#.p`):
+  * If the body is in anaphoric style (such as `f(#, n)`, `o[s][#]`, `# + n`, and `#.p`):
     1. An inner lexical context is entered.
     2. Within this inner context, `topicValue` is bound to a variable.
     3. Within this inner context, with the variable binding to `topicValue`, the body is evaluated; call the resulting value `bodyValue`.
     4. The entire pipeline’s value is `bodyValue`.
 
-  * Otherwise, if the body is an invalid body (such as `f()`, `f(n)`, `o[s]`, `+ n`, and `n`), then throw a syntax error explaining that the pipeline’s topic variable is missing from its body.
+  * Otherwise, if the body is an invalid body (such as `f()`, `f(n)`, `o[s]`, `+ n`, and `n`), then throw a syntax error explaining that the pipeline’s topic anaphor is missing from its body.
 
-### Term rewriting topical style
-Body expressions in topical style can be further explained with a nested `do` expression. There are two ways to illustrate this equivalency. The first way is to [replace each pipe expression’s topic variables with an autogenerated variable][term rewriting with autogenerated variables], which must be guaranteed to be [lexically hygienic][] and to not conflict with other variables. The alternative way is to [use two variables—the topic variable `#` and a single dummy variable][term rewriting with single dummy variable]—which also preserves [lexical hygiene][lexically hygienic].
+### Term rewriting anaphoric style
+Pipe bodies in anaphoric style can be further explained with a nested `do` expression. There are two ways to illustrate this equivalency. The first way is to [replace each pipe expression’s topic anaphors with an autogenerated variable][term rewriting with autogenerated variables], which must be guaranteed to be [lexically hygienic][] and to not conflict with other variables. The alternative way is to [use two variables—the topic anaphor `#` and a single dummy variable][term rewriting with single dummy variable]—which also preserves [lexical hygiene][lexically hygienic].
 
 #### Term rewriting with autogenerated variables
-The first way to illustrate the operator’s semantics is to replace each pipe expression’s topic variables with an autogenerated variable, which must be guaranteed to not conflict with other variables.
+The first way to illustrate the operator’s semantics is to replace each pipe expression’s topic anaphors with an autogenerated variable, which must be guaranteed to not conflict with other variables.
 
-Let us say that each pipe expression autogenerates a new, [lexically hygienic][] variable (`#₀`, `#₁`, `#₂`, `#₃`, …), which in turn replaces each use of the topic variable `#` in each pipe’s body. (These `#ₙ` variables are not true syntax; it is merely for illustrative purposes. You cannot actually assign or use `#ₙ` variables.) Let us also group the expressions with left associativity (although this is arbitrary, because [right associativity would also work][bidirectional associativity]).
+Let us pretend that each pipe expression autogenerates a new, [lexically hygienic][] variable (`#₀`, `#₁`, `#₂`, `#₃`, …), which in turn replaces each topic anaphor `#` in each pipeline body. (These `#ₙ` variables are not true syntax; it is merely for illustrative purposes. You cannot actually assign or use `#ₙ` variables.) Let us also group the expressions with left associativity (although this is arbitrary, because [right associativity would also work][bidirectional associativity]).
 
 With this notation, each line in this example would be equivalent to the other lines.
 ```js
@@ -504,14 +523,14 @@ do {
 }
 ```
 
-In general, for each pipe expression `topic |> body`, assuming that `body` is in topical style, that is, assuming that `body` contains an unshadowed topic variable:
+In general, for each pipe expression `topic |> body`, assuming that `body` is in anaphoric style, that is, assuming that `body` contains an unshadowed topic anaphor:
 
-* Let `#ₙ` be a [hygienically autogenerated][lexically hygienic] topic variable, `#ₙ`, where <var>n</var> is a number that would not conflict with the name of any other autogenerated topic variable in the scope of the entire pipe expression.
+* Let `#ₙ` be a [hygienically autogenerated][lexically hygienic] topic anaphor, `#ₙ`, where <var>n</var> is a number that would not conflict with the name of any other autogenerated topic anaphor in the scope of the entire pipe expression.
 * Also let `substitutedBody` be `body` but with all instances of `#` replaced with `#ₙ`.
-* Then the static term rewriting (left associative and inside to outside) would simply be: `do { const #ₙ = topic; substitutedBody }`. This `do` expression would act as at the body scope.
+* Then the static term rewriting (left associative and inside to outside) would simply be: `do { const #ₙ = topic; substitutedBody }`. This `do` expression would act as at the anaphoric scope.
 
 #### Term rewriting with single dummy variable
-The other way to demonstrate topical style is to use two variables: the topic variable `#` and single [lexically hygienic][] dummy variable `•`. It should be noted that `const # = …` is not a valid statement under this proposal’s actual syntax; likewise, `•` is not a part of the proposal’s syntax. Both forms are for illustrative purposes here only.
+The other way to demonstrate anaphoric style is to use two variables: the topic anaphor `#` and single [lexically hygienic][] dummy variable `•`. It should be noted that `const # = …` is not a valid statement under this proposal’s actual syntax; likewise, `•` is not a part of the proposal’s syntax. Both forms are for illustrative purposes here only.
 
 With this notation, no variable autogeneration is required; instead, the nested `do` expressions will redeclare the same variables `#` and `•`, shadowing the external variables of the same name as needed. The number example above becomes the following. Each line is still equivalent to the other lines.
 ```js
@@ -562,8 +581,8 @@ For each pipe expression, evaluated left associatively and inside to outside, th
 
 1. The topic expression is first evaluated in the current lexical context.
 2. The topic’s result is bound to a hidden special variable `•`.
-3. In a new inner lexical context (the body scope), the value of `•` is bound to the topic variable `#`.
-4. The pipe’s body expression is evaluated within this inner lexical context.
+3. In a new inner lexical context (the anaphoric scope), the value of `•` is bound to the topic anaphor `#`.
+4. The pipe’s body is evaluated within this inner lexical context.
 5. The pipe’s result is the result of the body.
 
 ### Bidirectional associativity
@@ -660,23 +679,29 @@ do { do { do { do { 3 * 3 } } }
 ## Runtime semantics
 [TO DO]
 
+## Possible future extensions to topic anaphora
+
 ## Alternative solutions explored
 There are a number of other ways of potentially accomplishing the above use cases. However, the authors of this proposal believe that the smart pipe operator may be the best choice. [TO DO]
 
 ## Relation to existing work
 [TO DO]
 
-[TO DO: Include commentary on why “topic variable” instead of “placeholder”—because verbally confusing with partial-application placeholders—and because forward compatibility with extending the topic concept to other syntax, such as `for { … }`, `matches { … }`, and `given (…) { … }`.]
+[TO DO: Include commentary on why “topic anaphor” instead of “placeholder”—because verbally confusing with partial-application placeholders—and because forward compatibility with extending the topic concept to other syntax, such as `for { … }`, `matches { … }`, and `given (…) { … }`.]
 
 [`for` iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
 
 [`in` relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
+
+[antecedent]: https://en.wikipedia.org/wiki/Antecedent_(grammar)
 
 [assignment operator]: https://tc39.github.io/ecma262/#sec-assignment-operators
 
 [associative property]: https://en.wikipedia.org/wiki/Associative_property
 
 [bidirectional associativity]: #bidirectional-associativity
+
+[binding]: https://en.wikipedia.org/wiki/Binding_(linguistics)
 
 [Clojure pipe]: https://clojuredocs.org/clojure.core/as-%3E
 
@@ -726,6 +751,8 @@ There are a number of other ways of potentially accomplishing the above use case
 
 [pipeline syntax]: #pipeline-syntax
 
+[possible future extensions to topic anaphora]: #possible-future-extensions-to-topic-anaphora
+
 [previous pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator
 
 [previous pipeline-placeholder discussions]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
@@ -740,7 +767,11 @@ There are a number of other ways of potentially accomplishing the above use case
 
 [R pipe]: https://cran.r-project.org/web/packages/magrittr/index.html
 
+[runtime semantics]: #runtime-semantics
+
 [smart body syntax]: #smart-body-syntax
+
+[syntactic partial application]: https://github.com/tc39/proposal-partial-application
 
 [tacit programming]: https://en.wikipedia.org/wiki/Tacit_programming
 
@@ -750,13 +781,17 @@ There are a number of other ways of potentially accomplishing the above use case
 
 [term rewriting]: https://en.wikipedia.org/wiki/Term_rewriting
 
-[term rewriting topical style]: #term-rewriting-topical-style
+[term rewriting anaphoric style]: #term-rewriting-anaphoric-style
 
 [term rewriting with autogenerated variables]: #term-rewriting-with-single-dummy-variable
 
 [term rewriting with autogenerated variables]: #term-rewriting-with-single-dummy-variable
 
 [term rewriting with single dummy variable]: #term-rewriting-with-single-dummy-variable
+
+[topic and rheme]: https://en.wikipedia.org/wiki/Topic_and_comment
+
+[topic variables in other languages]: https://rosettacode.org/wiki/Topic_variable
 
 [Underscore.js]: http://underscorejs.org
 
