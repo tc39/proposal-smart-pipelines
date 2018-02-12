@@ -265,6 +265,7 @@ Precedence is tighter than assignment (`=`, `+=`, …), generator `yield` and `y
 
 The [assignment operator][] is already parameterized on `In`, `Yield`, and `Await`; it may be a conditional expression, yield expression, arrow function, async arrow function, or assignment:
 ```
+// Old version
 AssignmentExpression[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
   [+Yield] YieldExpression[?In, ?Await]
@@ -278,6 +279,7 @@ AssignmentExpression[In, Yield, Await] :
 
 Here, the conditional-expression rule (`AssignmentExpression : ConditionalExpression`) would be replaced with one for pipeline expressions (`AssignmentExpression : PipelineExpression`):
 ```
+// New version
 AssignmentExpression[In, Yield, Await] :
   PipelineExpression[?In, ?Yield, ?Await]
   [+Yield] YieldExpression[?In, ?Await]
@@ -290,6 +292,7 @@ An expression is a pipeline-level expression (a `PipelineExpression`) only if:
 * Or it is another pipeline-level expression, followed by a `|>` token, then a pipeline body (`PipelineBody`, defined next), with the same parameters as above.
 
 ```
+// New rule
 PipelineExpression[In, Yield, Await]:
   ConditionalExpression[?In, ?Yield, ?Await]
   PipelineExpression[?In, ?Yield, ?Await] `|>`
@@ -300,6 +303,7 @@ PipelineExpression[In, Yield, Await]:
 When the parser checks the RHS/body expression, it must determine what style it is in. There are four outcomes for each pipeline body: tacit constructor, tacit function, topical-style expression, or syntax error.
 
 ```
+// New rule
 PipelineBody[In, Yield, Await]:
   PipelineTacitConstructor
   PipelineTacitFunction
