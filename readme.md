@@ -215,34 +215,30 @@ fetch("https://pk.example/berlin-calling.json", { mode: "cors" })
   }).then(processJSON)
 ```
 ```js
-do {
-  const res = await fetch("https://pk.example/berlin-calling.json", {
-    mode: "cors"
-  });
-  processJSON(do {
-    if (res.headers.get("content-type")??.toLowerCase()
-      .indexOf("application/json") >= 0
-    ) {
-      await res.json()
-    } else {
-      throw new TypeError()
-    }
-  })
-}
+const res = await fetch("https://pk.example/berlin-calling.json", {
+  mode: "cors"
+});
+processJSON(do {
+  if (res.headers.get("content-type")??.toLowerCase()
+    .indexOf("application/json") >= 0
+  ) {
+    await res.json()
+  } else {
+    throw new TypeError()
+  }
+})
 ```
 ```js
-do {
-  const response = "https://pk.example/berlin-calling.json"
-    |> await fetch(#, { mode: "cors" });
-  response
-    |> #.headers.get("content-type")
-    |> #??.toLowerCase()
-    |> #.indexOf("application/json")
-    |> # >= 0
-    |> # ? response.json() : throw new TypeError()
-    |> await #
-    |> processJSON
-}
+const response = "https://pk.example/berlin-calling.json"
+  |> await fetch(#, { mode: "cors" });
+response
+  |> #.headers.get("content-type")
+  |> #??.toLowerCase()
+  |> #.indexOf("application/json")
+  |> # >= 0
+  |> # ? response : throw new TypeError()
+  |> await #.json()
+  |> processJSON
 ```
 
 ## Nomenclature
