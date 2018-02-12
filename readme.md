@@ -418,6 +418,8 @@ Another goal is to statically prevents a writing JavaScript programmer from acci
 If a pipeline body *never* uses a topic variable, then it must be a permitted tacit unary function (single identifier or simple property chain). Otherwise, it is a syntax error. In particular, tacit style *never* uses parentheses. If they need to have parentheses, then they need to have use the topic variable. See also [property-chained tacit style][].
 
 ### General semantics
+[TO DO: Rewrite this section to the conventions of the ES specification.]
+
 A pipe expression’s semantics are:
 1. The topic expression is evaluated into the topic’s value; call this `topicValue`.
 2. [The body expression is tested for its type][26]: Is it in tacit style (as a tacit function or a tacit constructor), is it in topical style, or is it an invalid body?
@@ -625,8 +627,23 @@ do { do { do { do { 3 * 3 } } }
 9
 ```
 
-## Runtime semantics
+## Static semantics
+[TO DO: Brief explanation of static semantics]
 
+### Early errors
+
+### Contains?
+[TO DO]
+
+### Is function definition?
+[TO DO]
+
+### Is valid simple assignment target?
+[TO DO]
+
+### Is
+
+## Runtime semantics
 [TO DO]
 
 ## Alternative solutions explored
