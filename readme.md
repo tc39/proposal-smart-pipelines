@@ -232,14 +232,17 @@ The binary operator itself may be referred to as a <dfn>pipe</dfn>, a <dfn>pipe 
 
 A pipe operator between two expressions forms a <dfn>pipe expression</dfn>. One or more pipe expressions in a chain form a <dfn>pipeline</dfn>. For each pipe expression, the expression before the pipe is the pipeline’s <dfn>left-hand side (LHS)</dfn>; the expression after the pipe is its <dfn>right-hand side (RHS)</dfn>. The pipe operator is said <dfn>to pipeline</dfn> the LHS’s value <dfn>through</dfn> the RHS expression, where “pipeline” here is used as a verb.
 
+A <dfn><var>PipelineExpression</var></dfn> or <dfn>pipeline-level expression</dfn> is an expression at the same [precedence level of the pipe operator](#pipeline-syntax). Although all pipelines are <var>PipelineExpression</var>s, most <var>PipelineExpression</var>s are not actually pipelines; conditional operations, logical-or operations, or any other expressions that have tighter syntactic precedence than the pipe operation—those are also <var>PipelineExpression</var>s.
+
 The special token `#` is a <dfn>topic variable</dfn>: it is a nullary operator that acts as a special variable. The topic variable is *not* an identifier and cannot be manually declared (`const #` is a syntax error), nor can it be assigned with a value (`# = 3` is a syntax error). Instead, the topic variable may be implicitly, lexically bound using a pipeline. When a pipeline’s RHS is in <dnf>topic-variable style</dfn>, the RHS forms an inner lexical scope—called the pipeline’s <dfn>RHS scope</dfn>—within which the topic variable is implicitly bound to the value of the LHS, acting as a **placeholder** for the LHS’s value.
 
 Alternatively, you may omit the RHS’s topic variables if the RHS is just a simple reference to a function or constructor, such as with `… |> capitalize` and `… |> new User.Message` from the preceding example. The RHS would then be called as a unary function or constructor, without having to use the topic variable as an explicit argument. This is called [<dfn>tacit style</dfn> or <dfn>point-free style</dfn>][24]. When a pipe is in tacit style, the RHS is called a <dfn>tacit function</dfn> or a <dfn>tacit constructor</dfn>, depending on if it starts with `new`.
 
-## Syntax
+## Grammar
+This proposal uses the [same grammar notation as that from the ES standard][es-grammar].
 
-### Tokens
-The rule for <var>Punctuator</var> tokens would be modified: two new tokens, `|>` and `#`, would be added to the Punctuators:
+### Lexing
+The lexical rule for [<var>Punctuator</var> tokens][es-punctuators] would be modified. Two new tokens, `|>` for the binary pipe and `#` for the topic variable, would be added to the Punctuators:
 ```
 Punctuator :: one of
   `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==`
@@ -248,15 +251,22 @@ Punctuator :: one of
   `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
 ```
 
-### Pipe expressions
-[TO DO]
+### Pipeline syntax
+A pipeline `lhs |> rhs` is a left-associative (though see [bidirectional associativity][]) binary operation with a loose precedence.
 
-### Loose precedence
-The pipe operator’s precedence is quite loose. It is tighter than assignment (`=`, `+=`, …), generator `yield` and `yield *`, and sequence `,`; and it is looser than logical ternary conditional (`… ? … : …`), logical and/or `&&`/`||`, bitwise and/or/xor, `&`/`|`/`^`, equality/inequality `==`/`===`/`!=`/`!==`, and every other type of expression.
+Precedence is tighter than assignment (`=`, `+=`, …), generator `yield` and `yield *`, and sequence `,`; and it is looser than logical ternary conditional (`… ? … : …`), logical and/or `&&`/`||`, bitwise and/or/xor, `&`/`|`/`^`, equality/inequality `==`/`===`/`!=`/`!==`, and every other type of expression. See also [MDN’s guide on expressions and operators][]. If the pipe operation were any tighter than this level, its RHS would have to be parenthesized for many frequent types of expressions. However, the result of a pipeline is also expected to often serve as the RHS of a variable assignment `=`, so it is tighter than assignment operators.
 
-Being any tighter than this level would require its RHS to be parenthesized for many frequent types of expressions. However, the result of a pipeline is also expected to often serve as the RHS of a variable assignment `=`.
-
-Thus, [TO DO: Add to expression rule]
+1. Given these mode parameters, defined for [primary expressions]:
+  * <dfn><var>In</var></dfn>: Whether the current context is within some sort of grouping, like parentheses `(…)`, arrow parameters `(…) => blah`, or a template literal `\`${…}\``
+  * <dfn><var>Yield</var></dfn>: Whether the current context is within a `yield` expression/declaration.
+  * <dfn><var>Yield</var></dfn>: Whether the current context is within an `await` expression/declaration.
+2. Then an expression is a pipeline-level expression (a <var>PipelineExpression</var>) only if it is either also a conditional-level expression <var>ConditionalExpression</var>, or if it is… [TO DO]
+```
+PipelineExpression[In, Yield, Await]:
+  ConditionalExpression[?In, ?Yield, ?Await]
+  PipelineExpression[?In, ?Yield, ?Await] `|>`
+    ConditionalExpression[?In, ?Yield, ?Await]
+```
 
 ### Smart RHS syntax
 When the parser checks the RHS, it must determine what style it is in. There are four outcomes: tacit constructor, tacit function, parameterized expression, or invalid RHS.
@@ -273,7 +283,7 @@ The parsing rules are such that:
 
 3. Otherwise, the RHS is now an arbitrary expression. Because the expression is not in tacit style, it must use that pipe’s topic variable. ([TO DO: Formalize this static semantic as `usesTopic()`.] Topic variables from the RHS scopes of other, inner pipelines do not count.) If there is no such topic variable in the expression, then a syntax error is thrown.
 
-If a pipe RHS *never* uses topic variable, then it must be a permitted tacit unary function (single identifier or simple property chain). Otherwise, it is a syntax error. In particular, tacit style *never* uses parentheses. If they need to have parentheses, then they need to have use the topic variable. The following table summarizes these rules.
+If a pipe RHS *never* uses a topic variable, then it must be a permitted tacit unary function (single identifier or simple property chain). Otherwise, it is a syntax error. In particular, tacit style *never* uses parentheses. If they need to have parentheses, then they need to have use the topic variable. The following table summarizes these rules.
 
 | Expression                            | Result                          |
 | ------------------------------------- | ------------------------------- |
@@ -342,7 +352,7 @@ The topic-variable RHS case can be further explained with a nested `do` expressi
 #### Topic-variable semantics by replacing them with autogenerated variables
 The first way to illustrate the operator’s semantics is to replace each pipe expression’s topic variables with an autogenerated variable, which must be guaranteed to not conflict with other variables.
 
-Let us say that each pipe expression autogenerates a new, [lexically hygienic][32] variable (`#₀`, `#₁`, `#₂`, `#₃`, …), which in turn replaces each use of the topic variable `#` in each pipe’s RHS. (These `#ₙ` variables are not true syntax; it is merely for illustrative purposes. You cannot actually assign or use `#ₙ` variables.) Let us also group the expressions with left associativity (although this is arbitrary, because [right associativity would also work][33]).
+Let us say that each pipe expression autogenerates a new, [lexically hygienic][32] variable (`#₀`, `#₁`, `#₂`, `#₃`, …), which in turn replaces each use of the topic variable `#` in each pipe’s RHS. (These `#ₙ` variables are not true syntax; it is merely for illustrative purposes. You cannot actually assign or use `#ₙ` variables.) Let us also group the expressions with left associativity (although this is arbitrary, because [right associativity would also work][bidirectional associativity]).
 
 With this notation, each line in this example would be equivalent to the other lines.
 ```js
@@ -560,6 +570,9 @@ There are a number of other ways of potentially accomplishing the above use case
 [22]: https://github.com/sindresorhus/pify
 [23]: https://fetch.spec.whatwg.org
 [24]: https://en.wikipedia.org/wiki/Tacit_programming
+[es-grammar]: https://tc39.github.io/ecma262/#sec-syntactic-and-lexical-grammars
+[es-lexical-grammar]: https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar
+[es-punctuators]: https://tc39.github.io/ecma262/#sec-punctuators
 [25]: https://en.wikipedia.org/wiki/Garden_path_sentence
 [26]: #smart-rhs-syntax
 [28]: #topic-variable-semantics-by-replacing-them-with-autogenerated-variables
@@ -567,8 +580,9 @@ There are a number of other ways of potentially accomplishing the above use case
 [30]: #topic-variable-semantics-by-alternating-lexical-shadowing-with-dummy-variable
 [31]: https://en.wikipedia.org/wiki/Hygienic_macro
 [32]: https://en.wikipedia.org/wiki/Hygienic_macro
-[33]: #bidirectional-associativity
+[bidirectional associativity]: #bidirectional-associativity
 [34]: https://en.wikipedia.org/wiki/Hygienic_macro
 [35]: https://en.wikipedia.org/wiki/Hygienic_macro
 [36]: https://en.wikipedia.org/wiki/Associative_property
 [37]: https://en.wikipedia.org/wiki/Hygienic_macro
+[MDN’s guide on expressions and operators]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
