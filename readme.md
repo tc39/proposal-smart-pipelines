@@ -10,6 +10,8 @@ The proposal is a variant of a [previous pipe-operator proposal][14] championed 
 
 You can take part in the discussions on the [GitHub issue tracker][19]. When you file an issue, please note in it that you are talking specifically about “Proposal 4: Smart Mix”.
 
+Note that the use of `#` as the topic variable is up for debate. `@` would be similarly terse, visually distinguishable, and easily typeable. [Bikeshedding over what characters to use for the topic token is occurring in a GitHub issue](https://github.com/tc39/proposal-pipeline-operator/issues/91).
+
 ## Motivation
 Let these two functions be defined:
 ```js
@@ -73,7 +75,8 @@ _.find = _.detect = function(obj, predicate, context) {
   }
   if (key !== void 0 && key !== -1) return obj[key];
 };
-
+```
+```js
 _.find = _.detect = function(obj, predicate, context) {
   return obj
     |> isArrayLike(#) ? _.findIndex : _.findKey
@@ -89,7 +92,8 @@ _.reject = function(obj, predicate, context) {
     context
   )
 };
-
+```
+```js
 _.reject = function(obj, predicate, context) {
   return predicate
     |> cb
@@ -107,7 +111,8 @@ var executeBound = function(sourceFunc, boundFunc, context, callingContext, args
   if (_.isObject(result)) return result;
   return self;
 };
-
+```
+```js
 var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
   if (callingContext |> # instanceof boundFunc |> !#)
     return sourceFunc.apply(context, args);
@@ -127,7 +132,8 @@ _.size = function(obj) {
     ? obj.length
     : _.keys(obj).length;
 };
-
+```
+```js
 _.size = function(obj) {
   if (obj == null) return 0;
   return obj |> isArrayLike
@@ -142,9 +148,11 @@ Adapted from [Pify 3.0.0][22] by Sindre Sorhus under MIT License.
 pify(fs.readFile)('package.json', 'utf8').then(data => {
   console.log(JSON.parse(data).name)
 })
-
+```
+```js
 console.log(JSON.parse((await pify(fs.readFile)('package.json', 'utf8')).name));
-
+```
+```js
 'package.json'
   |> await pify(fs.readFile)(#, 'utf8')
   |> JSON.parse
@@ -156,7 +164,8 @@ console.log(JSON.parse((await pify(fs.readFile)('package.json', 'utf8')).name));
 return opts.include
   ? opts.include.some(match)
   : !opts.exclude.some(match)
-
+```
+```js
 return opts.include
   ? opts.include.some(match)
   : opts.exclude.some(match) |> !#
@@ -168,9 +177,11 @@ Adapted from [Fetch, the living web standard][23] by WHATWG under Creative Commo
 fetch("/music/pk/altes-kamuffel.flac")
   .then(res => res.blob())
   .then(playBlob)
-
+```
+```js
 playBlob(await (await fetch("/music/pk/altes-kamuffel.flac")).blob())
-
+```
+```js
 "/music/pk/altes-kamuffel.flac"
   |> await fetch(#)
   |> await #.blob()
@@ -180,10 +191,12 @@ playBlob(await (await fetch("/music/pk/altes-kamuffel.flac")).blob())
 ```js
 fetch("/", { method: "HEAD" })
   .then(res => log(res.headers.get("strict-transport-security")))
-
+```
+```js
 (await fetch("/", { method: "HEAD" }))
   .headers.get("strict-transport-security")
-
+```
+```js
 "/"
   |> await fetch(#, { method: "HEAD" })
   |> #.headers.get("strict-transport-security")
@@ -191,40 +204,45 @@ fetch("/", { method: "HEAD" })
 ***
 ```js
 fetch("https://pk.example/berlin-calling.json", { mode: "cors" })
-  .then(res => {
-    if (res.headers.get("content-type")??.toLowerCase()
+  .then(response => {
+    if (response.headers.get("content-type")??.toLowerCase()
       .indexOf("application/json") >= 0
     ) {
-      return res.json()
+      return response.json()
     } else {
       throw new TypeError()
     }
   }).then(processJSON)
-
+```
+```js
 do {
   const res = await fetch("https://pk.example/berlin-calling.json", {
     mode: "cors"
   });
-  processJSON(await do {
+  processJSON(do {
     if (res.headers.get("content-type")??.toLowerCase()
       .indexOf("application/json") >= 0
     ) {
-      res.json()
+      await res.json()
     } else {
       throw new TypeError()
     }
   })
 }
-
-"https://pk.example/berlin-calling.json"
-  |> await fetch(#, { mode: "cors" })
-  |>
-    #.headers.get("content-type")
-      ??.toLowerCase().indexOf("application/json")
-      >= 0
-    ? #.json()
-    : throw new TypeError()
-  |> processJSON
+```
+```js
+do {
+  const response = "https://pk.example/berlin-calling.json"
+    |> await fetch(#, { mode: "cors" });
+  response
+    |> #.headers.get("content-type")
+    |> #??.toLowerCase()
+    |> #.indexOf("application/json")
+    |> # >= 0
+    |> # ? response.json() : throw new TypeError()
+    |> await #
+    |> processJSON
+}
 ```
 
 ## Nomenclature
@@ -367,7 +385,7 @@ Another goal is to statically prevents a writing JavaScript programmer from acci
 2. If the body starts with `new`, followed by mere identifier, optionally with a chain of properties, and with no parentheses or brackets, then that identifier is interpreted to be a **tacit constructor**.
   ```
   PipelineTacitConstructor :
-  `new` SimpleMemberExpression
+    `new` SimpleMemberExpression
   ```
 
 3. Otherwise, the body is now an arbitrary expression. Because the expression is not in tacit style, it must use that pipe’s topic variable. ([TO DO: Formalize this static semantic as `usesTopic()`.] Topic variables from the body scopes of other, inner pipelines do not count.) If there is no such topic variable in the expression, then a syntax error is thrown.
@@ -661,3 +679,4 @@ There are a number of other ways of potentially accomplishing the above use case
 [37]: https://en.wikipedia.org/wiki/Hygienic_macro
 [MDN’s guide on expressions and operators]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
 [formal grammar]: #grammar
+[Clojure pipe]: https://clojuredocs.org/clojure.core/as-%3E
