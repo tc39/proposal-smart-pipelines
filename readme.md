@@ -298,7 +298,7 @@ do { const $ = …; settimeout(() => $ |> f |> # * 500) }
 ```
 
 ### Property-chained tacit style
-
+[TO DO]
 
 | Expression                            | Result                          |
 | ------------------------------------- | ------------------------------- |
