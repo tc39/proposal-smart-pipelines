@@ -24,7 +24,6 @@ function capitalize (string) {
 }
 ```
 
-Now look at the nested expression below. Expressions like this happen often in JavaScript: whenever any value must be passed through a series of transformations, whether they be operations, functions, or constructors. Unfortunately, this nested expression—and many like it—are quite messy spaghetti. Writing it requires many levels of indentation, and reading it requires checking both the left and right of each subexpression to understand its data flow.
 ```js
 new User.Message(
   capitalizedString(
@@ -678,8 +677,8 @@ There are a number of other ways of potentially accomplishing the above use case
 [es-grammar]: https://tc39.github.io/ecma262/#sec-syntactic-and-lexical-grammars
 [es-lexical-grammar]: https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar
 [es-punctuators]: https://tc39.github.io/ecma262/#sec-punctuators
-[in relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
-[for iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
+[`in` relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
+[`for` iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
 [assignment operator]: https://tc39.github.io/ecma262/#sec-assignment-operators
 [25]: https://en.wikipedia.org/wiki/Garden_path_sentence
 [26]: #smart-body-syntax
