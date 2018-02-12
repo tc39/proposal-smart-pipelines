@@ -59,7 +59,7 @@ Note also that it was not necessary to include parentheses for `capitalize` or `
   |> # + '!'
 ```
 
-Being able to automatically detect this tacit style is the “smart” part of these “smart pipeline operators”; for more information, see the [“smart body syntax” section][20].
+Being able to automatically detect this tacit style is the “smart” part of this “smart pipe operator”; for more information, see the explanation of “[tacit style][]” and of “[smart body syntax][]”.
 
 Now following are various examples adapted from useful, real-world code.
 
@@ -264,7 +264,7 @@ Alternatively, you may omit the body expression’s topic variables if the body 
 
 The body expression would then be called as a unary function or constructor, without having to use the topic variable as an explicit argument.
 
-This is called [<dfn>tacit style</dfn> or <dfn>point-free style</dfn>][24]. When a pipe is in tacit style, the body expression is called a <dfn>tacit function</dfn> or a <dfn>tacit constructor</dfn>, depending on if it starts with `new`.
+This is called [<dfn>tacit style</dfn> or <dfn>point-free style</dfn>][24]. When a pipe is in tacit style, the body expression is called a <dfn>tacit function</dfn> or a <dfn>tacit constructor</dfn>, depending on if it starts with `new`. Either way, the body must otherwise consist of only a <dfn>simple property chain</dfn>, which is simply an identifier (like `abc`), optionally chained with member properties (like `abc.property`). They are more formally defined in [smart body syntax][].
 
 Tacit style never has parentheses in the pipeline body (that is, do this `… |> fetch` and not this `… |> fetch()`). If you need parentheses, you must use a topic variable (like this `… |> fetch(#, { method: 'options' })`).
 
@@ -300,6 +300,29 @@ do { const $ = …; settimeout(() => $ |> f |> # * 500) }
 … |> settimeout(() => f(#) |> # * 500)
 … |> settimeout(() => # |> f |> # * 500)
 ```
+
+### Property-chained tacit style
+
+
+| Expression                            | Result                          |
+| ------------------------------------- | ------------------------------- |
+| **`'2018' \|> Date(#)`**              | **`Date('2018')`**              |
+| **`'2018' \|> Date`**                 | **`Date('2018')`**              |
+|   `'2018' \|> Date()`                 |   syntax error: missing `#`     |
+|   `'2018' \|> (Date)`                 |   syntax error: missing `#`     |
+| **`'2018' \|> Date.parse(#)`**        | **`Date.parse('2018')`**        |
+| **`'2018' \|> Date.parse`**           | **`Date.parse('2018')`**        |
+|   `'2018' \|> Date.parse()`           |   syntax error: missing `#`     |
+|   `'2018' \|> (Date.parse)`           |   syntax error: missing `#`     |
+| **`'2018' \|> global.Date.parse(#)`** | **`global.Date.parse('2018')`** |
+| **`'2018' \|> global.Date.parse`**    | **`global.Date.parse('2018')`** |
+|   `'2018' \|> global.Date.parse()`    |   syntax error: missing `#`     |
+|   `'2018' \|> (global.Date.parse)`    |   syntax error: missing `#`     |
+| **`'2018' \|> new global.Date(#)`**   | **`new Date('2018')`**          |
+| **`'2018' \|> new global.Date`**      | **`new Date('2018')`**          |
+|   `'2018' \|> new global.Date()`      |   syntax error: missing `#`     |
+|   `'2018' \|> (new global.Date)`      |   syntax error: missing `#`     |
+
 ## Grammar
 This proposal uses the [same grammar notation as that from the ES standard][es-grammar].
 
@@ -392,28 +415,9 @@ Another goal is to statically prevents a writing JavaScript programmer from acci
 
   `PipelineTopicalBody` will be defined in the next section.
 
-If a pipeline body *never* uses a topic variable, then it must be a permitted tacit unary function (single identifier or simple property chain). Otherwise, it is a syntax error. In particular, tacit style *never* uses parentheses. If they need to have parentheses, then they need to have use the topic variable. The following table summarizes these rules.
+If a pipeline body *never* uses a topic variable, then it must be a permitted tacit unary function (single identifier or simple property chain). Otherwise, it is a syntax error. In particular, tacit style *never* uses parentheses. If they need to have parentheses, then they need to have use the topic variable. See also [property-chained tacit style][].
 
-| Expression                            | Result                          |
-| ------------------------------------- | ------------------------------- |
-| **`'2018' \|> Date(#)`**              | **`Date('2018')`**              |
-| **`'2018' \|> Date`**                 | **`Date('2018')`**              |
-|   `'2018' \|> Date()`                 |   syntax error: missing `#`     |
-|   `'2018' \|> (Date)`                 |   syntax error: missing `#`     |
-| **`'2018' \|> Date.parse(#)`**        | **`Date.parse('2018')`**        |
-| **`'2018' \|> Date.parse`**           | **`Date.parse('2018')`**        |
-|   `'2018' \|> Date.parse()`           |   syntax error: missing `#`     |
-|   `'2018' \|> (Date.parse)`           |   syntax error: missing `#`     |
-| **`'2018' \|> global.Date.parse(#)`** | **`global.Date.parse('2018')`** |
-| **`'2018' \|> global.Date.parse`**    | **`global.Date.parse('2018')`** |
-|   `'2018' \|> global.Date.parse()`    |   syntax error: missing `#`     |
-|   `'2018' \|> (global.Date.parse)`    |   syntax error: missing `#`     |
-| **`'2018' \|> new global.Date(#)`**   | **`new Date('2018')`**          |
-| **`'2018' \|> new global.Date`**      | **`new Date('2018')`**          |
-|   `'2018' \|> new global.Date()`      |   syntax error: missing `#`     |
-|   `'2018' \|> (new global.Date)`      |   syntax error: missing `#`     |
-
-### General static semantics
+### General semantics
 A pipe expression’s semantics are:
 1. The topic expression is evaluated into the topic’s value; call this `topicValue`.
 2. [The body expression is tested for its type][26]: Is it in tacit style (as a tacit function or a tacit constructor), is it in topical style, or is it an invalid body?
@@ -652,7 +656,6 @@ There are a number of other ways of potentially accomplishing the above use case
 [17]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
 [18]: https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394
 [19]: https://github.com/tc39/proposal-dynamic-import/issues
-[20]: #smart-body-syntax
 [21]: http://underscorejs.org
 [22]: https://github.com/sindresorhus/pify
 [23]: https://fetch.spec.whatwg.org
@@ -680,3 +683,5 @@ There are a number of other ways of potentially accomplishing the above use case
 [MDN’s guide on expressions and operators]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
 [formal grammar]: #grammar
 [Clojure pipe]: https://clojuredocs.org/clojure.core/as-%3E
+[property-chained tacit style]: #property-chained-tacit-style
+[smart body syntax]: #smart-body-syntax
