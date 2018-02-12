@@ -232,7 +232,7 @@ The binary operator itself may be referred to as a <dfn>pipe</dfn>, a <dfn>pipe 
 
 A pipe operator between two expressions forms a <dfn>pipe expression</dfn>. One or more pipe expressions in a chain form a <dfn>pipeline</dfn>. For each pipe expression, the expression before the pipe is the pipeline’s <dfn>left-hand side (LHS)</dfn>, also known as its <dfn>topic expression</dfn> or its <dfn>topic</dfn>; the expression after the pipe is its <dfn>right-hand side (RHS)</dfn>, also known as its <dfn>body expression</dfn> or its <dfn>body</dfn>. The pipe operator is said <dfn>to pipeline</dfn> the LHS/topic’s value <dfn>through</dfn> the RHS/body expression, where “pipeline” here is used as a verb.
 
-A <dfn><var>PipelineExpression</var></dfn> or <dfn>pipeline-level expression</dfn> is an expression at the same [precedence level of the pipe operator](#pipeline-syntax). Although all pipelines are <var>PipelineExpression</var>s, most <var>PipelineExpression</var>s are not actually pipelines; conditional operations, logical-or operations, or any other expressions that have tighter syntactic precedence than the pipe operation—those are also <var>PipelineExpression</var>s.
+A <dfn>`PipelineExpression`</dfn> or <dfn>pipeline-level expression</dfn> is an expression at the same [precedence level of the pipe operator][pipeline syntax]. Although all pipelines are `PipelineExpression`s, most `PipelineExpression`s are not actually pipelines; conditional operations, logical-or operations, or any other expressions that have tighter syntactic precedence than the pipe operation—those are also `PipelineExpression`s.
 
 The special token `#` is a <dfn>topic variable</dfn>: it is a nullary operator that acts as a special variable. The topic variable is *not* an identifier and cannot be manually declared (`const #` is a syntax error), nor can it be assigned with a value (`# = 3` is a syntax error). Instead, the topic variable may be implicitly, lexically bound using a pipeline. When a pipeline’s body expression is in <dnf>topical style</dfn>, the body expression forms an inner lexical scope—called the pipeline’s <dfn>body scope</dfn>—within which the topic variable is implicitly bound to the value of the topic, acting as a **placeholder** for the topic’s value.
 
@@ -242,7 +242,7 @@ Alternatively, you may omit the body expression’s topic variables if the body 
 This proposal uses the [same grammar notation as that from the ES standard][es-grammar].
 
 ### Lexing
-The lexical rule for [<var>Punctuator</var> tokens][es-punctuators] would be modified. Two new tokens, `|>` for the binary pipe and `#` for the topic variable, would be added to the Punctuators:
+The lexical rule for [`Punctuator` tokens][es-punctuators] would be modified. Two new tokens, `|>` for the binary pipe and `#` for the topic variable, would be added to the Punctuators:
 ```
 Punctuator :: one of
   `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==`
@@ -251,35 +251,64 @@ Punctuator :: one of
   `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
 ```
 
+### Syntax parameters
+In the ES standard, expressions in general are parameterized with three flags:
+
+* <dfn>`In`</dfn>: Whether the current context allows the [`in` relational operator][], which is false only in the headers of [`for` iteration statements][].
+* <dfn>`Yield`</dfn>: Whether the current context is within a `yield` expression/declaration.
+* <dfn>`Await`</dfn>: Whether the current context is within an `await` expression/declaration.
+
 ### Pipeline syntax
 A pipeline `topic |> body` is a left-associative (though see [bidirectional associativity][]) binary operation with a loose precedence.
 
 Precedence is tighter than assignment (`=`, `+=`, …), generator `yield` and `yield *`, and sequence `,`; and it is looser than logical ternary conditional (`… ? … : …`), logical and/or `&&`/`||`, bitwise and/or/xor, `&`/`|`/`^`, equality/inequality `==`/`===`/`!=`/`!==`, and every other type of expression. See also [MDN’s guide on expressions and operators][]. If the pipe operation were any tighter than this level, its body would have to be parenthesized for many frequent types of expressions. However, the result of a pipeline is also expected to often serve as the body of a variable assignment `=`, so it is tighter than assignment operators.
 
-1. Given these mode parameters, defined for [primary expressions]:
-  * <dfn><var>In</var></dfn>: Whether the current context allows the [`in` relational operator][], which is false in the headers of [`for` iteration statements][].
-  * <dfn><var>Yield</var></dfn>: Whether the current context is within a `yield` expression/declaration.
-  * <dfn><var>Await</var></dfn>: Whether the current context is within an `await` expression/declaration.
-2. Then an expression is a pipeline-level expression (a <var>PipelineExpression</var>) only if:
+The [assignment operator][] is already parameterized on `In`, `Yield`, and `Await`; it may be a conditional expression, yield expression, arrow function, async arrow function, or assignment:
+```
+AssignmentExpression[In, Yield, Await] :
+  ConditionalExpression[?In, ?Yield, ?Await]
+  [+Yield] YieldExpression[?In, ?Await]
+  ArrowFunction[?In, ?Yield, ?Await]
+  AsyncArrowFunction[?In, ?Yield, ?Await]
+  LeftHandSideExpression[?Yield, ?Await]
+    `=` AssignmentExpression[?In, ?Yield, ?Await]
+  LeftHandSideExpression[?Yield, ?Await]
+    AssignmentOperator AssignmentExpression[?In, ?Yield, ?Await]
+```
 
-  * It is either also a conditional-level expression <var>ConditionalExpression</var>,
-  * Or it is another pipeline-level expression, followed by a `|>` token, then a pipeline body (<var>PipelineBody</var>, defined next).
+Here, the conditional-expression rule (`AssignmentExpression : ConditionalExpression`) would be replaced with one for pipeline expressions (`AssignmentExpression : PipelineExpression`):
+```
+AssignmentExpression[In, Yield, Await] :
+  PipelineExpression[?In, ?Yield, ?Await]
+  [+Yield] YieldExpression[?In, ?Await]
+  …
+```
 
-  ```
-  PipelineExpression[In, Yield, Await]:
-    ConditionalExpression[?In, ?Yield, ?Await]
-    PipelineExpression[?In, ?Yield, ?Await] `|>`
-      PipelineBody[?In, ?Yield, ?Await]
-  ```
+An expression is a pipeline-level expression (a `PipelineExpression`) only if:
+
+* It is either also a conditional-level expression `ConditionalExpression`, with the same parameters above;
+* Or it is another pipeline-level expression, followed by a `|>` token, then a pipeline body (`PipelineBody`, defined next), with the same parameters as above.
+
+```
+PipelineExpression[In, Yield, Await]:
+  ConditionalExpression[?In, ?Yield, ?Await]
+  PipelineExpression[?In, ?Yield, ?Await] `|>`
+    PipelineBody[?In, ?Yield, ?Await]
+```
 
 ### Smart body syntax
-When the parser checks the RHS/body expression, it must determine what style it is in. There are four outcomes for each pipeline body: tacit constructor, tacit function, parameterized expression, or invalid body.
+When the parser checks the RHS/body expression, it must determine what style it is in. There are four outcomes for each pipeline body: tacit constructor, tacit function, topical-style expression, or syntax error.
+
+```
+PipelineBody[In, Yield, Await]:
+  PipelineTacitConstructor
+  PipelineTacitFunction
+  PipelineTopicalBody[In, Yield, Await]
+```
 
 The goal here is to minimize the parsing lookahead that the compiler must check before it can distinguish between tacit style and topic-token style. By restricting the space of valid tacit-style pipeline bodies (that is, without topic variables), the rule prevents [garden-path syntax][25] that would otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
-``
-Another goal is to statically prevents a writing JavaScript programmer from accidentally omitting a topic variable where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the writer intended. The JavaScript programmer is encouraged to use topic variables and avoid tacit style, where tacit style may be visually confusing to the reader.
 
-The parsing rules are such that:
+Another goal is to statically prevents a writing JavaScript programmer from accidentally omitting a topic variable where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the writer intended. The JavaScript programmer is encouraged to use topic variables and avoid tacit style, where tacit style may be visually confusing to the reader.
 
 1. If the body is a mere identifier, optionally with a chain of properties, and with no parentheses or brackets, then that identifier is assumed to be a **tacit function**.
 
@@ -574,11 +603,14 @@ There are a number of other ways of potentially accomplishing the above use case
 [22]: https://github.com/sindresorhus/pify
 [23]: https://fetch.spec.whatwg.org
 [24]: https://en.wikipedia.org/wiki/Tacit_programming
+[nomenclature]: #nomenclature
+[pipeline syntax]: #pipeline-syntax
 [es-grammar]: https://tc39.github.io/ecma262/#sec-syntactic-and-lexical-grammars
 [es-lexical-grammar]: https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar
 [es-punctuators]: https://tc39.github.io/ecma262/#sec-punctuators
 [in relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
 [for iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
+[assignment operator]: https://tc39.github.io/ecma262/#sec-assignment-operators
 [25]: https://en.wikipedia.org/wiki/Garden_path_sentence
 [26]: #smart-body-syntax
 [28]: #topic-variable-semantics-by-replacing-them-with-autogenerated-variables
