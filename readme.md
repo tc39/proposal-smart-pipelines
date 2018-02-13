@@ -274,8 +274,9 @@ fetch('/music/pk/altes-kamuffel')
 <td>
 
 ```js
-fetch('https://example.com/', { method: 'HEAD' })
-  .then(res =>
+fetch('https://example.com/',
+  { method: 'HEAD' }
+).then(res =>
     log(res.headers.get('content-type'))
   )
 ```
