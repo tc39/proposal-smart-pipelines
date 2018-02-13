@@ -55,13 +55,13 @@ BSD License.
 <td>
 
 ```js
-function doubleSay (string, separatorString) {
-  return `${string}${separatorString}${string}`
+function doubleSay (str, separatorStr) {
+  return `${str}${separatorStr}${str}`
 }
 
-function capitalize (string) {
-  return string[0].toUpperCase()
-    + string.substring(1)
+function capitalize (str) {
+  return str[0].toUpperCase()
+    + str.substring(1)
 }
 
 new User.Message(
@@ -77,13 +77,13 @@ new User.Message(
 <td>
 
 ```js
-function doubleSay (string, separatorString) {
-  return `${string}${separatorString}${string}`
+function doubleSay (str, separatorStr) {
+  return `${str}${separatorStr}${string}`
 }
 
-function capitalize (string) {
-  return string[0].toUpperCase()
-    + string.substring(1)
+function capitalize (str) {
+  return str[0].toUpperCase()
+    + str.substring(1)
 }
 
 stringPromise
@@ -108,12 +108,12 @@ MIT License.
 <td>
 
 ```js
-function(obj, predicate, context) {
+function (obj, pred, context) {
   var key;
   if (isArrayLike(obj)) {
-    key = _.findIndex(obj, predicate, context);
+    key = _.findIndex(obj, pred, context);
   } else {
-    key = _.findKey(obj, predicate, context);
+    key = _.findKey(obj, pred, context);
   }
   if (key !== void 0 && key !== -1)
     return obj[key];
@@ -123,10 +123,10 @@ function(obj, predicate, context) {
 <td>
 
 ```js
-function(obj, predicate, context) {
+function(obj, pred, context) {
   return obj
     |> isArrayLike(#) ? _.findIndex : _.findKey
-    |> #(obj, predicate, context)
+    |> #(obj, pred, context)
     |> (# !== void 0 && # !== -1)
       ? obj[#]
       : undefined;
@@ -138,9 +138,9 @@ function(obj, predicate, context) {
 <td>
 
 ```js
-_.reject = function(obj, predicate, context) {
+function (obj, pred, context) {
   return _.filter(obj,
-    _.negate(cb(predicate)),
+    _.negate(cb(pred)),
     context
   )
 };
@@ -149,8 +149,8 @@ _.reject = function(obj, predicate, context) {
 <td>
 
 ```js
-_.reject = function(obj, predicate, context) {
-  return predicate
+function (obj, pred, context) {
+  return pred
     |> cb
     |> _.negate
     |> _.filter(obj, #, context)
@@ -164,10 +164,10 @@ _.reject = function(obj, predicate, context) {
 ```js
 function (
   sourceFunc, boundFunc,
-  context, callingContext, args
+  ctxt, callingCtxt, args
 ) {
-  if (!(callingContext instanceof boundFunc))
-    return sourceFunc.apply(context, args);
+  if (!(callingCtxt instanceof boundFunc))
+    return sourceFunc.apply(ctxt, args);
   var self = baseCreate(sourceFunc.prototype);
   var result = sourceFunc.apply(self, args);
   if (_.isObject(result)) return result;
@@ -180,10 +180,10 @@ function (
 ```js
 function (
   sourceFunc, boundFunc,
-  context, callingContext, args
+  ctxt, callingCtxt, args
 ) {
-  if (callingContext |> # instanceof boundFunc |> !#)
-    return sourceFunc.apply(context, args);
+  if (callingCtxt |> # instanceof boundFunc |> !#)
+    return sourceFunc.apply(ctxt, args);
   var self = sourceFunc
     |> #.prototype
     |> baseCreate;
