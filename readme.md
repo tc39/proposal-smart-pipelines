@@ -101,6 +101,23 @@ Note that `|> capitalize` is a tacit unary function call; `|> capitalize(#)` wou
 Ditto for `|> new User.Message`, which is a tacit unary constructor call, abbreviated from `|> new User.Message(#)`.
 
 <tr>
+<td>″″
+<td>″″
+<td>
+
+```js
+stringPromise
+  |> await #
+  |> # ?? throw new TypeError()
+  |> `${#}, ${#}`
+  |> #[0].toUpperCase() + #.substring(1)
+  |> # + '!'
+  |> new User.Message
+```
+
+<td>When tiny functions are only used once, and their bodies would be self-documenting, they are ritual boilerplate that a programmer’s style may prefer to inline.
+
+<tr>
 <td>
 
 **[Underscore.js][]** 1.8.3.<br>
@@ -348,8 +365,8 @@ Nested expressions like those in the second column occur often in JavaScript. Th
 
 ```js
 new User.Message(
-  capitalizedString(
-    doubledString(
+  capitalize(
+    doubledSay(
       (await stringPromise)
         ?? throw new TypeError(`Expected string from ${stringPromise}`)
     )
