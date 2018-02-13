@@ -60,7 +60,8 @@ function doubleSay (string, separatorString) {
 }
 
 function capitalize (string) {
-  return string[0].toUpperCase() + string.substring(1)
+  return string[0].toUpperCase()
+    + string.substring(1)
 }
 
 new User.Message(
@@ -81,16 +82,19 @@ function doubleSay (string, separatorString) {
 }
 
 function capitalize (string) {
-  return string[0].toUpperCase() + string.substring(1)
+  return string[0].toUpperCase()
+    + string.substring(1)
 }
 
 stringPromise
   |> await #
   |> # ?? throw new TypeError()
   |> doubleSay(#, ', ')
-  |> capitalize // a tacit unary function call
+  // A tacit unary function call:
+  |> capitalize
   |> # + '!'
-  |> new User.Message // a tacit unary constructor call
+  // A tacit unary constructor call:
+  |> new User.Message
 ```
 
 <tr>
@@ -104,25 +108,28 @@ MIT License.
 <td>
 
 ```js
-_.find = _.detect = function(obj, predicate, context) {
+function(obj, predicate, context) {
   var key;
   if (isArrayLike(obj)) {
     key = _.findIndex(obj, predicate, context);
   } else {
     key = _.findKey(obj, predicate, context);
   }
-  if (key !== void 0 && key !== -1) return obj[key];
+  if (key !== void 0 && key !== -1)
+    return obj[key];
 };
 ```
 
 <td>
 
 ```js
-_.find = _.detect = function(obj, predicate, context) {
+function(obj, predicate, context) {
   return obj
     |> isArrayLike(#) ? _.findIndex : _.findKey
     |> #(obj, predicate, context)
-    |> (# !== void 0 && # !== -1) ? obj[#] : undefined;
+    |> (# !== void 0 && # !== -1)
+      ? obj[#]
+      : undefined;
 };
 ```
 
@@ -156,7 +163,8 @@ _.reject = function(obj, predicate, context) {
 
 ```js
 function (
-  sourceFunc, boundFunc, context, callingContext, args
+  sourceFunc, boundFunc,
+  context, callingContext, args
 ) {
   if (!(callingContext instanceof boundFunc))
     return sourceFunc.apply(context, args);
@@ -171,7 +179,8 @@ function (
 
 ```js
 function (
-  sourceFunc, boundFunc, context, callingContext, args
+  sourceFunc, boundFunc,
+  context, callingContext, args
 ) {
   if (callingContext |> # instanceof boundFunc |> !#)
     return sourceFunc.apply(context, args);
@@ -268,7 +277,7 @@ fetch("/music/pk/altes-kamuffel")
 ```js
 fetch("/", { method: "HEAD" })
   .then(res =>
-    log(res.headers.get("strict-transport-security"))
+    log(res.headers.get("content-type"))
   )
 ```
 
@@ -277,7 +286,7 @@ fetch("/", { method: "HEAD" })
 ```js
 "/"
   |> await fetch(#, { method: "HEAD" })
-  |> #.headers.get("strict-transport-security")
+  |> #.headers.get("content-type")
 ```
 
 <tr>
@@ -285,23 +294,24 @@ fetch("/", { method: "HEAD" })
 <td>
 
 ```js
-fetch("https://example.com/blah", { mode: "cors" })
-  .then(response => {
-    if (response.headers.get("content-type")
-      ??.toLowerCase()
-      .indexOf("application/json") >= 0
-    ) {
-      return response.json()
-    } else {
-      throw new TypeError()
-    }
-  }).then(processJSON)
+fetch("https://pk.example/berlin-calling",
+  { mode: "cors" }
+).then(response => {
+  if (response.headers.get("content-type")
+    ??.toLowerCase()
+    .indexOf("application/json") >= 0
+  ) {
+    return response.json()
+  } else {
+    throw new TypeError()
+  }
+}).then(processJSON)
 ```
 
 <td>
 
 ```js
-const response = "https://example.com/blah"
+const response = "https://pk.example/berlin-calling"
   |> await fetch(#, { mode: "cors" });
 response
   |> #.headers.get("content-type")
