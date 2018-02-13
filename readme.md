@@ -287,7 +287,8 @@ fetch("/", { method: "HEAD" })
 ```js
 fetch("https://example.com/blah", { mode: "cors" })
   .then(response => {
-    if (response.headers.get("content-type")??.toLowerCase()
+    if (response.headers.get("content-type")
+      ??.toLowerCase()
       .indexOf("application/json") >= 0
     ) {
       return response.json()
@@ -296,25 +297,11 @@ fetch("https://example.com/blah", { mode: "cors" })
     }
   }).then(processJSON)
 ```
-```js
-const res = await fetch("https://example.com/blah", {
-  mode: "cors"
-});
-processJSON(do {
-  if (res.headers.get("content-type")??.toLowerCase()
-    .indexOf("application/json") >= 0
-  ) {
-    await res.json()
-  } else {
-    throw new TypeError()
-  }
-})
-```
 
 <td>
 
 ```js
-const response = "https://pk.example/berlin-calling.json"
+const response = "https://example.com/blah"
   |> await fetch(#, { mode: "cors" });
 response
   |> #.headers.get("content-type")
