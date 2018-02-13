@@ -38,6 +38,7 @@ Here is a table of code blocks in current JavaScript. Several are taken from sev
 <th>Source
 <th>Status quo
 <th>With smart pipes
+<th>Notes
 
 </thead>
 
@@ -90,12 +91,14 @@ stringPromise
   |> await #
   |> # ?? throw new TypeError()
   |> doubleSay(#, ', ')
-  // A tacit unary function call:
-  |> capitalize
-  |> # + '!'
-  // A tacit unary constructor call:
+  |> capitalize |> # + '!'
   |> new User.Message
 ```
+
+<td>
+
+Note that `|> capitalize` is a tacit unary function call; `|> capitalize(#)` would work but the `#` is unnecessary.<br>
+Ditto for `|> new User.Message`, which is a tacit unary constructor call, abbreviated from `|> new User.Message(#)`.
 
 <tr>
 <td>
@@ -117,20 +120,19 @@ function (obj, pred, context) {
   }
   if (key !== void 0 && key !== -1)
     return obj[key];
-};
+}
 ```
 
 <td>
 
 ```js
-function(obj, pred, context) {
+function (obj, pred, context) {
   return obj
     |> isArrayLike(#) ? _.findIndex : _.findKey
     |> #(obj, pred, context)
     |> (# !== void 0 && # !== -1)
-      ? obj[#]
-      : undefined;
-};
+      ? obj[#] : undefined;
+}
 ```
 
 <tr>
@@ -143,7 +145,7 @@ function (obj, pred, context) {
     _.negate(cb(pred)),
     context
   )
-};
+}
 ```
 
 <td>
@@ -154,7 +156,7 @@ function (obj, pred, context) {
     |> cb
     |> _.negate
     |> _.filter(obj, #, context)
-};
+}
 ```
 
 <tr>
@@ -171,26 +173,24 @@ function (
   var self = baseCreate(sourceFunc.prototype);
   var result = sourceFunc.apply(self, args);
   if (_.isObject(result)) return result;
-  return self;
-};
+  return self
+}
 ```
 
 <td>
 
 ```js
 function (
-  sourceFunc, boundFunc,
-  ctxt, callingCtxt, args
+  sourceFn, boundFn, ctxt, callingCtxt, args
 ) {
-  if (callingCtxt |> # instanceof boundFunc |> !#)
-    return sourceFunc.apply(ctxt, args);
-  var self = sourceFunc
-    |> #.prototype
-    |> baseCreate;
+  if (callingCtxt |> # instanceof boundFn |> !#)
+    return sourceFn.apply(ctxt, args);
+  var self = sourceFn
+    |> #.prototype |> baseCreate;
   return self
-    |> sourceFunc.apply(#, args)
+    |> sourceFn.apply(#, args)
     |> _.isObject(#) ? # : self;
-};
+}
 ```
 
 <tr>
@@ -198,23 +198,23 @@ function (
 <td>
 
 ```js
-_.size = function(obj) {
+function (obj) {
   if (obj == null) return 0;
   return isArrayLike(obj)
     ? obj.length
     : _.keys(obj).length;
-};
+}
 ```
 
 <td>
 
 ```js
-_.size = function(obj) {
+function (obj) {
   if (obj == null) return 0;
   return obj |> isArrayLike
     ? obj.length
     : obj |> _.keys |> #.length;
-};
+}
 ```
 
 <tr>
@@ -239,8 +239,7 @@ pify(fs.readFile)('package.json', 'utf8')
 ```js
 'package.json'
   |> await pify(fs.readFile)(#, 'utf8')
-  |> JSON.parse
-  |> #.name
+  |> JSON.parse |> #.name
   |> console.log
 ```
 
@@ -256,7 +255,7 @@ Creative Commons BY.
 <td>
 
 ```js
-fetch("/music/pk/altes-kamuffel")
+fetch('/music/pk/altes-kamuffel')
   .then(res => res.blob())
   .then(playBlob)
 ```
@@ -264,7 +263,7 @@ fetch("/music/pk/altes-kamuffel")
 <td>
 
 ```js
-"/music/pk/altes-kamuffel"
+'/music/pk/altes-kamuffel'
   |> await fetch(#)
   |> await #.blob()
   |> playBlob
@@ -275,18 +274,18 @@ fetch("/music/pk/altes-kamuffel")
 <td>
 
 ```js
-fetch("/", { method: "HEAD" })
+fetch('https://example.com/', { method: 'HEAD' })
   .then(res =>
-    log(res.headers.get("content-type"))
+    log(res.headers.get('content-type'))
   )
 ```
 
 <td>
 
 ```js
-"/"
-  |> await fetch(#, { method: "HEAD" })
-  |> #.headers.get("content-type")
+'https://example.com/'
+  |> await fetch(#, { method: 'HEAD' })
+  |> #.headers.get('content-type')
 ```
 
 <tr>
@@ -294,12 +293,12 @@ fetch("/", { method: "HEAD" })
 <td>
 
 ```js
-fetch("https://pk.example/berlin-calling",
-  { mode: "cors" }
+fetch('https://pk.example/berlin-calling',
+  { mode: 'cors' }
 ).then(response => {
-  if (response.headers.get("content-type")
+  if (response.headers.get('content-type')
     ??.toLowerCase()
-    .indexOf("application/json") >= 0
+    .indexOf('application/json') >= 0
   ) {
     return response.json()
   } else {
@@ -311,12 +310,12 @@ fetch("https://pk.example/berlin-calling",
 <td>
 
 ```js
-const response = "https://pk.example/berlin-calling"
-  |> await fetch(#, { mode: "cors" });
+const response = 'https://pk.example/berlin-calling'
+  |> await fetch(#, { mode: 'cors' });
 response
-  |> #.headers.get("content-type")
+  |> #.headers.get('content-type')
   |> #??.toLowerCase()
-  |> #.indexOf("application/json")
+  |> #.indexOf('application/json')
   |> # >= 0
   |> # ? response : throw new TypeError()
   |> await #.json()
