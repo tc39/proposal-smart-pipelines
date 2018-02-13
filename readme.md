@@ -28,7 +28,32 @@ You can take part in the discussions on the [GitHub issue tracker][]. When you f
 This specification uses `#` as its topic token, but note that this is not set in stone. In particular, `@` could also be used. would be similarly terse, visually distinguishable, and easily typeable. [Bikeshedding over what characters to use for the topic token is occurring in a GitHub issue](https://github.com/tc39/proposal-pipeline-operator/issues/91).
 
 ## Motivation
-Let these two functions be defined:
+Here is a table of code blocks in current JavaScript. Several are taken from several real-world code libraries.
+
+<table>
+
+<thead>
+
+<tr>
+<th>Source
+<th>Status quo
+<th>With smart pipes
+
+</thead>
+
+<tbody>
+
+<tr>
+<td>
+
+[Prior pipeline proposal][].<br>
+[Gilbert “mindeavor”][mindeavor] et al.<br>
+ECMA International.<br>
+2017–2018.<br>
+BSD License.
+
+<td>
+
 ```js
 function doubleSay (string, separatorString) {
   return `${string}${separatorString}${string}`
@@ -37,10 +62,7 @@ function doubleSay (string, separatorString) {
 function capitalize (string) {
   return string[0].toUpperCase() + string.substring(1)
 }
-```
 
-Now look at the nested expression below. Expressions like this happen often in JavaScript: whenever any value must be passed through a series of transformations, whether they be operations, functions, or constructors. Unfortunately, this nested expression—and many like it—can be quite messy spaghetti code, due to its mixing of prefix, infix, and postfix expressions together. Writing the code requires many nested levels of indentation. Reading the code requires checking both the left and right of each subexpression to understand its data flow.
-```js
 new User.Message(
   capitalizedString(
     doubledString(
@@ -51,8 +73,17 @@ new User.Message(
 )
 ```
 
-With the smart pipe operator, the code above could be terser and, literally, straightforward. Prefix, infix, and postfix expressions would be less tangled together in threads of spaghetti. Instead, data values would be piped from left to right through a single flat thread of postfix expressions, essentially forming a [Reverse Polish notation][]. The syntax statically is [term rewritable into already valid code][term rewriting] with theoretically zero runtime cost.
+<td>
+
 ```js
+function doubleSay (string, separatorString) {
+  return `${string}${separatorString}${string}`
+}
+
+function capitalize (string) {
+  return string[0].toUpperCase() + string.substring(1)
+}
+
 stringPromise
   |> await #
   |> # ?? throw new TypeError()
@@ -62,26 +93,16 @@ stringPromise
   |> new User.Message // a tacit unary constructor call
 ```
 
-This code’s terseness and flatness may be both easier for the JavaScript programmer to read and to edit. The reader may follow the flow of data more easily through this single flattened thread of postfix operations. And the editor may more easily add or remove operations at the beginning, end, or middle of the thread, without changing the indentation of many nearby, unrelated lines.
+<tr>
+<td rowspan=4>
 
-Similar use cases appear numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, object constructions, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions. In particular, the styles of [functional programming][], [dataflow programming][], and [tacit programming][] may benefit from pipelining. The smart pipe operator can simply handle them all.
+[Underscore.js][] 1.8.3.<br>
+[Jeremy Ashkenas][jashkenas] et al.<br>
+2009–2018.<br>
+MIT License.
 
-Note also that it was not necessary to include parentheses for `capitalize` or `new User.Message`; they were implicitly included as a unary function call and a unary constructor call, respectively. That is, the preceding example is equivalent to:
-```js
-'hello'
-  |> await #
-  |> # ?? throw new TypeError(`Expected string from ${#}`)
-  |> doubleSay(#, ', ')
-  |> capitalize(#)
-  |> # + '!'
-```
+<td>
 
-Being able to automatically detect this tacit style is the “smart” part of this “smart pipe operator”; for more information, see the explanation of “[tacit style][]” and of “[smart body syntax][]”.
-
-Here are some examples adapted from useful, real-world code.
-
-### Underscore.js
-Adapted from [Underscore.js][] 1.8.3 by Jeremy Ashkenas et al., under MIT License.
 ```js
 _.find = _.detect = function(obj, predicate, context) {
   var key;
@@ -93,6 +114,9 @@ _.find = _.detect = function(obj, predicate, context) {
   if (key !== void 0 && key !== -1) return obj[key];
 };
 ```
+
+<td>
+
 ```js
 _.find = _.detect = function(obj, predicate, context) {
   return obj
@@ -101,7 +125,10 @@ _.find = _.detect = function(obj, predicate, context) {
     |> (# !== void 0 && # !== -1) ? obj[#] : undefined;
 };
 ```
-***
+
+<tr>
+<td>
+
 ```js
 _.reject = function(obj, predicate, context) {
   return _.filter(obj,
@@ -110,6 +137,9 @@ _.reject = function(obj, predicate, context) {
   )
 };
 ```
+
+<td>
+
 ```js
 _.reject = function(obj, predicate, context) {
   return predicate
@@ -118,9 +148,12 @@ _.reject = function(obj, predicate, context) {
     |> _.filter(obj, #, context)
 };
 ```
-***
+
+<tr>
+<td>
+
 ```js
-var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
+function (sourceFunc, boundFunc, context, callingContext, args) {
   if (!(callingContext instanceof boundFunc))
     return sourceFunc.apply(context, args);
   var self = baseCreate(sourceFunc.prototype);
@@ -129,8 +162,11 @@ var executeBound = function(sourceFunc, boundFunc, context, callingContext, args
   return self;
 };
 ```
+
+<td>
+
 ```js
-var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
+function (sourceFunc, boundFunc, context, callingContext, args) {
   if (callingContext |> # instanceof boundFunc |> !#)
     return sourceFunc.apply(context, args);
   var self = sourceFunc
@@ -141,7 +177,10 @@ var executeBound = function(sourceFunc, boundFunc, context, callingContext, args
     |> _.isObject(#) ? # : self;
 };
 ```
-***
+
+<tr>
+<td>
+
 ```js
 _.size = function(obj) {
   if (obj == null) return 0;
@@ -150,6 +189,9 @@ _.size = function(obj) {
     : _.keys(obj).length;
 };
 ```
+
+<td>
+
 ```js
 _.size = function(obj) {
   if (obj == null) return 0;
@@ -159,8 +201,16 @@ _.size = function(obj) {
 };
 ```
 
-### Pify
-Adapted from [Pify][] 3.0.0 by Sindre Sorhus, under MIT License.
+<tr>
+<td>
+
+[Pify][] 3.0.0.<br>
+[Sindre Sorhus][sindresorhus] et al.<br>
+2015–2018.<br>
+MIT License.
+
+<td>
+
 ```js
 pify(fs.readFile)('package.json', 'utf8').then(data => {
   console.log(JSON.parse(data).name)
@@ -169,6 +219,9 @@ pify(fs.readFile)('package.json', 'utf8').then(data => {
 ```js
 console.log(JSON.parse((await pify(fs.readFile)('package.json', 'utf8')).name));
 ```
+
+<td>
+
 ```js
 'package.json'
   |> await pify(fs.readFile)(#, 'utf8')
@@ -176,20 +229,18 @@ console.log(JSON.parse((await pify(fs.readFile)('package.json', 'utf8')).name));
   |> #.name
   |> console.log
 ```
-***
-```js
-return opts.include
-  ? opts.include.some(match)
-  : !opts.exclude.some(match)
-```
-```js
-return opts.include
-  ? opts.include.some(match)
-  : opts.exclude.some(match) |> !#
-```
 
-### Fetch Standard
-Adapted from [Fetch, the living web standard by WHATWG][WHATWG Fetch], under Creative Commons BY.
+<tr>
+<td rowspan=3>
+
+[WHATWG Fetch Standard][].<br>
+[Anne van Kesteren][annevk] et al.<br>
+2011–2018.<br>
+WHATWG.<br>
+Creative Commons BY.
+
+<td>
+
 ```js
 fetch("/music/pk/altes-kamuffel.flac")
   .then(res => res.blob())
@@ -198,13 +249,19 @@ fetch("/music/pk/altes-kamuffel.flac")
 ```js
 playBlob(await (await fetch("/music/pk/altes-kamuffel.flac")).blob())
 ```
+
+<td>
+
 ```js
 "/music/pk/altes-kamuffel.flac"
   |> await fetch(#)
   |> await #.blob()
   |> playBlob
 ```
-***
+
+<tr>
+<td>
+
 ```js
 fetch("/", { method: "HEAD" })
   .then(res => log(res.headers.get("strict-transport-security")))
@@ -213,12 +270,18 @@ fetch("/", { method: "HEAD" })
 (await fetch("/", { method: "HEAD" }))
   .headers.get("strict-transport-security")
 ```
+
+<td>
+
 ```js
 "/"
   |> await fetch(#, { method: "HEAD" })
   |> #.headers.get("strict-transport-security")
 ```
-***
+
+<tr>
+<td>
+
 ```js
 fetch("https://pk.example/berlin-calling.json", { mode: "cors" })
   .then(response => {
@@ -245,6 +308,9 @@ processJSON(do {
   }
 })
 ```
+
+<td>
+
 ```js
 const response = "https://pk.example/berlin-calling.json"
   |> await fetch(#, { mode: "cors" });
@@ -257,6 +323,51 @@ response
   |> await #.json()
   |> processJSON
 ```
+
+</tbody>
+
+</table>
+
+Nested expressions like those in the second column occur often in JavaScript. They occur whenever any single value must be processed by a series of transformations, whether they be operations, functions, or constructors. Unfortunately, this nested expression—and many like it—can be quite messy spaghetti code, due to its mixing of prefix, infix, and postfix expressions together. Writing the code requires many nested levels of indentation. Reading the code requires checking both the left and right of each subexpression to understand its data flow.
+
+```js
+new User.Message(
+  capitalizedString(
+    doubledString(
+      (await stringPromise)
+        ?? throw new TypeError(`Expected string from ${stringPromise}`)
+    )
+  ) + '!'
+)
+```
+
+With the smart pipe operator, the code above could be terser and, literally, straightforward. Prefix, infix, and postfix expressions would be less tangled together in threads of spaghetti. Instead, data values would be piped from left to right through a single flat thread of postfix expressions, essentially forming a [Reverse Polish notation][]. The syntax statically is [term rewritable into already valid code][term rewriting] with theoretically zero runtime cost.
+
+```js
+stringPromise
+  |> await #
+  |> # ?? throw new TypeError()
+  |> doubleSay(#, ', ')
+  |> capitalize // a tacit unary function call
+  |> # + '!'
+  |> new User.Message // a tacit unary constructor call
+```
+
+This code’s terseness and flatness may be both easier for the JavaScript programmer to read and to edit. The reader may follow the flow of data more easily through this single flattened thread of postfix operations. And the editor may more easily add or remove operations at the beginning, end, or middle of the thread, without changing the indentation of many nearby, unrelated lines.
+
+Similar use cases appear numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, object constructions, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions. In particular, the styles of [functional programming][], [dataflow programming][], and [tacit programming][] may benefit from pipelining. The smart pipe operator can simply handle them all.
+
+Note also that it was not necessary to include parentheses for `capitalize` or `new User.Message`; they were implicitly included as a unary function call and a unary constructor call, respectively. That is, the preceding example is equivalent to:
+```js
+'hello'
+  |> await #
+  |> # ?? throw new TypeError(`Expected string from ${#}`)
+  |> doubleSay(#, ', ')
+  |> capitalize(#)
+  |> # + '!'
+```
+
+Being able to automatically detect this tacit style is the “smart” part of this “smart pipe operator”; for more information, see the explanation of “[tacit style][]” and of “[smart body syntax][]”.
 
 ## Nomenclature
 The binary operator itself `|>` may be referred to as a **pipe**, a **pipe operator**, or a **pipeline operator**; all these names are equivalent. This specification will prefer the term “pipe operator”.
@@ -693,6 +804,8 @@ There are a number of other ways of potentially accomplishing the above use case
 
 [`in` relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
 
+[annevk]: https://github.com/annevk
+
 [antecedent]: https://en.wikipedia.org/wiki/Antecedent_(grammar)
 
 [assignment operator]: https://tc39.github.io/ecma262/#sec-assignment-operators
@@ -729,6 +842,8 @@ There are a number of other ways of potentially accomplishing the above use case
 
 [Hack pipe]: https://docs.hhvm.com/hack/operators/pipe-operator
 
+[jashkenas]: https://github.com/jashkenas
+
 [Julia pipe]: https://docs.julialang.org/en/stable/stdlib/base/#Base.:|>
 
 [lexically hygienic]: https://en.wikipedia.org/wiki/Hygienic_macro
@@ -738,6 +853,8 @@ There are a number of other ways of potentially accomplishing the above use case
 [LiveScript pipe]: http://livescript.net/#operators-piping
 
 [MDN’s guide on expressions and operators]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
+
+[mindeavor]: https://github.com/gilbert
 
 [Node-stream piping]: https://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
 
@@ -757,6 +874,8 @@ There are a number of other ways of potentially accomplishing the above use case
 
 [previous pipeline-placeholder discussions]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
 
+[Prior pipeline proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
+
 [property-chained tacit style]: #property-chained-tacit-style
 
 [Proposal 4: Smart Mix on the pipe-proposal wiki]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
@@ -768,6 +887,8 @@ There are a number of other ways of potentially accomplishing the above use case
 [R pipe]: https://cran.r-project.org/web/packages/magrittr/index.html
 
 [runtime semantics]: #runtime-semantics
+
+[sindresorhus]: https://github.com/sindresorhus
 
 [smart body syntax]: #smart-body-syntax
 
@@ -797,7 +918,7 @@ There are a number of other ways of potentially accomplishing the above use case
 
 [Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
 
-[WHATWG Fetch]: https://fetch.spec.whatwg.org
+[WHATWG Fetch Standard]: https://fetch.spec.whatwg.org
 
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
 
