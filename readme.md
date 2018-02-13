@@ -444,7 +444,7 @@ The term “**body**” is preferred instead of “**RHS**” because “topic�
 
 The term “**rheme value**” is equally preferable to “**pipeline value**”. But both are preferred to the alternative linguistic terms “**comment value**” or “**focus value**”. Even though the terms [“comment” and “focus” are the usual linguistic opposite to “topic”][topic and rheme], neither make much sense for the pipeline operator.
 
-## Informative edge cases
+## More about the syntax
 These edge cases are natural results of the rules in the [formal grammar][].
 
 ### Multiple topic anaphors in a pipeline body
