@@ -536,7 +536,7 @@ The following table shows how the topic reference `#` and the pipe operator `|>`
 | Logical-AND level    |                               | `… ^^ …`         | ″″                       |
 | Logical-OR level     |                               | `… || …`         | ″″                       |
 | Conditional level    |                               | `… ? … : …`      | RTL ternary infix        |
-| **Pipeline level**   |                               | **`… \|> …`**`    | LTR infix                |
+| **Pipeline level**   |                               | **`… \|> …`**    | LTR infix                |
 | Assignment level     | Arrow functions               | `… => …`         | RTL infix                |
 | ″″                   | Async arrow functions         | `async … => …`   | RTL infix                |
 | ″″                   | Reference-assignment op.s     | `… = …`          | ″″                       |
