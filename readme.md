@@ -499,8 +499,8 @@ The following table shows how the topic reference `#` and the pipe operator `|>`
 | ″″                   | Tagged templates              | ``…`…```         | LTR infix                |
 | ″″                   | Super properties              | `super.…`        | LTR infix                |
 | ″″                   | Meta properties               | `meta.…`         | unchainable prefix       |
-| ″″                   | Super call operations         | `super(…)`       | unchainable prefix       |
-| ″″                   | New operations                | `new …`          | RTL prefix               |
+| ″″                   | Super call op.s               | `super(…)`       | unchainable prefix       |
+| ″″                   | New op.s                      | `new …`          | RTL prefix               |
 | ″″                   | Normal call expressions       | `…(…)`           | LTR infix with circumfix |
 | Postfix unary level  | Postfix increment op.s        | `…++`            | postfix                  |
 | ″″                   | Postfix decrement op.s        | `…--`            | postfix                  |
