@@ -31,19 +31,14 @@ This specification uses `#` as its topic token, but note that this is not set in
 Here is a table of code blocks in current JavaScript. Several are taken from several real-world code libraries.
 
 <table>
-
 <thead>
-
 <tr>
 <th>Source
 <th>Status quo
 <th>With smart pipes
 <th>Notes
 
-</thead>
-
 <tbody>
-
 <tr>
 <td>
 
@@ -356,8 +351,6 @@ response
 ```
 
 <td>
-
-</tbody>
 
 </table>
 
