@@ -400,7 +400,7 @@ Note also that it was not necessary to include parentheses for `capitalize` or `
   |> # + '!'
 ```
 
-Being able to automatically detect this [tacit style][] is the **smart** part of this “smart pipe operator”.
+Being able to automatically detect this [tacit style][] is the [**smart** part of this “smart pipe operator”][smart body syntax].
 
 ## Nomenclature
 The binary operator itself `|>` may be referred to as a **pipe**, a **pipe operator**, or a **pipeline operator**; all these names are equivalent. This specification will prefer the term “pipe operator”.
@@ -460,11 +460,11 @@ Punctuator :: one of
 <details>
 <summary>Formal grammar details</summary>
 
-In the ES standard, expressions in general are parameterized with three flags:
+In the ES standard, the rules for expressions are often parameterized with three flags, which are then recursively passed into their constituent rules.
 
 * **`In`**: Whether the current context allows the [`in` relational operator][], which is false only in the headers of [`for` iteration statements][].
-* **`Yield`**: Whether the current context is within a `yield` expression/declaration.
-* **`Await`**: Whether the current context is within an `await` expression/declaration.
+* **`Yield`**: Whether the current context allows a `yield` expression/declaration (that is, is the current function context a generator?).
+* **`Await`**: Whether the current context allows an `await` expression/declaration (that is, is the current function context an async function/generator?).
 
 </details>
 
@@ -477,85 +477,86 @@ The pipe operator actually has [bidirectional association][]. However, for the p
 
 The following table shows how the topic reference `#` and the pipe operator `|>` are integrated into the hierarchy of operators. All expression levels in JavaScript from **tightest to loosest**. Each level includes all the expression types listed for that level—**as well as** any expression types from any precedence level that is listed **above** it.
 
-| Level          | Type                    | Form             | Associativity / fixity   |
-|----------------|-------------------------|------------------|--------------------------|
-| Primary        | This                    | `this`           | Nullary                  |
-| ″″             | **Topic**               | **`#`**          | ″″                       |
-| ″″             | Identifiers             | `a` …            | ″″                       |
-| ″″             | Null                    | `null`           | ″″                       |
-| ″″             | Booleans                | `true` `false`   | ″″                       |
-| ″″             | Numerics                | `0` …            | ″″                       |
-| ″″             | Arrays                  | `[…]`            | Circumfix                |
-| ″″             | Object                  | `{…}`            | ″″                       |
-| ″″             | Function                |                  | ″″                       |
-| ″″             | Classes                 | `class … {…}`    | ″″                       |
-| ″″             | Generators              |                  | ″″                       |
-| ″″             | Async functions         |                  | ″″                       |
-| ″″             | Regular expression      | `/…/`…           | ″″                       |
-| ″″             | Templates               | ```…```          | ″″                       |
-| ″″             | Parentheses             | `(…)`            | ″″                       |
-| LHS            | Dynamic properties      | `…[…]`           | LTR infix with circumfix |
-| ″″             | Static properties       | `….…`            | ″″                       |
-| ″″             | Tagged templates        | ``…`…```         | ″″                       |
-| ″″             | Super properties        | `super.…`        | ″″                       |
-| ″″             | Meta properties         | `meta.…`         | Unchainable prefix       |
-| ″″             | Super call op.s         | `super(…)`       | ″″                       |
-| ″″             | New                     | `new …`          | RTL prefix               |
-| ″″             | Normal calls            | `…(…)`           | LTR infix with circumfix |
-| Postfix unary  | Postfix increments      | `…++`            | Postfix                  |
-| ″″             | Postfix decrements      | `…--`            | ″″                       |
-| Prefix unary   | Prefix increments       | `++…`            | RTL prefix               |
-| Prefix unary   | Prefix decrements       | `--…`            | ″″                       |
-| ″″             | Deletes                 | `delete …`       | ″″                       |
-| ″″             | Voids                   | `void …`         | ″″                       |
-| ″″             | Unary `+`/`-`           | ″″               | ″″                       |
-| ″″             | Bitwise NOT `~…`        | ″″               | ″″                       |
-| ″″             | Logical NOT `!…`        | ″″               | ″″                       |
-| Exponentiation | Exponentiation          | `… ** …`         | RTL infix                |
-| Multiplicative | Multiplication          | `… * …`          | LTR infix                |
-| ″″             | Division                | `… / …`          | ″″                       |
-| ″″             | Modulus                 | `… % …`          | ″″                       |
-| Additive       | Addition                | `… + …`          | ″″                       |
-| ″″             | Subtraction             | `… - …`          | ″″                       |
-| Bitwise shift  | Left shift              | `… << …`         | ″″                       |
-| ″″             | Right shift             | `… >> …`         | ″″                       |
-| ″″             | Signed right shift      | `… >> …`         | ″″                       |
-| Relational     | Greater than            | `… < …`          | ″″                       |
-| ″″             | Less than               | `… > …`          | ″″                       |
-| ″″             | Greater than / equal to | `… >= …`         | ″″                       |
-| ″″             | Less than / equal to    | `… <= …`         | ″″                       |
-| ″″             | Containment             | `… in …`         | ″″                       |
-| ″″             | Instance of             | `… instanceof …` | ″″                       |
-| Equality       | Abstract equality       | `… == …`         | ″″                       |
-| ″″             | Abstract inequality     | `… != …`         | ″″                       |
-| ″″             | Strict equality         | `… === …`        | ″″                       |
-| ″″             | Strict inequality       | `… !== …`        | ″″                       |
-| Bitwise AND    |                         | `… & …`          | ″″                       |
-| Bitwise XOR    |                         | `… ^ …`          | ″″                       |
-| Bitwise OR     |                         | `… | …`          | ″″                       |
-| Logical AND    |                         | `… ^^ …`         | ″″                       |
-| Logical OR     |                         | `… || …`         | ″″                       |
-| Conditional    |                         | `… ? … : …`      | RTL ternary infix        |
-| **Pipeline**   |                         | **`… \|> …`**    | LTR infix                |
-| Assignment     | Arrow functions         | `… => …`         | RTL infix                |
-| ″″             | Async arrow functions   | `async … => …`   | RTL infix                |
-| ″″             | Reference assignments   | `… = …`          | ″″                       |
-| ″″             |                         | `… += …`         | ″″                       |
-| ″″             |                         | `… -= …`         | ″″                       |
-| ″″             |                         | `… *= …`         | ″″                       |
-| ″″             |                         | `… %= …`         | ″″                       |
-| ″″             |                         | `… **= …`        | ″″                       |
-| ″″             |                         | `… <<= …`        | ″″                       |
-| ″″             |                         | `… >>= …`        | ″″                       |
-| ″″             |                         | `… >>>= …`       | ″″                       |
-| ″″             |                         | `… &= …`         | ″″                       |
-| ″″             |                         | `… |= …`         | ″″                       |
-| Yield level    |                         | `yield …`        | RTL prefix               |
-| ″″             |                         | `yield * …`      | ″″                       |
-| Ultimate level | Comma                   | `…, …`           | LTR infix                |
+| Level          | Type                    | Form           | Associativity / fixity   |
+| -------------- | ----------------------- | -------------- | ------------------------ |
+| Primary        | This                    |`this`          | Nullary                  |
+| ″″             | **Topic**               |**`#`**         | ″″                       |
+| ″″             | Identifiers             |`a` …           | ″″                       |
+| ″″             | Null                    |`null`          | ″″                       |
+| ″″             | Booleans                |`true` `false`  | ″″                       |
+| ″″             | Numerics                |`0` …           | ″″                       |
+| ″″             | Arrays                  |`[…]`           | Circumfix                |
+| ″″             | Object                  |`{…}`           | ″″                       |
+| ″″             | Function                |                | ″″                       |
+| ″″             | Classes                 |`class … {…}`   | ″″                       |
+| ″″             | Generators              |                | ″″                       |
+| ″″             | Async functions         |                | ″″                       |
+| ″″             | Regular expression      |`/…/`…          | ″″                       |
+| ″″             | Templates               |```…```         | ″″                       |
+| ″″             | Parentheses             |`(…)`           | ″″                       |
+| LHS            | Dynamic properties      |`…[…]`          | LTR infix with circumfix |
+| ″″             | Static properties       |`….…`           | ″″                       |
+| ″″             | Tagged templates        |``…`…```        | ″″                       |
+| ″″             | Super properties        |`super.…`       | ″″                       |
+| ″″             | Meta properties         |`meta.…`        | Unchainable prefix       |
+| ″″             | Super call op.s         |`super(…)`      | ″″                       |
+| ″″             | New                     |`new …`         | RTL prefix               |
+| ″″             | Normal calls            |`…(…)`          | LTR infix with circumfix |
+| Postfix unary  | Postfix increments      |`…++`           | Postfix                  |
+| ″″             | Postfix decrements      |`…--`           | ″″                       |
+| Prefix unary   | Prefix increments       |`++…`           | RTL prefix               |
+| Prefix unary   | Prefix decrements       |`--…`           | ″″                       |
+| ″″             | Deletes                 |`delete …`      | ″″                       |
+| ″″             | Voids                   |`void …`        | ″″                       |
+| ″″             | Unary `+`/`-`           |″″              | ″″                       |
+| ″″             | Bitwise NOT `~…`        |″″              | ″″                       |
+| ″″             | Logical NOT `!…`        |″″              | ″″                       |
+| Exponentiation | Exponentiation          |`… ** …`        | RTL infix                |
+| Multiplicative | Multiplication          |`… * …`         | LTR infix                |
+| ″″             | Division                |`… / …`         | ″″                       |
+| ″″             | Modulus                 |`… % …`         | ″″                       |
+| Additive       | Addition                |`… + …`         | ″″                       |
+| ″″             | Subtraction             |`… - …`         | ″″                       |
+| Bitwise shift  | Left shift              |`… << …`        | ″″                       |
+| ″″             | Right shift             |`… >> …`        | ″″                       |
+| ″″             | Signed right shift      |`… >> …`        | ″″                       |
+| Relational     | Greater than            |`… < …`         | ″″                       |
+| ″″             | Less than               |`… > …`         | ″″                       |
+| ″″             | Greater than / equal to |`… >= …`        | ″″                       |
+| ″″             | Less than / equal to    |`… <= …`        | ″″                       |
+| ″″             | Containment             |`… in …`        | ″″                       |
+| ″″             | Instance of             |`… instanceof …`| ″″                       |
+| Equality       | Abstract equality       |`… == …`        | ″″                       |
+| ″″             | Abstract inequality     |`… != …`        | ″″                       |
+| ″″             | Strict equality         |`… === …`       | ″″                       |
+| ″″             | Strict inequality       |`… !== …`       | ″″                       |
+| Bitwise AND    |                         |`… & …`         | ″″                       |
+| Bitwise XOR    |                         |`… ^ …`         | ″″                       |
+| Bitwise OR     |                         |`… | …`         | ″″                       |
+| Logical AND    |                         |`… ^^ …`        | ″″                       |
+| Logical OR     |                         |`… || …`        | ″″                       |
+| Conditional    |                         |`… ? … : …`     | RTL ternary infix        |
+| **Pipeline**   |                         |**`… \|> …`**   | LTR infix                |
+| Assignment     | Arrow functions         |`… => …`        | RTL infix                |
+| ″″             | Async arrow functions   |`async … => …`  | RTL infix                |
+| ″″             | Reference assignments   |`… = …`         | ″″                       |
+| ″″             |                         |`… += …`        | ″″                       |
+| ″″             |                         |`… -= …`        | ″″                       |
+| ″″             |                         |`… *= …`        | ″″                       |
+| ″″             |                         |`… %= …`        | ″″                       |
+| ″″             |                         |`… **= …`       | ″″                       |
+| ″″             |                         |`… <<= …`       | ″″                       |
+| ″″             |                         |`… >>= …`       | ″″                       |
+| ″″             |                         |`… >>>= …`      | ″″                       |
+| ″″             |                         |`… &= …`        | ″″                       |
+| ″″             |                         |`… |= …`        | ″″                       |
+| Yield level    |                         |`yield …`       | RTL prefix               |
+| ″″             |                         |`yield * …`     | ″″                       |
+| Ultimate level | Comma                   |`…, …`          | LTR infix                |
 
 
-The [assignment operator][] is already parameterized on `In`, `Yield`, and `Await`; it may be a conditional expression, yield expression, arrow function, async arrow function, or assignment:
+
+The [assignment-level expressions][] is already parameterized on `In`, `Yield`, and `Await`; it may be a conditional expression, yield expression, arrow function, async arrow function, or assignment:
 ```
 // Old version
 AssignmentExpression[In, Yield, Await] :
@@ -591,13 +592,48 @@ PipelineExpression[In, Yield, Await] :
     PipelineBody[?In, ?Yield, ?Await]
 ```
 
-### Tacit style
-Most pipelines will use the topic anaphor `#` in their bodies. But for two certain simple cases—unary functions and constructors—you may omit the anaphor from the body. The body is just a **simple reference** to a function or constructor, such as with `… |> capitalize` and `… |> new User.Message`.
+### Smart body syntax
+Most pipelines will use the topic anaphor `#` in their bodies. As already explained above in [nomenclature][], this style of pipeline is called **anaphoric style**.
 
-This is called [**tacit style** or **point-free style**][tacit programming]. When a pipe is in tacit style, we refer to the body as a **tacit function** or a **tacit constructor**, depending on the rules in [tacit style][].
+But for two certain simple cases—unary functions and constructors—you may omit the anaphor from the body. This is called **tacit style**, after the term [**tacit programming**, aka **point-free programming**][tacit programming]. When a pipe is in tacit style, we refer to the body as a **tacit function** or a **tacit constructor**, depending on the rules in [tacit style][]. The body acts as just a simple reference to a function or constructor, such as with `… |> capitalize` and `… |> new User.Message`. The body’s value would then be called as a unary function or constructor, without having to use the topic anaphor as an explicit argument.
 
-The body’s value would then be called as a unary function or constructor, without having to use the topic anaphor as an explicit argument.
+The rules of the two respective styles will be explained in more detail, but an overview is given in the following table.
 
+| Valid topical style     | Valid tacit style                | Invalid tacit style
+| ----------------------- | -------------------------------- | --------------------
+|`… \|> o(#)`             |`… \|> o`                         |🚫 `… \|> o()`
+| ″″                      | ″″                               |🚫 `… \|> (o)`
+| ″″                      | ″″                               |🚫 `… \|> (o())`
+|`… \|> new o(#)`         |`… \|> new o`                     |🚫 `… \|> new o()`
+| ″″                      | ″″                               |🚫 `… \|> (new o)`
+| ″″                      | ″″                               |🚫 `… \|> (new o())`
+| ″″                      | ″″                               |🚫 `… \|> new (o)`
+| ″″                      | ″″                               |🚫 `… \|> new (o())`
+|`… \|> o.m(#)`           |`… |> o.m`                        |🚫 `… \|> o.m()`
+| ″″                      |`const m = o::m; … |> m`          |🚫 `… \|> o.m()`
+|`… \|> new o.m(#)`       |`… |> new o.m`                    |🚫 `… \|> o.m()`
+| ″″                      |`const m = o::m; … |> m`          |🚫 `… \|> o.m()`
+|`… \|> o.m(arg, #)`      |`const m = o::m(arg); … |> m`     |🚫 `… \|> o.m(arg)`
+|`… \|> new o.m(arg, #)`  |`const m = new o::m(arg); … |> m` |🚫 `… \|> new o.m(arg)`
+|`… \|> o[symbol](#)`     |`const m = o[symbol]; … |> m`     |🚫 `… \|> o[symbol]`
+|`… \|> new o[symbol](#)` |`const m = new o[symbol]; … |> m` |🚫 `… \|> new o[symbol]`
+|`… \|> o.makeFn()(#)`    |`const m = o.makeFn(); … |> m`    |🚫 `… \|> o.makeFn()`
+|`… \|> new o.makeFn()(#)`|`const m = new o.makeFn(); … |> m`|🚫 `… \|> new o.makeFn()`
+
+#### Smart-syntax goals
+There are two goals that this syntax tries to fulfill, from most to least important.
+
+1. Versatile expressivity: [TO DO]
+
+2. Short parser lookahead: Minimize the parsing lookahead that the compiler must check before it can distinguish between tacit style and topic-token style. By restricting the space of valid tacit-style pipeline bodies (that is, without topic anaphors), the rule prevents [garden-path syntax][] that would otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
+
+3. Minimal parser branching: [TO DO]
+
+4. Static analysis: Help the editing JavaScript programmer to avoid common footguns at compile time. Preventing them from accidentally omitting a topic anaphor where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the editor intended.
+
+5. Tacit terseness: Improve the terseness of pipeline bodies for frequent cases in which topic anaphors would be unnecessarily verbose: unary functions and unary constructors.
+
+#### Tacit style
 **If a pipeline** is of the form **`{{topic}} |> {{identifier}}`** (or `{{topic}} |> {{identifier0}}.{{identifier1}}` or `{{topic}} |> {{identifier0}}.{{identifier1}}.{{identifier2}}` or …), then the pipeline is a **tacit function call**. The **pipeline’s value** is **`{{body}}({{topic}})`**.
 
 **If a pipeline’s `body`** is of the form **`{{topic}} |> new {{identifier}}`** (or `{{topic}} |> new {{identifier0}}.{{identifier1}}` or `{{topic}} |> new {{identifier0}}.{{identifier1}}.{{identifier2}}` or …), then the pipeline is a **tacit constructor call**. The **pipeline’s value** is **`new {{bodyConstructor}}({{topic}})`**, where {{bodyConstructor}} is {{body}} with the `new` removed from its start.
@@ -606,46 +642,15 @@ Therefore, a pipeline in **tacit style *never*** has **parentheses `(…)` or br
 
 The tacit style supports using simple identifiers, possibly with chains of simple property identifiers. If there are any operators, parentheses (including for method calls), brackets, or anything other than identifiers and `.`s, then it cannot be a tacit call; it must be a function call.
 
-|                                                                                   |                                     |                     |                                          |                          |                                 |                      |                                          |                            |
-|-----------------------------------------------------------------------------------|-------------------------------------|---------------------|------------------------------------------|--------------------------|---------------------------------|----------------------|------------------------------------------|----------------------------|
-| **When a body needs parentheses or brackets**…                                    | ❌ `… \                              | > object.method()`  | ❌ `… \                                   | > object.method(arg)`    | ❌ `… \                          | > object[symbol]`    | ❌ `… \                                   | > object.createFunction()` |
-| …then **don’t use tacit style**, and instead **use a topic anaphor** in the body… | `… \                                | > object.method(#)` | `… \                                     | > object.method(arg, #)` | `… \                            | > object[symbol](#)` | `object.createFunction()(#)`             |                            |
-| …or **assign the body to a variable**, then **use that variable as a tacit body** | `const method = object::method; … \ | > method`           | `const method = object::method(arg); … \ | > method`                | `const fn = object[symbol]; … \ | > fn`                | `const fn = object.createFunction(); … \ | > fn`                      |
-
-The goal here is to minimize the parsing lookahead that the compiler must check before it can distinguish between tacit style and topic-token style. By restricting the space of valid tacit-style pipeline bodies (that is, without topic anaphors), the rule prevents [garden-path syntax][] that would otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
+**When a body needs parentheses or brackets**, then **don’t use tacit style**, and instead **use a topic anaphor** in the body……or **assign the body to a variable**, then **use that variable as a tacit body**.
 
 The JavaScript programmer is encouraged to use topic anaphors and avoid tacit style, where tacit style may be visually confusing to the reader.
 
-### Anaphoric style
+#### Anaphoric style
 **If a pipeline** of the form `{{topic}} |> {{body}}` is ***not* in tacit style** (that is, it is *not* a tacit function call or tacit constructor call), then it **must be in anaphoric style**. The **pipeline’s value** is **`do { const {{topicIdentifier}} = {{topic}}; {{substitutedBody}} }`**, where:
 
 * `{{topicVariable}}` is any [identifier that is *not* already used by any variable in the outer lexical context or the body’s inner anaphoric context][lexically hygienic],
 * And `{{substitutedBody}}` is `{{body}}` but with every instance of outside of the topic anaphor replaced by `{{topicVariable}}`.
-
-Another goal is to help the editing JavaScript programmer: statically preventing them from accidentally omitting a topic anaphor where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the editor intended.
-
-| Expression                            | Result                          |
-| ------------------------------------- | ------------------------------- |
-| **`'2018' \|> Date(#)`**              | **`Date('2018')`**              |
-| **`'2018' \|> Date`**                 | **`Date('2018')`**              |
-|   `'2018' \|> Date()`                 |   syntax error: missing `#`     |
-|   `'2018' \|> (Date)`                 |   syntax error: missing `#`     |
-| **`'2018' \|> Date.parse(#)`**        | **`Date.parse('2018')`**        |
-| **`'2018' \|> Date.parse`**           | **`Date.parse('2018')`**        |
-|   `'2018' \|> Date.parse()`           |   syntax error: missing `#`     |
-|   `'2018' \|> (Date.parse)`           |   syntax error: missing `#`     |
-|   `'2018' \|> Date['parse'](#)`       | **`Date['parse']('2018')`**     |
-|   `'2018' \|> Date['parse']()`        |   syntax error: missing `#`     |
-|   `'2018' \|> (Date['parse'])`        |   syntax error: missing `#`     |
-| **`'2018' \|> global.Date.parse(#)`** | **`global.Date.parse('2018')`** |
-| **`'2018' \|> global.Date.parse`**    | **`global.Date.parse('2018')`** |
-|   `'2018' \|> global.Date.parse()`    |   syntax error: missing `#`     |
-|   `'2018' \|> (global.Date.parse)`    |   syntax error: missing `#`     |
-| **`'2018' \|> new global.Date(#)`**   | **`new Date('2018')`**          |
-| **`'2018' \|> new global.Date`**      | **`new Date('2018')`**          |
-|   `'2018' \|> new global.Date()`      |   syntax error: missing `#`     |
-|   `'2018' \|> (new global.Date)`      |   syntax error: missing `#`     |
-|   `'2018' \|> Date['parse'](#)`       | **`Date['parse']('2018')`**     |
 
 ### Multiple topic anaphors in a pipeline body
 The topic anaphor may be used multiple times in a pipeline body. Each use refers to the same value (wherever the topic anaphor is not overridden by another, inner pipeline’s anaphoric scope). Because it is bound to the result of the topic, the topic is still only ever evaluated once. The lines in each of the following are equivalent:
@@ -959,7 +964,7 @@ There are a number of other ways of potentially accomplishing the above use case
 
 [antecedent]: https://en.wikipedia.org/wiki/Antecedent_(grammar)
 
-[assignment operator]: https://tc39.github.io/ecma262/#sec-assignment-operators
+[assignment-level expressions]: https://tc39.github.io/ecma262/#sec-assignment-operators
 
 [associative property]: https://en.wikipedia.org/wiki/Associative_property
 
