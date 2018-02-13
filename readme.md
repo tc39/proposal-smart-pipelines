@@ -48,7 +48,7 @@ Here is a table of code blocks in current JavaScript. Several are taken from sev
 <td>
 
 **[Prior pipeline proposal][]**.<br>
-[Gilbert “mindeavor”][mindeavor] et al.<br>
+[Gilbert “mindeavor”][mindeavor] &c.<br>
 ECMA International.<br>
 2017–2018.<br>
 BSD License.
@@ -121,7 +121,7 @@ stringPromise
 <td>
 
 **[Underscore.js][]** 1.8.3.<br>
-[Jeremy Ashkenas][jashkenas] et al.<br>
+[Jeremy Ashkenas][jashkenas] &c.<br>
 2009–2018.<br>
 MIT License.
 
@@ -246,7 +246,7 @@ function (obj) {
 <td>
 
 **[Pify][]** 3.0.0.<br>
-[Sindre Sorhus][sindresorhus] et al.<br>
+[Sindre Sorhus][sindresorhus] &c.<br>
 2015–2018.<br>
 MIT License.
 
@@ -274,7 +274,7 @@ pify(fs.readFile)('package.json', 'utf8')
 <td>
 
 **[Fetch Standard][]**.<br>
-[Anne van Kesteren][annevk] et al.<br>
+[Anne van Kesteren][annevk] &c.<br>
 2011–2018.<br>
 WHATWG.<br>
 Creative Commons BY.
