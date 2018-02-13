@@ -47,7 +47,7 @@ Here is a table of code blocks in current JavaScript. Several are taken from sev
 <tr>
 <td>
 
-[Prior pipeline proposal][].<br>
+**[Prior pipeline proposal][]**.<br>
 [Gilbert “mindeavor”][mindeavor] et al.<br>
 ECMA International.<br>
 2017–2018.<br>
@@ -103,7 +103,7 @@ Ditto for `|> new User.Message`, which is a tacit unary constructor call, abbrev
 <tr>
 <td>
 
-[Underscore.js][] 1.8.3.<br>
+**[Underscore.js][]** 1.8.3.<br>
 [Jeremy Ashkenas][jashkenas] et al.<br>
 2009–2018.<br>
 MIT License.
@@ -135,6 +135,8 @@ function (obj, pred, context) {
 }
 ```
 
+<td>
+
 <tr>
 <td>″″
 <td>
@@ -159,19 +161,21 @@ function (obj, pred, context) {
 }
 ```
 
+<td>
+
 <tr>
 <td>″″
 <td>
 
 ```js
 function (
-  sourceFunc, boundFunc,
+  srcFn, boundFn,
   ctxt, callingCtxt, args
 ) {
-  if (!(callingCtxt instanceof boundFunc))
-    return sourceFunc.apply(ctxt, args);
-  var self = baseCreate(sourceFunc.prototype);
-  var result = sourceFunc.apply(self, args);
+  if (!(callingCtxt instanceof boundFn))
+    return srcFn.apply(ctxt, args);
+  var self = baseCreate(srcFn.prototype);
+  var result = srcFn.apply(self, args);
   if (_.isObject(result)) return result;
   return self
 }
@@ -181,17 +185,19 @@ function (
 
 ```js
 function (
-  sourceFn, boundFn, ctxt, callingCtxt, args
+  srcFn, boundFn, ctxt, callingCtxt, args
 ) {
   if (callingCtxt |> # instanceof boundFn |> !#)
-    return sourceFn.apply(ctxt, args);
-  var self = sourceFn
+    return srcFn.apply(ctxt, args);
+  var self = srcFn
     |> #.prototype |> baseCreate;
   return self
-    |> sourceFn.apply(#, args)
+    |> srcFn.apply(#, args)
     |> _.isObject(#) ? # : self;
 }
 ```
+
+<td>
 
 <tr>
 <td>″″
@@ -217,10 +223,12 @@ function (obj) {
 }
 ```
 
+<td>
+
 <tr>
 <td>
 
-[Pify][] 3.0.0.<br>
+**[Pify][]** 3.0.0.<br>
 [Sindre Sorhus][sindresorhus] et al.<br>
 2015–2018.<br>
 MIT License.
@@ -243,10 +251,12 @@ pify(fs.readFile)('package.json', 'utf8')
   |> console.log
 ```
 
+<td>
+
 <tr>
 <td>
 
-[WHATWG Fetch Standard][].<br>
+**[Fetch Standard][]**.<br>
 [Anne van Kesteren][annevk] et al.<br>
 2011–2018.<br>
 WHATWG.<br>
@@ -269,6 +279,8 @@ fetch('/music/pk/altes-kamuffel')
   |> playBlob
 ```
 
+<td>
+
 <tr>
 <td>″″
 <td>
@@ -277,8 +289,8 @@ fetch('/music/pk/altes-kamuffel')
 fetch('https://example.com/',
   { method: 'HEAD' }
 ).then(res =>
-    log(res.headers.get('content-type'))
-  )
+  log(res.headers.get('content-type'))
+)
 ```
 
 <td>
@@ -287,7 +299,10 @@ fetch('https://example.com/',
 'https://example.com/'
   |> await fetch(#, { method: 'HEAD' })
   |> #.headers.get('content-type')
+  |> log
 ```
+
+<td>
 
 <tr>
 <td>″″
@@ -322,6 +337,8 @@ response
   |> await #.json()
   |> processJSON
 ```
+
+<td>
 
 </tbody>
 
@@ -411,7 +428,7 @@ The term “**body**” is preferred instead of “**RHS**” because “topic�
 The term “**rheme value**” is equally preferable to “**pipeline value**”. But both are preferred to the alternative linguistic terms “**comment value**” or “**focus value**”. Even though the terms [“comment” and “focus” are the usual linguistic opposite to “topic”][topic and rheme], neither make much sense for the pipeline operator.
 
 ## Informative edge cases
-These edge cases are natural results of the rules in the [formal grammar][]
+These edge cases are natural results of the rules in the [formal grammar][].
 
 ### Multiple topic anaphors in a pipeline body
 The topic anaphor may be used multiple times in a pipeline body. Each use refers to the same value (wherever the topic anaphor is not overridden by another, inner pipeline’s anaphoric scope). Because it is bound to the result of the topic, the topic is still only ever evaluated once. The lines in each of the following are equivalent:
@@ -917,7 +934,7 @@ There are a number of other ways of potentially accomplishing the above use case
 
 [Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
 
-[WHATWG Fetch Standard]: https://fetch.spec.whatwg.org
+[Fetch Standard]: https://fetch.spec.whatwg.org
 
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
 
