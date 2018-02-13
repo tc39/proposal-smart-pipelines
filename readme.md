@@ -477,82 +477,82 @@ The pipe operator actually has [bidirectional association][]. However, for the p
 
 The following table shows how the topic reference `#` and the pipe operator `|>` are integrated into the hierarchy of operators. All expression levels in JavaScript from **tightest to loosest**. Each level includes all the expression types listed for that level—**as well as** any expression types from any precedence level that is listed **above** it.
 
-| Precedence level     | Type                          | Form             | Associativity / fixity   |
-|----------------------|-------------------------------|------------------|--------------------------|
-| Primary level        | This references               | `this`           |                          |
-| ″″                   | **Topic references**          | **`#`**          |                          |
-| ″″                   | Identifier references         | `a` …            |                          |
-| ″″                   | Null literals                 | `null`           |                          |
-| ″″                   | Boolean literals              | `true` `false`   |                          |
-| ″″                   | Numeric literals              | `0` …            |                          |
-| ″″                   | Array literals                | `[…]`            | circumfix                |
-| ″″                   | Object literals               | `{…}`            | circumfix                |
-| ″″                   | Function literals             |                  |                          |
-| ″″                   | Class expressions             | `class … {…}`    | circumfix                |
-| ″″                   | Generator expressions         |                  |                          |
-| ″″                   | Async-function expressions    |                  |                          |
-| ″″                   | Regular-expression literals   | `/…/`…           | circumfix                |
-| ″″                   | Template literals             | ```…```          | circumfix                |
-| ″″                   | Parenthesized expressions     | `(…)`            | circumfix                |
-| LHS level            | Dynamic properties            | `…[…]`           | LTR infix with circumfix |
-| ″″                   | Static properties             | `….…`            | LTR infix                |
-| ″″                   | Tagged templates              | ``…`…```         | LTR infix                |
-| ″″                   | Super properties              | `super.…`        | LTR infix                |
-| ″″                   | Meta properties               | `meta.…`         | unchainable prefix       |
-| ″″                   | Super call op.s               | `super(…)`       | unchainable prefix       |
-| ″″                   | New op.s                      | `new …`          | RTL prefix               |
-| ″″                   | Normal call expressions       | `…(…)`           | LTR infix with circumfix |
-| Postfix unary level  | Postfix increment op.s        | `…++`            | postfix                  |
-| ″″                   | Postfix decrement op.s        | `…--`            | postfix                  |
-| Prefix unary level   | Prefix increment op.s         | `++…`            | RTL prefix               |
-| Prefix unary level   | Prefix decrement op.s         | `--…`            | ″″                       |
-| ″″                   | Delete op.s                   | `delete …`       | ″″                       |
-| ″″                   | Void op.s                     | `void …`         | ″″                       |
-| ″″                   | Unary `+`/`-` op.s            | ″″               | ″″                       |
-| ″″                   | Bitwise NOT op.s `~…`         | ″″               | ″″                       |
-| ″″                   | Logical NOT op.s `!…`         | ″″               | ″″                       |
-| Exponentiation level | Exponentiation op.s           | `… ** …`         | RTL infix                |
-| Multiplicative level | Multiplication op.s           | `… * …` op.s     | LTR infix                |
-| ″″                   | Division op.s                 | `… / …`          | ″″                       |
-| ″″                   | Modulus op.s                  | `… % …`          | ″″                       |
-| Additive level       | Addition op.s                 | `… + …`          | ″″                       |
-| ″″                   | Subtraction op.s              | `… - …`          | ″″                       |
-| Bitwise-shift level  | Left-shift op.s               | `… << …`         | ″″                       |
-| ″″                   | Right-shift op.s              | `… >> …`         | ″″                       |
-| ″″                   | Signed right-shift op.s       | `… >> …`         | ″″                       |
-| Relational level     | Greater-than op.s             | `… < …`          | ″″                       |
-| ″″                   | Less-than op.s                | `… > …`          | ″″                       |
-| ″″                   | Greater-than-or-equal-to op.s | `… >= …`         | ″″                       |
-| ″″                   | Less-than-or-equal-to op.s    | `… <= …`         | ″″                       |
-| ″″                   | Containment op.s              | `… in …`         | ″″                       |
-| ″″                   | Instance-of op.s              | `… instanceof …` | ″″                       |
-| Equality level       | Abstract equality op.s        | `… == …`         | ″″                       |
-| ″″                   | Abstract inequality op.s      | `… != …`         | ″″                       |
-| ″″                   | Strict equality op.s          | `… === …`        | ″″                       |
-| ″″                   | Strict inequality op.s        | `… !== …`        | ″″                       |
-| Bitwise-AND level    |                               | `… & …`          | ″″                       |
-| Bitwise-XOR level    |                               | `… ^ …`          | ″″                       |
-| Bitwise-OR level     |                               | `… | …`          | ″″                       |
-| Logical-AND level    |                               | `… ^^ …`         | ″″                       |
-| Logical-OR level     |                               | `… || …`         | ″″                       |
-| Conditional level    |                               | `… ? … : …`      | RTL ternary infix        |
-| **Pipeline level**   |                               | **`… \|> …`**    | LTR infix                |
-| Assignment level     | Arrow functions               | `… => …`         | RTL infix                |
-| ″″                   | Async arrow functions         | `async … => …`   | RTL infix                |
-| ″″                   | Reference-assignment op.s     | `… = …`          | ″″                       |
-| ″″                   |                               | `… += …`         | ″″                       |
-| ″″                   |                               | `… -= …`         | ″″                       |
-| ″″                   |                               | `… *= …`         | ″″                       |
-| ″″                   |                               | `… %= …`         | ″″                       |
-| ″″                   |                               | `… **= …`        | ″″                       |
-| ″″                   |                               | `… <<= …`        | ″″                       |
-| ″″                   |                               | `… >>= …`        | ″″                       |
-| ″″                   |                               | `… >>>= …`       | ″″                       |
-| ″″                   |                               | `… &= …`         | ″″                       |
-| ″″                   |                               | `… |= …`         | ″″                       |
-| Yield level          |                               | `yield …`        | RTL prefix               |
-| ″″                   |                               | `yield * …`      | ″″                       |
-| Ultimate level       | Comma op.s                    | `…, …`           | LTR infix                |
+| Level          | Type                    | Form             | Associativity / fixity   |
+|----------------|-------------------------|------------------|--------------------------|
+| Primary        | This                    | `this`           | Nullary                  |
+| ″″             | **Topic**               | **`#`**          | ″″                       |
+| ″″             | Identifiers             | `a` …            | ″″                       |
+| ″″             | Null                    | `null`           | ″″                       |
+| ″″             | Booleans                | `true` `false`   | ″″                       |
+| ″″             | Numerics                | `0` …            | ″″                       |
+| ″″             | Arrays                  | `[…]`            | Circumfix                |
+| ″″             | Object                  | `{…}`            | ″″                       |
+| ″″             | Function                |                  | ″″                       |
+| ″″             | Classes                 | `class … {…}`    | ″″                       |
+| ″″             | Generators              |                  | ″″                       |
+| ″″             | Async functions         |                  | ″″                       |
+| ″″             | Regular expression      | `/…/`…           | ″″                       |
+| ″″             | Templates               | ```…```          | ″″                       |
+| ″″             | Parentheses             | `(…)`            | ″″                       |
+| LHS            | Dynamic properties      | `…[…]`           | LTR infix with circumfix |
+| ″″             | Static properties       | `….…`            | ″″                       |
+| ″″             | Tagged templates        | ``…`…```         | ″″                       |
+| ″″             | Super properties        | `super.…`        | ″″                       |
+| ″″             | Meta properties         | `meta.…`         | Unchainable prefix       |
+| ″″             | Super call op.s         | `super(…)`       | ″″                       |
+| ″″             | New                     | `new …`          | RTL prefix               |
+| ″″             | Normal calls            | `…(…)`           | LTR infix with circumfix |
+| Postfix unary  | Postfix increments      | `…++`            | Postfix                  |
+| ″″             | Postfix decrements      | `…--`            | ″″                       |
+| Prefix unary   | Prefix increments       | `++…`            | RTL prefix               |
+| Prefix unary   | Prefix decrements       | `--…`            | ″″                       |
+| ″″             | Deletes                 | `delete …`       | ″″                       |
+| ″″             | Voids                   | `void …`         | ″″                       |
+| ″″             | Unary `+`/`-`           | ″″               | ″″                       |
+| ″″             | Bitwise NOT `~…`        | ″″               | ″″                       |
+| ″″             | Logical NOT `!…`        | ″″               | ″″                       |
+| Exponentiation | Exponentiation          | `… ** …`         | RTL infix                |
+| Multiplicative | Multiplication          | `… * …`          | LTR infix                |
+| ″″             | Division                | `… / …`          | ″″                       |
+| ″″             | Modulus                 | `… % …`          | ″″                       |
+| Additive       | Addition                | `… + …`          | ″″                       |
+| ″″             | Subtraction             | `… - …`          | ″″                       |
+| Bitwise shift  | Left shift              | `… << …`         | ″″                       |
+| ″″             | Right shift             | `… >> …`         | ″″                       |
+| ″″             | Signed right shift      | `… >> …`         | ″″                       |
+| Relational     | Greater than            | `… < …`          | ″″                       |
+| ″″             | Less than               | `… > …`          | ″″                       |
+| ″″             | Greater than / equal to | `… >= …`         | ″″                       |
+| ″″             | Less than / equal to    | `… <= …`         | ″″                       |
+| ″″             | Containment             | `… in …`         | ″″                       |
+| ″″             | Instance of             | `… instanceof …` | ″″                       |
+| Equality       | Abstract equality       | `… == …`         | ″″                       |
+| ″″             | Abstract inequality     | `… != …`         | ″″                       |
+| ″″             | Strict equality         | `… === …`        | ″″                       |
+| ″″             | Strict inequality       | `… !== …`        | ″″                       |
+| Bitwise AND    |                         | `… & …`          | ″″                       |
+| Bitwise XOR    |                         | `… ^ …`          | ″″                       |
+| Bitwise OR     |                         | `… | …`          | ″″                       |
+| Logical AND    |                         | `… ^^ …`         | ″″                       |
+| Logical OR     |                         | `… || …`         | ″″                       |
+| Conditional    |                         | `… ? … : …`      | RTL ternary infix        |
+| **Pipeline**   |                         | **`… \|> …`**    | LTR infix                |
+| Assignment     | Arrow functions         | `… => …`         | RTL infix                |
+| ″″             | Async arrow functions   | `async … => …`   | RTL infix                |
+| ″″             | Reference assignments   | `… = …`          | ″″                       |
+| ″″             |                         | `… += …`         | ″″                       |
+| ″″             |                         | `… -= …`         | ″″                       |
+| ″″             |                         | `… *= …`         | ″″                       |
+| ″″             |                         | `… %= …`         | ″″                       |
+| ″″             |                         | `… **= …`        | ″″                       |
+| ″″             |                         | `… <<= …`        | ″″                       |
+| ″″             |                         | `… >>= …`        | ″″                       |
+| ″″             |                         | `… >>>= …`       | ″″                       |
+| ″″             |                         | `… &= …`         | ″″                       |
+| ″″             |                         | `… |= …`         | ″″                       |
+| Yield level    |                         | `yield …`        | RTL prefix               |
+| ″″             |                         | `yield * …`      | ″″                       |
+| Ultimate level | Comma                   | `…, …`           | LTR infix                |
 
 
 The [assignment operator][] is already parameterized on `In`, `Yield`, and `Await`; it may be a conditional expression, yield expression, arrow function, async arrow function, or assignment:
