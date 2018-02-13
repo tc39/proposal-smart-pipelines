@@ -400,7 +400,7 @@ Note also that it was not necessary to include parentheses for `capitalize` or `
   |> # + '!'
 ```
 
-Being able to automatically detect this tacit style is the “smart” part of this “smart pipe operator”; for more information, see the explanation of “[tacit style][]” and of “[smart body syntax][]”.
+Being able to automatically detect this [tacit style][] is the **smart** part of this “smart pipe operator”.
 
 ## Nomenclature
 The binary operator itself `|>` may be referred to as a **pipe**, a **pipe operator**, or a **pipeline operator**; all these names are equivalent. This specification will prefer the term “pipe operator”.
@@ -409,43 +409,87 @@ A pipe operator between two expressions forms a **pipe expression**. One or more
 
 For each pipe expression, the expression before the pipe is the pipeline’s **head**. A pipeline’s head may also be called its **left-hand side (LHS)**, because it’s left to the pipe. (The head could also be referred to as the pipe’s **topic expression**, the pipe’s **[antecedent][]**, or the pipe’s **[binder][binding]**.) The *value* to which the head evaluates may be referred to as the **topic value**, **head value**, or **LHS value**.
 
-The expression after a pipe is the pipeline’s **body**. A pipeline’s body may also be called its **right-hand side (RHS)**, because it’s to the right of the pipe. When the body is evaluated according to its [runtime semantics][], that value may be referred to as the pipeline’s **rheme value** or simply as the **pipeline value**.
+The expression after a pipe is the pipeline’s **body**. A pipeline’s body may also be called its **right-hand side (RHS)**, because it’s to the right of the pipe. When the body is evaluated according to its [runtime semantics][], that value may be referred to the **pipeline’s value**.
 
-Where “pipeline” is used as a verb, the pipe operator is said **to pipeline its topic through its body**, resulting in a rheme value.
+Where “pipeline” is used as a verb, the pipe operator is said **to pipeline its topic through its body**, resulting in the pipeline’s value.
 
 A **`PipelineExpression`** or **pipeline-level expression** is an expression at the same [precedence level of the pipe operator][pipeline syntax]. Although all pipelines are `PipelineExpression`s, most `PipelineExpression`s are not actually pipelines; conditional operations, logical-or operations, or any other expressions that have tighter syntactic precedence than the pipe operation—those are also `PipelineExpression`s.
 
-### Anaphoric style
 The special token `#` is a **topic anaphor**, a **topic bindee**, or **topic placeholder**: it is a nullary operator that acts like a special variable: implicitly bound to its value, but still lexically scoped.
 
 The topic anaphor could also be called a “**topic variable**”, but this phrase is a misnomer. The topic anaphor is *not* actually a variable identifier and cannot be manually declared (`const #` is a syntax error), nor can it be assigned with a value (`# = 3` is a syntax error). Instead, the topic anaphor is implicitly, lexically bound only within pipeline bodies.
 
 When a pipeline’s body is in this **anaphoric style**, it itself can be also referred to as an **anaphora**. A pipeline body in anaphoric style forms an inner lexical scope—called the pipeline’s **anaphoric scope**—within which the topic anaphor is implicitly bound to the value of the topic, acting as a **placeholder** for the topic’s value.
 
-### Tacit style
-Alternatively, you may omit the topic anaphors entirely, if the body is just a **simple reference** to a function or constructor, such as with `… |> capitalize` and `… |> new User.Message`.
-
-The body’s value would then be called as a unary function or constructor, without having to use the topic anaphor as an explicit argument.
-
-This is called [**tacit style** or **point-free style**][tacit programming]. When a pipe is in tacit style, we refer to the body as a **tacit function** or a **tacit constructor**, depending on if it starts with `new`. Either way, the body must otherwise consist of only a **simple property chain**, which is simply an identifier (like `abc`), optionally chained with member properties (like `abc.property`). They are more formally defined in [smart body syntax][].
-
-Tacit style *never* has parentheses in the pipeline body (that is, prefer this `… |> fetch` to this `… |> fetch()`). If you need parentheses, you must use a topic anaphor (like this `… |> fetch(#, { method: 'options' })`).
+Alternatively, you may omit the topic anaphors entirely, if the body is just a **simple reference** to a function or constructor, such as with `… |> capitalize` and `… |> new User.Message`. Such a pipeline body is in **tacit style**. [Tacit style][] is described in more detail later.
 
 ### Explanation of conventions
-The terms [“**topic**” and “**rheme**” come from linguistics][topic and rheme] and have precedent in prior programming languages’ use of “topic variables”.
+The term [“**topic**” comes from linguistics][topic and comment] and have precedent in prior programming languages’ use of “topic variables”.
 
-The terms “**topic expression**” and “**antecedent**” are preferred instead of “**LHS**” because, in the future, the [topic concept could be extended to other syntax][possible future extensions to topic anaphora], not just pipelines. However, “LHS” is still a fine and acceptable name for topic expression in the pipeline operator. “Topic” is also preferred to the related linguistic term “**theme**”, because its meaning in computer programming is clearer—indeed, [“topic” is a term already used by many other languages to denote an implicitly bound variable][topic variables in other languages]
+The terms “**topic expression**” and “**antecedent**” are preferred instead of “**LHS**” because, in the future, the [topic concept could be extended to other syntax][possible future extensions to topic anaphora], not just pipelines. However, “LHS” is still a fine and acceptable name for topic expression in the pipeline operator.
 
 The term “**topic anaphor**” is preferred to the phrase “**topic variable**” because the latter is a misnomer. The topic anaphor is *not* a variable identifier. Unlike variables, it cannot be manually declared (`const #` is a syntax error), nor can it be assigned with a value (`# = 3` is a syntax error).
 
 “Topic anaphor” is also preferred to “**topic placeholder**”, to avoid confusion with the placeholders of another TC39 proposal—[syntactic partial application][]. These placeholders (currently denoted by nullary `?`) are of a different nature than topic anaphors. Instead of referring to a single value bound earlier in the surrounding lexical context, these **parameter placeholders** act as the parameter to a new function. When this new function is called, those parameter placeholders will be bound to multiple argument values.
 
-The term “**body**” is preferred instead of “**RHS**” because “topic” is preferred to “LHS”. However, “RHS” is still a fine and acceptable name for the body of the pipeline operator. should be used instead of “rheme” wherever “LHS” is used.
+The term “**body**” is preferred instead of “**RHS**” because “topic” is preferred to “LHS”. However, “RHS” is still a fine and acceptable name for the body of the pipeline operator.
 
-The term “**rheme value**” is equally preferable to “**pipeline value**”. But both are preferred to the alternative linguistic terms “**comment value**” or “**focus value**”. Even though the terms [“comment” and “focus” are the usual linguistic opposite to “topic”][topic and rheme], neither make much sense for the pipeline operator.
+## Brief rules
+Here are some brief rules for the JavaScript programmer. The [formal grammar][] formally defines the rules.
 
-## More about the syntax
-These edge cases are natural results of the rules in the [formal grammar][].
+### Tacit style
+Most pipelines will use the topic anaphor `#` in their bodies. But for two certain simple cases—unary functions and constructors—you may omit the anaphor from the body. The body is just a **simple reference** to a function or constructor, such as with `… |> capitalize` and `… |> new User.Message`.
+
+This is called [**tacit style** or **point-free style**][tacit programming]. When a pipe is in tacit style, we refer to the body as a **tacit function** or a **tacit constructor**, depending on the rules in [tacit style][].
+
+The body’s value would then be called as a unary function or constructor, without having to use the topic anaphor as an explicit argument.
+
+**If a pipeline** is of the form **`{{topic}} |> {{identifier}}`** (or `{{topic}} |> {{identifier0}}.{{identifier1}}` or `{{topic}} |> {{identifier0}}.{{identifier1}}.{{identifier2}}` or …), then the pipeline is a **tacit function call**. The **pipeline’s value** is **`{{body}}({{topic}})`**.
+
+**If a pipeline’s `body`** is of the form **`{{topic}} |> new {{identifier}}`** (or `{{topic}} |> new {{identifier0}}.{{identifier1}}` or `{{topic}} |> new {{identifier0}}.{{identifier1}}.{{identifier2}}` or …), then the pipeline is a **tacit constructor call**. The **pipeline’s value** is **`new {{bodyConstructor}}({{topic}})`**, where {{bodyConstructor}} is {{body}} with the `new` removed from its start.
+
+Therefore, a pipeline in **tacit style *never*** has **parentheses `(…)` or brackets `[…]`** in its body. Neither `… |> object.method()` nor `… |> object.method(arg)` nor `… |> object[symbol]` nor `… |> object.createFunction()` are in tacit style (in fact, they all have invalid syntax, due to their being anaphoric style without any anaphora).
+
+The tacit style supports using simple identifiers, possibly with chains of simple property identifiers. If there are any operators, parentheses (including for method calls), brackets, or anything other than identifiers and `.`s, then it cannot be a tacit call; it must be a function call.
+
+| **When a body needs parentheses or brackets**… | ❌ `… |> object.method()` | ❌ `… |> object.method(arg)` | ❌ `… |> object[symbol]` | ❌ `… |> object.createFunction()` |
+| …then **don’t use tacit style**, and instead **use a topic anaphor** in the body… | `… |> object.method(#)` | `… |> object.method(arg, #)` | `… |> object[symbol](#)` | `object.createFunction()(#)` |
+| …or **assign the body to a variable**, then **use that variable as a tacit body** | `const method = object::method; … |> method` | `const method = object::method(arg); … |> method` | `const fn = object[symbol]; … |> fn` | `const fn = object.createFunction(); … |> fn` |
+
+The goal here is to minimize the parsing lookahead that the compiler must check before it can distinguish between tacit style and topic-token style. By restricting the space of valid tacit-style pipeline bodies (that is, without topic anaphors), the rule prevents [garden-path syntax][] that would otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
+
+The JavaScript programmer is encouraged to use topic anaphors and avoid tacit style, where tacit style may be visually confusing to the reader.
+
+### Anaphoric style
+**If a pipeline** of the form `{{topic}} |> {{body}}` is ***not* in tacit style** (that is, it is *not* a tacit function call or tacit constructor call), then it **must be in anaphoric style**. The **pipeline’s value** is **`do { const {{topicIdentifier}} = {{topic}}; {{substitutedBody}} }`**, where:
+
+* `{{topicVariable}}` is any [identifier that is *not* already used by any variable in the outer lexical context or the body’s inner anaphoric context][lexically hygienic],
+* And `{{substitutedBody}}` is `{{body}}` but with every instance of outside of the topic anaphor replaced by `{{topicVariable}}`.
+
+Another goal is to help the editing JavaScript programmer: statically preventing them from accidentally omitting a topic anaphor where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the editor intended.
+
+| Expression                            | Result                          |
+| ------------------------------------- | ------------------------------- |
+| **`'2018' \|> Date(#)`**              | **`Date('2018')`**              |
+| **`'2018' \|> Date`**                 | **`Date('2018')`**              |
+|   `'2018' \|> Date()`                 |   syntax error: missing `#`     |
+|   `'2018' \|> (Date)`                 |   syntax error: missing `#`     |
+| **`'2018' \|> Date.parse(#)`**        | **`Date.parse('2018')`**        |
+| **`'2018' \|> Date.parse`**           | **`Date.parse('2018')`**        |
+|   `'2018' \|> Date.parse()`           |   syntax error: missing `#`     |
+|   `'2018' \|> (Date.parse)`           |   syntax error: missing `#`     |
+|   `'2018' \|> Date['parse'](#)`       | **`Date['parse']('2018')`**     |
+|   `'2018' \|> Date['parse']()`        |   syntax error: missing `#`     |
+|   `'2018' \|> (Date['parse'])`        |   syntax error: missing `#`     |
+| **`'2018' \|> global.Date.parse(#)`** | **`global.Date.parse('2018')`** |
+| **`'2018' \|> global.Date.parse`**    | **`global.Date.parse('2018')`** |
+|   `'2018' \|> global.Date.parse()`    |   syntax error: missing `#`     |
+|   `'2018' \|> (global.Date.parse)`    |   syntax error: missing `#`     |
+| **`'2018' \|> new global.Date(#)`**   | **`new Date('2018')`**          |
+| **`'2018' \|> new global.Date`**      | **`new Date('2018')`**          |
+|   `'2018' \|> new global.Date()`      |   syntax error: missing `#`     |
+|   `'2018' \|> (new global.Date)`      |   syntax error: missing `#`     |
+|   `'2018' \|> Date['parse'](#)`       | **`Date['parse']('2018')`**     |
 
 ### Multiple topic anaphors in a pipeline body
 The topic anaphor may be used multiple times in a pipeline body. Each use refers to the same value (wherever the topic anaphor is not overridden by another, inner pipeline’s anaphoric scope). Because it is bound to the result of the topic, the topic is still only ever evaluated once. The lines in each of the following are equivalent:
@@ -476,28 +520,6 @@ do { const $ = …; settimeout(() => $ |> f |> # * 500) }
 … |> settimeout(() => f(#) |> # * 500)
 … |> settimeout(() => # |> f |> # * 500)
 ```
-
-### Property-chained tacit style
-[TO DO]
-
-| Expression                            | Result                          |
-| ------------------------------------- | ------------------------------- |
-| **`'2018' \|> Date(#)`**              | **`Date('2018')`**              |
-| **`'2018' \|> Date`**                 | **`Date('2018')`**              |
-|   `'2018' \|> Date()`                 |   syntax error: missing `#`     |
-|   `'2018' \|> (Date)`                 |   syntax error: missing `#`     |
-| **`'2018' \|> Date.parse(#)`**        | **`Date.parse('2018')`**        |
-| **`'2018' \|> Date.parse`**           | **`Date.parse('2018')`**        |
-|   `'2018' \|> Date.parse()`           |   syntax error: missing `#`     |
-|   `'2018' \|> (Date.parse)`           |   syntax error: missing `#`     |
-| **`'2018' \|> global.Date.parse(#)`** | **`global.Date.parse('2018')`** |
-| **`'2018' \|> global.Date.parse`**    | **`global.Date.parse('2018')`** |
-|   `'2018' \|> global.Date.parse()`    |   syntax error: missing `#`     |
-|   `'2018' \|> (global.Date.parse)`    |   syntax error: missing `#`     |
-| **`'2018' \|> new global.Date(#)`**   | **`new Date('2018')`**          |
-| **`'2018' \|> new global.Date`**      | **`new Date('2018')`**          |
-|   `'2018' \|> new global.Date()`      |   syntax error: missing `#`     |
-|   `'2018' \|> (new global.Date)`      |   syntax error: missing `#`     |
 
 ## Grammar
 This proposal uses the [same grammar notation as that from the ES standard][ES grammar notation].
@@ -570,10 +592,6 @@ PipelineBody[In, Yield, Await] :
   PipelineTacitConstructor
   PipelineAnaphora[In, Yield, Await]
 ```
-
-The goal here is to minimize the parsing lookahead that the compiler must check before it can distinguish between tacit style and topic-token style. By restricting the space of valid tacit-style pipeline bodies (that is, without topic anaphors), the rule prevents [garden-path syntax][] that would otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
-
-Another goal is to help the editing JavaScript programmer: statically preventing them from accidentally omitting a topic anaphor where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the editor intended. The JavaScript programmer is encouraged to use topic anaphors and avoid tacit style, where tacit style may be visually confusing to the reader.
 
 1. If the body is a mere identifier, optionally with a chain of properties, and with no parentheses or brackets, then that identifier is interpreted to be a **tacit function**.
   ```
@@ -943,7 +961,7 @@ There are a number of other ways of potentially accomplishing the above use case
 
 [term rewriting with single dummy variable]: #term-rewriting-with-single-dummy-variable
 
-[topic and rheme]: https://en.wikipedia.org/wiki/Topic_and_comment
+[topic and comment]: https://en.wikipedia.org/wiki/Topic_and_comment
 
 [topic variables in other languages]: https://rosettacode.org/wiki/Topic_variable
 
