@@ -155,7 +155,9 @@ _.reject = function(obj, predicate, context) {
 <td>
 
 ```js
-function (sourceFunc, boundFunc, context, callingContext, args) {
+function (
+  sourceFunc, boundFunc, context, callingContext, args
+) {
   if (!(callingContext instanceof boundFunc))
     return sourceFunc.apply(context, args);
   var self = baseCreate(sourceFunc.prototype);
@@ -168,7 +170,9 @@ function (sourceFunc, boundFunc, context, callingContext, args) {
 <td>
 
 ```js
-function (sourceFunc, boundFunc, context, callingContext, args) {
+function (
+  sourceFunc, boundFunc, context, callingContext, args
+) {
   if (callingContext |> # instanceof boundFunc |> !#)
     return sourceFunc.apply(context, args);
   var self = sourceFunc
@@ -215,12 +219,10 @@ MIT License.
 <td>
 
 ```js
-pify(fs.readFile)('package.json', 'utf8').then(data => {
-  console.log(JSON.parse(data).name)
-})
-```
-```js
-console.log(JSON.parse((await pify(fs.readFile)('package.json', 'utf8')).name));
+pify(fs.readFile)('package.json', 'utf8')
+  .then(data => {
+    console.log(JSON.parse(data).name)
+  })
 ```
 
 <td>
@@ -245,18 +247,15 @@ Creative Commons BY.
 <td>
 
 ```js
-fetch("/music/pk/altes-kamuffel.flac")
+fetch("/music/pk/altes-kamuffel")
   .then(res => res.blob())
   .then(playBlob)
-```
-```js
-playBlob(await (await fetch("/music/pk/altes-kamuffel.flac")).blob())
 ```
 
 <td>
 
 ```js
-"/music/pk/altes-kamuffel.flac"
+"/music/pk/altes-kamuffel"
   |> await fetch(#)
   |> await #.blob()
   |> playBlob
@@ -268,11 +267,9 @@ playBlob(await (await fetch("/music/pk/altes-kamuffel.flac")).blob())
 
 ```js
 fetch("/", { method: "HEAD" })
-  .then(res => log(res.headers.get("strict-transport-security")))
-```
-```js
-(await fetch("/", { method: "HEAD" }))
-  .headers.get("strict-transport-security")
+  .then(res =>
+    log(res.headers.get("strict-transport-security"))
+  )
 ```
 
 <td>
@@ -288,7 +285,7 @@ fetch("/", { method: "HEAD" })
 <td>
 
 ```js
-fetch("https://pk.example/berlin-calling.json", { mode: "cors" })
+fetch("https://example.com/blah", { mode: "cors" })
   .then(response => {
     if (response.headers.get("content-type")??.toLowerCase()
       .indexOf("application/json") >= 0
@@ -300,7 +297,7 @@ fetch("https://pk.example/berlin-calling.json", { mode: "cors" })
   }).then(processJSON)
 ```
 ```js
-const res = await fetch("https://pk.example/berlin-calling.json", {
+const res = await fetch("https://example.com/blah", {
   mode: "cors"
 });
 processJSON(do {
