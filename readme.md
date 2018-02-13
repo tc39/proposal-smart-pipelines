@@ -65,9 +65,9 @@ function capitalize (string) {
 
 new User.Message(
   capitalizedString(
-    doubledString(
+    doubledSay(
       (await stringPromise)
-        ?? throw new TypeError(`Expected string from ${stringPromise}`)
+        ?? throw new TypeError()
     )
   ) + '!'
 )
@@ -94,7 +94,7 @@ stringPromise
 ```
 
 <tr>
-<td rowspan=4>
+<td>
 
 [Underscore.js][] 1.8.3.<br>
 [Jeremy Ashkenas][jashkenas] et al.<br>
@@ -127,6 +127,7 @@ _.find = _.detect = function(obj, predicate, context) {
 ```
 
 <tr>
+<td>″″
 <td>
 
 ```js
@@ -150,6 +151,7 @@ _.reject = function(obj, predicate, context) {
 ```
 
 <tr>
+<td>″″
 <td>
 
 ```js
@@ -179,6 +181,7 @@ function (sourceFunc, boundFunc, context, callingContext, args) {
 ```
 
 <tr>
+<td>″″
 <td>
 
 ```js
@@ -231,7 +234,7 @@ console.log(JSON.parse((await pify(fs.readFile)('package.json', 'utf8')).name));
 ```
 
 <tr>
-<td rowspan=3>
+<td>
 
 [WHATWG Fetch Standard][].<br>
 [Anne van Kesteren][annevk] et al.<br>
@@ -260,6 +263,7 @@ playBlob(await (await fetch("/music/pk/altes-kamuffel.flac")).blob())
 ```
 
 <tr>
+<td>″″
 <td>
 
 ```js
@@ -280,6 +284,7 @@ fetch("/", { method: "HEAD" })
 ```
 
 <tr>
+<td>″″
 <td>
 
 ```js
