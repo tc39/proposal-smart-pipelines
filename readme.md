@@ -413,7 +413,7 @@ The expression after a pipe is the pipeline’s **body**. A pipeline’s body ma
 
 Where “pipeline” is used as a verb, the pipe operator is said **to pipeline its topic through its body**, resulting in the pipeline’s value.
 
-A **`PipelineExpression`** or **pipeline-level expression** is an expression at the same [precedence level of the pipe operator][pipeline syntax]. Although all pipelines are `PipelineExpression`s, most `PipelineExpression`s are not actually pipelines; conditional operations, logical-or operations, or any other expressions that have tighter syntactic precedence than the pipe operation—those are also `PipelineExpression`s.
+A **pipeline-level expression** is an expression at the same [ level level of the pipe operator][operator precedence]. Although all pipelines are pipeline-level expressions, most pipeline-level expressions are not actually pipelines. Conditional operations, logical-or operations, or any other expressions that have tighter [operator precedence][] than the pipe operation—those are also pipeline-level expressions.
 
 The special token `#` is a **topic anaphor**, a **topic bindee**, or **topic placeholder**: it is a nullary operator that acts like a special variable: implicitly bound to its value, but still lexically scoped.
 
@@ -434,8 +434,162 @@ The term “**topic anaphor**” is preferred to the phrase “**topic variable*
 
 The term “**body**” is preferred instead of “**RHS**” because “topic” is preferred to “LHS”. However, “RHS” is still a fine and acceptable name for the body of the pipeline operator.
 
-## Brief rules
-Here are some brief rules for the JavaScript programmer. The [formal grammar][] formally defines the rules.
+## Grammar
+This grammar of the pipeline operator juxtaposes brief rules written for the JavaScript programmer with formally written changes to the ES standard. The formal changes are hidden within [TO DO: what’s a good phrase for `<details>`?].
+
+This proposal uses the [same grammar notation as that from the ES standard][ES grammar notation].
+
+### Lexing
+The smart pipe operator adds two new tokens to JavaSCript: `|>` the binary pipe, and `#` the topic anaphor.
+
+<details>
+<summary>Formal grammar details</summary>
+
+The lexical rule for [punctuator tokens][] would be modified so that `|>` and `#` are added:
+```
+Punctuator :: one of
+  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==`
+  `+` `-` `*` `%` `**` `++` `--`
+  `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` `|>` `#`
+  `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
+```
+
+</details>
+
+### Grammar parameters
+<details>
+<summary>Formal grammar details</summary>
+
+In the ES standard, expressions in general are parameterized with three flags:
+
+* **`In`**: Whether the current context allows the [`in` relational operator][], which is false only in the headers of [`for` iteration statements][].
+* **`Yield`**: Whether the current context is within a `yield` expression/declaration.
+* **`Await`**: Whether the current context is within an `await` expression/declaration.
+
+</details>
+
+### Operator precedence
+As a binary operation forming compound expressions, the [operator precedence and associativity][MDN’s guide on expressions and operators] of pipelining must be determined, relative to other operations.
+
+Precedence is tighter than assignment (`=`, `+=`, …), generator `yield` and `yield *`, and sequence `,`; and it is looser than every other type of expression. See also [MDN’s guide on expressions and operators][]. If the pipe operation were any tighter than this level, its body would have to be parenthesized for many frequent types of expressions. However, the result of a pipeline is also expected to often serve as the body of a variable assignment `=`, so it is tighter than assignment operators.
+
+The pipe operator actually has [bidirectional association][]. However, for the purposes of this grammar, it will
+
+The following table shows how the topic reference `#` and the pipe operator `|>` are integrated into the hierarchy of operators. All expression levels in JavaScript from **tightest to loosest**. Each level includes all the expression types listed for that level—**as well as** any expression types from any precedence level that is listed **above** it.
+
+| Precedence level     | Type                          | Form             | Associativity / fixity   |
+|----------------------|-------------------------------|------------------|--------------------------|
+| Primary level        | This references               | `this`           |                          |
+| ″″                   | **Topic references**          | **`#`**          |                          |
+| ″″                   | Identifier references         | `a` …            |                          |
+| ″″                   | Null literals                 | `null`           |                          |
+| ″″                   | Boolean literals              | `true` `false`   |                          |
+| ″″                   | Numeric literals              | `0` …            |                          |
+| ″″                   | Array literals                | `[…]`            | circumfix                |
+| ″″                   | Object literals               | `{…}`            | circumfix                |
+| ″″                   | Function literals             |                  |                          |
+| ″″                   | Class expressions             | `class … {…}`    | circumfix                |
+| ″″                   | Generator expressions         |                  |                          |
+| ″″                   | Async-function expressions    |                  |                          |
+| ″″                   | Regular-expression literals   | `/…/`…           | circumfix                |
+| ″″                   | Template literals             | ```…```          | circumfix                |
+| ″″                   | Parenthesized expressions     | `(…)`            | circumfix                |
+| LHS level            | Dynamic properties            | `…[…]`           | LTR infix with circumfix |
+| ″″                   | Static properties             | `….…`            | LTR infix                |
+| ″″                   | Tagged templates              | ``…`…```         | LTR infix                |
+| ″″                   | Super properties              | `super.…`        | LTR infix                |
+| ″″                   | Meta properties               | `meta.…`         | unchainable prefix       |
+| ″″                   | Super call operations         | `super(…)`       | unchainable prefix       |
+| ″″                   | New operations                | `new …`          | RTL prefix               |
+| ″″                   | Normal call expressions       | `…(…)`           | LTR infix with circumfix |
+| Postfix unary level  | Postfix increment op.s        | `…++`            | postfix                  |
+| ″″                   | Postfix decrement op.s        | `…--`            | postfix                  |
+| Prefix unary level   | Prefix increment op.s         | `++…`            | RTL prefix               |
+| Prefix unary level   | Prefix decrement op.s         | `--…`            | ″″                       |
+| ″″                   | Delete op.s                   | `delete …`       | ″″                       |
+| ″″                   | Void op.s                     | `void …`         | ″″                       |
+| ″″                   | Unary `+`/`-` op.s            | ″″               | ″″                       |
+| ″″                   | Bitwise NOT op.s `~…`         | ″″               | ″″                       |
+| ″″                   | Logical NOT op.s `!…`         | ″″               | ″″                       |
+| Exponentiation level | Exponentiation op.s           | `… ** …`         | RTL infix                |
+| Multiplicative level | Multiplication op.s           | `… * …` op.s     | LTR infix                |
+| ″″                   | Division op.s                 | `… / …`          | ″″                       |
+| ″″                   | Modulus op.s                  | `… % …`          | ″″                       |
+| Additive level       | Addition op.s                 | `… + …`          | ″″                       |
+| ″″                   | Subtraction op.s              | `… - …`          | ″″                       |
+| Bitwise-shift level  | Left-shift op.s               | `… << …`         | ″″                       |
+| ″″                   | Right-shift op.s              | `… >> …`         | ″″                       |
+| ″″                   | Signed right-shift op.s       | `… >> …`         | ″″                       |
+| Relational level     | Greater-than op.s             | `… < …`          | ″″                       |
+| ″″                   | Less-than op.s                | `… > …`          | ″″                       |
+| ″″                   | Greater-than-or-equal-to op.s | `… >= …`         | ″″                       |
+| ″″                   | Less-than-or-equal-to op.s    | `… <= …`         | ″″                       |
+| ″″                   | Containment op.s              | `… in …`         | ″″                       |
+| ″″                   | Instance-of op.s              | `… instanceof …` | ″″                       |
+| Equality level       | Abstract equality op.s        | `… == …`         | ″″                       |
+| ″″                   | Abstract inequality op.s      | `… != …`         | ″″                       |
+| ″″                   | Strict equality op.s          | `… === …`        | ″″                       |
+| ″″                   | Strict inequality op.s        | `… !== …`        | ″″                       |
+| Bitwise-AND level    |                               | `… & …`          | ″″                       |
+| Bitwise-XOR level    |                               | `… ^ …`          | ″″                       |
+| Bitwise-OR level     |                               | `… | …`          | ″″                       |
+| Logical-AND level    |                               | `… ^^ …`         | ″″                       |
+| Logical-OR level     |                               | `… || …`         | ″″                       |
+| Conditional level    |                               | `… ? … : …`      | RTL ternary infix        |
+| **Pipeline level**   |                               | **`… |> …`**`    | LTR infix                |
+| Assignment level     | Arrow functions               | `… => …`         | RTL infix                |
+| ″″                   | Async arrow functions         | `async … => …`   | RTL infix                |
+| ″″                   | Reference-assignment op.s     | `… = …`          | ″″                       |
+| ″″                   |                               | `… += …`         | ″″                       |
+| ″″                   |                               | `… -= …`         | ″″                       |
+| ″″                   |                               | `… *= …`         | ″″                       |
+| ″″                   |                               | `… %= …`         | ″″                       |
+| ″″                   |                               | `… **= …`        | ″″                       |
+| ″″                   |                               | `… <<= …`        | ″″                       |
+| ″″                   |                               | `… >>= …`        | ″″                       |
+| ″″                   |                               | `… >>>= …`       | ″″                       |
+| ″″                   |                               | `… &= …`         | ″″                       |
+| ″″                   |                               | `… |= …`         | ″″                       |
+| Yield level          |                               | `yield …`        | RTL prefix               |
+| ″″                   |                               | `yield * …`      | ″″                       |
+| Ultimate level       | Comma op.s                    | `…, …`           | LTR infix                |
+
+
+The [assignment operator][] is already parameterized on `In`, `Yield`, and `Await`; it may be a conditional expression, yield expression, arrow function, async arrow function, or assignment:
+```
+// Old version
+AssignmentExpression[In, Yield, Await] :
+  ConditionalExpression[?In, ?Yield, ?Await]
+  [+Yield] YieldExpression[?In, ?Await]
+  ArrowFunction[?In, ?Yield, ?Await]
+  AsyncArrowFunction[?In, ?Yield, ?Await]
+  LeftHandSideExpression[?Yield, ?Await]
+    `=` AssignmentExpression[?In, ?Yield, ?Await]
+  LeftHandSideExpression[?Yield, ?Await]
+    AssignmentOperator AssignmentExpression[?In, ?Yield, ?Await]
+```
+
+Here, the conditional-expression rule (`AssignmentExpression : ConditionalExpression`) would be replaced with one for pipeline expressions (`AssignmentExpression : PipelineExpression`):
+```
+// New version
+AssignmentExpression[In, Yield, Await] :
+  PipelineExpression[?In, ?Yield, ?Await]
+  [+Yield] YieldExpression[?In, ?Await]
+  …
+```
+
+An expression is a pipeline-level expression (a `PipelineExpression`) only if:
+
+* It is either also a conditional-level expression `ConditionalExpression`, with the same parameters above;
+* Or it is another pipeline-level expression, followed by a `|>` token, then a pipeline body (`PipelineBody`, defined next), with the same parameters as above.
+
+```
+// New rule
+PipelineExpression[In, Yield, Await] :
+  ConditionalExpression[?In, ?Yield, ?Await]
+  PipelineExpression[?In, ?Yield, ?Await] `|>`
+    PipelineBody[?In, ?Yield, ?Await]
+```
 
 ### Tacit style
 Most pipelines will use the topic anaphor `#` in their bodies. But for two certain simple cases—unary functions and constructors—you may omit the anaphor from the body. The body is just a **simple reference** to a function or constructor, such as with `… |> capitalize` and `… |> new User.Message`.
@@ -521,66 +675,10 @@ do { const $ = …; settimeout(() => $ |> f |> # * 500) }
 … |> settimeout(() => # |> f |> # * 500)
 ```
 
-## Grammar
-This proposal uses the [same grammar notation as that from the ES standard][ES grammar notation].
-
-### Lexing
-The lexical rule for [punctuator tokens][] would be modified. Two new tokens, `|>` for the binary pipe and `#` for the topic anaphor, would be added to the Punctuators:
-```
-Punctuator :: one of
-  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==`
-  `+` `-` `*` `%` `**` `++` `--`
-  `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` `|>` `#`
-  `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
-```
-
-### Syntax parameters
-In the ES standard, expressions in general are parameterized with three flags:
-
-* **`In`**: Whether the current context allows the [`in` relational operator][], which is false only in the headers of [`for` iteration statements][].
-* **`Yield`**: Whether the current context is within a `yield` expression/declaration.
-* **`Await`**: Whether the current context is within an `await` expression/declaration.
-
-### Pipeline syntax
+## [TO DO: Remove this section]
 A pipeline `topic |> body` is a left-associative (though see [bidirectional associativity][]) binary operation with a loose precedence.
 
-Precedence is tighter than assignment (`=`, `+=`, …), generator `yield` and `yield *`, and sequence `,`; and it is looser than logical ternary conditional (`… ? … : …`), logical and/or `&&`/`||`, bitwise and/or/xor, `&`/`|`/`^`, equality/inequality `==`/`===`/`!=`/`!==`, and every other type of expression. See also [MDN’s guide on expressions and operators][]. If the pipe operation were any tighter than this level, its body would have to be parenthesized for many frequent types of expressions. However, the result of a pipeline is also expected to often serve as the body of a variable assignment `=`, so it is tighter than assignment operators.
 
-The [assignment operator][] is already parameterized on `In`, `Yield`, and `Await`; it may be a conditional expression, yield expression, arrow function, async arrow function, or assignment:
-```
-// Old version
-AssignmentExpression[In, Yield, Await] :
-  ConditionalExpression[?In, ?Yield, ?Await]
-  [+Yield] YieldExpression[?In, ?Await]
-  ArrowFunction[?In, ?Yield, ?Await]
-  AsyncArrowFunction[?In, ?Yield, ?Await]
-  LeftHandSideExpression[?Yield, ?Await]
-    `=` AssignmentExpression[?In, ?Yield, ?Await]
-  LeftHandSideExpression[?Yield, ?Await]
-    AssignmentOperator AssignmentExpression[?In, ?Yield, ?Await]
-```
-
-Here, the conditional-expression rule (`AssignmentExpression : ConditionalExpression`) would be replaced with one for pipeline expressions (`AssignmentExpression : PipelineExpression`):
-```
-// New version
-AssignmentExpression[In, Yield, Await] :
-  PipelineExpression[?In, ?Yield, ?Await]
-  [+Yield] YieldExpression[?In, ?Await]
-  …
-```
-
-An expression is a pipeline-level expression (a `PipelineExpression`) only if:
-
-* It is either also a conditional-level expression `ConditionalExpression`, with the same parameters above;
-* Or it is another pipeline-level expression, followed by a `|>` token, then a pipeline body (`PipelineBody`, defined next), with the same parameters as above.
-
-```
-// New rule
-PipelineExpression[In, Yield, Await] :
-  ConditionalExpression[?In, ?Yield, ?Await]
-  PipelineExpression[?In, ?Yield, ?Await] `|>`
-    PipelineBody[?In, ?Yield, ?Await]
-```
 
 ### Smart body syntax
 When the parser checks the body/RHS, it must determine what style it is in. There are four outcomes for each pipeline body: tacit constructor, tacit function, anaphora, or syntax error.
@@ -973,3 +1071,6 @@ There are a number of other ways of potentially accomplishing the above use case
 
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
 
+[operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
+
+[operator precedence (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
