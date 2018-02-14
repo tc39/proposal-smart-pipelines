@@ -640,6 +640,103 @@ rules.</summary>
 
 </details>
 
+### Syntax and static semantics
+The syntactic grammar of JavaScript can transform token sequences (defined by the [lexical grammar][])
+into **parse trees**: rooted tree data structures made of **Parse Nodes**.
+
+<details>
+
+This is described further in [ES Clause 5.1.4][].
+
+When a stream of code points is to be parsed as an ECMAScript Script or Module, it is first converted to a stream of input elements by repeated application of the lexical grammar; this stream of input elements is then parsed by a single application of the syntactic grammar. The input stream is syntactically in error if the tokens in the stream of input elements cannot be parsed as a single instance of the goal nonterminal (Script or Module), with no tokens left over.
+
+When a parse is successful, it constructs a parse tree, a rooted tree structure in which each node is a Parse Node. Each Parse Node is an instance of a symbol in the grammar; it represents a span of the source text that can be derived from that symbol. The root node of the parse tree, representing the whole of the source text, is an instance of the parse's goal symbol. When a Parse Node is an instance of a nonterminal, it is also an instance of some production that has that nonterminal as its left-hand side. Moreover, it has zero or more children, one for each symbol on the production's right-hand side: each child is a Parse Node that is an instance of the corresponding symbol.
+
+</details>
+
+The syntactic grammar of JavaScript further relies upon several functions that analyze its
+syntactic structures. These functions are polymorphic on the types of their
+input syntactic structures, and their definitions are often also recursive. The
+ES specification goes into more detail on these **Static Semantic Rules** in [ES
+Clause 5.2.4][].
+
+<details>
+
+> Context-free grammars are not sufficiently powerful to express all the rules
+> that define whether a stream of input elements form a valid ECMAScript Script
+> or Module that may be evaluated. In some situations additional rules are
+> needed that may be expressed using either ECMAScript algorithm conventions or
+> prose requirements. Such rules are always associated with a production of a
+> grammar and are called the static semantics of the production.
+>
+> Static Semantic Rules have names and typically are defined using an algorithm.
+> Named Static Semantic Rules are associated with grammar productions and a
+> production that has multiple alternative definitions will typically have for
+> each alternative a distinct algorithm for each applicable named static
+> semantic rule.
+
+</details>
+
+This specification defines additions for the following Static Semantic Rules:
+
+| Form                              | Notes                                       |
+| --------------------------------- | ------------------------------------------- |
+| Contains                          | Already defined in ES for nearly all nodes. |
+| Is Function Definition            | Already defined in ES for many nodes.       |
+| Is Valid Simple Assignment Target | Already defined in ES for many nodes.       |
+| Binds Topic                       | New rule defined in this proposal.          |
+| Early errors                      | Already defined in ES for many nodes.       |
+
+It should be noted that, in the ES standard, the Contains rule is currently
+written as an infix operator: “… Contains …” for historical reasons. This is
+unlike any other Static Semantic Rule, which would be written as prefix
+operators “{{Rule Name}} of … with arguments …”. There are plans to change all
+Static Semantic Rules to instead have a consistent infix syntax resembling
+method calls: “….{{rule}}(…)”. For self-consistency, this proposal will use that
+planned method-like syntax.
+
+#### Static Containment
+<details>
+<summary>The ES spec imply defines the Contains rule for nearly all nodes.
+Conceptually, a node contains another node if the latter is somewhere in the
+former.</summary>
+
+>    b. If _child_ is an instance of a nonterminal, then
+>
+>       i.  Let contained be the result of _child_ Contains _symbol_.
+>       ii. If contained is true, return true.
+>
+> 2. Return false.
+>
+> The above definition is explicitly over-ridden for specific productions.
+
+</details>
+
+In the ES standard, the Contains rule is used by many other Static Semantic
+Rules, such as [object initializers’ Computed Property Contains rule][]. The
+rule is also generally overridden by methods definitions and other function
+definitions, such that they hide their substructure from the rule.
+
+It should also be noted that, uniquely among the Static Semantic Rules, Contains
+is written as an infix operator: “… Contains …” for historical reasons. This
+proposal will instead use the planned future new syntax “….contains(…)”.
+
+### Static Function Definition
+
+#### Static Early Errors
+<details>
+
+> A special kind of static semantic rule is an Early Error Rule. Early error
+> rules define early error conditions (see clause 16) that are associated with
+> specific grammar productions. Evaluation of most early error rules are not
+> explicitly invoked within the algorithms of this specification. A conforming
+> implementation must, prior to the first evaluation of a Script or Module,
+> validate all of the early error rules of the productions used to parse that
+> Script or Module. If any of the early error rules are violated the Script or
+> Module is invalid and cannot be evaluated.
+
+</details>
+
 ### Operator precedence
 As a binary operation forming compound expressions, the [operator precedence and
 associativity][MDN’s guide on expressions and operators] of pipelining must be
