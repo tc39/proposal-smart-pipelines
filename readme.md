@@ -498,11 +498,12 @@ placeholder**, or **topic anaphor**. `#` is a nullary operator that acts like a
 special variable: implicitly bound to its value, but still lexically scoped.
 
 The topic reference could also be called a “**topic variable**” or “**topic
-identifier**”, but these phrases are misnomers. The topic reference is *not*
-actually a variable identifier and cannot be manually declared (`const #` is a
-syntax error), nor can it be assigned with a value (`# = 3` is a syntax error).
-Instead, the topic reference is implicitly, lexically bound only within pipeline
-bodies.
+identifier**”, [as they are called in other programming languages][topic
+variables in other languages]. But in JavaScript, these phrases would be
+misnomers. The topic reference is *not* actually a variable identifier and
+cannot be manually declared (`const #` is a syntax error), nor can it be
+assigned with a value (`# = 3` is a syntax error). Instead, the topic reference
+is implicitly, lexically bound only within pipeline bodies.
 
 When a pipeline’s body is in this **topical style**. A pipeline body in topical
 style forms an inner lexical scope – called the pipeline’s **topical
@@ -522,7 +523,7 @@ because, in the future, the [topic concept could be extended to other
 syntax][possible future extensions to topic concept], not just pipelines. In
 addition, “LHS” in the ES specification usually refers to the [LHS of
 assignments][ES LHS expressions], which may be confusing. However, “LHS” is
-still a fine and acceptable name for topic expression in the pipeline operator.
+still a fine and acceptable name for a pipeline’s antecedent.
 
 The term “**topic reference**” is preferred to the phrase “**topic variable**”
 because the latter is a misnomer. The topic reference is *not* a variable
@@ -547,12 +548,8 @@ body of the pipeline operator.
 This grammar of the pipeline operator juxtaposes brief rules written for the
 JavaScript developer with formally written changes to the ES standard.
 
-This proposal uses the [same notation as that from the ES standard][ES grammar
-notation] to denote context-free grammars; see [ES grammar notation][] for more
-information.
-
 <details>
-<summary>The ES specification explains…</summary>
+<summary>The ES specification explains further…</summary>
 
 > A context-free grammar consists of a number of **productions**. Each
 > production has an abstract symbol called a **nonterminal** as its left-hand
@@ -560,19 +557,13 @@ information.
 > its right-hand side. For each grammar, the terminal symbols are drawn from a
 > specified alphabet.
 
-> A **chain production** is a production that has exactly one nonterminal symbol
-> on its right-hand side along with zero or more terminal symbols.
-
-> Starting from a sentence consisting of a single distinguished nonterminal,
-> called the **goal symbol**, a given context-free grammar specifies a
-> **language**, namely, the (perhaps infinite) set of possible sequences of
-> terminal symbols that can result from repeatedly replacing any nonterminal in
-> the sequence with a right-hand side of a production for which the nonterminal
-> is the left-hand side.
-
 </details>
 
-### Lexing
+This proposal uses the [same notation as that from the ES standard][ES grammar
+notation] to denote context-free grammars; see [ES grammar notation][] for more
+information.
+
+### Lexical grammar
 The smart pipe operator adds two new tokens to JavaSCript: `|>` the binary pipe,
 and `#` the topic reference.
 
@@ -580,8 +571,7 @@ and `#` the topic reference.
 <summary>The lexical rule for punctuator tokens would be modified so that
 these two tokens are added.</summary>
 
-The specification explains in [ES clause 5.1.2: The Lexical and _RegExp_
-Grammars][]:
+The specification explains in [ES clause 5.1.2][]:
 
 > A lexical grammar for ECMAScript is given in [ES clause 11][]. This grammar
 > has as its terminal symbols Unicode code points…It defines a set of
@@ -626,9 +616,9 @@ Punctuator :: one of
 
 ### Grammar parameters
 <details>
-<summary>In the ES standard, the rules for expressions are often parameterized
+<summary>In the ES standard, the rules that produce expressions are often parameterized
 with three flags, which are then recursively passed into their constituent
-rules.</summary>
+rules. These parameters thus must also be used by the new rules in this proposal.</summary>
 
 * **`In`**: Whether the current context allows the [`in` relational operator][],
   which is false only in the headers of [`for` iteration statements][].
@@ -759,7 +749,7 @@ integrated into the hierarchy of operators.</summary>
 
 All expression levels in JavaScript are listed here, from **tightest to
 loosest**. Each level includes all the expression types listed for that
-level—**as well as** any expression types from any precedence level that is
+level – **as well as** any expression types from any precedence level that is
 listed **above** it.
 
 | Level          | Type                    | Form           | Associativity / fixity   |
@@ -871,7 +861,7 @@ AssignmentExpression[In, Yield, Await] :
 
 <details>
 <summary>This conditional-expression production rule would be replaced with one for
-pipeline expressions, which is also defined soon.</summary>
+pipeline expressions, which will be defined in the next section.</summary>
 
 ```
 // New version
@@ -910,6 +900,10 @@ PipelineExpression[In, Yield, Await] :
 ```
 
 </details>
+
+#### Static Semantics
+
+Several…
 
 ### Smart body syntax
 Most pipelines will use the topic reference `#` in their bodies. As already
@@ -1085,8 +1079,8 @@ The lines in each of the following rows are equivalent.
 
 ### Inner functions
 <details>
-<summary>Both the topic expression and the body of a pipeline may contain nested
-inner functions.</summary>
+<summary>Both the antecedent and the body of a pipeline may contain nested inner
+functions.</summary>
 
 The lines in each of the following rows are equivalent.
 
@@ -1097,12 +1091,12 @@ The lines in each of the following rows are equivalent.
 </details>
 
 ### Deeply nested pipelines
-Both the topic expression and the body of a pipeline may contain nested inner
+Both the antecedent and the body of a pipeline may contain nested inner
 functions. This is not encouraged, but it is still permitted.
 
 <details>
-<summary>Both the topic expression and the body of a pipeline may contain nested
-inner functions.</summary>
+<summary>Both the antecedent and the body of a pipeline may contain nested inner
+functions.</summary>
 
 The lines in each of the following rows are equivalent.
 
@@ -1298,6 +1292,7 @@ because verbally confusing with partial-application placeholders – and because
 forward compatibility with [Possible future extensions to topic concept].]
 
 <details>
+
 <summary>
 
 ## Previous draft appendices
@@ -1353,7 +1348,7 @@ also [property-chained tacit style][].
 [TO DO: Rewrite this section to the conventions of the ES specification.]
 
 A pipe expression’s semantics are:
-1. The topic expression is evaluated into the topic’s value; call this `topicValue`.
+1. The antecedent is evaluated into the topic’s value; call this `topicValue`.
 2. [The body is tested for its type][smart body syntax]: Is it in tacit style
    (as a tacit function or a tacit constructor), is it in topical style, or is it
    an invalid body?
@@ -1517,7 +1512,7 @@ do {
 For each pipe expression, evaluated left associatively and inside to outside,
 the steps of the computation would be:
 
-1. The topic expression is first evaluated in the current lexical context.
+1. The antecedent is first evaluated in the current lexical context.
 2. The topic’s result is bound to a hidden special variable `•`.
 3. In a new inner lexical context (the topical scope), the value of `•` is
   bound to the topic reference `#`.
@@ -1609,41 +1604,6 @@ do { do { do { do { 3 * 3 } } }
 ```
 
 </details>
-
-## Static semantics
-[TO DO: Brief explanation of static semantics]
-
-### Early errors
-
-### “Contains?”
-[TO DO]
-
-### “Is function definition?”
-[TO DO]
-
-### “Is valid simple assignment target?”
-[TO DO]
-
-### “Binds topic?”
-[TO DO]
-
-## Runtime semantics
-[TO DO]
-
-## Possible future extensions to topic concept
-
-## Alternative solutions explored
-There are a number of other ways of potentially accomplishing the above use
-cases. However, the authors of this proposal believe that the smart pipe
-operator may be the best choice. [TO DO]
-
-## Relation to existing work
-[TO DO]
-
-[TO DO: Include commentary on why “topic reference” instead of
-“placeholder”—because verbally confusing with partial-application
-placeholders—and because forward compatibility with extending the topic concept
-to other syntax, such as `for { … }`, `matches { … }`, and `given (…) { … }`.]
 
 [`for` iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
 
@@ -1775,6 +1735,20 @@ to other syntax, such as `for { … }`, `matches { … }`, and `given (…) { �
 
 [ES clause 11]: https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar
 
-[ES clause 5.1.2: The Lexical and _RegExp_ Grammars]: https://tc39.github.io/ecma262/#sec-lexical-and-regexp-grammars
+[ES clause 5.1.2]: https://tc39.github.io/ecma262/#sec-lexical-and-regexp-grammars
 
 [grammar parameters]: #grammar-parameters
+
+[_IdentifierReference_]: https://tc39.github.io/ecma262/#prod-IdentifierReference
+
+[_MemberExpression_]: https://tc39.github.io/ecma262/#prod-MemberExpression
+
+[_IdentifierName_]: https://tc39.github.io/ecma262/#prod-IdentifierName
+
+[ES Clause 5.2.4]: https://tc39.github.io/ecma262/#sec-static-semantic-rules
+
+[lexical grammar]: #lexical-grammar
+
+[object initializers’ Computed Property Contains rule]: https://tc39.github.io/ecma262/#sec-object-initializer-static-semantics-computedpropertycontains
+
+[REPLs]: https://en.wikipedia.org/wiki/Read–eval–print_loop
