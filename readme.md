@@ -1114,6 +1114,189 @@ The lines in each of the following rows are equivalent.
 
 </details>
 
+## Possible future extensions to topic concept
+The [concept of the “topic variable” already exists in many other programming
+languages][topic variables in other languages], commonly named with an
+underscore `_` or `$_`. These languages often integrate their topic variables
+into their function-call control-flow syntaxes, with Perl 6 perhaps as the most
+extensive, unified example. Integration of topic with syntax enables especially
+pithy, terse tacit programming.
+
+In addition, many JavaScript console [REPLs][], such as those of the WebKit Web
+Inspector and the Node.js interactive console… [TO DO]
+
+Several disadvantages to these prior approaches may increase the probability of
+developer surprise, in which “surprise” refers to behavior difficult to predict
+by the developer.
+
+One disadvantage arises from their frequent dynamic binding rather than lexical
+binding, as the former is not statically analyzable and is more stateful than
+the latter. It may also cause surprising results when coupled with tacit calls
+it becomes more difficult to tell whether a bare identifier `print` is meant to
+be a simple variable reference or a tacit function call on the topic value.
+
+Another disadvantage arises from the ability to clobber or overwrite the value of the
+topic variable, which may affect code in surprising ways.
+
+However, JavaScript’s topic reference `#` is different than this prior art. It
+is lexically bound and statically analyzable. It is also cannot be accidentally
+bound; the developer must opt into binding it by using the pipe operator. It
+also cannot be accidentally used; it is a syntax error when `#` is used outside
+of a pipeline body. [TO DO: Link to pertinent grammar sections.]
+
+Should this proposal be accepted, the door becomes opened to extending the topic
+concept to other syntax forms, potentially multiplying its benefits toward
+reading and writing, while perhaps preserving static analyzability and… [TO DO]
+
+[TO DO: Note on forward compatibility with these possibilities.]
+
+[TO DO: Add, to above, a version of second example with `do` blocks showcasing
+the `#|>` idiom.]
+
+<table>
+<thead>
+<tr>
+<th>
+<th>With future proposal
+<th>With only this proposal
+
+<tbody>
+<tr>
+<th>Topical for loop
+
+<td>
+
+```js
+for (range(0, 50)) {
+  console.log(#|> # ** 2);
+  console.log(#|> Math.sqrt);
+}
+```
+
+<td>
+
+```js
+for (const i of range(0, 50)) {
+  console.log(i |> # ** 2);
+  console.log(i |> Math.sqrt);
+}
+```
+
+<tr>
+<th>Topical for–await loop
+
+<td>
+
+```js
+for await (lineStream) {
+  yield #|>
+    …
+}
+```
+
+<td>
+
+```js
+for await (const line of lineStream) {
+  yield line |>
+    …
+}
+```
+
+<tr>
+<th>Topical arrow function
+
+<td>
+
+```js
+materials.map(=> #.length)
+```
+
+<td>
+
+```js
+materials.map(m => m.length)
+```
+
+<tr>
+<th>Topical match
+
+<td>
+
+```js
+function getLength (#) {
+  return match {
+    …
+  }
+}
+```
+
+<td>
+
+```js
+function getLength (vector) {
+  return match (vector) {
+    …
+  }
+}
+```
+
+<tr>
+<th>Topical function with topical match
+
+<td>
+
+```js
+function getLength (#) {
+  return match {
+    …
+  }
+}
+```
+
+<td>
+
+```js
+function getLength (vector) {
+  return match (vector) {
+    …
+  }
+}
+```
+
+<tr>
+<th>Topical arrow function with topical match
+
+<td>
+
+```js
+const getLength = => match {
+  …
+}
+```
+
+<td>
+
+```js
+const getLength = vector => match (vector) {
+  …
+}
+```
+
+</table>
+
+## Alternative solutions explored
+There are a number of other ways of potentially accomplishing the above use
+cases. However, the authors of this proposal believe that the smart pipe
+operator may be the best choice. [TO DO]
+
+## Relation to existing work
+[TO DO]
+
+[TO DO: Include commentary on why “topic reference” instead of “placeholder” –
+because verbally confusing with partial-application placeholders – and because
+forward compatibility with [Possible future extensions to topic concept].]
+
 <details>
 <summary>
 
