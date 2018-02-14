@@ -6,15 +6,9 @@ operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC3
 process][TC39 process] but it may eventually be presented to TC39.
 
 ## Background
-The binary operator proposed here would provide a backwards- and
-forwards-compatible style of chaining nested expressions into a readable,
-left-to-right manner. Nested transformations become untangled into short steps
-in a zero-cost abstraction.
-
 <details>
-<summary>The concept of a pipe operator is similar to operators from numerous
-other languages, variously called “pipeline”, “threading”, and “feed”
-operators.</summary>
+<summary>The concept of a pipe operator appears in numerous other languages,
+variously called “pipeline”, “threading”, and “feed” operators.</summary>
 
 * [Clojure’s `->` and `as->`][Clojure pipe]
 * [Forth’s, Joy’s, Factor’s, Onyx’s, PostScript’s, and RPL’s term
@@ -33,6 +27,11 @@ operators.</summary>
 It is also conceptually similar to [WHATWG-stream piping][] and [Node-stream piping][].
 
 </details>
+
+The binary operator proposed here would provide a backwards- and
+forwards-compatible style of chaining nested expressions into a readable,
+left-to-right manner. Nested transformations become untangled into short steps
+in a zero-cost abstraction.
 
 The proposal is a variant of a [previous pipe-operator proposal][] championed by
 [Daniel “littledan” Ehrenberg of Igalia][]. This variant is listed as
@@ -548,23 +547,79 @@ body of the pipeline operator.
 This grammar of the pipeline operator juxtaposes brief rules written for the
 JavaScript developer with formally written changes to the ES standard.
 
-This proposal uses the [same grammar notation as that from the ES standard][ES
-grammar notation].
+This proposal uses the [same notation as that from the ES standard][ES grammar
+notation] to denote context-free grammars; see [ES grammar notation][] for more
+information.
+
+<details>
+<summary>The ES specification explains…</summary>
+
+> A context-free grammar consists of a number of **productions**. Each
+> production has an abstract symbol called a **nonterminal** as its left-hand
+> side, and a sequence of zero or more nonterminal and **terminal** symbols as
+> its right-hand side. For each grammar, the terminal symbols are drawn from a
+> specified alphabet.
+
+> A **chain production** is a production that has exactly one nonterminal symbol
+> on its right-hand side along with zero or more terminal symbols.
+
+> Starting from a sentence consisting of a single distinguished nonterminal,
+> called the **goal symbol**, a given context-free grammar specifies a
+> **language**, namely, the (perhaps infinite) set of possible sequences of
+> terminal symbols that can result from repeatedly replacing any nonterminal in
+> the sequence with a right-hand side of a production for which the nonterminal
+> is the left-hand side.
+
+</details>
 
 ### Lexing
 The smart pipe operator adds two new tokens to JavaSCript: `|>` the binary pipe,
 and `#` the topic reference.
 
 <details>
-<summary>The lexical rule for [punctuator tokens][] would be modified so that
-`|>` and `#` are added.</summary>
+<summary>The lexical rule for punctuator tokens would be modified so that
+these two tokens are added.</summary>
+
+The specification explains in [ES clause 5.1.2: The Lexical and _RegExp_
+Grammars][]:
+
+> A lexical grammar for ECMAScript is given in [ES clause 11][]. This grammar
+> has as its terminal symbols Unicode code points…It defines a set of
+> productions…that describe how sequences of such code points are translated
+> into a sequence of input elements.
+>
+> Input elements other than white space and comments form the terminal symbols
+> for the syntactic grammar for ECMAScript and are called ECMAScript tokens.
+> These tokens are the reserved words, identifiers, literals, and
+> **punctuators** of the ECMAScript language. Moreover, line terminators,
+> although not considered to be tokens, also become part of the stream of input
+> elements and guide the process of automatic semicolon insertion…Simple white
+> space and…comments are discarded and do not appear in the stream of input
+> elements for the syntactic grammar.
+
+The _Punctuators_ production is defined in [ES punctuators][]. This production
+would be changed from this:
 
 ```
 Punctuator :: one of
-  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==`
+  `{` `(` `)` `[` `]` `.` `...` `;` `,`
+  `<` `>` `<=` `>=` `==` `!=` `===` `!==`
   `+` `-` `*` `%` `**` `++` `--`
-  `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` `|>` `#`
-  `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
+  `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:`
+  `=` `+=` `-=` `*=` `%=` `**=`
+  `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
+```
+
+…to this:
+
+```
+Punctuator :: one of
+  `{` `(` `)` `[` `]` `.` `...` `;` `,` `#`
+  `<` `>` `<=` `>=` `==` `!=` `===` `!==`
+  `+` `-` `*` `%` `**` `++` `--`
+  `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` `|>`
+  `=` `+=` `-=` `*=` `%=` `**=`
+  `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
 ```
 
 </details>
@@ -601,13 +656,9 @@ pipeline is also expected to often serve as the body of a variable assignment
 The pipe operator actually has [bidirectional associativity][]. However, for the
 purposes of this grammar, it will have left associativity.
 
-<details>
-<summary>
-
-A table shows how the topic reference `#` and the pipe operator `|>` are
-integrated into the hierarchy of operators.
-
-</summary>
+<details
+<summary>A table shows how the topic reference and the pipe operator are
+integrated into the hierarchy of operators.</summary>
 
 All expression levels in JavaScript are listed here, from **tightest to
 loosest**. Each level includes all the expression types listed for that
@@ -693,13 +744,17 @@ listed **above** it.
 
 </details>
 
+The production rule for [ES assignment-level expressions][] needs to be modified
+so that pipe expressions slip in between it and conditional-level expressions in
+the hierarchy. Then the conditional-expression rule would be used in the
+production for pipeline-level expressions (also defined soon), preserving the
+unbroken recursive hierarchy of expression types.
+
 <details>
-<summary>
-
-An [assignment-level expression][] *currently* may be a conditional expression,
-yield expression, arrow function, async arrow function, or assignment.
-
-</summary>
+<summary>An assignment-level expression currently may be a conditional
+expression, yield expression, arrow function, async arrow function, or
+assignment. These possibilities are given the same parameters that the
+assignment-level expression happens to have also gotten.</summary>
 
 ```
 // Old version
@@ -718,8 +773,8 @@ AssignmentExpression[In, Yield, Await] :
 </details>
 
 <details>
-<summary>Here, the conditional-expression rule would be replaced with one for
-pipeline expressions.</summary>
+<summary>This conditional-expression production rule would be replaced with one for
+pipeline expressions, which is also defined soon.</summary>
 
 ```
 // New version
@@ -736,20 +791,16 @@ AssignmentExpression[In, Yield, Await] :
 
 </details>
 
-…Then the conditional-expression rule would be used in the pipeline-level,
-preserving the unbroken recursive hierarchy of expression types.
+An expression is a pipeline-level expression (given the usual three [grammar
+parameters][]) only if:
+
+* It is either also a conditional-level expression, with the same parameters
+  used by the pipeline-level expression;
+* Or it is another pipeline-level expression, followed by a `|>` token, then a
+  pipeline body (defined next), with the same parameters as above.
 
 <details>
-<summary>
-
-An expression is a pipeline-level expression only if:
-
-* It is either also a conditional-level expression `ConditionalExpression`, with
-  the same parameters above;
-* Or it is another pipeline-level expression, followed by a `|>` token, then a
-  pipeline body (`PipelineBody`, defined next), with the same parameters as above.
-
-</summary>
+<summary>This would be defined in a new production rule.</summary>
 
 ```
 // New rule
@@ -835,14 +886,11 @@ From most to least important:
 
 #### Tacit style
 <details>
-<summary>
-
-The tacit style supports using simple identifiers, possibly with chains of
-simple property identifiers. If there are any operators, parentheses (including
-for method calls), brackets, or anything other than identifiers and `.`s, then
-it cannot be a tacit call; it must be a function call.
-
-</summary>
+<summary>The tacit style supports using simple identifiers, possibly with chains
+of simple property identifiers. If there are any operators, parentheses
+(including for method calls), brackets, or anything other than identifiers and
+dot punctuators, then it cannot be a tacit call; it must be a function
+call.</summary>
 
 **If a pipeline** is of the form **`{{topic}} |> {{identifier}}`** (or
 `{{topic}} |> {{identifier0}}.{{identifier1}}` or `{{topic}} |>
@@ -877,13 +925,9 @@ style** (that is, it is *not* a tacit function call or tacit constructor call),
 then it **must be in topical style**.
 
 <details>
-<summary>
-
-The pipeline’s value is whatever the body expression evaluates into, assuming
-that the topic value is first bound to the topic reference `#` within the body
-scope.
-
-</summary>
+<summary>The pipeline’s value is whatever the body expression evaluates into,
+assuming that the topic value is first bound to the topic reference within the
+body scope.</summary>
 
 The **pipeline’s value** is **`do { const {{topicIdentifier}} = {{topic}};
 {{substitutedBody}} }`**, where:
@@ -1254,23 +1298,24 @@ do { do { do { do { 3 * 3 } } }
 9
 ```
 
-</summary>
+</details>
 
 ## Static semantics
 [TO DO: Brief explanation of static semantics]
 
 ### Early errors
 
-### Contains?
+### “Contains?”
 [TO DO]
 
-### Is function definition?
+### “Is function definition?”
 [TO DO]
 
-### Is valid simple assignment target?
+### “Is valid simple assignment target?”
 [TO DO]
 
-### Is
+### “Binds topic?”
+[TO DO]
 
 ## Runtime semantics
 [TO DO]
@@ -1298,7 +1343,7 @@ to other syntax, such as `for { … }`, `matches { … }`, and `given (…) { �
 
 [antecedent]: https://en.wikipedia.org/wiki/Antecedent_(grammar)
 
-[assignment-level expression]: https://tc39.github.io/ecma262/#sec-assignment-operators
+[ES assignment-level expressions]: https://tc39.github.io/ecma262/#sec-assignment-operators
 
 [associative property]: https://en.wikipedia.org/wiki/Associative_property
 
@@ -1372,7 +1417,7 @@ to other syntax, such as `for { … }`, `matches { … }`, and `given (…) { �
 
 [Proposal 4: Smart Mix on the pipe-proposal wiki]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
 
-[punctuator tokens]: https://tc39.github.io/ecma262/#sec-punctuators
+[ES punctuators]: https://tc39.github.io/ecma262/#sec-punctuators
 
 [reverse Polish notation]: https://en.wikipedia.org/wiki/Reverse_Polish_notation
 
@@ -1417,3 +1462,9 @@ to other syntax, such as `for { … }`, `matches { … }`, and `given (…) { �
 [operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
 
 [operator precedence (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
+
+[ES clause 11]: https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar
+
+[ES clause 5.1.2: The Lexical and _RegExp_ Grammars]: https://tc39.github.io/ecma262/#sec-lexical-and-regexp-grammars
+
+[grammar parameters]: #grammar-parameters
