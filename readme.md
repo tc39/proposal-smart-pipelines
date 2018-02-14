@@ -84,9 +84,9 @@ stringPromise
   |> await #
   |> # ?? throw new TypeError()
   |> doubleSay(#, ', ')
-  |> capitalize // a tacit unary function call
+  |> capitalize // a bare unary function call
   |> # + '!'
-  |> new User.Message // a tacit unary constructor call
+  |> new User.Message // a bare unary constructor call
 ```
 
 This code’s terseness and flatness may be both easier for the JavaScript
@@ -116,7 +116,7 @@ equivalent to:
   |> # + '!'
 ```
 
-Being able to automatically detect this [tacit style][] is the [**smart** part
+Being able to automatically detect this [bare style][] is the [**smart** part
 of this “smart pipe operator”][smart body syntax].
 
 <details>
@@ -191,9 +191,9 @@ stringPromise
 
 <td>
 
-Note that `|> capitalize` is a tacit unary function call; `|> capitalize(#)`
-would work but the `#` is unnecessary.\
-Ditto for `|> new User.Message`, which is a tacit unary constructor call,
+Note that `|> capitalize` is a bare unary function call. The `#` is tacitly,
+invisibly implied. `|> capitalize(#)` would work but the `#` is unnecessary.\
+Ditto for `|> new User.Message`, which is a bare unary constructor call,
 abbreviated from `|> new User.Message(#)`.
 
 <tr>
@@ -512,17 +512,17 @@ topic, acting as a **placeholder** for the topic’s value.
 
 Alternatively, you may omit the topic references entirely, if the body is just a
 **simple reference** to a function or constructor, such as with `… |>
-capitalize` and `… |> new User.Message`. Such a pipeline body is in **tacit
-style**. [Tacit style][] is described in more detail later.
+capitalize` and `… |> new User.Message`. Such a pipeline body is in **bare
+style**. [Bare style][] is described in more detail later.
 
 The term [“**topic**” comes from linguistics][topic and comment] and have
 precedent in prior programming languages’ use of “topic variables”.
 
 The terms “**antecedent**” and “**topic expression**” are preferred to “**LHS**”
-because, in the future, the [topic concept could be extended to other
-syntax][possible future extensions to topic concept], not just pipelines. In
-addition, “LHS” in the ES specification usually refers to the [LHS of
-assignments][ES LHS expressions], which may be confusing. However, “LHS” is
+because, in the future, the [topic concept could be extended to other syntaxes
+such as `for`][possible future extensions to the topic concept], not just
+pipelines. In addition, “LHS” in the ES specification usually refers to the [LHS
+of assignments][ES LHS expressions], which may be confusing. However, “LHS” is
 still a fine and acceptable name for a pipeline’s antecedent.
 
 The term “**topic reference**” is preferred to the phrase “**topic variable**”
@@ -541,6 +541,11 @@ called, those parameter placeholders will be bound to multiple argument values.
 The term “**body**” is preferred instead of “**RHS**” because “topic” is
 preferred to “LHS”. However, “RHS” is still a fine and acceptable name for the
 body of the pipeline operator.
+
+“**Bare style**” can also be called “**tacit style**”, but the former is
+preferred to the latter. Eventually, certain [future possible extensions to the
+topic concept][] may enable [tacit programming][] even without using bare-style
+pipelines.
 
 </details>
 
@@ -911,10 +916,10 @@ explained above in [nomenclature][], this style of pipeline is called **topical
 style**.
 
 But for two certain simple cases – unary functions and constructors – you may omit
-the topic reference from the body. This is called **tacit style**, after the
-term [**tacit programming**, aka **point-free programming**][tacit programming].
-When a pipe is in tacit style, we refer to the body as a **tacit function** or a
-**tacit constructor**, depending on the rules in [tacit style][]. The body acts
+the topic reference from the body. This is called **bare style**.
+
+When a pipe is in bare style, we refer to the body as a **bare function** or a
+**bare constructor**, depending on the rules in [bare style][]. The body acts
 as just a simple reference to a function or constructor, such as with `… |>
 capitalize` and `… |> new User.Message`. The body’s value would then be called
 as a unary function or constructor, without having to use the topic reference as
@@ -925,7 +930,7 @@ an explicit argument.
 <summary>The rules of the two respective styles will be explained in more
 detail, but an overview is given in a table.</summary>
 
-| Valid topical style     | Valid tacit style                | Invalid tacit style
+| Valid topical style     | Valid bare style                | Invalid bare style
 | ----------------------- | -------------------------------- | --------------------
 |`… \|> o(#)`             |`… \|> o`                         |  `… \|> o()` 🚫
 | ″″                      | ″″                               | `… \|> (o)` 🚫
@@ -953,46 +958,49 @@ detail, but an overview is given in a table.</summary>
 <summary>There are five ordered goals that the smart body syntax tries to
 fulfill.</summary>
 
-From most to least important:
+The first three goals can be summed up by saying, “Keep the parsing rules
+simple!” and “Don’t make me think hard!” The last two rules address the new
+functionality that this proposal would bring. From most to least important:
 
-1. Versatile expressivity: [TO DO]
+1. Short parser lookahead: Minimize the parsing lookahead that the compiler must
+   check before it can distinguish between bare style and topical style. By
+   restricting the space of valid bare-style pipeline bodies (that is, without
+   topic references), the rule prevents [garden-path syntax][] that would
+   otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
 
-2. Short parser lookahead: Minimize the parsing lookahead that the compiler must
-   check before it can distinguish between tacit style and topic-token style. By
-   restricting the space of valid tacit-style pipeline bodies (that is, without
-   topic references), the rule prevents [garden-path syntax][] that would otherwise
-   be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
+2. Minimal parser branching: [TO DO]
 
-3. Minimal parser branching: [TO DO]
-
-4. Static analysis: Help the editing JavaScript developer to avoid common
+3. Static analysis: Help the editing JavaScript developer to avoid common
    footguns at compile time. Preventing them from accidentally omitting a topic
    reference where they meant to put one. For instance, if `x |> 3` were not a
-   syntax error, then it would be a useless operation and almost certainly not what
-   the editor intended.
+   syntax error, then it would be a useless operation and almost certainly not
+   what the editor intended.
 
-5. Tacit terseness: Improve the terseness of pipeline bodies for frequent cases
-   in which topic references would be unnecessarily verbose: unary functions and
-   unary constructors.
+4. Versatile expressivity: [TO DO]
+
+5. Tacit terseness: Make especially ergonomic the style of [**tacit
+   programming**, aka **point-free programming**][tacit programming], for
+   frequent cases in which topic references would be unnecessarily verbose:
+   unary functions and unary constructors.
 
 </details>
 
-#### Tacit style
-The **tacit style** supports using simple identifiers, possibly with chains of
+#### Bare style
+The **bare style** supports using simple identifiers, possibly with chains of
 simple property identifiers. If there are any operators, parentheses (including
 for method calls), brackets, or anything other than identifiers and dot
-punctuators, then it is in topical style, not in tacit style.
+punctuators, then it is in topical style, not in bare style.
 
 If the body is a mere identifier, optionally with a chain of properties, and
    with no parentheses or brackets, then that identifier is interpreted to be a
-   **tacit function call**.
+   **bare function call**.
 
 <details>
 
 **If a pipeline** is of the form **`{{topic}} |> {{identifier}}`** (or
 `{{topic}} |> {{identifier0}}.{{identifier1}}` or `{{topic}} |>
 {{identifier0}}.{{identifier1}}.{{identifier2}}` or …), then the pipeline is a
-**tacit function call**. The **pipeline’s value** is **`{{body}}({{topic}})`**.
+**bare function call**. The **pipeline’s value** is **`{{body}}({{topic}})`**.
 
 This is achieved by defining the _PipelineTacitFunction_ production using
 [_IdentifierReference_][], [_IdentifierName_][], and left recursion, in
@@ -1008,14 +1016,14 @@ PipelineTacitFunction :
 
 If the body starts with `new`, followed by mere identifier, optionally with a
    chain of properties, and with no parentheses or brackets, then that identifier
-   is interpreted to be a **tacit constructor**.
+   is interpreted to be a **bare constructor**.
 
 <details>
 
 **If a pipeline’s `body`** is of the form **`{{topic}} |> new {{identifier}}`**
 (or `{{topic}} |> new {{identifier0}}.{{identifier1}}` or `{{topic}} |> new
 {{identifier0}}.{{identifier1}}.{{identifier2}}` or …), then the pipeline is a
-**tacit constructor call**. The **pipeline’s value** is **`new
+**bare constructor call**. The **pipeline’s value** is **`new
 {{bodyConstructor}}({{topic}})`**, where {{bodyConstructor}} is {{body}} with
 the `new` removed from its start.
 
@@ -1027,22 +1035,22 @@ PipelineTacitFunction :
 
 </details>
 
-Therefore, a pipeline in **tacit style *never*** has **parentheses `(…)` or
+Therefore, a pipeline in **bare style *never*** has **parentheses `(…)` or
 brackets `[…]`** in its body. Neither `… |> object.method()` nor `… |>
 object.method(arg)` nor `… |> object[symbol]` nor `… |> object.createFunction()`
-are in tacit style (in fact, they all have invalid syntax, due to their being in
+are in bare style (in fact, they all have invalid syntax, due to their being in
 topical style without any topic references).
 
-**When a body needs parentheses or brackets**, then **don’t use tacit style**,
+**When a body needs parentheses or brackets**, then **don’t use bare style**,
 and instead **use a topic reference** in the body……or **assign the body to a
-variable**, then **use that variable as a tacit body**.
+variable**, then **use that variable as a bare body**.
 
-The JavaScript developer is encouraged to use topic references and avoid tacit
-style, where tacit style may be visually confusing to the reader.
+The JavaScript developer is encouraged to use topic references and avoid bare
+style, where bare style may be visually confusing to the reader.
 
 #### Topical style
-**If a pipeline** of the form `{{topic}} |> {{body}}` is ***not* in tacit
-style** (that is, it is *not* a tacit function call or tacit constructor call),
+**If a pipeline** of the form `{{topic}} |> {{body}}` is ***not* in bare
+style** (that is, it is *not* a bare function call or bare constructor call),
 then it **must be in topical style**.
 
 <details>
@@ -1108,13 +1116,13 @@ The lines in each of the following rows are equivalent.
 
 </details>
 
-## Possible future extensions to topic concept
+## Possible future extensions to the topic concept
 The [concept of the “topic variable” already exists in many other programming
 languages][topic variables in other languages], commonly named with an
 underscore `_` or `$_`. These languages often integrate their topic variables
-into their function-call control-flow syntaxes, with Perl 6 perhaps as the most
-extensive, unified example. Integration of topic with syntax enables especially
-pithy, terse tacit programming.
+into their function-call control-flow syntaxes, with [Perl 6 as perhaps the most
+extensive, unified example][Perl 6 topicalization]. Integration of topic with
+syntax enables especially pithy, terse [tacit programming][].
 
 In addition, many JavaScript console [REPLs][], such as those of the WebKit Web
 Inspector and the Node.js interactive console… [TO DO]
@@ -1125,9 +1133,10 @@ by the developer.
 
 One disadvantage arises from their frequent dynamic binding rather than lexical
 binding, as the former is not statically analyzable and is more stateful than
-the latter. It may also cause surprising results when coupled with tacit calls
-it becomes more difficult to tell whether a bare identifier `print` is meant to
-be a simple variable reference or a tacit function call on the topic value.
+the latter. It may also cause surprising results when coupled with bare/tacit
+calls: it becomes more difficult to tell whether a bare identifier `print` is
+meant to be a simple variable reference or a bare function call on the topic
+value.
 
 Another disadvantage arises from the ability to clobber or overwrite the value of the
 topic variable, which may affect code in surprising ways.
@@ -1153,16 +1162,16 @@ the `#|>` idiom.]
 <th>
 <th>With future proposal
 <th>With only this proposal
+<th>Notes
 
 <tbody>
 <tr>
 <th>Topical for loop
-
 <td>
 
 ```js
 for (range(0, 50)) {
-  console.log(#|> # ** 2);
+  console.log(# ** 2);
   console.log(#|> Math.sqrt);
 }
 ```
@@ -1176,9 +1185,18 @@ for (const i of range(0, 50)) {
 }
 ```
 
+<td>
+
+A `for ` statement would bind the topic reference only when statement’s
+parentheses is not of the form `(… of …)` or `(…; …; …)`. When this is so, then
+it will act as if it were a `for (const # of …) { … }` loop: pulling each of the
+given iterator’s items, then tacitly binding the item to the topic reference,
+then running the block with that topic reference in its scope. This maintains
+forward compatibility with pipelines whose bodies contain `for` statements that
+in turn use the topic reference. [TO DO: Link to section on deep nesting.]
+
 <tr>
 <th>Topical for–await loop
-
 <td>
 
 ```js
@@ -1197,9 +1215,10 @@ for await (const line of lineStream) {
 }
 ```
 
+<td>Similar.
+
 <tr>
 <th>Topical arrow function
-
 <td>
 
 ```js
@@ -1214,7 +1233,6 @@ materials.map(m => m.length)
 
 <tr>
 <th>Topical match
-
 <td>
 
 ```js
@@ -1237,7 +1255,6 @@ function getLength (vector) {
 
 <tr>
 <th>Topical function with topical match
-
 <td>
 
 ```js
@@ -1260,7 +1277,6 @@ function getLength (vector) {
 
 <tr>
 <th>Topical arrow function with topical match
-
 <td>
 
 ```js
@@ -1277,6 +1293,84 @@ const getLength = vector => match (vector) {
 }
 ```
 
+<tr>
+<th>Topical error capture
+<td>
+
+```js
+try {
+  console.log('Outer try running...')
+
+  try {
+    console.log('Nested try running...')
+    throw new Error(301, 'an error')
+  } catch {
+    console.log(`Nested catch caught: ${#.message}`)
+    throw #
+  } finally {
+    console.log('Nested finally is running...')
+  }
+
+} catch {
+  console.log(`Outer catch caught: ${#.message}`)
+
+} finally {
+  console.log('Outer finally running')
+}
+```
+
+<td>
+
+```js
+try {
+  console.log('Outer try running...')
+
+  try {
+    console.log('Nested try running...')
+    throw new Error(301, 'an error')
+  } catch (error) {
+    console.log(`Nested catch caught: ${error.message}`)
+    throw error
+  } finally {
+    console.log('Nested finally is running...')
+  }
+
+} catch (error) {
+  console.log(`Outer catch caught: ${error.message}`)
+
+} finally {
+  console.log('Outer finally running')
+}
+```
+
+<tr>
+<th>Topical error capture with topical match
+<td>
+
+```js
+try {
+  …
+} catch {
+  match {
+    MyError: …
+    TypeError: …
+  }
+}
+```
+
+<td>
+
+```js
+try {
+  …
+} catch (error) {
+  match (error) {
+    MyError: …
+    TypeError: …
+  }
+}
+```
+
 </table>
 
 ## Alternative solutions explored
@@ -1289,7 +1383,7 @@ operator may be the best choice. [TO DO]
 
 [TO DO: Include commentary on why “topic reference” instead of “placeholder” –
 because verbally confusing with partial-application placeholders – and because
-forward compatibility with [Possible future extensions to topic concept].]
+forward compatibility with [possible future extensions to the topic concept].]
 
 <details>
 
@@ -1303,35 +1397,35 @@ forward compatibility with [Possible future extensions to topic concept].]
 
 ### Smart body syntax
 When the parser checks the body/RHS, it must determine what style it is in.
-There are four outcomes for each pipeline body: tacit constructor, tacit
+There are four outcomes for each pipeline body: bare constructor, bare
 function, topical body, or invalid syntax.
 
 ```
 // New rule
 PipelineBody[In, Yield, Await] :
-  PipelineTacitFunction
-  PipelineTacitConstructor
+  PipelineBareFunction
+  PipelineBareConstructor
   PipelineTopicalBody[In, Yield, Await]
 ```
 
 1. If the body is a mere identifier, optionally with a chain of properties, and
    with no parentheses or brackets, then that identifier is interpreted to be a
-   **tacit function**.
+   **bare function**.
    ```
-   PipelineTacitFunction :
+   PipelineBareFunction :
      SimpleMemberExpression
    ```
 
 2. If the body starts with `new`, followed by mere identifier, optionally with a
    chain of properties, and with no parentheses or brackets, then that identifier
-   is interpreted to be a **tacit constructor**.
+   is interpreted to be a **bare constructor**.
    ```
-   PipelineTacitConstructor :
+   PipelineBareConstructor :
      `new` SimpleMemberExpression
    ```
 
 3. Otherwise, the body is now an arbitrary expression. Because the expression is
-   not in tacit style, it must use that pipe’s topic reference. ([TO DO: Formalize
+   not in bare style, it must use that pipe’s topic reference. ([TO DO: Formalize
    this static semantic as `usesTopic()`.] topic references from the topical scopes
    of other, inner pipelines do not count.) If there is no such topic reference in
    the expression, then a syntax error is thrown.
@@ -1339,26 +1433,26 @@ PipelineBody[In, Yield, Await] :
    `PipelineTopicalBody` will be defined in the next section.
 
 If a pipeline body *never* uses a topic reference, then it must be a permitted
-tacit unary function (single identifier or simple property chain). Otherwise, it
-is a syntax error. In particular, tacit style *never* uses parentheses. If they
+bare unary function (single identifier or simple property chain). Otherwise, it
+is a syntax error. In particular, bare style *never* uses parentheses. If they
 need to have parentheses, then they need to have use the topic reference. See
-also [property-chained tacit style][].
+also [property-chained bare style][].
 
 ### General semantics
 [TO DO: Rewrite this section to the conventions of the ES specification.]
 
 A pipe expression’s semantics are:
 1. The antecedent is evaluated into the topic’s value; call this `topicValue`.
-2. [The body is tested for its type][smart body syntax]: Is it in tacit style
-   (as a tacit function or a tacit constructor), is it in topical style, or is it
+2. [The body is tested for its type][smart body syntax]: Is it in bare style
+   (as a bare function or a bare constructor), is it in topical style, or is it
    an invalid body?
 
-  * If the body is a tacit function (such as `f` and `M.f`):
+  * If the body is a bare function (such as `f` and `M.f`):
     1. The body is evaluated (in the current lexical context); call this value
        the `bodyFunction`.
     2. The entire pipeline’s value is `bodyFunction(topicValue)`.
 
-  * If the body is a tacit constructor (such as `new C` and `new M.C`):
+  * If the body is a bare constructor (such as `new C` and `new M.C`):
     1. The portion of the body after `new` is evaluated (in the current lexical
        context); call this value the `BodyConstructor`.
     2. The entire pipeline’s value is `new BodyConstructor(topicValue)`.
@@ -1418,8 +1512,8 @@ Consider also the motivating first example above:
 stringPromise
   |> await #
   |> # ?? throw new TypeError()
-  |> doubleSay // a tacit unary function call
-  |> capitalize // also a tacit unary function call
+  |> doubleSay // a bare unary function call
+  |> capitalize // also a bare unary function call
   |> # + '!'
 ```
 
@@ -1487,8 +1581,8 @@ Consider also the motivating first example above:
 stringPromise
   |> await #
   |> # ?? throw new TypeError()
-  |> doubleSay // a tacit unary function call
-  |> capitalize // also a tacit unary function call
+  |> doubleSay // a bare unary function call
+  |> capitalize // also a bare unary function call
   |> # + '!'
 ```
 
@@ -1675,15 +1769,13 @@ do { do { do { do { 3 * 3 } } }
 
 [pipeline syntax]: #pipeline-syntax
 
-[possible future extensions to topic concept]: #possible-future-extensions-to-topic-concept
+[possible future extensions to the topic concept]: #possible-future-extensions-to-topic-concept
 
 [previous pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator
 
 [previous pipeline-placeholder discussions]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
 
-[Prior pipeline proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
-
-[property-chained tacit style]: #property-chained-tacit-style
+[prior pipeline proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
 
 [Proposal 4: Smart Mix on the pipe-proposal wiki]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
 
@@ -1703,7 +1795,7 @@ do { do { do { do { 3 * 3 } } }
 
 [tacit programming]: https://en.wikipedia.org/wiki/Tacit_programming
 
-[tacit style]: #tacit-style
+[bare style]: #bare-style
 
 [TC39 process]: https://tc39.github.io/process-document/
 
@@ -1752,3 +1844,5 @@ do { do { do { do { 3 * 3 } } }
 [object initializers’ Computed Property Contains rule]: https://tc39.github.io/ecma262/#sec-object-initializer-static-semantics-computedpropertycontains
 
 [REPLs]: https://en.wikipedia.org/wiki/Read–eval–print_loop
+
+[Perl 6 topicalization]: https://www.perl.com/pub/2002/10/30/topic.html/
