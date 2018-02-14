@@ -4,7 +4,10 @@ ECMAScript Stage-(−1) Proposal by J. S. Choi, 2018-02.
 This repository contains the formal specification for a proposed “smart pipe operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC39 process][TC39 process] but it may eventually be presented to TC39.
 
 ## Background
-The binary operator proposed here would provide a backwards- and forwards-compatible style of chaining nested expressions into a readable, left-to-right manner. Nested transformations become untangled into short steps in a zero-cost abstraction. The operator is similar to operators from numerous other languages, variously called “pipeline”, “threading”, and “feed” operators:
+The binary operator proposed here would provide a backwards- and forwards-compatible style of chaining nested expressions into a readable, left-to-right manner. Nested transformations become untangled into short steps in a zero-cost abstraction.
+
+<details>
+<summary>The operator is similar to operators from numerous other languages, variously called “pipeline”, “threading”, and “feed” operators.</summary>
 
 * [Clojure’s `->` and `as->`][Clojure pipe]
 * [Forth’s, Joy’s, Factor’s, Onyx’s, PostScript’s, and RPL’s term concatenation][concatenative programming]
@@ -18,6 +21,8 @@ The binary operator proposed here would provide a backwards- and forwards-compat
 * [Perl 6’s `==>`][Perl 6 pipe]
 * [R / magrittr’s `%>%`][R pipe]
 * [Unix shells’ and PowerShell’s `|` ][Unix pipe]
+
+</details>
 
 It is also conceptually similar to [WHATWG-stream piping][] and [Node-stream piping][].
 
