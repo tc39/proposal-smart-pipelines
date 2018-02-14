@@ -888,6 +888,8 @@ AssignmentExpression[In, Yield, Await] :
 
 </details>
 
+### Pipeline expression
+
 An expression is a pipeline-level expression (given the usual three [grammar
 parameters][]) only if:
 
@@ -982,17 +984,39 @@ From most to least important:
 </details>
 
 #### Tacit style
+The **tacit style** supports using simple identifiers, possibly with chains of
+simple property identifiers. If there are any operators, parentheses (including
+for method calls), brackets, or anything other than identifiers and dot
+punctuators, then it is in topical style, not in tacit style.
+
+If the body is a mere identifier, optionally with a chain of properties, and
+   with no parentheses or brackets, then that identifier is interpreted to be a
+   **tacit function call**.
+
 <details>
-<summary>The tacit style supports using simple identifiers, possibly with chains
-of simple property identifiers. If there are any operators, parentheses
-(including for method calls), brackets, or anything other than identifiers and
-dot punctuators, then it cannot be a tacit call; it must be a function
-call.</summary>
 
 **If a pipeline** is of the form **`{{topic}} |> {{identifier}}`** (or
 `{{topic}} |> {{identifier0}}.{{identifier1}}` or `{{topic}} |>
 {{identifier0}}.{{identifier1}}.{{identifier2}}` or …), then the pipeline is a
 **tacit function call**. The **pipeline’s value** is **`{{body}}({{topic}})`**.
+
+This is achieved by defining the _PipelineTacitFunction_ production using
+[_IdentifierReference_][], [_IdentifierName_][], and left recursion, in
+imitation of how [_MemberExpression_][] handles method chains.
+
+```
+PipelineTacitFunction :
+  IdentifierReference
+  PipelineTacitFunction `.` IdentifierName
+```
+
+</details>
+
+If the body starts with `new`, followed by mere identifier, optionally with a
+   chain of properties, and with no parentheses or brackets, then that identifier
+   is interpreted to be a **tacit constructor**.
+
+<details>
 
 **If a pipeline’s `body`** is of the form **`{{topic}} |> new {{identifier}}`**
 (or `{{topic}} |> new {{identifier0}}.{{identifier1}}` or `{{topic}} |> new
@@ -1000,6 +1024,12 @@ call.</summary>
 **tacit constructor call**. The **pipeline’s value** is **`new
 {{bodyConstructor}}({{topic}})`**, where {{bodyConstructor}} is {{body}} with
 the `new` removed from its start.
+
+```
+PipelineTacitFunction :
+  new IdentifierReference
+  PipelineTacitFunction `.` IdentifierName
+```
 
 </details>
 
