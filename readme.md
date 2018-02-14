@@ -1188,7 +1188,8 @@ for (const i of range(0, 50)) {
 <td>
 
 A `for ` statement would bind the topic reference only when statement’s
-parentheses is not of the form `(… of …)` or `(…; …; …)`.
+parentheses is not of the form `(… of …)` or `(…; …; …)`. This is anticipated to
+be backward compatible with existing `for` statements.
 
 When this is so, then it would act as if it were a `for (const # of …) { … }`
 loop: pulling each of the given iterator’s items, then tacitly binding the item
@@ -1234,6 +1235,12 @@ materials.map(=> #.length)
 materials.map(m => m.length)
 ```
 
+<td>
+
+This is anticipated to be backward compatible with current arrow functions,
+which always require a head (an identifier reference or a parenthesized
+parameter list) before the `=>`.
+
 <tr>
 <th>Topical match
 <td>
@@ -1255,6 +1262,8 @@ function getLength (vector) {
   }
 }
 ```
+
+<td>[TO DO: Link to match proposal.]
 
 <tr>
 <th>Topical function with topical match
@@ -1278,6 +1287,12 @@ function getLength (vector) {
 }
 ```
 
+<td>
+
+This is anticipated to be backward compatible with existing `function`
+definitions. Even with this pipeline proposal, `function (#) { … }` is not
+allowed.
+
 <tr>
 <th>Topical arrow function with topical match
 <td>
@@ -1295,6 +1310,8 @@ const getLength = vector => match (vector) {
   …
 }
 ```
+
+<td>
 
 <tr>
 <th>Topical error capture
@@ -1346,6 +1363,8 @@ try {
 }
 ```
 
+<td>[TO DO: Link to bare error proposal.]
+
 <tr>
 <th>Topical error capture with topical match
 <td>
@@ -1372,6 +1391,8 @@ try {
     TypeError: …
   }
 }
+
+<td>[TO DO]
 ```
 
 </table>
