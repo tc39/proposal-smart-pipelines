@@ -1171,8 +1171,8 @@ the `#|>` idiom.]
 
 ```js
 for (range(0, 50)) {
-  console.log(# ** 2);
-  console.log(#|> Math.sqrt);
+  log(# ** 2);
+  log(#|> Math.sqrt);
 }
 ```
 
@@ -1180,8 +1180,8 @@ for (range(0, 50)) {
 
 ```js
 for (const i of range(0, 50)) {
-  console.log(i |> # ** 2);
-  console.log(i |> Math.sqrt);
+  log(i |> # ** 2);
+  log(i |> Math.sqrt);
 }
 ```
 
@@ -1306,7 +1306,7 @@ const getLength = => match {
 <td>
 
 ```js
-const getLength = vector => match (vector) {
+const getLength = v => match (v) {
   …
 }
 ```
@@ -1319,23 +1319,11 @@ const getLength = vector => match (vector) {
 
 ```js
 try {
-  log('Outer try.')
-
-  try {
-    log('Nested try.')
-    throw new Error(301, 'an error')
-  } catch {
-    log(`Nested catch: ${#.message}`)
-    throw #
-  } finally {
-    log('Nested finally.')
-  }
-
+  …
 } catch {
-  log(`Outer catch: ${#.message}`)
-
+  log(#.message)
 } finally {
-  log('Outer finally.')
+  …
 }
 ```
 
@@ -1343,23 +1331,11 @@ try {
 
 ```js
 try {
-  log('Outer try.')
-
-  try {
-    log('Nested try.')
-    throw new Error(301, 'an error')
-  } catch (error) {
-    log(`Nested catch: ${error.message}`)
-    throw error
-  } finally {
-    log('Nested finally.')
-  }
-
+  …
 } catch (error) {
-  log(`Outer catch: ${error.message}`)
-
+  log(#.message)
 } finally {
-  log('Outer finally.')
+  …
 }
 ```
 
@@ -1376,6 +1352,8 @@ try {
   match {
     MyError: …
     TypeError: …
+    SyntaxError: …
+    Error: …
   }
 }
 ```
@@ -1389,11 +1367,13 @@ try {
   match (error) {
     MyError: …
     TypeError: …
+    SyntaxError: …
+    Error: …
   }
 }
+```
 
 <td>[TO DO]
-```
 
 </table>
 
