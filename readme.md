@@ -1116,7 +1116,13 @@ The lines in each of the following rows are equivalent.
 
 </details>
 
-## Possible future extensions to the topic concept
+## Relations to other work
+
+[TO DO: Include commentary on why “topic reference” instead of “placeholder” –
+because verbally confusing with partial-application placeholders – and because
+forward compatibility with [possible future extensions to the topic concept].]
+
+### Possible future extensions to the topic concept
 The [concept of the “topic variable” already exists in many other programming
 languages][topic variables in other languages], commonly named with an
 underscore `_` or `$_`. These languages often integrate their topic variables
@@ -1155,6 +1161,8 @@ reading and writing, while perhaps preserving static analyzability and… [TO DO
 
 [TO DO: Add, to above, a version of second example with `do` blocks showcasing
 the `#|>` idiom.]
+
+[TO DO: Can partial application be integrated with topics?]
 
 <table>
 <thead>
@@ -1377,17 +1385,10 @@ try {
 
 </table>
 
-## Alternative solutions explored
+### Alternative solutions explored
 There are a number of other ways of potentially accomplishing the above use
 cases. However, the authors of this proposal believe that the smart pipe
 operator may be the best choice. [TO DO]
-
-## Relation to existing work
-[TO DO]
-
-[TO DO: Include commentary on why “topic reference” instead of “placeholder” –
-because verbally confusing with partial-application placeholders – and because
-forward compatibility with [possible future extensions to the topic concept].]
 
 <details>
 
