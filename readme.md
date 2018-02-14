@@ -108,8 +108,8 @@ of code that may benefit from smart pipelines abound.</summary>
 <thead>
 <tr>
 <th>Source
-<th>Status quo
 <th>With smart pipes
+<th>Status quo
 <th>Notes
 
 <tbody>
@@ -121,6 +121,26 @@ of code that may benefit from smart pipelines abound.</summary>
 ECMA International.\
 2017–2018.\
 BSD License.
+
+<td>
+
+```js
+function doubleSay (str, separatorStr) {
+  return `${str}${separatorStr}${string}`
+}
+
+function capitalize (str) {
+  return str[0].toUpperCase()
+    + str.substring(1)
+}
+
+stringPromise
+  |> await #
+  |> # ?? throw new TypeError()
+  |> doubleSay(#, ', ')
+  |> capitalize |> # + '!'
+  |> new User.Message
+```
 
 <td>
 
@@ -146,33 +166,12 @@ new User.Message(
 
 <td>
 
-```js
-function doubleSay (str, separatorStr) {
-  return `${str}${separatorStr}${string}`
-}
-
-function capitalize (str) {
-  return str[0].toUpperCase()
-    + str.substring(1)
-}
-
-stringPromise
-  |> await #
-  |> # ?? throw new TypeError()
-  |> doubleSay(#, ', ')
-  |> capitalize |> # + '!'
-  |> new User.Message
-```
-
-<td>
-
 Note that `|> capitalize` is a bare unary function call. The `#` is tacitly,
 invisibly implied. `|> capitalize(#)` would work but the `#` is unnecessary.\
 Ditto for `|> new User.Message`, which is a bare unary constructor call,
 abbreviated from `|> new User.Message(#)`.
 
 <tr>
-<td>″″
 <td>″″
 <td>
 
@@ -186,6 +185,8 @@ stringPromise
   |> new User.Message
 ```
 
+<td>″″
+
 <td>When tiny functions are only used once, and their bodies would be
 self-documenting, they are ritual boilerplate that a developer’s style may
 prefer to inline.
@@ -197,6 +198,18 @@ prefer to inline.
 [Jeremy Ashkenas][jashkenas] &c.\
 2009–2018.\
 MIT License.
+
+<td>
+
+```js
+function (obj, pred, context) {
+  return obj
+    |> isArrayLike(#) ? _.findIndex : _.findKey
+    |> #(obj, pred, context)
+    |> (# !== void 0 && # !== -1)
+      ? obj[#] : undefined;
+}
+```
 
 <td>
 
@@ -215,31 +228,8 @@ function (obj, pred, context) {
 
 <td>
 
-```js
-function (obj, pred, context) {
-  return obj
-    |> isArrayLike(#) ? _.findIndex : _.findKey
-    |> #(obj, pred, context)
-    |> (# !== void 0 && # !== -1)
-      ? obj[#] : undefined;
-}
-```
-
-<td>
-
 <tr>
 <td>″″
-<td>
-
-```js
-function (obj, pred, context) {
-  return _.filter(obj,
-    _.negate(cb(pred)),
-    context
-  )
-}
-```
-
 <td>
 
 ```js
@@ -253,24 +243,19 @@ function (obj, pred, context) {
 
 <td>
 
-<tr>
-<td>″″
-<td>
-
 ```js
-function (
-  srcFn, boundFn,
-  ctxt, callingCtxt, args
-) {
-  if (!(callingCtxt instanceof boundFn))
-    return srcFn.apply(ctxt, args);
-  var self = baseCreate(srcFn.prototype);
-  var result = srcFn.apply(self, args);
-  if (_.isObject(result)) return result;
-  return self
+function (obj, pred, context) {
+  return _.filter(obj,
+    _.negate(cb(pred)),
+    context
+  )
 }
 ```
 
+<td>
+
+<tr>
+<td>″″
 <td>
 
 ```js
@@ -289,19 +274,24 @@ function (
 
 <td>
 
-<tr>
-<td>″″
-<td>
-
 ```js
-function (obj) {
-  if (obj == null) return 0;
-  return isArrayLike(obj)
-    ? obj.length
-    : _.keys(obj).length;
+function (
+  srcFn, boundFn,
+  ctxt, callingCtxt, args
+) {
+  if (!(callingCtxt instanceof boundFn))
+    return srcFn.apply(ctxt, args);
+  var self = baseCreate(srcFn.prototype);
+  var result = srcFn.apply(self, args);
+  if (_.isObject(result)) return result;
+  return self
 }
 ```
 
+<td>
+
+<tr>
+<td>″″
 <td>
 
 ```js
@@ -310,6 +300,17 @@ function (obj) {
   return obj |> isArrayLike
     ? obj.length
     : obj |> _.keys |> #.length;
+}
+```
+
+<td>
+
+```js
+function (obj) {
+  if (obj == null) return 0;
+  return isArrayLike(obj)
+    ? obj.length
+    : _.keys(obj).length;
 }
 ```
 
@@ -326,19 +327,19 @@ MIT License.
 <td>
 
 ```js
-pify(fs.readFile)('package.json', 'utf8')
-  .then(data => {
-    console.log(JSON.parse(data).name)
-  })
+'package.json'
+  |> await pify(fs.readFile)(#, 'utf8')
+  |> JSON.parse |> #.name
+  |> console.log
 ```
 
 <td>
 
 ```js
-'package.json'
-  |> await pify(fs.readFile)(#, 'utf8')
-  |> JSON.parse |> #.name
-  |> console.log
+pify(fs.readFile)('package.json', 'utf8')
+  .then(data => {
+    console.log(JSON.parse(data).name)
+  })
 ```
 
 <td>
@@ -355,14 +356,6 @@ Creative Commons BY.
 <td>
 
 ```js
-fetch('/music/pk/altes-kamuffel')
-  .then(res => res.blob())
-  .then(playBlob)
-```
-
-<td>
-
-```js
 '/music/pk/altes-kamuffel'
   |> await fetch(#)
   |> await #.blob()
@@ -371,8 +364,25 @@ fetch('/music/pk/altes-kamuffel')
 
 <td>
 
+```js
+fetch('/music/pk/altes-kamuffel')
+  .then(res => res.blob())
+  .then(playBlob)
+```
+
+<td>
+
 <tr>
 <td>″″
+<td>
+
+```js
+'https://example.com/'
+  |> await fetch(#, { method: 'HEAD' })
+  |> #.headers.get('content-type')
+  |> log
+```
+
 <td>
 
 ```js
@@ -385,17 +395,23 @@ fetch('https://example.com/',
 
 <td>
 
-```js
-'https://example.com/'
-  |> await fetch(#, { method: 'HEAD' })
-  |> #.headers.get('content-type')
-  |> log
-```
-
-<td>
-
 <tr>
 <td>″″
+<td>
+
+```js
+const response = 'https://pk.example/berlin-calling'
+  |> await fetch(#, { mode: 'cors' });
+response
+  |> #.headers.get('content-type')
+  |> #??.toLowerCase()
+  |> #.indexOf('application/json')
+  |> # >= 0
+  |> # ? response : throw new TypeError()
+  |> await #.json()
+  |> processJSON
+```
+
 <td>
 
 ```js
@@ -411,21 +427,6 @@ fetch('https://pk.example/berlin-calling',
     throw new TypeError()
   }
 }).then(processJSON)
-```
-
-<td>
-
-```js
-const response = 'https://pk.example/berlin-calling'
-  |> await fetch(#, { mode: 'cors' });
-response
-  |> #.headers.get('content-type')
-  |> #??.toLowerCase()
-  |> #.indexOf('application/json')
-  |> # >= 0
-  |> # ? response : throw new TypeError()
-  |> await #.json()
-  |> processJSON
 ```
 
 <td>
