@@ -211,7 +211,7 @@ function (obj, pred, context) {
 }
 ```
 
-<td>
+<td>[TO DO]
 
 ```js
 function (obj, pred, context) {
@@ -226,7 +226,7 @@ function (obj, pred, context) {
 }
 ```
 
-<td>
+<td>[TO DO]
 
 <tr>
 <td>″″
@@ -252,7 +252,7 @@ function (obj, pred, context) {
 }
 ```
 
-<td>
+<td>[TO DO]
 
 <tr>
 <td>″″
@@ -288,7 +288,7 @@ function (
 }
 ```
 
-<td>
+<td>[TO DO]
 
 <tr>
 <td>″″
@@ -314,7 +314,7 @@ function (obj) {
 }
 ```
 
-<td>
+<td>[TO DO]
 
 <tr>
 <td>
@@ -342,7 +342,7 @@ pify(fs.readFile)('package.json', 'utf8')
   })
 ```
 
-<td>
+<td>[TO DO]
 
 <tr>
 <td>
@@ -370,7 +370,7 @@ fetch('/music/pk/altes-kamuffel')
   .then(playBlob)
 ```
 
-<td>
+<td>[TO DO]
 
 <tr>
 <td>″″
@@ -393,7 +393,7 @@ fetch('https://example.com/',
 )
 ```
 
-<td>
+<td>[TO DO]
 
 <tr>
 <td>″″
@@ -1318,7 +1318,7 @@ const getLength = v => match (v) {
 }
 ```
 
-<td>
+<td>[TO DO]
 
 <tr>
 <th>Topical error capture
