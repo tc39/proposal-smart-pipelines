@@ -1188,12 +1188,15 @@ for (const i of range(0, 50)) {
 <td>
 
 A `for ` statement would bind the topic reference only when statement’s
-parentheses is not of the form `(… of …)` or `(…; …; …)`. When this is so, then
-it will act as if it were a `for (const # of …) { … }` loop: pulling each of the
-given iterator’s items, then tacitly binding the item to the topic reference,
-then running the block with that topic reference in its scope. This maintains
-forward compatibility with pipelines whose bodies contain `for` statements that
-in turn use the topic reference. [TO DO: Link to section on deep nesting.]
+parentheses is not of the form `(… of …)` or `(…; …; …)`.
+
+When this is so, then it would act as if it were a `for (const # of …) { … }`
+loop: pulling each of the given iterator’s items, then tacitly binding the item
+to the topic reference, then running the block with that topic reference in its
+scope. This maintains forward compatibility with pipelines whose bodies contain
+`for` statements that in turn use the topic reference.
+
+[TO DO: Link to section on deep nesting.]
 
 <tr>
 <th>Topical for–await loop
@@ -1299,23 +1302,23 @@ const getLength = vector => match (vector) {
 
 ```js
 try {
-  console.log('Outer try running...')
+  log('Outer try.')
 
   try {
-    console.log('Nested try running...')
+    log('Nested try.')
     throw new Error(301, 'an error')
   } catch {
-    console.log(`Nested catch caught: ${#.message}`)
+    log(`Nested catch: ${#.message}`)
     throw #
   } finally {
-    console.log('Nested finally is running...')
+    log('Nested finally.')
   }
 
 } catch {
-  console.log(`Outer catch caught: ${#.message}`)
+  log(`Outer catch: ${#.message}`)
 
 } finally {
-  console.log('Outer finally running')
+  log('Outer finally.')
 }
 ```
 
@@ -1323,23 +1326,23 @@ try {
 
 ```js
 try {
-  console.log('Outer try running...')
+  log('Outer try.')
 
   try {
-    console.log('Nested try running...')
+    log('Nested try.')
     throw new Error(301, 'an error')
   } catch (error) {
-    console.log(`Nested catch caught: ${error.message}`)
+    log(`Nested catch: ${error.message}`)
     throw error
   } finally {
-    console.log('Nested finally is running...')
+    log('Nested finally.')
   }
 
 } catch (error) {
-  console.log(`Outer catch caught: ${error.message}`)
+  log(`Outer catch: ${error.message}`)
 
 } finally {
-  console.log('Outer finally running')
+  log('Outer finally.')
 }
 ```
 
