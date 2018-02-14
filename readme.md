@@ -3,8 +3,6 @@ ECMAScript Stage-(−1) Proposal by J. S. Choi, 2018-02.
 
 This repository contains the formal specification for a proposed “smart pipe operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC39 process][TC39 process] but it may eventually be presented to TC39.
 
-[TO DO: Replace “programmer” with “developer”.]
-
 ## Background
 The binary operator proposed here would provide a backwards- and forwards-compatible style of chaining nested expressions into a readable, left-to-right manner. Nested transformations become untangled into short steps in a zero-cost abstraction. The operator is similar to operators from numerous other languages, variously called “pipeline”, “threading”, and “feed” operators:
 
@@ -56,7 +54,7 @@ stringPromise
   |> new User.Message // a tacit unary constructor call
 ```
 
-This code’s terseness and flatness may be both easier for the JavaScript programmer to read and to edit. The reader may follow the flow of data more easily through this single flattened thread of postfix operations. And the editor may more easily add or remove operations at the beginning, end, or middle of the thread, without changing the indentation of many nearby, unrelated lines.
+This code’s terseness and flatness may be both easier for the JavaScript developer to read and to edit. The reader may follow the flow of data more easily through this single flattened thread of postfix operations. And the editor may more easily add or remove operations at the beginning, end, or middle of the thread, without changing the indentation of many nearby, unrelated lines.
 
 Similar use cases appear numerous times in JavaScript code, whenever any value is transformed by expressions of any type: function calls, property calls, method calls, object constructions, arithmetic operations, logical operations, bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and `throw` expressions. In particular, the styles of [functional programming][], [dataflow programming][], and [tacit programming][] may benefit from pipelining. The smart pipe operator can simply handle them all.
 
@@ -161,7 +159,7 @@ stringPromise
   |> new User.Message
 ```
 
-<td>When tiny functions are only used once, and their bodies would be self-documenting, they are ritual boilerplate that a programmer’s style may prefer to inline.
+<td>When tiny functions are only used once, and their bodies would be self-documenting, they are ritual boilerplate that a developer’s style may prefer to inline.
 
 <tr>
 <td>
@@ -444,7 +442,7 @@ The term “**body**” is preferred instead of “**RHS**” because “topic�
 </details>
 
 ## Grammar
-This grammar of the pipeline operator juxtaposes brief rules written for the JavaScript programmer with formally written changes to the ES standard.
+This grammar of the pipeline operator juxtaposes brief rules written for the JavaScript developer with formally written changes to the ES standard.
 
 This proposal uses the [same grammar notation as that from the ES standard][ES grammar notation].
 
@@ -676,7 +674,7 @@ From most to least important:
 
 3. Minimal parser branching: [TO DO]
 
-4. Static analysis: Help the editing JavaScript programmer to avoid common footguns at compile time. Preventing them from accidentally omitting a topic reference where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the editor intended.
+4. Static analysis: Help the editing JavaScript developer to avoid common footguns at compile time. Preventing them from accidentally omitting a topic reference where they meant to put one. For instance, if `x |> 3` were not a syntax error, then it would be a useless operation and almost certainly not what the editor intended.
 
 5. Tacit terseness: Improve the terseness of pipeline bodies for frequent cases in which topic references would be unnecessarily verbose: unary functions and unary constructors.
 
@@ -700,7 +698,7 @@ Therefore, a pipeline in **tacit style *never*** has **parentheses `(…)` or br
 
 **When a body needs parentheses or brackets**, then **don’t use tacit style**, and instead **use a topic reference** in the body……or **assign the body to a variable**, then **use that variable as a tacit body**.
 
-The JavaScript programmer is encouraged to use topic references and avoid tacit style, where tacit style may be visually confusing to the reader.
+The JavaScript developer is encouraged to use topic references and avoid tacit style, where tacit style may be visually confusing to the reader.
 
 #### Topical style
 **If a pipeline** of the form `{{topic}} |> {{body}}` is ***not* in tacit style** (that is, it is *not* a tacit function call or tacit constructor call), then it **must be in topical style**.
