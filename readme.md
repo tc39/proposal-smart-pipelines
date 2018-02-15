@@ -690,8 +690,8 @@ Rules** in [ES Clause 5.2.4][].
 > prose requirements. Such rules are always associated with a production of a
 > grammar and are called the static semantics of the production.
 >
-> Static Semantic Rules have names and typically are defined using an algorithm.
-> Named Static Semantic Rules are associated with grammar productions and a
+> Static semantic rules have names and typically are defined using an algorithm.
+> Named static semantic rules are associated with grammar productions and a
 > production that has multiple alternative definitions will typically have for
 > each alternative a distinct algorithm for each applicable named static
 > semantic rule.
@@ -700,7 +700,7 @@ Rules** in [ES Clause 5.2.4][].
 
 ***
 
-This specification defines additions for the following Static Semantic Rules:
+This specification defines additions for the following static semantic rules:
 
 | Form                               | Notes                                             |
 | ---------------------------------- | ------------------------------------------------- |
@@ -708,14 +708,14 @@ This specification defines additions for the following Static Semantic Rules:
 | Is Function Definition?            | Already defined in ES: all expressions            |
 | Is Identifier Reference?           | Already defined: primary- & LHS-level expressions |
 | Is Valid Simple Assignment Target? | Already defined: primary- & LHS-level expressions |
-| Uses Outer Topic?          | New rule defined in this proposal.                |
+| Uses Outer Topic?                  | New rule defined in this proposal.                |
 | Early Errors                       | Already defined in ES for many nodes.             |
 
 It should be noted that, in the ES standard, the Contains rule is currently
 written as an infix operator: “… Contains …” for historical reasons. This is
-unlike any other Static Semantic Rule, which would be written as prefix
+unlike any other static semantic rule, which would be written as prefix
 operators “_RuleName_ of … with arguments …”. There are plans to change all
-Static Semantic Rules to instead have a consistent infix syntax resembling
+static semantic rules to instead have a consistent infix syntax resembling
 method calls: “…._ruleName_(…)”. For self-consistency, this proposal will use that
 planned method-like syntax.
 
@@ -743,7 +743,7 @@ Rules, such as [object initializers’ Computed Property Contains rule][]. The
 rule is also generally overridden by methods definitions and other function
 definitions, such that they hide their substructure from the rule.
 
-It should also be noted that, uniquely among the Static Semantic Rules, Contains
+It should also be noted that, uniquely among the static semantic rules, Contains
 is written as an infix operator: “… Contains …” for historical reasons. This
 proposal will instead use the planned future new syntax “….contains(…)”.
 
@@ -1464,8 +1464,8 @@ The lines in each of the following rows are equivalent.
 
 | Block                                          | Pipeline
 | ---------------------------------------------- | ---------------------------------------
-|`const $ = …; f($, $)`                          |`… |> f(#, #)`
-|`const $ = …; [$, $ * 2, $ * 3]`                |`… |> [#, # * 2, # * 3]`
+|`const $ = …; f($, $)`                          |`… \|> f(#, #)`
+|`const $ = …; [$, $ * 2, $ * 3]`                |`… \|> [#, # * 2, # * 3]`
 
 [TO DO]
 
@@ -1754,13 +1754,9 @@ There are a number of other ways of potentially accomplishing the above use
 cases. However, the authors of this proposal believe that the smart pipe
 operator may be the best choice. [TO DO]
 
-<details>
-
-<summary>
-
 ## Previous draft appendices
 
-</summary>
+<details>
 
 [TO DO: Rewrite everything in this section]
 
