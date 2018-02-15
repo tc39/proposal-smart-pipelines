@@ -1169,29 +1169,6 @@ The lines in each of the following rows are equivalent.
 because verbally confusing with partial-application placeholders – and because
 forward compatibility with [possible future extensions to the topic concept].]
 
-### In other programming languages
-<details>
-<summary>The concept of a pipe operator appears in numerous other languages,
-variously called “pipeline”, “threading”, and “feed” operators.</summary>
-
-* [Clojure’s `->` and `as->`][Clojure pipe]
-* [Forth’s, Joy’s, Factor’s, Onyx’s, PostScript’s, and RPL’s term
-  concatenation][concatenative programming]
-* [Elixir/Erlang’s `|>`][Elixir pipe]
-* [Elm’s `|>`][Elm pipe]
-* [F#’s `|>`][F# pipe]
-* [Hack’s `|>` and `$$`][Hack pipe]
-* [Julia’s `|>`][Julia pipe]
-* [LiveScript’s `|>`][LiveScript pipe]
-* [OCaml’s `|>`][OCaml pipe]
-* [Perl 6’s `==>`][Perl 6 pipe]
-* [R / magrittr’s `%>%`][R pipe]
-* [Unix shells’ and PowerShell’s `|` ][Unix pipe]
-
-It is also conceptually similar to [WHATWG-stream piping][] and [Node-stream piping][].
-
-</details>
-
 ### Possible future extensions to the topic concept
 The [concept of the “topic variable” already exists in many other programming
 languages][topic variables in other languages], commonly named with an
