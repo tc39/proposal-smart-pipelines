@@ -632,11 +632,11 @@ Punctuator :: one of
 with three flags, which are then recursively passed into their constituent
 rules. These parameters thus must also be used by the new rules in this proposal.</summary>
 
-* **`In`**: Whether the current context allows the [`in` relational operator][],
+* **_In_**: Whether the current context allows the [`in` relational operator][],
   which is false only in the headers of [`for` iteration statements][].
-* **`Yield`**: Whether the current context allows a `yield`
+* **_Yield_**: Whether the current context allows a `yield`
   expression/declaration (that is, is the current function context a generator?).
-* **`Await`**: Whether the current context allows an `await`
+* **_Await_**: Whether the current context allows an `await`
   expression/declaration (that is, is the current function context an async
   function/generator?).
 
@@ -711,9 +711,9 @@ This specification defines additions for the following Static Semantic Rules:
 It should be noted that, in the ES standard, the Contains rule is currently
 written as an infix operator: “… Contains …” for historical reasons. This is
 unlike any other Static Semantic Rule, which would be written as prefix
-operators “{{Rule Name}} of … with arguments …”. There are plans to change all
+operators “_RuleName_ of … with arguments …”. There are plans to change all
 Static Semantic Rules to instead have a consistent infix syntax resembling
-method calls: “….{{rule}}(…)”. For self-consistency, this proposal will use that
+method calls: “…._ruleName_(…)”. For self-consistency, this proposal will use that
 planned method-like syntax.
 
 #### Static “Contains?”
@@ -887,7 +887,7 @@ that the `#` appears as one of the types of primary expressions.
 <summary>An assignment-level expression currently may be a this reference,
 identifier reference, null / undefined / true / false literal, array / object /
 regular-expression / template literal, function / async-function / generator /
-class expression These possibilities are given the same parameters that the
+class expression. These possibilities are given the same parameters that the
 assignment-level expression happens to have also gotten, except where they
 would be unnecessary, such as for the this token.</summary>
 
@@ -939,12 +939,12 @@ for identifiers, parenthesized expressions, and arrow parameter lists.</summary>
 
     Return true.
 
-  * ``PrimaryExpression: `this` | `#` | Literal | …``
+  * ``PrimaryExpression : `this` | `#` | Literal | …``
 
     Return false.
 
 * IsValidSimpleAssignmentTarget
-  * ``PrimaryExpression: `this` | `#` | Literal | …``
+  * ``PrimaryExpression : `this` | `#` | Literal | …``
 
     Return false.
 
@@ -977,7 +977,7 @@ environment.
 <details>
 
 * Evaluation
-  * ``PrimaryExpression: `#` ``
+  * PrimaryExpression : `#`
     * Return ? ResolveTopic()
 
 </details>
@@ -995,8 +995,9 @@ expression, yield expression, arrow function, async arrow function, or
 assignment. These possibilities are given the same parameters that the
 assignment-level expression happens to have also gotten.</summary>
 
+The old version:
+
 ```
-// Old version
 AssignmentExpression[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
   [+Yield] YieldExpression[?In, ?Await]
@@ -1011,11 +1012,13 @@ AssignmentExpression[In, Yield, Await] :
 </details>
 
 <details>
-<summary>The conditional-expression production rule in here would be replaced
-with one for pipeline-level expressions, which will be defined next.</summary>
+<summary>In this proposal, the conditional-expression production rule would be
+replaced with one for pipeline-level expressions, which will be defined
+next.</summary>
+
+The new version:
 
 ```
-// New version
 AssignmentExpression[In, Yield, Await] :
   PipelineExpression[?In, ?Yield, ?Await]
   [+Yield] YieldExpression[?In, ?Await]
@@ -1055,16 +1058,16 @@ PipelineExpression[In, Yield, Await] :
 identifier reference.</summary>
 
 * IsIdentifierRef
-  * ``PipelineExpression : PipelineExpression `|>` PipelineBody ``
+  * PipelineExpression : PipelineExpression `|>` PipelineBody
 
     Return true.
 
-  * ``PipelineExpression : PipelineExpression `|>` PipelineBody ``
+  * PipelineExpression : PipelineExpression `|>` PipelineBody
 
     Return false.
 
 * IsValidSimpleAssignmentTarget
-  * ``PipelineExpression : PipelineExpression `|>` PipelineBody ``
+  * PipelineExpression : PipelineExpression `|>` PipelineBody
 
     Return false.
 
@@ -1089,7 +1092,7 @@ During runtime, [TO DO]
 <details>
 
 * Evaluation
-  * ``PipelineExpression : PipelineExpression `|>` PipelineBody ``
+  * PipelineExpression : PipelineExpression `|>` PipelineBody
     1. Let _headRef_ be the result of evaluating ? _PipelineExpression_.
     2. Let _headValue_ be the result of ? GetValue(_headRef_).
     3. Let _bodyRef_ be PipelineBodyEvaluation of _PipelineBody_ with argument
@@ -1203,9 +1206,9 @@ punctuators, then it is in topical style, not in bare style.
 First, let’s call a mere identifier—optionally with a chain of properties, and
 with no parentheses, brackets, or operators—a **simple reference**.
 
-**If an expression** is of the form **`{{identifier}}`**
-or `{{topic}} |> {{identifier0}}.{{identifier1}}`
-or `{{topic}} |> {{identifier0}}.{{identifier1}}.{{identifier2}}`
+**If an expression** is of the form **_identifier_**
+or _topic_ `|>` _identifier0_`.`_identifier1_
+or _topic_ `|>` _identifier0_`.`_identifier1_._identifier2_
 or …), then the pipeline is a **simple reference**.
 
 <details>
@@ -1230,7 +1233,7 @@ This section is adapted from the [ES Spec, § Property Accessors, § RS:
 Evaluation][].
 
 * Evaluation
-  * ``SimpleReference : SimpleReference `.` IdentifierName ``
+  * SimpleReference : SimpleReference `.` IdentifierName
     * Is evaluated in exactly the same manner as [MemberExpression `:`
       MemberExpression `.` IdentifierName][ES Spec, § Property Accessors, § RS:
       Evaluation] except that the contained `SimpleReference` is evaluated in
@@ -1243,12 +1246,12 @@ If the body is a merely a simple reference, then that identifier is interpreted
 to be a **bare function call**. The pipeline’s value will be the result of
 calling the body with the topic value as its argument.
 
-That is: **if a pipeline** is of the form **`{{topic}} |> {{identifier}}`**\
-or `{{topic}} |> {{identifier0}}.{{identifier1}}`\
-or `{{topic}} |> {{identifier0}}.{{identifier1}}.{{identifier2}}`\
+That is: **if a pipeline** is of the form **_topic_ `|>` _identifier_**\
+or _topic_ |> _identifier0_._identifier1_\
+or _topic_ |> _identifier0_._identifier1_._identifier2_\
 or …,\
 then the pipeline is a **bare function call**. The **pipeline’s value** is
-**`{{body}}({{topic}})`**.
+**_body_`(`_topic_`)`**.
 
 <details>
 <summary>Syntactic grammar</summary>
@@ -1270,8 +1273,8 @@ This algorithm was adapted from [ES Spec, § Function Calls, § RS: Evaluation
 * PipelineBodyEvaluation
   * With parameter _headValue_.
   * Note that this PipelineBodyEvaluation rule is used in the evaluation of
-    `PipelineExpression`, defined previously.
-  * ``PipelineBareFunction : PipelineBareFunction `.`  ``
+    PipelineExpression, defined previously.
+  * PipelineBareFunctionCall : SimpleReference
     1. Let _ref_ be the result of evaluating _SimpleReference_.
     2. Let _func_ be ? GetValue(_ref_).
     3. Let _thisCall_ be this _PipelineBareFunctionCall_.
@@ -1287,19 +1290,19 @@ If the body starts with `new`, followed by mere identifier, optionally with a
 chain of properties, and with no parentheses or brackets, then that identifier
 is interpreted to be a **bare constructor**.
 
-That is: **if a pipeline** is of the form **`{{topic}} |> {{identifier}}`**\
-or `{{topic}} |> {{identifier0}}.{{identifier1}}`\
-or `{{topic}} |> {{identifier0}}.{{identifier1}}.{{identifier2}}`\
+That is: **if a pipeline** is of the form **_topic_ |> _identifier_**\
+or _topic_ |> _identifier0_._identifier1_\
+or _topic_ |> _identifier0_._identifier1_._identifier2_\
 or …,\
 then the pipeline is a **bare function call**. The **pipeline’s value** is
-**`{{body}}({{topic}})`**.
+**_body_`(`_topic_`)`**.
 
 <details>
+<summary>Syntax grammar</summary>
 
 ```
-PipelineBareConstructor :
-  new IdentifierReference
-  PipelineBareConstructor `.` IdentifierName
+PipelineBareConstructorCall :
+  `new` SimpleReference
 ```
 
 </details>
@@ -1313,9 +1316,9 @@ This algorithm was adapted from [ES Spec, § The new operator, § RS: Evaluati
 * PipelineBodyEvaluation
   * With parameter _headValue_.
   * Note that this PipelineBodyEvaluation rule is used in the evaluation of
-    `PipelineExpression`, defined previously.
-  * ``PipelineBareFunction : PipelineBareFunction `.`  ``
-    * [TO DO: Can we use EvaluateNew if SimpleReference is technically not the
+    PipelineExpression, defined previously.
+  * PipelineBareConstructorCall : `new` SimpleReference
+    * [TO DO: Can we use EvaluateNew if _SimpleReference_ is technically not the
       same as MemberExpression? Should we just use MemberExpression with some
       limitations?]
 
@@ -1337,7 +1340,7 @@ The JavaScript developer is encouraged to use topic references and avoid bare
 style, where bare style may be visually confusing to the reader.
 
 #### Topical style
-**If a pipeline** of the form `{{topic}} |> {{body}}` is ***not* in bare
+**If a pipeline** of the form _topic_ |> _body_ is ***not* in bare
 style** (that is, it is *not* a bare function call or bare constructor call),
 then it **must be in topical style**.
 
@@ -1346,27 +1349,25 @@ then it **must be in topical style**.
 assuming that the topic value is first bound to the topic reference within the
 body scope.</summary>
 
-The **pipeline’s value** is **`do { const {{topicIdentifier}} = {{topic}};
-{{substitutedBody}} }`**, where:
-
-* `{{topicVariable}}` is any [identifier that is *not* already used by any
-  variable in the outer lexical context or the body’s inner topical
-  context][lexically hygienic],
-* And `{{substitutedBody}}` is `{{body}}` but with every instance of outside of
-  the topic reference replaced by `{{topicVariable}}`.
-
-</details>
-
-#### Topical pipeline body • Runtime semantics
-During runtime, [TO DO]
-
-<details>
+But more precisely, it binds the topic to the pipeline’s head value then
+evaluates the RHS
 
 * Evaluation
-  * ``PipelineExpression : PipelineExpression `|>` PipelineBody ``
-    1. Let _headValue_ be the result of evaluating `PipelineExpression`.
+  * PipelineExpression : PipelineExpression `|>` PipelineBody
+    1. Let _headValue_ be the result of evaluating _PipelineExpression_.
     2. [TO DO: Create topic environment]
     3. [TO DO: Evaluate body in new environment]
+
+It sort of acts like **`do { const ` _topicIdentifier_ `=` _topic_`;
+`_substitutedBody_` }`**, where:
+
+* _topicVariable_ is any [identifier that is *not* already used by any
+  variable in the outer lexical context or the body’s inner topical
+  context][lexically hygienic],
+* And _substitutedBody_ is _body_ but with every instance of outside of
+  the topic reference replaced by _topicVariable_.
+
+[TO DO: Add link to term-rewriting appendix.]
 
 </details>
 
