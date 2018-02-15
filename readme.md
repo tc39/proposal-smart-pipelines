@@ -1008,7 +1008,7 @@ AssignmentExpression[In, Yield, Await] :
     AssignmentOperator AssignmentExpression[?In, ?Yield, ?Await]
 ```
 
-</detail>
+</details>
 
 <details>
 <summary>The conditional-expression production rule in here would be replaced
