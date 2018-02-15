@@ -58,10 +58,10 @@ characters to use for the topic token is occurring on GitHub at
 ## Motivation
 Nested, deeply composed expressions occur often in JavaScript. They occur
 whenever any single value must be processed by a series of transformations,
-whether they be operations, functions, or constructors. Unfortunately, this
-nested expression – and many like it – can be quite messy spaghetti code, due to
-its mixing of prefix, infix, and postfix expressions together. Writing the code
-requires many nested levels of indentation. Reading the code requires checking
+whether they be operations, functions, or constructors. Unfortunately, these
+deeply nested expressions often result in messy spaghetti code, due to their
+mixing of prefix, infix, and postfix expressions together. Writing such code
+requires many nested levels of indentation. Reading the such requires checking
 both the left and right of each subexpression to understand its data flow.
 
 ```js
@@ -78,10 +78,8 @@ new User.Message(
 With the smart pipe operator, the code above could be terser and, literally,
 straightforward. Prefix, infix, and postfix expressions would be less tangled
 together in threads of spaghetti. Instead, data values would be piped from left
-to right through a single flat thread of postfix expressions, essentially
-forming a [Reverse Polish notation][]. The syntax statically is [term rewritable
-into already valid code][term rewriting] with theoretically zero runtime cost.
-
+to right through a **single flat thread of postfix expressions**, essentially
+forming a [Reverse Polish notation][].
 ```js
 stringPromise
   |> await #
@@ -91,6 +89,14 @@ stringPromise
   |> # + '!'
   |> new User.Message // a bare unary constructor call
 ```
+
+Each such postfix expression (called a **pipeline body**) is in its own inner
+lexical scope, within which a special token `#` is defined. This `#` is called a
+**topic reference**; it represents the “topic” of the pipeline, which is
+whatever the pipeline head evaluated into. For instance, `5 |> # - 3 |> # * 2`
+is precisely the same as `((5 - 3)) * 2`. The syntax statically is [term
+rewritable into already valid code][term rewriting] with theoretically zero
+runtime cost.
 
 This code’s terseness and flatness may be both easier for the JavaScript
 developer to read and to edit. The reader may follow the flow of data more
@@ -127,13 +133,59 @@ of this “smart pipe operator”][smart body syntax].
 
 ### Goals
 
-<summary>There are eleven ordered goals that the smart body syntax tries to
-fulfill.</summary>
+<summary>
+There are twelve ordered goals that the smart body syntax tries to fulfill,
+which may be summarized,
+“Don’t break my code,”<br>
+“Don’t make me think too hard,”<br>
+“Don’t shoot me in the foot,” and<br>
+“Make it worth my while.”
+</summary>
 
 Listed from most to least important:
 
-#### “Don’t make me think hard.”
-1.  **Short parser lookahead**: The syntax should minimize the parsing lookahead
+#### “Don’t break my code.”
+ 1. **Backward compatibility**: The syntax must avoid stepping on the toes of
+    existing code, including but not limited to JavaScript libraries such as
+    jQuery and Underscore.js. In particular, the topic reference should not be
+    an existing identifier such as `$` or `_`, which both may cause surprising
+    results to a developer who adopts pipelines while also using a globally
+    bound convenience variable. It is a common pattern to do this even without a
+    library: `var $ = document.querySelectorAll`”. The silent shadowing of such
+    outer-context variables may silently cause bugs, which may also be difficult
+    to debug (see Goal 7).
+
+    Nor can it cause previously valid code to become invalid. This includes,
+    to a lesser extent, common nonstandard extensions to JavaScript: for instance,
+    using `<>` for the topic reference would retroactively invalidate existing
+    E4X and JSX code.
+
+ 2. **Zero runtime cost**: A form of backward compatibility. When translating
+    old code into the new syntax, doing so should not cause unexpected
+    performance regression. For instance, the new syntax should not require
+    memory allocation for newly created functions that were not necessary in the
+    old code. Instead, it should, at least theoretically, perform as well the
+    old code did for both memory and CPU. And it should be able to do this
+    without dramatically rearranging code logic or relying on hidden,
+    uncontrollable compiler optimization.
+
+    For instance, in order to apply the syntax to the logic of an async
+    functions, a hypothetical new pipeline syntax might not support using
+    `await` in the same async context as the pipeline itself. Such a syntax
+    would, for each of its pipelines’ steps, require inner async functions that
+    would return wrapper promises and pass them between consecutive steps. Such
+    an approach would be be unnecessarily expensive to naively evaluate for both
+    CPU and memory. But inlining these async functions may be internally
+    complicated, and such optimizations would be difficult for the developer to
+    correctly predict and might differ widely between JavaScript engines.
+
+ 3. **Forward compatibility**: Keep the door open to other proposals, including
+    both already-proposed features, such as [syntactic partial application][],
+    and [possible future extensions to the topic concept][], such as `for` and
+    `catch` blocks that also bind the topic. This is [TO DO]
+
+#### “Don’t make me think too hard.”
+ 4. **Syntactic locality**: The syntax should minimize the parsing lookahead
     that the compiler must check. If the grammar makes [garden-path syntax][]
     common, then this increases the dependency that pieces of code have on other
     code. This in turn makes it more likely that they will exhibit
@@ -150,13 +202,16 @@ Listed from most to least important:
     turn increases locality of syntax: it becomes easier to read code without
     thinking about code elsewhere.
 
-2.  **Minimal parser branching**: Each edge case of the grammar increases the
+ 5. **Minimal parser branching**: Each edge case of the grammar increases the
     [cyclomatic complexity][] of parsing the new syntax, increasing cognitive
     burden on both machine compiler and human reader in writing and reading code
-    without error. Reducing complexity reduces the probability that the
-    developer will fire a footgun.
+    without error. If edge cases and branching are minimized, then the resulting
+    syntax will be uniform and consistent. The reduced complexity would
+    hopefully reduce the probability that the developer will misunderstand the
+    code they read or write.
 
-3.  **Static analyzability**: Help the editing JavaScript developer avoid common
+#### “Don’t shoot me in the foot.”
+ 6. **Static analyzability**: Help the editing JavaScript developer avoid common
     footguns at compile time, such as preventing them from accidentally omitting
     a topic reference where they meant to put one. For instance, if `x |> 3`
     were not a syntax error, then it would be a useless operation and almost
@@ -164,35 +219,29 @@ Listed from most to least important:
     is used outside of a pipeline RHS’s scope, such as in `export function () {
     # }`, then this is also almost certainly a developer error.
 
-#### “Don’t break anything.”
-4.  **Backward compatibility**: Avoid stepping on the toes of existing code,
-    including but not limited to JavaScript libraries such as jQuery. In
-    particular, the topic reference should not be an existing identifier such as
-    `$`, which both may cause surprising results to a developer who adopts
-    pipelines but who also expects to be able to use.
+ 7. **Simple scoping**: [TO DO]
 
-5.  **Zero runtime cost**: [TO DO]
+#### “Make it worth my while.”
+ 8. **Human readability**: [TO DO]
 
-6.  **Forward compatibility**: Keep the door open to other proposals, including
-    both already-proposed features, such as [syntactic partial application][],
-    and [possible future extensions to the topic concept][], such as `for` and
-    `catch` blocks that also bind the topic.
+ 9. **Visual terseness**: JavaScript code with pipelines should be [TO DO]
 
-#### “Make it worth learning.”
-7.  **Human readability**: [TO DO]
-
-8.  **Visual terseness**: JavaScript code with pipelines should be [TO DO]
-
-9.  **Versatile expressivity**: Enable the JavaScript is a language rich with
+10. **Versatile expressivity**: The JavaScript is a language rich with
     [expressions of many kinds][MDN expressions and operators]. [TO DO]
 
-10. **Optimization by frequency**: [TO DO]
+    * Function calls with multiple arguments.
+    * Constructor calls with multiple arguments.
+
+    In addition, the topic reference does not need to be coupled only to
+    pipelines…
+
+11. **Optimization by frequency**: [TO DO]
     For instance, unary function/constructor calls are a very frequent type of
     expression. That is why certain [tacit or point-free styles][tacit
     programming] of functional programming dramatically optimize the ergonomics
     of these cases.
 
-11. **Intuitiveness and explainability**: [TO DO]
+12. **Intuitiveness and explainability**: [TO DO]
 
 </details>
 
