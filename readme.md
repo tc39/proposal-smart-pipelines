@@ -30,7 +30,6 @@ for the topic token is occurring in a GitHub
 issue](https://github.com/tc39/proposal-pipeline-operator/issues/91).
 
 ## Motivation
-
 Nested, deeply composed expressions occur often in JavaScript. They occur
 whenever any single value must be processed by a series of transformations,
 whether they be operations, functions, or constructors. Unfortunately, this
@@ -527,10 +526,12 @@ pipelines.
 
 ## Grammar
 This grammar of the pipeline operator juxtaposes brief rules written for the
-JavaScript developer with formally written changes to the ES standard.
+JavaScript developer with formally written changes to the ES standard. The
+grammar itself is a [context-free grammar supplemented with static
+semantics][syntax and static semantics].
 
 <details>
-<summary>The ES specification explains further…</summary>
+<summary>The ES specification explains further.</summary>
 
 > A context-free grammar consists of a number of **productions**. Each
 > production has an abstract symbol called a **nonterminal** as its left-hand
@@ -539,6 +540,8 @@ JavaScript developer with formally written changes to the ES standard.
 > specified alphabet.
 
 </details>
+
+***
 
 This proposal uses the [same notation as that from the ES standard][ES grammar
 notation] to denote context-free grammars; see [ES grammar notation][] for more
@@ -552,9 +555,9 @@ and `#` the topic reference.
 <summary>The lexical rule for punctuator tokens would be modified so that
 these two tokens are added.</summary>
 
-The specification explains in [ES clause 5.1.2][]:
+The specification explains in [ES Clause 5.1.2][]:
 
-> A lexical grammar for ECMAScript is given in [ES clause 11][]. This grammar
+> A lexical grammar for ECMAScript is given in [ES Clause 11][]. This grammar
 > has as its terminal symbols Unicode code points…It defines a set of
 > productions…that describe how sequences of such code points are translated
 > into a sequence of input elements.
@@ -613,23 +616,39 @@ rules. These parameters thus must also be used by the new rules in this proposal
 
 ### Syntax and static semantics
 The syntactic grammar of JavaScript can transform token sequences (defined by the [lexical grammar][])
-into **parse trees**: rooted tree data structures made of **Parse Nodes**.
+into **parse trees**: rooted tree data structures made of **Parse Nodes**. This
+is described further in [ES Clause 5.1.4][].
 
 <details>
 
-This is described further in [ES Clause 5.1.4][].
+> When a stream of code points is to be parsed as an ECMAScript Script or
+> Module, it is first converted to a stream of input elements by repeated
+> application of the lexical grammar; this stream of input elements is then
+> parsed by a single application of the syntactic grammar. The input stream is
+> syntactically in error if the tokens in the stream of input elements cannot be
+> parsed as a single instance of the goal nonterminal (Script or Module), with
+> no tokens left over.
 
-When a stream of code points is to be parsed as an ECMAScript Script or Module, it is first converted to a stream of input elements by repeated application of the lexical grammar; this stream of input elements is then parsed by a single application of the syntactic grammar. The input stream is syntactically in error if the tokens in the stream of input elements cannot be parsed as a single instance of the goal nonterminal (Script or Module), with no tokens left over.
-
-When a parse is successful, it constructs a parse tree, a rooted tree structure in which each node is a Parse Node. Each Parse Node is an instance of a symbol in the grammar; it represents a span of the source text that can be derived from that symbol. The root node of the parse tree, representing the whole of the source text, is an instance of the parse's goal symbol. When a Parse Node is an instance of a nonterminal, it is also an instance of some production that has that nonterminal as its left-hand side. Moreover, it has zero or more children, one for each symbol on the production's right-hand side: each child is a Parse Node that is an instance of the corresponding symbol.
+> When a parse is successful, it constructs a parse tree, a rooted tree
+> structure in which each node is a **Parse Node**. Each Parse Node is an
+> instance of a symbol in the grammar; it represents a span of the source text
+> that can be derived from that symbol. The root node of the parse tree,
+> representing the whole of the source text, is an instance of the parse's goal
+> symbol. When a Parse Node is an instance of a nonterminal, it is also an
+> instance of some production that has that nonterminal as its left-hand side.
+> Moreover, it has zero or more children, one for each symbol on the
+> production's right-hand side: each child is a Parse Node that is an instance
+> of the corresponding symbol.
 
 </details>
 
-The syntactic grammar of JavaScript further relies upon several functions that analyze its
-syntactic structures. These functions are polymorphic on the types of their
-input syntactic structures, and their definitions are often also recursive. The
-ES specification goes into more detail on these **Static Semantic Rules** in [ES
-Clause 5.2.4][].
+***
+
+The syntactic grammar of JavaScript further relies upon several functions that
+analyze its syntactic structures. These functions are polymorphic on the types
+of their input syntactic structures, and their definitions are often also
+recursive. The ES specification goes into more detail on these **Static Semantic
+Rules** in [ES Clause 5.2.4][].
 
 <details>
 
@@ -647,6 +666,8 @@ Clause 5.2.4][].
 > semantic rule.
 
 </details>
+
+***
 
 This specification defines additions for the following Static Semantic Rules:
 
@@ -683,6 +704,8 @@ former.</summary>
 
 </details>
 
+***
+
 In the ES standard, the Contains rule is used by many other Static Semantic
 Rules, such as [object initializers’ Computed Property Contains rule][]. The
 rule is also generally overridden by methods definitions and other function
@@ -691,8 +714,6 @@ definitions, such that they hide their substructure from the rule.
 It should also be noted that, uniquely among the Static Semantic Rules, Contains
 is written as an infix operator: “… Contains …” for historical reasons. This
 proposal will instead use the planned future new syntax “….contains(…)”.
-
-### Static Function Definition
 
 #### Static Early Errors
 <details>
@@ -724,7 +745,7 @@ pipeline is also expected to often serve as the body of a variable assignment
 The pipe operator actually has [bidirectional associativity][]. However, for the
 purposes of this grammar, it will have left associativity.
 
-<details
+<details>
 <summary>A table shows how the topic reference and the pipe operator are
 integrated into the hierarchy of operators.</summary>
 
@@ -812,6 +833,8 @@ listed **above** it.
 
 </details>
 
+***
+
 The production rule for [ES assignment-level expressions][] needs to be modified
 so that pipe expressions slip in between it and conditional-level expressions in
 the hierarchy. Then the conditional-expression rule would be used in the
@@ -839,6 +862,8 @@ AssignmentExpression[In, Yield, Await] :
 
 
 </details>
+
+***
 
 <details>
 <summary>This conditional-expression production rule would be replaced with one for
@@ -929,6 +954,8 @@ detail, but an overview is given in a table.</summary>
 
 </details>
 
+***
+
 <details>
 
 <summary>There are five ordered goals that the smart body syntax tries to
@@ -990,6 +1017,8 @@ PipelineTacitFunction :
 
 </details>
 
+***
+
 If the body starts with `new`, followed by mere identifier, optionally with a
    chain of properties, and with no parentheses or brackets, then that identifier
    is interpreted to be a **bare constructor**.
@@ -1010,6 +1039,8 @@ PipelineTacitFunction :
 ```
 
 </details>
+
+***
 
 Therefore, a pipeline in **bare style *never*** has **parentheses `(…)` or
 brackets `[…]`** in its body. Neither `… |> object.method()` nor `… |>
@@ -1675,6 +1706,8 @@ do { do { do { do { 3 * 3 } } }
 
 </details>
 
+***
+
 [`for` iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
 
 [`in` relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
@@ -1801,9 +1834,9 @@ do { do { do { do { 3 * 3 } } }
 
 [operator precedence (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
 
-[ES clause 11]: https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar
+[ES Clause 11]: https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar
 
-[ES clause 5.1.2]: https://tc39.github.io/ecma262/#sec-lexical-and-regexp-grammars
+[ES Clause 5.1.2]: https://tc39.github.io/ecma262/#sec-lexical-and-regexp-grammars
 
 [grammar parameters]: #grammar-parameters
 
@@ -1822,3 +1855,5 @@ do { do { do { do { 3 * 3 } } }
 [REPLs]: https://en.wikipedia.org/wiki/Read–eval–print_loop
 
 [Perl 6 topicalization]: https://www.perl.com/pub/2002/10/30/topic.html/
+
+[ES Clause 5.1.4]: https://tc39.github.io/ecma262/#sec-syntactic-grammar
