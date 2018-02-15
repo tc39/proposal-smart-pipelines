@@ -671,13 +671,13 @@ Rules** in [ES Clause 5.2.4][].
 
 This specification defines additions for the following Static Semantic Rules:
 
-| Form                              | Notes                                       |
-| --------------------------------- | ------------------------------------------- |
-| Contains                          | Already defined in ES for nearly all nodes. |
-| Is Function Definition            | Already defined in ES for many nodes.       |
-| Is Valid Simple Assignment Target | Already defined in ES for many nodes.       |
-| Binds Topic                       | New rule defined in this proposal.          |
-| Early errors                      | Already defined in ES for many nodes.       |
+| Form                               | Notes                                       |
+| ---------------------------------- | ------------------------------------------- |
+| Contains?                          | Already defined in ES for nearly all nodes. |
+| Is Function Definition?            | Already defined in ES for many nodes.       |
+| Is Valid Simple Assignment Target? | Already defined in ES for many nodes.       |
+| Binds Topic?                       | New rule defined in this proposal.          |
+| Early Errors                       | Already defined in ES for many nodes.       |
 
 It should be noted that, in the ES standard, the Contains rule is currently
 written as an infix operator: “… Contains …” for historical reasons. This is
@@ -687,7 +687,7 @@ Static Semantic Rules to instead have a consistent infix syntax resembling
 method calls: “….{{rule}}(…)”. For self-consistency, this proposal will use that
 planned method-like syntax.
 
-#### Static Containment
+#### Static “Contains?”
 <details>
 <summary>The ES spec imply defines the Contains rule for nearly all nodes.
 Conceptually, a node contains another node if the latter is somewhere in the
@@ -715,7 +715,20 @@ It should also be noted that, uniquely among the Static Semantic Rules, Contains
 is written as an infix operator: “… Contains …” for historical reasons. This
 proposal will instead use the planned future new syntax “….contains(…)”.
 
+#### Static “Is Function Definition?”
+[TO DO]
+
+#### Static “Is Valid Simple Assignment Target?”
+[TO DO]
+
+#### Static “Binds Topic?”
+[TO DO]
+
 #### Static Early Errors
+Certain syntax errors cannot be detected by the context-free grammar alone yet
+must still be detected at compile time. Early Error Rules are Static Semantic
+Rules that define when such extra syntax errors occur.
+
 <details>
 
 > A special kind of static semantic rule is an Early Error Rule. Early error
