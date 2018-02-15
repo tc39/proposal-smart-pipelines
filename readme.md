@@ -943,10 +943,6 @@ PipelineExpression[In, Yield, Await] :
 
 </details>
 
-#### Static Semantics
-
-Several…
-
 ### Smart body syntax
 Most pipelines will use the topic reference `#` in their bodies. As already
 explained above in [nomenclature][], this style of pipeline is called **topical
@@ -1041,14 +1037,14 @@ If the body is a mere identifier, optionally with a chain of properties, and
 {{identifier0}}.{{identifier1}}.{{identifier2}}` or …), then the pipeline is a
 **bare function call**. The **pipeline’s value** is **`{{body}}({{topic}})`**.
 
-This is achieved by defining the _PipelineTacitFunction_ production using
+This is achieved by defining the _PipelineBareFunction_ production using
 [_IdentifierReference_][], [_IdentifierName_][], and left recursion, in
 imitation of how [_MemberExpression_][] handles method chains.
 
 ```
-PipelineTacitFunction :
+PipelineBareFunction :
   IdentifierReference
-  PipelineTacitFunction `.` IdentifierName
+  PipelineBareFunction `.` IdentifierName
 ```
 
 </details>
@@ -1056,8 +1052,8 @@ PipelineTacitFunction :
 ***
 
 If the body starts with `new`, followed by mere identifier, optionally with a
-   chain of properties, and with no parentheses or brackets, then that identifier
-   is interpreted to be a **bare constructor**.
+chain of properties, and with no parentheses or brackets, then that identifier
+is interpreted to be a **bare constructor**.
 
 <details>
 
@@ -1069,9 +1065,9 @@ If the body starts with `new`, followed by mere identifier, optionally with a
 the `new` removed from its start.
 
 ```
-PipelineTacitFunction :
+PipelineBareConstructor :
   new IdentifierReference
-  PipelineTacitFunction `.` IdentifierName
+  PipelineBareFunction `.` IdentifierName
 ```
 
 </details>
@@ -1111,6 +1107,9 @@ The **pipeline’s value** is **`do { const {{topicIdentifier}} = {{topic}};
   the topic reference replaced by `{{topicVariable}}`.
 
 </details>
+
+### Topic reference
+[TO DO]
 
 ### Multiple topic references and inner functions
 <details>
