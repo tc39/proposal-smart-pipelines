@@ -1480,7 +1480,7 @@ The lines in each of the following rows are equivalent.
 
 | Block                                          | Pipeline
 | ---------------------------------------------- | ---------------------------------------
-|`const $ = …; settimeout(() => $ * 5)`          |`… |> settimeout(() => # * 5)`|
+|`const $ = …; settimeout(() => $ * 5)`          |`… \|> settimeout(() => # * 5)`|
 
 [TO DO]
 
@@ -1496,9 +1496,9 @@ The lines in each of the following rows are equivalent.
 
 | Block                                          | Pipeline
 | ---------------------------------------------- | ---------------------------------------
-|`const $ = …; settimeout(() => f($) * 5)`       |`… |> settimeout(() => f(#) * 5)`
-|`const $ = …; settimeout(() => f($) |> # * 5)`  |`… |> settimeout(() => f(#) |> # * 5)`
-|`const $ = …; settimeout(() => $ |> f |> # * 5)`|`… |> settimeout(() => # |> f |> # * 5)`
+|`const $ = …; settimeout(() => f($) * 5)`       |`… \|> settimeout(() => f(#) * 5)`
+|`const $ = …; settimeout(() => f($) |> # * 5)`  |`… \|> settimeout(() => f(#) |> # * 5)`
+|`const $ = …; settimeout(() => $ |> f |> # * 5)`|`… \|> settimeout(() => #|> f |> # * 5)`
 
 [TO DO]
 
