@@ -1442,50 +1442,7 @@ operator may be the best choice. [TO DO]
 
 [TO DO: Rewrite everything in this section]
 
-### Smart body syntax
-When the parser checks the body/RHS, it must determine what style it is in.
-There are four outcomes for each pipeline body: bare constructor, bare
-function, topical body, or invalid syntax.
-
-```
-// New rule
-PipelineBody[In, Yield, Await] :
-  PipelineBareFunction
-  PipelineBareConstructor
-  PipelineTopicalBody[In, Yield, Await]
-```
-
-1. If the body is a mere identifier, optionally with a chain of properties, and
-   with no parentheses or brackets, then that identifier is interpreted to be a
-   **bare function**.
-   ```
-   PipelineBareFunction :
-     SimpleMemberExpression
-   ```
-
-2. If the body starts with `new`, followed by mere identifier, optionally with a
-   chain of properties, and with no parentheses or brackets, then that identifier
-   is interpreted to be a **bare constructor**.
-   ```
-   PipelineBareConstructor :
-     `new` SimpleMemberExpression
-   ```
-
-3. Otherwise, the body is now an arbitrary expression. Because the expression is
-   not in bare style, it must use that pipe’s topic reference. ([TO DO: Formalize
-   this static semantic as `usesTopic()`.] topic references from the topical scopes
-   of other, inner pipelines do not count.) If there is no such topic reference in
-   the expression, then a syntax error is thrown.
-
-   `PipelineTopicalBody` will be defined in the next section.
-
-If a pipeline body *never* uses a topic reference, then it must be a permitted
-bare unary function (single identifier or simple property chain). Otherwise, it
-is a syntax error. In particular, bare style *never* uses parentheses. If they
-need to have parentheses, then they need to have use the topic reference. See
-also [property-chained bare style][].
-
-### General semantics
+### Old semantic section
 [TO DO: Rewrite this section to the conventions of the ES specification.]
 
 A pipe expression’s semantics are:
