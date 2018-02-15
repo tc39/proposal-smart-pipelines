@@ -59,8 +59,8 @@ characters to use for the topic token is occurring on GitHub at
 Nested, deeply composed expressions occur often in JavaScript. They occur
 whenever any single value must be processed by a series of transformations,
 whether they be operations, functions, or constructors. Unfortunately, this
-nested expression – and many like it – can be quite messy spaghetti code, due to its
-mixing of prefix, infix, and postfix expressions together. Writing the code
+nested expression – and many like it – can be quite messy spaghetti code, due to
+its mixing of prefix, infix, and postfix expressions together. Writing the code
 requires many nested levels of indentation. Reading the code requires checking
 both the left and right of each subexpression to understand its data flow.
 
@@ -95,8 +95,9 @@ stringPromise
 This code’s terseness and flatness may be both easier for the JavaScript
 developer to read and to edit. The reader may follow the flow of data more
 easily through this single flattened thread of postfix operations. And the
-editor may more easily add or remove operations at the beginning, end, or middle
-of the thread, without changing the indentation of many nearby, unrelated lines.
+developer may more easily add or remove operations at the beginning, end, or
+middle of the thread, without changing the indentation of many nearby, unrelated
+lines.
 
 Similar use cases appear numerous times in JavaScript code, whenever any value
 is transformed by expressions of any type: function calls, property calls,
@@ -121,6 +122,79 @@ equivalent to:
 
 Being able to automatically detect this [bare style][] is the [**smart** part
 of this “smart pipe operator”][smart body syntax].
+
+<details>
+
+### Goals
+
+<summary>There are eleven ordered goals that the smart body syntax tries to
+fulfill.</summary>
+
+Listed from most to least important:
+
+#### “Don’t make me think hard.”
+1.  **Short parser lookahead**: The syntax should minimize the parsing lookahead
+    that the compiler must check. If the grammar makes [garden-path syntax][]
+    common, then this increases the dependency that pieces of code have on other
+    code. This in turn makes it more likely that they will exhibit
+    developer-unintended behavior.
+
+    This is true particularly for [distinguishing between bare style and topical
+    style][smart body syntax]. Without being careful, a pipeline’s meaning will
+    be ambiguous between bare style and topical style, at least without checking
+    the body carefully to see which. And this body may be a very long expression.
+
+    By restricting the space of valid bare-style pipeline bodies (that is,
+    without topic references), the rule minimizes garden-path syntax that would
+    otherwise be possible—such as `… |> compose(f, g, h, i, j, k, #)`. This in
+    turn increases locality of syntax: it becomes easier to read code without
+    thinking about code elsewhere.
+
+2.  **Minimal parser branching**: Each edge case of the grammar increases the
+    [cyclomatic complexity][] of parsing the new syntax, increasing cognitive
+    burden on both machine compiler and human reader in writing and reading code
+    without error. Reducing complexity reduces the probability that the
+    developer will fire a footgun.
+
+3.  **Static analyzability**: Help the editing JavaScript developer avoid common
+    footguns at compile time, such as preventing them from accidentally omitting
+    a topic reference where they meant to put one. For instance, if `x |> 3`
+    were not a syntax error, then it would be a useless operation and almost
+    certainly not what the developer intended. Similarly if the topic reference
+    is used outside of a pipeline RHS’s scope, such as in `export function () {
+    # }`, then this is also almost certainly a developer error.
+
+#### “Don’t break anything.”
+4.  **Backward compatibility**: Avoid stepping on the toes of existing code,
+    including but not limited to JavaScript libraries such as jQuery. In
+    particular, the topic reference should not be an existing identifier such as
+    `$`, which both may cause surprising results to a developer who adopts
+    pipelines but who also expects to be able to use.
+
+5.  **Zero runtime cost**: [TO DO]
+
+6.  **Forward compatibility**: Keep the door open to other proposals, including
+    both already-proposed features, such as [syntactic partial application][],
+    and [possible future extensions to the topic concept][], such as `for` and
+    `catch` blocks that also bind the topic.
+
+#### “Make it worth learning.”
+7.  **Human readability**: [TO DO]
+
+8.  **Visual terseness**: JavaScript code with pipelines should be [TO DO]
+
+9.  **Versatile expressivity**: Enable the JavaScript is a language rich with
+    [expressions of many kinds][MDN expressions and operators]. [TO DO]
+
+10. **Optimization by frequency**: [TO DO]
+    For instance, unary function/constructor calls are a very frequent type of
+    expression. That is why certain [tacit or point-free styles][tacit
+    programming] of functional programming dramatically optimize the ergonomics
+    of these cases.
+
+11. **Intuitiveness and explainability**: [TO DO]
+
+</details>
 
 ### Real-world examples
 
@@ -508,9 +582,9 @@ assigned with a value (`# = 3` is a syntax error). Instead, the topic reference
 is implicitly, lexically bound only within pipeline bodies.
 
 When a pipeline’s body is in this **topical style**. A pipeline body in topical
-style forms an inner lexical scope – called the pipeline’s **topical
-scope** – within which the topic reference is implicitly bound to the value of the
-topic, acting as a **placeholder** for the topic’s value.
+style forms an inner lexical scope – called the pipeline’s **topical scope** –
+within which the topic reference is implicitly bound to the value of the topic,
+acting as a **placeholder** for the topic’s value.
 
 Alternatively, you may omit the topic references entirely, if the body is just a
 **simple reference** to a function or constructor, such as with `… |>
@@ -579,7 +653,7 @@ notation] to denote context-free grammars; see [ES grammar notation][] for more
 information.
 
 ### Lexical grammar
-The smart pipe operator adds two new tokens to JavaSCript: `|>` the binary pipe,
+The smart pipe operator adds two new tokens to JavaScript: `|>` the binary pipe,
 and `#` the topic reference.
 
 <details>
@@ -1109,8 +1183,8 @@ Most pipelines will use the topic reference `#` in their bodies. As already
 explained above in [nomenclature][], this style of pipeline is called **topical
 style**.
 
-But for two certain simple cases – unary functions and constructors – you may omit
-the topic reference from the body. This is called **bare style**.
+But for two certain simple cases – unary functions and constructors – you may
+omit the topic reference from the body. This is called **bare style**.
 
 When a pipe is in bare style, we refer to the body as a **bare function** or a
 **bare constructor**, depending on the rules in [bare style][]. The body acts
@@ -1165,40 +1239,6 @@ detail, but an overview is given in a table.</summary>
 
 </details>
 
-***
-
-<details>
-
-<summary>There are five ordered goals that the smart body syntax tries to
-fulfill.</summary>
-
-The first three goals can be summed up by saying, “Keep the parsing rules
-simple!” and “Don’t make me think hard!” The last two rules address the new
-functionality that this proposal would bring. From most to least important:
-
-1. Short parser lookahead: Minimize the parsing lookahead that the compiler must
-   check before it can distinguish between bare style and topical style. By
-   restricting the space of valid bare-style pipeline bodies (that is, without
-   topic references), the rule prevents [garden-path syntax][] that would
-   otherwise be possible: such as `… |> compose(f, g, h, i, j, k, #)`.
-
-2. Minimal parser branching: [TO DO]
-
-3. Static analysis: Help the editing JavaScript developer to avoid common
-   footguns at compile time. Preventing them from accidentally omitting a topic
-   reference where they meant to put one. For instance, if `x |> 3` were not a
-   syntax error, then it would be a useless operation and almost certainly not
-   what the editor intended.
-
-4. Versatile expressivity: [TO DO]
-
-5. Tacit terseness: Make especially ergonomic the style of [**tacit
-   programming**, aka **point-free programming**][tacit programming], for
-   frequent cases in which topic references would be unnecessarily verbose:
-   unary functions and unary constructors.
-
-</details>
-
 #### Bare style
 The **bare style** supports using simple identifiers, possibly with chains of
 simple property identifiers. If there are any operators, parentheses (including
@@ -1206,12 +1246,12 @@ for method calls), brackets, or anything other than identifiers and dot
 punctuators, then it is in topical style, not in bare style.
 
 ##### Simple reference
-First, let’s call a mere identifier—optionally with a chain of properties, and
-with no parentheses, brackets, or operators—a **simple reference**.
+First, let’s call a mere identifier – optionally with a chain of properties, and
+with no parentheses, brackets, or operators – a **simple reference**.
 
-**If an expression** is of the form **_identifier_**
-or _topic_ `|>` _identifier0_`.`_identifier1_
-or _topic_ `|>` _identifier0_`.`_identifier1_._identifier2_
+**If an expression** is of the form **_identifier_**\
+or _topic_ `|>` _identifier0_`.`_identifier1_\
+or _topic_ `|>` _identifier0_`.`_identifier1_._identifier2_\
 or …), then the pipeline is a **simple reference**.
 
 <details>
@@ -1227,6 +1267,8 @@ SimpleReference :
 ```
 
 </details>
+
+***
 
 <details>
 <summary>Simple references’ runtime semantics are exactly the same as the
@@ -1797,8 +1839,8 @@ to [replace each pipe expression’s topic references with an autogenerated
 variable][term rewriting with autogenerated variables], which must be guaranteed
 to be [lexically hygienic][] and to not conflict with other variables. The
 alternative way is to [use two variables – the topic reference `#` and a single
-dummy variable][term rewriting with single dummy variable] – which also preserves
-[lexical hygiene][lexically hygienic].
+dummy variable][term rewriting with single dummy variable] – which also
+preserves [lexical hygiene][lexically hygienic].
 
 #### Term rewriting with autogenerated variables
 The first way to illustrate the operator’s semantics is to replace each pipe
@@ -2147,7 +2189,7 @@ do { do { do { do { 3 * 3 } } }
 
 [operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
 
-[operator precedence (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
+[expressions and operators (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
 
 [ES Clause 11]: https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar
 
@@ -2184,3 +2226,5 @@ do { do { do { do { 3 * 3 } } }
 [ES Spec, § Function Calls, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-function-calls-runtime-semantics-evaluation
 
 [ES Spec, § Lists and Records]: https://tc39.github.io/ecma262/#sec-list-and-record-specification-type
+
+[cyclomatic complexity]: https://en.wikipedia.org/wiki/Cyclomatic_complexity#Applications
