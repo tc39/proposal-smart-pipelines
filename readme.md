@@ -1139,26 +1139,26 @@ PipelineBody[In, Yield, Await] :
 <summary>The rules of the two respective styles will be explained in more
 detail, but an overview is given in a table.</summary>
 
-| Valid topical style     | Valid bare style                 | Invalid bare style
-| ----------------------- | -------------------------------- | --------------------
-|`… \|> o(#)`             |`… \|> o`                         |  `… \|> o()` 🚫
-| ″″                      | ″″                               | `… \|> (o)` 🚫
-| ″″                      | ″″                               | `… \|> (o())` 🚫
-|`… \|> new o(#)`         |`… \|> new o`                     | `… \|> new o()` 🚫
-| ″″                      | ″″                               | `… \|> (new o)` 🚫
-| ″″                      | ″″                               | `… \|> (new o())` 🚫
-| ″″                      | ″″                               | `… \|> new (o)` 🚫
-| ″″                      | ″″                               | `… \|> new (o())` 🚫
-|`… \|> o.m(#)`           |`… |> o.m`                        | `… \|> o.m()` 🚫
-| ″″                      |`const m = o::m; … |> m`          | `… \|> o.m()` 🚫
-|`… \|> new o.m(#)`       |`… |> new o.m`                    | `… \|> o.m()` 🚫
-| ″″                      |`const m = o::m; … |> m`          | `… \|> o.m()` 🚫
-|`… \|> o.m(arg, #)`      |`const m = o::m(arg); … |> m`     | `… \|> o.m(arg)` 🚫
-|`… \|> new o.m(arg, #)`  |`const m = new o::m(arg); … |> m` | `… \|> new o.m(arg)` 🚫
-|`… \|> o[symbol](#)`     |`const m = o[symbol]; … |> m`     | `… \|> o[symbol]` 🚫
-|`… \|> new o[symbol](#)` |`const m = new o[symbol]; … |> m` | `… \|> new o[symbol]` 🚫
-|`… \|> o.makeFn()(#)`    |`const m = o.makeFn(); … |> m`    | `… \|> o.makeFn()` 🚫
-|`… \|> new o.makeFn()(#)`|`const m = new o.makeFn(); … |> m`| `… \|> new o.makeFn()` 🚫
+| Valid topical style     | Valid bare style                  | Invalid bare style
+| ----------------------- | --------------------------------- | --------------------
+|`… \|> o(#)`             |`… \|> o`                          |  `… \|> o()` 🚫
+| ″″                      | ″″                                | `… \|> (o)` 🚫
+| ″″                      | ″″                                | `… \|> (o())` 🚫
+|`… \|> new o(#)`         |`… \|> new o`                      | `… \|> new o()` 🚫
+| ″″                      | ″″                                | `… \|> (new o)` 🚫
+| ″″                      | ″″                                | `… \|> (new o())` 🚫
+| ″″                      | ″″                                | `… \|> new (o)` 🚫
+| ″″                      | ″″                                | `… \|> new (o())` 🚫
+|`… \|> o.m(#)`           |`… \|> o.m`                        | `… \|> o.m()` 🚫
+| ″″                      |`const m = o::m; … \|> m`          | `… \|> o.m()` 🚫
+|`… \|> new o.m(#)`       |`… \|> new o.m`                    | `… \|> o.m()` 🚫
+| ″″                      |`const m = o::m; … \|> m`          | `… \|> o.m()` 🚫
+|`… \|> o.m(arg, #)`      |`const m = o::m(arg); … \|> m`     | `… \|> o.m(arg)` 🚫
+|`… \|> new o.m(arg, #)`  |`const m = new o::m(arg); … \|> m` | `… \|> new o.m(arg)` 🚫
+|`… \|> o[symbol](#)`     |`const m = o[symbol]; … \|> m`     | `… \|> o[symbol]` 🚫
+|`… \|> new o[symbol](#)` |`const m = new o[symbol]; … \|> m` | `… \|> new o[symbol]` 🚫
+|`… \|> o.makeFn()(#)`    |`const m = o.makeFn(); … \|> m`    | `… \|> o.makeFn()` 🚫
+|`… \|> new o.makeFn()(#)`|`const m = new o.makeFn(); … \|> m`| `… \|> new o.makeFn()` 🚫
 
 </details>
 
