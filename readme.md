@@ -1552,6 +1552,9 @@ the `#|>` idiom.]
 
 [TO DO: Can partial application be integrated with topics?]
 
+<details>
+<summary>Table of interaction with future proposals</summary>
+
 <table>
 <thead>
 <tr>
@@ -1744,6 +1747,7 @@ try {
 <td>[TO DO]
 
 </table>
+</details>
 
 ### Alternative solutions explored
 There are a number of other ways of potentially accomplishing the above use
