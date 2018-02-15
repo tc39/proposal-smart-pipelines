@@ -46,11 +46,11 @@ You can take part in the discussions on the [GitHub issue tracker][]. When you
 file an issue, please note in it that you are talking specifically about
 “Proposal 4: Smart Mix”.
 
-This specification uses `#` as its topic token, but note that this is not set in
-stone. In particular, `@` could also be used. would be similarly terse, visually
-distinguishable, and easily typeable. [Bikeshedding over what characters to use
-for the topic token is occurring in a GitHub
-issue](https://github.com/tc39/proposal-pipeline-operator/issues/91).
+This specification uses `#` as its [topic token][nomenclature]. However, this is
+not set in stone. In particular, `@` could also be used. would be similarly
+terse, visually distinguishable, and easily typeable. Bikeshedding over what
+characters to use for the topic token is occurring on GitHub at
+[tc39/proposal-pipeline-operator, issue #91][topic-token bikeshedding].
 
 ## Motivation
 Nested, deeply composed expressions occur often in JavaScript. They occur
@@ -491,9 +491,10 @@ pipelines. Conditional operations, logical-or operations, or any other
 expressions that have tighter [operator precedence][] than the pipe
 operation – those are also pipeline-level expressions.
 
-The special token `#` is a **topic reference**, a **topic bindee**, **topic
-placeholder**, or **topic anaphor**. `#` is a nullary operator that acts like a
-special variable: implicitly bound to its value, but still lexically scoped.
+The special token `#` is the **topic token**. It represents the **topic
+reference**, aka the **topic bindee**, **topic placeholder** or **topic
+anaphor**. `#` is a nullary operator that acts like a special variable:
+implicitly bound to its value, but still lexically scoped.
 
 The topic reference could also be called a “**topic variable**” or “**topic
 identifier**”, [as they are called in other programming languages][topic
@@ -694,13 +695,14 @@ Rules** in [ES Clause 5.2.4][].
 
 This specification defines additions for the following Static Semantic Rules:
 
-| Form                               | Notes                                       |
-| ---------------------------------- | ------------------------------------------- |
-| Contains?                          | Already defined in ES for nearly all nodes. |
-| Is Function Definition?            | Already defined in ES for many nodes.       |
-| Is Valid Simple Assignment Target? | Already defined in ES for many nodes.       |
-| Binds Topic?                       | New rule defined in this proposal.          |
-| Early Errors                       | Already defined in ES for many nodes.       |
+| Form                               | Notes                                             |
+| ---------------------------------- | ------------------------------------------------- |
+| Contains?                          | Already defined in ES for nearly all nodes        |
+| Is Function Definition?            | Already defined in ES: all expressions            |
+| Is Identifier Reference?           | Already defined: primary- & LHS-level expressions |
+| Is Valid Simple Assignment Target? | Already defined: primary- & LHS-level expressions |
+| Uses Topic?                        | New rule defined in this proposal.                |
+| Early Errors                       | Already defined in ES for many nodes.             |
 
 It should be noted that, in the ES standard, the Contains rule is currently
 written as an infix operator: “… Contains …” for historical reasons. This is
@@ -741,10 +743,13 @@ proposal will instead use the planned future new syntax “….contains(…)”.
 #### Static “Is Function Definition?”
 [TO DO]
 
+#### Static “Is Identifier Reference?”
+[TO DO]
+
 #### Static “Is Valid Simple Assignment Target?”
 [TO DO]
 
-#### Static “Binds Topic?”
+#### Static “Uses Topic?”
 [TO DO]
 
 #### Static Early Errors
@@ -869,8 +874,95 @@ listed **above** it.
 
 </details>
 
+### Topic reference: syntax grammar
+The topic reference integrates into the ES syntax as one of the [ES primary
+expressions][], just like `this`. Their production rule needs to be modified so
+that the `#` appears as one of the types of primary expressions.
+
+<details>
+<summary>An assignment-level expression currently may be a this reference,
+identifier reference, null / undefined / true / false literal, array / object /
+regular-expression / template literal, function / async-function / generator /
+class expression These possibilities are given the same parameters that the
+assignment-level expression happens to have also gotten, except where they
+would be unnecessary, such as for the this token.</summary>
+
+The old version:
+```
+PrimaryExpression[Yield, Await]:
+  `this`
+  IdentifierReference[?Yield, ?Await]
+  Literal
+  ArrayLiteral[?Yield, ?Await]
+  ObjectLiteral[?Yield, ?Await]
+  FunctionExpression
+  ClassExpression[?Yield, ?Await]
+  GeneratorExpression
+  AsyncFunctionExpression
+  RegularExpressionLiteral
+  TemplateLiteral[?Yield, ?Await, ~Tagged]
+  CoverParenthesizedExpressionAndArrowParameterList[?Yield, ?Await]
+```
+
+</details>
+
 ***
 
+<details>
+<summary>Added to this list would be the topic token.</summary>
+
+The new version:
+```
+PrimaryExpression[Yield, Await]:
+  `this`
+  `#`
+  IdentifierReference[?Yield, ?Await]
+  Literal
+  …
+```
+
+</details>
+
+### Topic reference: static semantics
+
+<details>
+<summary>The topic reference is neither a function definition nor an identifier
+reference. This is the same as almost every other primary expression, except
+for identifiers, parenthesized expressions, and arrow parameter lists.</summary>
+
+* IsIdentifierRef
+  * `PrimaryExpression : IdentifierReference`
+
+    Return true.
+
+  * ``PrimaryExpression: `this` | `#` | Literal | …``
+
+    Return false.
+
+* IsValidSimpleAssignmentTarget
+  * ``PrimaryExpression: `this` | `#` | Literal | …``
+
+    Return false.
+
+  * `PrimaryExpression : CoverParenthesizedExpressionAndArrowParameterList`
+
+    [Unchanged from original specification.]
+
+</details>
+
+<details>
+<summary>When any expression, anywhere, uses the topic, then somewhere in there is
+a topic reference. That…
+
+Most primary expressions do not use the topic. But primary expressions
+formed by enclosing other expressions could use the topic. And, of course, the
+topic reference itself uses the topic.</summary>
+
+* BindsTopic
+
+</details>
+
+### Pipeline-level expressions
 The production rule for [ES assignment-level expressions][] needs to be modified
 so that pipe expressions slip in between it and conditional-level expressions in
 the hierarchy. Then the conditional-expression rule would be used in the
@@ -896,14 +988,11 @@ AssignmentExpression[In, Yield, Await] :
     AssignmentOperator AssignmentExpression[?In, ?Yield, ?Await]
 ```
 
-
-</details>
-
-***
+</detail>
 
 <details>
-<summary>This conditional-expression production rule would be replaced with one for
-pipeline expressions, which will be defined in the next section.</summary>
+<summary>The conditional-expression production rule in here would be replaced
+with one for pipeline-level expressions, which will be defined next.</summary>
 
 ```
 // New version
@@ -911,16 +1000,12 @@ AssignmentExpression[In, Yield, Await] :
   PipelineExpression[?In, ?Yield, ?Await]
   [+Yield] YieldExpression[?In, ?Await]
   ArrowFunction[?In, ?Yield, ?Await]
-  AsyncArrowFunction[?In, ?Yield, ?Await]
-  LeftHandSideExpression[?Yield, ?Await]
-    `=` AssignmentExpression[?In, ?Yield, ?Await]
-  LeftHandSideExpression[?Yield, ?Await]
-    AssignmentOperator AssignmentExpression[?In, ?Yield, ?Await]
+  …
 ```
 
 </details>
 
-### Pipeline expression
+***
 
 An expression is a pipeline-level expression (given the usual three [grammar
 parameters][]) only if:
@@ -1107,9 +1192,6 @@ The **pipeline’s value** is **`do { const {{topicIdentifier}} = {{topic}};
   the topic reference replaced by `{{topicVariable}}`.
 
 </details>
-
-### Topic reference
-[TO DO]
 
 ### Multiple topic references and inner functions
 <details>
@@ -1830,3 +1912,7 @@ do { do { do { do { 3 * 3 } } }
 [Perl 6 topicalization]: https://www.perl.com/pub/2002/10/30/topic.html/
 
 [ES Clause 5.1.4]: https://tc39.github.io/ecma262/#sec-syntactic-grammar
+
+[ES primary expressions]: https://tc39.github.io/ecma262/#prod-PrimaryExpression
+
+[topic-token bikeshedding]: https://github.com/tc39/proposal-pipeline-operator/issues/91
