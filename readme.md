@@ -1103,6 +1103,8 @@ The lines in each of the following rows are equivalent.
 |`const $ = …; f($, $)`                          |`… |> f(#, #)`
 |`const $ = …; [$, $ * 2, $ * 3]`                |`… |> [#, # * 2, # * 3]`
 
+[TO DO]
+
 </details>
 
 ### Inner functions
@@ -1116,15 +1118,15 @@ The lines in each of the following rows are equivalent.
 | ---------------------------------------------- | ---------------------------------------
 |`const $ = …; settimeout(() => $ * 5)`          |`… |> settimeout(() => # * 5)`|
 
+[TO DO]
+
 </details>
 
 ### Deeply nested pipelines
-Both the antecedent and the body of a pipeline may contain nested inner
-functions. This is not encouraged, but it is still permitted.
-
 <details>
 <summary>Both the antecedent and the body of a pipeline may contain nested inner
-functions.</summary>
+pipelines. Nested pipelines in the body is not encouraged, but it is still
+permitted.</summary>
 
 The lines in each of the following rows are equivalent.
 
@@ -1133,6 +1135,8 @@ The lines in each of the following rows are equivalent.
 |`const $ = …; settimeout(() => f($) * 5)`       |`… |> settimeout(() => f(#) * 5)`
 |`const $ = …; settimeout(() => f($) |> # * 5)`  |`… |> settimeout(() => f(#) |> # * 5)`
 |`const $ = …; settimeout(() => $ |> f |> # * 5)`|`… |> settimeout(() => # |> f |> # * 5)`
+
+[TO DO]
 
 </details>
 
