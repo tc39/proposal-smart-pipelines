@@ -701,7 +701,7 @@ This specification defines additions for the following Static Semantic Rules:
 | Is Function Definition?            | Already defined in ES: all expressions            |
 | Is Identifier Reference?           | Already defined: primary- & LHS-level expressions |
 | Is Valid Simple Assignment Target? | Already defined: primary- & LHS-level expressions |
-| Uses Topic?                        | New rule defined in this proposal.                |
+| Uses Outer Topic?          | New rule defined in this proposal.                |
 | Early Errors                       | Already defined in ES for many nodes.             |
 
 It should be noted that, in the ES standard, the Contains rule is currently
@@ -749,7 +749,7 @@ proposal will instead use the planned future new syntax “….contains(…)”.
 #### Static “Is Valid Simple Assignment Target?”
 [TO DO]
 
-#### Static “Uses Topic?”
+#### Static “Uses Outer Topic?”
 [TO DO]
 
 #### Static Early Errors
@@ -874,7 +874,7 @@ listed **above** it.
 
 </details>
 
-### Topic reference: syntax grammar
+### Topic reference • Syntax grammar
 The topic reference integrates into the ES syntax as one of the [ES primary
 expressions][], just like `this`. Their production rule needs to be modified so
 that the `#` appears as one of the types of primary expressions.
@@ -923,7 +923,7 @@ PrimaryExpression[Yield, Await]:
 
 </details>
 
-### Topic reference: static semantics
+### Topic reference • Static semantics
 
 <details>
 <summary>The topic reference is neither a function definition nor an identifier
@@ -950,19 +950,21 @@ for identifiers, parenthesized expressions, and arrow parameter lists.</summary>
 
 </details>
 
-<details>
-<summary>When any expression, anywhere, uses the topic, then somewhere in there is
-a topic reference. That…
+When any expression, anywhere, uses the topic, then somewhere in there is a
+topic reference. That…
 
-Most primary expressions do not use the topic. But primary expressions
+<details>
+<summary>Most primary expressions do not use the topic. But primary expressions
 formed by enclosing other expressions could use the topic. And, of course, the
 topic reference itself uses the topic.</summary>
 
-* BindsTopic
+* UsesOuterTopic
+
+  [TO DO]
 
 </details>
 
-### Pipeline-level expressions
+### Pipeline-level expressions • Syntax grammar
 The production rule for [ES assignment-level expressions][] needs to be modified
 so that pipe expressions slip in between it and conditional-level expressions in
 the hierarchy. Then the conditional-expression rule would be used in the
@@ -1025,6 +1027,45 @@ PipelineExpression[In, Yield, Await] :
   PipelineExpression[?In, ?Yield, ?Await] `|>`
     PipelineBody[?In, ?Yield, ?Await]
 ```
+
+</details>
+
+### Pipeline-level expressions • Static semantics
+
+<details>
+<summary>The pipeline-level expression is neither a function definition nor an
+identifier reference.</summary>
+
+* IsIdentifierRef
+  * `PrimaryExpression : IdentifierReference`
+
+    Return true.
+
+  * ``PrimaryExpression: `this` | `#` | Literal | …``
+
+    Return false.
+
+* IsValidSimpleAssignmentTarget
+  * ``PrimaryExpression: `this` | `#` | Literal | …``
+
+    Return false.
+
+  * `PrimaryExpression : CoverParenthesizedExpressionAndArrowParameterList`
+
+    [Unchanged from original specification.]
+
+</details>
+
+<details>A pipeline expression uses its outer lexical context’s topic only if
+its antecedent/LHS uses the outer context’s topic. Its body/RHS cannot use the
+outer context’s topic, because the body is evaluated within a second, inner
+lexical context, within which the topic reference is rebound to another value.
+If there is a topic reference defined in the outer context, then it is shadowed
+within the body.</summary>
+
+* UsesOuterTopic
+
+  [TO DO]
 
 </details>
 
