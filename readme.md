@@ -6,6 +6,7 @@ operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC3
 process][TC39 process] but it may eventually be presented to TC39.
 
 ## Background
+<details>
 <summary>The concept of a pipe operator appears in numerous other languages,
 variously called “pipeline”, “threading”, and “feed” operators. This is because
 developers find the concept useful.</summary>
@@ -26,6 +27,8 @@ developers find the concept useful.</summary>
 
 Pipe operators are also conceptually similar to [WHATWG-stream piping][] and
 [Node-stream piping][].
+
+</details>
 
 ****
 
