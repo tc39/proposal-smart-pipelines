@@ -517,12 +517,14 @@ style**. [Bare style][] is described in more detail later.
 The term [“**topic**” comes from linguistics][topic and comment] and have
 precedent in prior programming languages’ use of “topic variables”.
 
-The terms “**antecedent**” and “**topic expression**” are preferred to “**LHS**”
-because, in the future, the [topic concept could be extended to other syntaxes
-such as `for`][possible future extensions to the topic concept], not just
-pipelines. In addition, “LHS” in the ES specification usually refers to the [LHS
-of assignments][ES LHS expressions], which may be confusing. However, “LHS” is
-still a fine and acceptable name for a pipeline’s antecedent.
+The term “**head**” is preferred to “**topic expression**” because, in the
+future, the [topic concept could be extended to other syntaxes such as
+`for`][possible future extensions to the topic concept], not just pipelines.
+
+In addition, “head” is preferred to “**LHS**”, because “LHS” in the ES
+specification usually refers to the [LHS of assignments][ES LHS expressions],
+which may be confusing. However, “topic expression” and “LHS” are still fine and
+acceptable, if not imprecise, names for a pipeline’s head.
 
 The term “**topic reference**” is preferred to the phrase “**topic variable**”
 because the latter is a misnomer. The topic reference is *not* a variable
@@ -536,6 +538,8 @@ different nature than topic references. Instead of referring to a single value
 bound earlier in the surrounding lexical context, these **parameter
 placeholders** act as the parameter to a new function. When this new function is
 called, those parameter placeholders will be bound to multiple argument values.
+
+[TO DO: define “topic” alone.]
 
 The term “**body**” is preferred instead of “**RHS**” because “topic” is
 preferred to “LHS”. However, “RHS” is still a fine and acceptable name for the
@@ -964,6 +968,20 @@ topic reference itself uses the topic.</summary>
 
 </details>
 
+### Topic reference • Runtime semantics
+
+During runtime, the topic reference uses the [ResolveTopic abstract
+operation][resolving topics] on the running execution context’s lexical
+environment.
+
+<details>
+
+* Evaluation
+  * ``PrimaryExpression: `#` ``
+    * Return ? ResolveTopic()
+
+</details>
+
 ### Pipeline-level expressions • Syntax grammar
 The production rule for [ES assignment-level expressions][] needs to be modified
 so that pipe expressions slip in between it and conditional-level expressions in
@@ -1037,35 +1055,46 @@ PipelineExpression[In, Yield, Await] :
 identifier reference.</summary>
 
 * IsIdentifierRef
-  * `PrimaryExpression : IdentifierReference`
+  * ``PipelineExpression : PipelineExpression `|>` PipelineBody ``
 
     Return true.
 
-  * ``PrimaryExpression: `this` | `#` | Literal | …``
+  * ``PipelineExpression : PipelineExpression `|>` PipelineBody ``
 
     Return false.
 
 * IsValidSimpleAssignmentTarget
-  * ``PrimaryExpression: `this` | `#` | Literal | …``
+  * ``PipelineExpression : PipelineExpression `|>` PipelineBody ``
 
     Return false.
-
-  * `PrimaryExpression : CoverParenthesizedExpressionAndArrowParameterList`
-
-    [Unchanged from original specification.]
 
 </details>
 
 <details>A pipeline expression uses its outer lexical context’s topic only if
-its antecedent/LHS uses the outer context’s topic. Its body/RHS cannot use the
-outer context’s topic, because the body is evaluated within a second, inner
-lexical context, within which the topic reference is rebound to another value.
-If there is a topic reference defined in the outer context, then it is shadowed
-within the body.</summary>
+the pipeline’s head uses the outer context’s topic. The pipeline’s body cannot
+use the outer context’s topic, because the body is evaluated within a second,
+inner lexical context, within which the topic reference is rebound to another
+value. If there is a topic reference defined in the outer context, then it is
+shadowed within the body.</summary>
 
 * UsesOuterTopic
 
   [TO DO]
+
+</details>
+
+### Pipeline-level expressions • Runtime semantics
+During runtime, [TO DO]
+
+<details>
+
+* Evaluation
+  * ``PipelineExpression : PipelineExpression `|>` PipelineBody ``
+    1. Let _headRef_ be the result of evaluating ? _PipelineExpression_.
+    2. Let _headValue_ be the result of ? GetValue(_headRef_).
+    3. Let _bodyRef_ be PipelineBodyEvaluation of _PipelineBody_ with argument
+       _headValue_.
+    4. Return ? GetValue(_bodyRef_).
 
 </details>
 
@@ -1086,10 +1115,28 @@ an explicit argument.
 
 <details>
 
+<summary>Syntactic grammar</summary>
+
+[TO DO: Note no parameters in bare style.]
+
+```
+// New rule
+PipelineBody[In, Yield, Await] :
+  PipelineBareFunctionCall
+  PipelineBareConstructorCall
+  PipelineTopicalBody[?In, ?Yield, ?Await]
+```
+
+</details>
+
+***
+
+<details>
+
 <summary>The rules of the two respective styles will be explained in more
 detail, but an overview is given in a table.</summary>
 
-| Valid topical style     | Valid bare style                | Invalid bare style
+| Valid topical style     | Valid bare style                 | Invalid bare style
 | ----------------------- | -------------------------------- | --------------------
 |`… \|> o(#)`             |`… \|> o`                         |  `… \|> o()` 🚫
 | ″″                      | ″″                               | `… \|> (o)` 🚫
@@ -1152,49 +1199,125 @@ simple property identifiers. If there are any operators, parentheses (including
 for method calls), brackets, or anything other than identifiers and dot
 punctuators, then it is in topical style, not in bare style.
 
-If the body is a mere identifier, optionally with a chain of properties, and
-   with no parentheses or brackets, then that identifier is interpreted to be a
-   **bare function call**.
+##### Simple reference
+First, let’s call a mere identifier—optionally with a chain of properties, and
+with no parentheses, brackets, or operators—a **simple reference**.
+
+**If an expression** is of the form **`{{identifier}}`**
+or `{{topic}} |> {{identifier0}}.{{identifier1}}`
+or `{{topic}} |> {{identifier0}}.{{identifier1}}.{{identifier2}}`
+or …), then the pipeline is a **simple reference**.
 
 <details>
 
-**If a pipeline** is of the form **`{{topic}} |> {{identifier}}`** (or
-`{{topic}} |> {{identifier0}}.{{identifier1}}` or `{{topic}} |>
-{{identifier0}}.{{identifier1}}.{{identifier2}}` or …), then the pipeline is a
-**bare function call**. The **pipeline’s value** is **`{{body}}({{topic}})`**.
-
-This is achieved by defining the _PipelineBareFunction_ production using
+This is achieved by defining the _SimpleReference_ production using
 [_IdentifierReference_][], [_IdentifierName_][], and left recursion, in
 imitation of how [_MemberExpression_][] handles method chains.
 
 ```
-PipelineBareFunction :
+SimpleReference :
   IdentifierReference
-  PipelineBareFunction `.` IdentifierName
+  SimpleReference `.` IdentifierName
 ```
 
 </details>
 
-***
+<details>
+<summary>Simple references’ runtime semantics are exactly the same as the
+member expressions they resemble.</summary>
 
+This section is adapted from the [ES Spec, § Property Accessors, § RS:
+Evaluation][].
+
+* Evaluation
+  * ``SimpleReference : SimpleReference `.` IdentifierName ``
+    * Is evaluated in exactly the same manner as [MemberExpression `:`
+      MemberExpression `.` IdentifierName][ES Spec, § Property Accessors, § RS:
+      Evaluation] except that the contained `SimpleReference` is evaluated in
+      step 1.
+
+</details>
+
+##### Bare function call
+If the body is a merely a simple reference, then that identifier is interpreted
+to be a **bare function call**. The pipeline’s value will be the result of
+calling the body with the topic value as its argument.
+
+That is: **if a pipeline** is of the form **`{{topic}} |> {{identifier}}`**\
+or `{{topic}} |> {{identifier0}}.{{identifier1}}`\
+or `{{topic}} |> {{identifier0}}.{{identifier1}}.{{identifier2}}`\
+or …,\
+then the pipeline is a **bare function call**. The **pipeline’s value** is
+**`{{body}}({{topic}})`**.
+
+<details>
+<summary>Syntactic grammar</summary>
+
+```
+PipelineBareFunctionCall :
+  SimpleReference
+```
+
+</details>
+
+[TO DO: Make sure that `eval` and other special “functions” are not allowed.]
+
+<details>
+<summary>Runtime semantics</summary>
+
+This algorithm was adapted from [ES Spec, § Function Calls, § RS: Evaluation][].
+
+* PipelineBodyEvaluation
+  * With parameter _headValue_.
+  * Note that this PipelineBodyEvaluation rule is used in the evaluation of
+    `PipelineExpression`, defined previously.
+  * ``PipelineBareFunction : PipelineBareFunction `.`  ``
+    1. Let _ref_ be the result of evaluating _SimpleReference_.
+    2. Let _func_ be ? GetValue(_ref_).
+    3. Let _thisCall_ be this _PipelineBareFunctionCall_.
+    4. Let _tailCall_ be IsInTailPosition(thisCall).
+    5. Let _Arguments_ be a [List][ES Spec, § Lists and Records] containing the
+       one element which is _headValue_.
+    6. Return ? EvaluateCall(_func_, _ref_, Arguments, tailCall).
+
+</details>
+
+##### Bare constructor call
 If the body starts with `new`, followed by mere identifier, optionally with a
 chain of properties, and with no parentheses or brackets, then that identifier
 is interpreted to be a **bare constructor**.
 
-<details>
+That is: **if a pipeline** is of the form **`{{topic}} |> {{identifier}}`**\
+or `{{topic}} |> {{identifier0}}.{{identifier1}}`\
+or `{{topic}} |> {{identifier0}}.{{identifier1}}.{{identifier2}}`\
+or …,\
+then the pipeline is a **bare function call**. The **pipeline’s value** is
+**`{{body}}({{topic}})`**.
 
-**If a pipeline’s `body`** is of the form **`{{topic}} |> new {{identifier}}`**
-(or `{{topic}} |> new {{identifier0}}.{{identifier1}}` or `{{topic}} |> new
-{{identifier0}}.{{identifier1}}.{{identifier2}}` or …), then the pipeline is a
-**bare constructor call**. The **pipeline’s value** is **`new
-{{bodyConstructor}}({{topic}})`**, where {{bodyConstructor}} is {{body}} with
-the `new` removed from its start.
+<details>
 
 ```
 PipelineBareConstructor :
   new IdentifierReference
-  PipelineBareFunction `.` IdentifierName
+  PipelineBareConstructor `.` IdentifierName
 ```
+
+</details>
+
+<details>
+<summary>Runtime semantics</summary>
+
+This algorithm was adapted from [ES Spec, § The new operator, § RS: Evaluation][].
+[TO DO: Add link.]
+
+* PipelineBodyEvaluation
+  * With parameter _headValue_.
+  * Note that this PipelineBodyEvaluation rule is used in the evaluation of
+    `PipelineExpression`, defined previously.
+  * ``PipelineBareFunction : PipelineBareFunction `.`  ``
+    * [TO DO: Can we use EvaluateNew if SimpleReference is technically not the
+      same as MemberExpression? Should we just use MemberExpression with some
+      limitations?]
 
 </details>
 
@@ -1234,6 +1357,98 @@ The **pipeline’s value** is **`do { const {{topicIdentifier}} = {{topic}};
 
 </details>
 
+#### Topical pipeline body • Runtime semantics
+During runtime, [TO DO]
+
+<details>
+
+* Evaluation
+  * ``PipelineExpression : PipelineExpression `|>` PipelineBody ``
+    1. Let _headValue_ be the result of evaluating `PipelineExpression`.
+    2. [TO DO: Create topic environment]
+    3. [TO DO: Evaluate body in new environment]
+
+</details>
+
+### Topic resolution
+Resolving the topic reference is a [TO DO]
+
+#### Lexical Environments
+
+<details>
+<summary>The ES spec associates Identifiers with variables/functions using an
+abstract data structure called a Lexical Environment, which is essentially a
+linked list of Lexical Environments. A single piece of the chain of Lexical
+Environments is called an Environment Record. Syntactic structures such as
+functions and blocks each have their own Lexical Environments, created whenever
+such code is evaluated at runtime. </summary>
+
+> A Lexical Environment is a specification type used to define the association
+> of Identifiers to specific variables and functions based upon the lexical
+> nesting structure of ECMAScript code. A Lexical Environment consists of an
+> Environment Record and a possibly null reference to an outer Lexical
+> Environment. Usually a Lexical Environment is associated with some specific
+> syntactic structure of ECMAScript code such as a FunctionDeclaration, a
+> BlockStatement, or a Catch clause of a TryStatement and a new Lexical
+> Environment is created each time such code is evaluated.
+>
+> An Environment Record records the identifier bindings that are created within
+> the scope of its associated Lexical Environment. It is referred to as the
+> Lexical Environment's EnvironmentRecord
+>
+> The outer environment reference is used to model the logical nesting of
+> Lexical Environment values. The outer reference of a (inner) Lexical
+> Environment is a reference to the Lexical Environment that logically surrounds
+> the inner Lexical Environment. An outer Lexical Environment may, of course,
+> have its own outer Lexical Environment. A Lexical Environment may serve as the
+> outer environment for multiple inner Lexical Environments. For example, if a
+> FunctionDeclaration contains two nested FunctionDeclarations then the Lexical
+> Environments of each of the nested functions will have as their outer Lexical
+> Environment the Lexical Environment of the current evaluation of the
+> surrounding function.
+>
+> A global environment is a Lexical Environment which does not have an outer
+> environment. The global environment's outer environment reference is null. A
+> global environment's EnvironmentRecord may be prepopulated with identifier
+> bindings and includes an associated global object whose properties provide
+> some of the global environment's identifier bindings. As ECMAScript code is
+> executed, additional properties may be added to the global object and the
+> initial properties may be modified.
+>
+> A module environment is a Lexical Environment that contains the bindings for
+> the top level declarations of a Module. It also contains the bindings that are
+> explicitly imported by the Module. The outer environment of a module
+> environment is a global environment.
+>
+> A function environment is a Lexical Environment that corresponds to the
+> invocation of an ECMAScript function object. A function environment may
+> establish a new this binding. A function environment also captures the state
+> necessary to support super method invocations.
+>
+> Lexical Environments and Environment Record values are purely specification
+> mechanisms and need not correspond to any specific artefact of an ECMAScript
+> implementation. It is impossible for an ECMAScript program to directly access
+> or manipulate such values.
+
+</details>
+
+***
+
+Any topic-binding syntactic [TO DO]
+
+A topic environment is a Lexical Environment that corresponds
+
+[TO DO: Change “topical style” to “topic style”, to be consistent with “topic
+environment”. After all, this is a style of topics, not a style that itself
+is “topical” in the usual adjectival sense.]
+
+[TO DO]
+
+#### Abstract operations
+ResolveTopic is a new abstract operation that acts upon a Lexical Environment.
+
+[TO DO]
+
 ### Multiple topic references and inner functions
 <details>
 <summary>The topic reference may be used multiple times in a pipeline body. Each
@@ -1254,7 +1469,7 @@ The lines in each of the following rows are equivalent.
 
 ### Inner functions
 <details>
-<summary>Both the antecedent and the body of a pipeline may contain nested inner
+<summary>Both the head and the body of a pipeline may contain nested inner
 functions.</summary>
 
 The lines in each of the following rows are equivalent.
@@ -1269,7 +1484,7 @@ The lines in each of the following rows are equivalent.
 
 ### Deeply nested pipelines
 <details>
-<summary>Both the antecedent and the body of a pipeline may contain nested inner
+<summary>Both the head and the body of a pipeline may contain nested inner
 pipelines. Nested pipelines in the body is not encouraged, but it is still
 permitted.</summary>
 
@@ -1545,7 +1760,7 @@ operator may be the best choice. [TO DO]
 [TO DO: Rewrite this section to the conventions of the ES specification.]
 
 A pipe expression’s semantics are:
-1. The antecedent is evaluated into the topic’s value; call this `topicValue`.
+1. The head is evaluated into the topic’s value; call this `topicValue`.
 2. [The body is tested for its type][smart body syntax]: Is it in bare style
    (as a bare function or a bare constructor), is it in topical style, or is it
    an invalid body?
@@ -1709,7 +1924,7 @@ do {
 For each pipe expression, evaluated left associatively and inside to outside,
 the steps of the computation would be:
 
-1. The antecedent is first evaluated in the current lexical context.
+1. The head is first evaluated in the current lexical context.
 2. The topic’s result is bound to a hidden special variable `•`.
 3. In a new inner lexical context (the topical scope), the value of `•` is
   bound to the topic reference `#`.
@@ -1957,3 +2172,11 @@ do { do { do { do { 3 * 3 } } }
 [ES primary expressions]: https://tc39.github.io/ecma262/#prod-PrimaryExpression
 
 [topic-token bikeshedding]: https://github.com/tc39/proposal-pipeline-operator/issues/91
+
+[resolving topics]: #resolve-topic
+
+[ES Spec, § Property Accessors, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-property-accessors-runtime-semantics-evaluation
+
+[ES Spec, § Function Calls, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-function-calls-runtime-semantics-evaluation
+
+[ES Spec, § Lists and Records]: https://tc39.github.io/ecma262/#sec-list-and-record-specification-type
