@@ -6,7 +6,30 @@ operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC3
 process][TC39 process] but it may eventually be presented to TC39.
 
 ## Background
-The binary operator proposed here would provide a backwards- and
+<summary>The concept of a pipe operator appears in numerous other languages,
+variously called “pipeline”, “threading”, and “feed” operators. This is because
+developers find the concept useful.</summary>
+
+* [Clojure’s `->` and `as->`][Clojure pipe]
+* [Forth’s, Joy’s, Factor’s, Onyx’s, PostScript’s, and RPL’s term
+  concatenation][concatenative programming]
+* [Elixir/Erlang’s `|>`][Elixir pipe]
+* [Elm’s `|>`][Elm pipe]
+* [F#’s `|>`][F# pipe]
+* [Hack’s `|>` and `$$`][Hack pipe]
+* [Julia’s `|>`][Julia pipe]
+* [LiveScript’s `|>`][LiveScript pipe]
+* [OCaml’s `|>`][OCaml pipe]
+* [Perl 6’s `==>`][Perl 6 pipe]
+* [R / magrittr’s `%>%`][R pipe]
+* [Unix shells’ and PowerShell’s `|` ][Unix pipe]
+
+Pipe operators are also conceptually similar to [WHATWG-stream piping][] and
+[Node-stream piping][].
+
+****
+
+The binary smart pipe operator proposed here would provide a backwards- and
 forwards-compatible style of chaining nested expressions into a readable,
 left-to-right manner. Nested transformations become untangled into short steps
 in a zero-cost abstraction.
