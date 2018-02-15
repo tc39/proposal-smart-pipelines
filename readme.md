@@ -1273,34 +1273,6 @@ function getLength (vector) {
 <td>[TO DO: Link to match proposal.]
 
 <tr>
-<th>Topical function with topical match
-<td>
-
-```js
-function getLength (#) {
-  return match {
-    …
-  }
-}
-```
-
-<td>
-
-```js
-function getLength (vector) {
-  return match (vector) {
-    …
-  }
-}
-```
-
-<td>
-
-This is anticipated to be backward compatible with existing `function`
-definitions. Even with this pipeline proposal, `function (#) { … }` is not
-allowed.
-
-<tr>
 <th>Topical arrow function with topical match
 <td>
 
