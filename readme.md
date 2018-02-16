@@ -6,7 +6,7 @@ operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC3
 process][TC39 process] but it may eventually be presented to TC39.
 
 ## Background
-<details>
+<details open>
 <summary>The concept of a pipe operator appears in numerous other languages,
 variously called “pipeline”, “threading”, and “feed” operators. This is because
 developers find the concept useful.</summary>
@@ -49,11 +49,11 @@ You can take part in the discussions on the [GitHub issue tracker][]. When you
 file an issue, please note in it that you are talking specifically about
 “Proposal 4: Smart Mix”.
 
-This specification uses `#` as its [topic token][nomenclature]. However, this is
-not set in stone. In particular, `@` could also be used. would be similarly
-terse, visually distinguishable, and easily typeable. Bikeshedding over what
-characters to use for the topic token is occurring on GitHub at
-[tc39/proposal-pipeline-operator, issue #91][topic-token bikeshedding].
+**This specification uses `#`** as its [“topic token”][nomenclature]. However,
+this is not set in stone. In particular, **`?` and `@` could also be used**.
+Either would be similarly terse, visually distinguishable, and easily typeable.
+Bikeshedding over what characters to use for the topic token is occurring on
+GitHub at [tc39/proposal-pipeline-operator, issue #91][topic-token bikeshedding].
 
 ## Motivation
 Nested, deeply composed expressions occur often in JavaScript. They occur
@@ -91,16 +91,22 @@ stringPromise
 ```
 
 Each such postfix expression (called a **pipeline body**) is in its own inner
-lexical scope, within which a special token `#` is defined. This `#` is called a
-**topic reference**; it represents the “topic” of the pipeline, which is
+lexical scope, within which a special token `#` is defined. This `#` is a
+reference to the **topic** of the pipeline (`#` itself is called the **topic
+reference**). When the pipeline’s head (the expression at its left-hand side) is
+evaluated, it then becomes the pipeline’s topic. A new lexical environment it
+created, within which `#` is bound to the topic, and within which the pipeline’s
+body (the expression at its righthand side) is evaluated using that topic
+binding.
+
 whatever the pipeline head evaluated into. For instance, `5 |> # - 3 |> # * 2`
 is precisely the same as `((5 - 3)) * 2`. The syntax statically is [term
 rewritable into already valid code][term rewriting] with theoretically zero
 runtime cost.
 
-This code’s terseness and flatness may be both easier for the JavaScript
-developer to read and to edit. The reader may follow the flow of data more
-easily through this single flattened thread of postfix operations. And the
+The resulting code’s terseness and flatness may be both easier for the
+JavaScript developer to read and to edit. The reader may follow the flow of data
+more easily through this single flattened thread of postfix operations. And the
 developer may more easily add or remove operations at the beginning, end, or
 middle of the thread, without changing the indentation of many nearby, unrelated
 lines.
@@ -129,22 +135,22 @@ equivalent to:
 Being able to automatically detect this [bare style][] is the [**smart** part
 of this “smart pipe operator”][smart body syntax].
 
-<details>
+<details open>
 
 ### Goals
 
 <summary>
-There are twelve ordered goals that the smart body syntax tries to fulfill,
+There are thirteen ordered Goals that the smart body syntax tries to fulfill,
 which may be summarized,
-“Don’t break my code,”<br>
-“Don’t make me think too hard,”<br>
-“Don’t shoot me in the foot,” and<br>
-“Make it worth my while.”
+“Don’t break my code your syntax,”<br>
+“Don’t make me think about your syntax,”<br>
+“Don’t shoot me in the foot with your syntax,” and<br>
+“Make my code simpler to read and easier to write.”
 </summary>
 
 Listed from most to least important:
 
-#### “Don’t break my code.”
+#### “Don’t break my code with your syntax.”
  1. **Backward compatibility**: The syntax must avoid stepping on the toes of
     existing code, including but not limited to JavaScript libraries such as
     jQuery and Underscore.js. In particular, the topic reference should not be
@@ -153,21 +159,25 @@ Listed from most to least important:
     bound convenience variable. It is a common pattern to do this even without a
     library: `var $ = document.querySelectorAll`”. The silent shadowing of such
     outer-context variables may silently cause bugs, which may also be difficult
-    to debug (see Goal 7).
+    to debug (see Goal 6).
 
     Nor can it cause previously valid code to become invalid. This includes,
     to a lesser extent, common nonstandard extensions to JavaScript: for instance,
     using `<>` for the topic reference would retroactively invalidate existing
     E4X and JSX code.
 
- 2. **Zero runtime cost**: A form of backward compatibility. When translating
-    old code into the new syntax, doing so should not cause unexpected
-    performance regression. For instance, the new syntax should not require
-    memory allocation for newly created functions that were not necessary in the
-    old code. Instead, it should, at least theoretically, perform as well the
-    old code did for both memory and CPU. And it should be able to do this
-    without dramatically rearranging code logic or relying on hidden,
-    uncontrollable compiler optimization.
+    This proposal uses `#` for its topic reference. This is compatible with all
+    known previous JavaScript code. `?` and `@` could be chosen instead, which
+    are each also backwards compatible.
+
+ 2. **Zero runtime cost**: This could be considered a specific type of backward
+    compatibility. When translating old code into the new syntax, doing so
+    should not cause unexpected performance regression. For instance, the new
+    syntax should not require memory allocation for newly created functions that
+    were not necessary in the old code. Instead, it should, at least
+    theoretically, perform as well the old code did for both memory and CPU. And
+    it should be able to do this without dramatically rearranging code logic or
+    relying on hidden, uncontrollable compiler optimization.
 
     For instance, in order to apply the syntax to the logic of an async
     functions, a hypothetical new pipeline syntax might not support using
@@ -179,30 +189,46 @@ Listed from most to least important:
     complicated, and such optimizations would be difficult for the developer to
     correctly predict and might differ widely between JavaScript engines.
 
- 3. **Forward compatibility**: Keep the door open to other proposals, including
-    both already-proposed features, such as [syntactic partial application][],
-    and [possible future extensions to the topic concept][], such as `for` and
-    `catch` blocks that also bind the topic. This is [TO DO]
+    Instead, this proposal’s use of a topic reference enables the zero-cost
+    rewriting of any expression within the current environmental context,
+    including `await` operations in async functions, without having to create
+    unnecessary inner async functions, and without having to wrap values in
+    unnecessary promises.
 
-#### “Don’t make me think too hard.”
+ 3. **Forward compatibility**: The syntax should not preclude other proposals:
+    both already-proposed features, such as [syntactic partial application][]
+    and [private class fields][] – as well as [possible future extensions to the
+    topic concept][], such as topic-binding versions of `function`, `for`, and
+    `catch` blocks.
+
+    This proposal is forward compatible with all these proposals, in both its
+    choice of topic reference and in its prohibition of topic references within
+    any block (other than arrow functions).
+
+    Forward compatibility is elaborated in the section on [relations to other
+    work][]. See also Goal 9 below. See also [inner blocks in pipelines][inner
+    blocks].
+
+#### “Don’t make me think about your syntax.”
  4. **Syntactic locality**: The syntax should minimize the parsing lookahead
     that the compiler must check. If the grammar makes [garden-path syntax][]
     common, then this increases the dependency that pieces of code have on other
-    code. This in turn makes it more likely that they will exhibit
-    developer-unintended behavior.
+    code. This long lookahead in turn makes it more likely that the code will
+    exhibit developer-unintended behavior.
 
     This is true particularly for [distinguishing between bare style and topical
-    style][smart body syntax]. Without being careful, a pipeline’s meaning will
-    be ambiguous between bare style and topical style, at least without checking
-    the body carefully to see which. And this body may be a very long expression.
+    style][smart body syntax]. A pipeline’s meaning would often be ambiguous
+    between bare style and topical style, at least without checking the body
+    carefully to see in which style it is written. And this body may be a very
+    long expression.
 
     By restricting the space of valid bare-style pipeline bodies (that is,
     without topic references), the rule minimizes garden-path syntax that would
-    otherwise be possible—such as `… |> compose(f, g, h, i, j, k, #)`. This in
-    turn increases locality of syntax: it becomes easier to read code without
-    thinking about code elsewhere.
+    otherwise be possible—such as `… |> compose(f, g, h, i, j, k, #)`. Syntax
+    becomes more locally readable. It becomes easier to reason about code
+    without thinking about code elsewhere.
 
- 5. **Minimal parser branching**: Each edge case of the grammar increases the
+ 5. **Cyclomatic simplicity**: Each edge case of the grammar increases the
     [cyclomatic complexity][] of parsing the new syntax, increasing cognitive
     burden on both machine compiler and human reader in writing and reading code
     without error. If edge cases and branching are minimized, then the resulting
@@ -210,44 +236,169 @@ Listed from most to least important:
     hopefully reduce the probability that the developer will misunderstand the
     code they read or write.
 
-#### “Don’t shoot me in the foot.”
- 6. **Static analyzability**: Help the editing JavaScript developer avoid common
-    footguns at compile time, such as preventing them from accidentally omitting
-    a topic reference where they meant to put one. For instance, if `x |> 3`
-    were not a syntax error, then it would be a useless operation and almost
-    certainly not what the developer intended. Similarly if the topic reference
-    is used outside of a pipeline RHS’s scope, such as in `export function () {
-    # }`, then this is also almost certainly a developer error.
+#### “Don’t shoot me in the foot with your syntax.”
+ 6. **Simple scoping**: It should not be easy to accidentally shadow a reference
+    from an outer lexical scope. When the developer does so, any use of that
+    reference could result in subtle, pernicious bugs.
 
- 7. **Simple scoping**: [TO DO]
+    The rules for when the topic is bound should be simple and consistent. It
+    should be clear and obvious when a topic is bound and in what scope it
+    exists. And forgetting these rules should result in early, compile-time
+    errors, not subtle runtime bugs.
 
-#### “Make it worth my while.”
- 8. **Human readability**: [TO DO]
+    The rules of topic scoping is simple: **Topic references are bound in the
+    bodies of pipelines, and they cannot be used within any block other than
+    arrow functions’ bodies.** See the section on [inner blocks][].
 
- 9. **Visual terseness**: JavaScript code with pipelines should be [TO DO]
+ 7. **Static analyzability**: Early errors help the editing JavaScript developer
+    avoid common footguns at compile time, such as preventing them from
+    accidentally omitting a topic reference where they meant to put one. For
+    instance, if `x |> 3` were not a syntax error, then it would be a useless
+    operation and almost certainly not what the developer intended.
 
-10. **Versatile expressivity**: The JavaScript is a language rich with
-    [expressions of many kinds][MDN expressions and operators]. [TO DO]
+    Similarly, if the topic reference is used outside of a pipeline RHS’s scope,
+    such as in `export function () { # }`, then this is also almost certainly a
+    developer error.
 
-    * Function calls with multiple arguments.
-    * Constructor calls with multiple arguments.
+#### “Make my code simpler to read and easier to write.”
+This proposal should increase the human readability of much common code.
 
-    In addition, the topic reference does not need to be coupled only to
-    pipelines…
+Increasing the human readability and comprehensibility of JavaScript is the
+prime original purpose of this proposal. To a computer, whether complex
+expressions are expressed as deeply nested groups or as flat threads of steps
+should not matter. But to a human, it can make a significant difference.
 
-11. **Optimization by frequency**: [TO DO]
-    For instance, unary function/constructor calls are a very frequent type of
+ 8. **Untangled threading**: When a human reads deeply nested groups of
+    expressions – which are very common in JavaScript code – their attention
+    must switch between the start and end of each nested expression. And
+    these expressions will dramatically differ in length, depending on their
+    level in the syntactic tree. To use the example above:
+    ```js
+    new User.Message(
+      capitalize(
+        doubledSay(
+          (await stringPromise)
+            ?? throw new TypeError(`Expected string from ${stringPromise}`)
+        )
+      ) + '!'
+    )
+    ```
+    …the deep inner expression `await stringPromise` is relatively short. In
+    contrast, the shallow outer expression `` capitalize(doubledSay((await
+    stringPromise) ?? throw new TypeError(`Expected string from
+    ${stringPromise}`))) + '!'`) `` is very long. Yet both are
+    quite similar: they are transformations of a string into another. This
+    insight is lost in the deeply nested noise.
+
+    With pipelines, the code forms a flat thread of postfix steps. It is much
+    easier for a human to read and comprehend. Each of its steps are roughly the
+    same length. In order to understand what occurs before a given step, one
+    only need to scan left, rather than in both directions as the deeply nested
+    tree would require. To read the whole thing, a reader may simply follow
+    along left to right, not back and forth.
+    ```js
+    stringPromise
+      |> await #
+      |> # ?? throw new TypeError()
+      |> doubleSay(#, ', ')
+      |> capitalize
+      |> # + '!'
+      |> new User.Message
+    ```
+
+    The introduction to this [motivations][] section already explained much of
+    the readability rationale, but it may also be useful to study the
+    [real-world examples] below.
+
+  9. **Versatile expressivity**: JavaScript is a language rich with [expressions
+    of numerous kinds][MDN expressions and operators], each of which may
+    usefully transform data from one form to another. There is **no single
+    type** of expression that forms a **majority of used expressions**.
+
+    * Arithmetic operations.
+    * Array literals.
+    * Arrow functions.
+    * Assignment operations.
+    * `await` expressions.
+    * Class definitions.
+    * Conditional operations.
+    * Constructor calls one argument.
+    * Constructor calls with many n-ary arguments.
+    * Equality operations.
+    * Function calls with one unary argument.
+    * Function calls with many n-ary arguments.
+    * Function and async-function definitions.
+    * Function partial application.
+    * Generator and async-generator definitions.
+    * `instanceof` and `in` operations.
+    * Object literals.
+    * Property accessors and method calls.
+    * References to variables, `this`, and `new.target`.
+    * Regular-expression literals.
+    * `super` calls.
+    * Template literals.
+    * `typeof` operations.
+    * Unary function composition.
+    * `yield` expressions.
+
+    The goal of the pipe operator is to untangle deeply nested expressions into
+    flat threads of postfix expressions. To limit it to only one type of
+    expression, even a common type, truncates its benefits to that one type only
+    and compromises its expressivity and versatility.
+
+    It would be possible to add ad-hoc handling, for selected other expression
+    types, to the operator’s grammar. This would expand its benefits to that
+    type. However, this conflicts with Goal 5 (adding cyclomatic complexity to
+    the parsing process, proportional to the number of ad-hoc handled cases). It
+    also does not fulfill this Goal well either: excluding, perhaps arbitrarily,
+    whatever classes its grammar’s branches do not handle.
+
+    A pipeline operator that is versatile (this Goal) but conceptually and cyclomatically
+    simple (Goal 5) must be able to handle **all** expressions in a **single**
+    manner **uniformly** **universally** applicable to **all** expressions. It
+    is the hope of this proposal’s authors that its **[topical style][]**
+    fulfills both criteria.
+
+    ***
+
+    Another form of versatility and expressivity comes in how its concepts may
+    be applicable to other syntax, including existing syntax and future syntax
+    (compare with Goal 3).
+
+    This proposal’s concept of a **topic reference does not need to be coupled
+    only to pipelines** The [topic concept is **generalizable to many syntactic
+    forms**][possible future extensions to the topic concept], such as.
+
+    These generalizations are **out of scope** of this proposal, which is only
+    for the smart pipe operator. They are **deferred** to [other, future
+    proposals][possible future extensions to the topic concept].
+
+10. **Visual distinguishability**: [TO DO]
+
+11. **Visual terseness**: JavaScript code also often becomes becomes more
+    visually terse and less cluttered. The example above demonstrates how
+    many parentheses would become unnecessary with pipelines.
+
+    Terseness may be optimized in other ways, in balance with Goals 4 and 5. In
+    particular, unary function/constructor calls are a very frequent type of
     expression. That is why certain [tacit or point-free styles][tacit
     programming] of functional programming dramatically optimize the ergonomics
     of these cases.
 
-12. **Intuitiveness and explainability**: [TO DO]
+    It is the hope of this proposal’s authors that its [smart body syntax][]
+    reaches a good balance between this Goal and Goals 4 and 5, in the same
+    manner that [Huffman coding][] optimizes textual symbols’ length for their
+    frequency of use: more commonly used symbols are shorter.
+
+12. **Human writability**: [TO DO]
+
+13. **Novice learnability**: [TO DO]
 
 </details>
 
 ### Real-world examples
 
-<details>
+<details open>
 <summary>It is useful to look at code several real-world libraries or standards,
 and compare their readability with smart-pipelined versions. Numerous examples
 of code that may benefit from smart pipelines abound.</summary>
@@ -584,7 +735,7 @@ fetch('https://pk.example/berlin-calling',
 </details>
 
 ## Nomenclature
-<details>
+<details open>
 <summary>Because this proposal introduces several new concepts, it is important
 to use a consistent set of terminology.</summary>
 
@@ -684,7 +835,7 @@ JavaScript developer with formally written changes to the ES standard. The
 grammar itself is a [context-free grammar supplemented with static
 semantics][syntax and static semantics].
 
-<details>
+<details open>
 <summary>The ES specification explains further.</summary>
 
 > A context-free grammar consists of a number of **productions**. Each
@@ -705,7 +856,7 @@ information.
 The smart pipe operator adds two new tokens to JavaScript: `|>` the binary pipe,
 and `#` the topic reference.
 
-<details>
+<details open>
 <summary>The lexical rule for punctuator tokens would be modified so that
 these two tokens are added.</summary>
 
@@ -753,7 +904,7 @@ Punctuator :: one of
 </details>
 
 ### Grammar parameters
-<details>
+<details open>
 <summary>In the ES standard, the rules that produce expressions are often parameterized
 with three flags, which are then recursively passed into their constituent
 rules. These parameters thus must also be used by the new rules in this proposal.</summary>
@@ -773,7 +924,7 @@ The syntactic grammar of JavaScript can transform token sequences (defined by th
 into **parse trees**: rooted tree data structures made of **Parse Nodes**. This
 is described further in [ES Clause 5.1.4][].
 
-<details>
+<details open>
 
 > When a stream of code points is to be parsed as an ECMAScript Script or
 > Module, it is first converted to a stream of input elements by repeated
@@ -804,7 +955,7 @@ of their input syntactic structures, and their definitions are often also
 recursive. The ES specification goes into more detail on these **Static Semantic
 Rules** in [ES Clause 5.2.4][].
 
-<details>
+<details open>
 
 > Context-free grammars are not sufficiently powerful to express all the rules
 > that define whether a stream of input elements form a valid ECMAScript Script
@@ -843,7 +994,7 @@ method calls: “…._ruleName_(…)”. For self-consistency, this proposal wil
 planned method-like syntax.
 
 #### Static “Contains?”
-<details>
+<details open>
 <summary>The ES spec imply defines the Contains rule for nearly all nodes.
 Conceptually, a node contains another node if the latter is somewhere in the
 former.</summary>
@@ -887,7 +1038,7 @@ Certain syntax errors cannot be detected by the context-free grammar alone yet
 must still be detected at compile time. Early Error Rules are Static Semantic
 Rules that define when such extra syntax errors occur.
 
-<details>
+<details open>
 
 > A special kind of static semantic rule is an Early Error Rule. Early error
 > rules define early error conditions (see clause 16) that are associated with
@@ -916,7 +1067,7 @@ pipeline is also expected to often serve as the body of a variable assignment
 The pipe operator actually has [bidirectional associativity][]. However, for the
 purposes of this grammar, it will have left associativity.
 
-<details>
+<details open>
 <summary>A table shows how the topic reference and the pipe operator are
 integrated into the hierarchy of operators.</summary>
 
@@ -1009,7 +1160,7 @@ The topic reference integrates into the ES syntax as one of the [ES primary
 expressions][], just like `this`. Their production rule needs to be modified so
 that the `#` appears as one of the types of primary expressions.
 
-<details>
+<details open>
 <summary>An assignment-level expression currently may be a this reference,
 identifier reference, null / undefined / true / false literal, array / object /
 regular-expression / template literal, function / async-function / generator /
@@ -1038,7 +1189,7 @@ PrimaryExpression[Yield, Await]:
 
 ***
 
-<details>
+<details open>
 <summary>Added to this list would be the topic token.</summary>
 
 The new version:
@@ -1055,7 +1206,7 @@ PrimaryExpression[Yield, Await]:
 
 ### Topic reference • Static semantics
 
-<details>
+<details open>
 <summary>The topic reference is neither a function definition nor an identifier
 reference. This is the same as almost every other primary expression, except
 for identifiers, parenthesized expressions, and arrow parameter lists.</summary>
@@ -1083,7 +1234,7 @@ for identifiers, parenthesized expressions, and arrow parameter lists.</summary>
 When any expression, anywhere, uses the topic, then somewhere in there is a
 topic reference. That…
 
-<details>
+<details open>
 <summary>Most primary expressions do not use the topic. But primary expressions
 formed by enclosing other expressions could use the topic. And, of course, the
 topic reference itself uses the topic.</summary>
@@ -1100,7 +1251,7 @@ During runtime, the topic reference uses the [ResolveTopic abstract
 operation][resolving topics] on the running execution context’s lexical
 environment.
 
-<details>
+<details open>
 
 * Evaluation
   * PrimaryExpression : `#`
@@ -1115,7 +1266,7 @@ the hierarchy. Then the conditional-expression rule would be used in the
 production for pipeline-level expressions (also defined soon), preserving the
 unbroken recursive hierarchy of expression types.
 
-<details>
+<details open>
 <summary>An assignment-level expression currently may be a conditional
 expression, yield expression, arrow function, async arrow function, or
 assignment. These possibilities are given the same parameters that the
@@ -1137,7 +1288,7 @@ AssignmentExpression[In, Yield, Await] :
 
 </details>
 
-<details>
+<details open>
 <summary>In this proposal, the conditional-expression production rule would be
 replaced with one for pipeline-level expressions, which will be defined
 next.</summary>
@@ -1164,7 +1315,7 @@ parameters][]) only if:
 * Or it is another pipeline-level expression, followed by a `|>` token, then a
   pipeline body (defined next), with the same parameters as above.
 
-<details>
+<details open>
 <summary>This would be defined in a new production rule.</summary>
 
 ```
@@ -1179,7 +1330,7 @@ PipelineExpression[In, Yield, Await] :
 
 ### Pipeline-level expressions • Static semantics
 
-<details>
+<details open>
 <summary>The pipeline-level expression is neither a function definition nor an
 identifier reference.</summary>
 
@@ -1199,7 +1350,7 @@ identifier reference.</summary>
 
 </details>
 
-<details>A pipeline expression uses its outer lexical context’s topic only if
+<details open>A pipeline expression uses its outer lexical context’s topic only if
 the pipeline’s head uses the outer context’s topic. The pipeline’s body cannot
 use the outer context’s topic, because the body is evaluated within a second,
 inner lexical context, within which the topic reference is rebound to another
@@ -1215,7 +1366,7 @@ shadowed within the body.</summary>
 ### Pipeline-level expressions • Runtime semantics
 During runtime, [TO DO]
 
-<details>
+<details open>
 
 * Evaluation
   * PipelineExpression : PipelineExpression `|>` PipelineBody
@@ -1242,7 +1393,7 @@ capitalize` and `… |> new User.Message`. The body’s value would then be call
 as a unary function or constructor, without having to use the topic reference as
 an explicit argument.
 
-<details>
+<details open>
 
 <summary>Syntactic grammar</summary>
 
@@ -1260,7 +1411,7 @@ PipelineBody[In, Yield, Await] :
 
 ***
 
-<details>
+<details open>
 
 <summary>The rules of the two respective styles will be explained in more
 detail, but an overview is given in a table.</summary>
@@ -1303,7 +1454,7 @@ or _topic_ `|>` _identifier0_`.`_identifier1_\
 or _topic_ `|>` _identifier0_`.`_identifier1_._identifier2_\
 or …), then the pipeline is a **simple reference**.
 
-<details>
+<details open>
 
 This is achieved by defining the _SimpleReference_ production using
 [_IdentifierReference_][], [_IdentifierName_][], and left recursion, in
@@ -1319,7 +1470,7 @@ SimpleReference :
 
 ***
 
-<details>
+<details open>
 <summary>Simple references’ runtime semantics are exactly the same as the
 member expressions they resemble.</summary>
 
@@ -1347,7 +1498,7 @@ or …,\
 then the pipeline is a **bare function call**. The **pipeline’s value** is
 **_body_`(`_topic_`)`**.
 
-<details>
+<details open>
 <summary>Syntactic grammar</summary>
 
 ```
@@ -1359,7 +1510,7 @@ PipelineBareFunctionCall :
 
 [TO DO: Make sure that `eval` and other special “functions” are not allowed.]
 
-<details>
+<details open>
 <summary>Runtime semantics</summary>
 
 This algorithm was adapted from [ES Spec, § Function Calls, § RS: Evaluation][].
@@ -1391,7 +1542,7 @@ or …,\
 then the pipeline is a **bare function call**. The **pipeline’s value** is
 **_body_`(`_topic_`)`**.
 
-<details>
+<details open>
 <summary>Syntax grammar</summary>
 
 ```
@@ -1401,7 +1552,7 @@ PipelineBareConstructorCall :
 
 </details>
 
-<details>
+<details open>
 <summary>Runtime semantics</summary>
 
 This algorithm was adapted from [ES Spec, § The new operator, § RS: Evaluation][].
@@ -1438,7 +1589,7 @@ style, where bare style may be visually confusing to the reader.
 style** (that is, it is *not* a bare function call or bare constructor call),
 then it **must be in topical style**.
 
-<details>
+<details open>
 <summary>The pipeline’s value is whatever the body expression evaluates into,
 assuming that the topic value is first bound to the topic reference within the
 body scope.</summary>
@@ -1470,7 +1621,7 @@ Resolving the topic reference is a [TO DO]
 
 #### Lexical Environments
 
-<details>
+<details open>
 <summary>The ES spec associates Identifiers with variables/functions using an
 abstract data structure called a Lexical Environment, which is essentially a
 linked list of Lexical Environments. A single piece of the chain of Lexical
@@ -1545,7 +1696,7 @@ ResolveTopic is a new abstract operation that acts upon a Lexical Environment.
 [TO DO]
 
 ### Multiple topic references and inner functions
-<details>
+<details open>
 <summary>The topic reference may be used multiple times in a pipeline body. Each
 use refers to the same value (wherever the topic reference is not overridden by
 another, inner pipeline’s topical scope). Because it is bound to the result of
@@ -1553,55 +1704,74 @@ the topic, the topic is still only ever evaluated once.</summary>
 
 The lines in each of the following rows are equivalent.
 
-| Block                                          | Pipeline
-| ---------------------------------------------- | ---------------------------------------
-|`const $ = …; f($, $)`                          |`… \|> f(#, #)`
-|`const $ = …; [$, $ * 2, $ * 3]`                |`… \|> [#, # * 2, # * 3]`
+| Pipeline                       | Block                                             |
+| ------------------------------ | ------------------------------------------------- |
+|`… \|> f(#, #)`                 |`const $ = …; f($, $)`                             |
+|`… \|> [#, # * 2, # * 3]`       |`const $ = …; [$, $ * 2, $ * 3]`                   |
 
 [TO DO]
 
 </details>
 
-### Inner functions
-<details>
-<summary>Both the head and the body of a pipeline may contain nested inner
-functions.</summary>
+### Inner blocks
+<details open>
+<summary>The body of a pipeline may contain an inner arrow function but no other
+type of block expression.</summary>
 
 The lines in each of the following rows are equivalent.
 
-| Block                                          | Pipeline
-| ---------------------------------------------- | ---------------------------------------
-|`const $ = …; settimeout(() => $ * 5)`          |`… \|> settimeout(() => # * 5)`|
+| Pipeline                       | Block                                              |
+| ------------------------------ | -------------------------------------------------- |
+|`… \|> x => # + x`              |`const $ = …; x => # + x`                           |
+|`… \|> settimeout(() => # * 5)` |`const $ = …; settimeout(() => $ * 5)`              |
+
+However, you cannot use use topic references inside of other types of blocks:
+function, async function, generator, async generator, or class.
+
+More precisely, all block expressions (other than arrow functions) shadow any
+outer lexical context’s topic with its own *absence* of a topic. This behavior
+is in order to fulfill both [Goals 3 and 6][goals].
+
+| Pipeline                       |                                                    |
+| ------------------------------ |--------------------------------------------------- |
+|`… \|> function () { # }`       | Syntax Error: Topic never used by pipeline’s body. |
 
 [TO DO]
 
 </details>
 
-### Deeply nested pipelines
-<details>
+### Nested pipelines
+<details open>
 <summary>Both the head and the body of a pipeline may contain nested inner
 pipelines. Nested pipelines in the body is not encouraged, but it is still
 permitted.</summary>
 
 The lines in each of the following rows are equivalent.
 
-| Block                                          | Pipeline
-| ---------------------------------------------- | ---------------------------------------
-|`const $ = …; settimeout(() => f($) * 5)`       |`… \|> settimeout(() => f(#) * 5)`
-|`const $ = …; settimeout(() => f($) |> # * 5)`  |`… \|> settimeout(() => f(#) |> # * 5)`
-|`const $ = …; settimeout(() => $ |> f |> # * 5)`|`… \|> settimeout(() => #|> f |> # * 5)`
+| Pipeline                       | Block                                              |
+| ------------------------------ | -------------------------------------------------- |
+|`… \|> f(() => f(#) * 5)`       |`const $ = …; f(x => f($) * 5)`                     |
+|`… \|> f(() => f(#) |> # * 5)`  |`const $ = …; f(x => f($) |> # * 5)`                |
+|`… \|> f(() => #|> f |> # * 5)` |`const $ = …; f(x => $ |> f |> # * 5)`              |
 
 [TO DO]
 
 </details>
 
 ## Relations to other work
-
 [TO DO: Include commentary on why “topic reference” instead of “placeholder” –
 because verbally confusing with partial-application placeholders – and because
 forward compatibility with [possible future extensions to the topic concept].]
 
+[TO DO: Partial application.]
+
+[TO DO: Private class fields.]
+
+[TO DO: `do` expressions]
+
 ### Possible future extensions to the topic concept
+<details open>
+
 The [concept of the “topic variable” already exists in many other programming
 languages][topic variables in other languages], commonly named with an
 underscore `_` or `$_`. These languages often integrate their topic variables
@@ -1642,9 +1812,6 @@ reading and writing, while perhaps preserving static analyzability and… [TO DO
 the `#|>` idiom.]
 
 [TO DO: Can partial application be integrated with topics?]
-
-<details>
-<summary>Table of interaction with future proposals</summary>
 
 <table>
 <thead>
@@ -1847,7 +2014,7 @@ operator may be the best choice. [TO DO]
 
 ## Previous draft appendices
 
-<details>
+<details open>
 
 [TO DO: Rewrite everything in this section]
 
@@ -2277,3 +2444,12 @@ do { do { do { do { 3 * 3 } } }
 [ES Spec, § Lists and Records]: https://tc39.github.io/ecma262/#sec-list-and-record-specification-type
 
 [cyclomatic complexity]: https://en.wikipedia.org/wiki/Cyclomatic_complexity#Applications
+
+[relations to other work]: #relations-to-other-work
+
+[private class fields]: https://github.com/tc39/proposal-class-fields/
+
+[goals]: #goals
+
+[inner blocks]: #inner-blocks
+
