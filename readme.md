@@ -43,7 +43,7 @@ The proposal is a variant of a [previous pipe-operator proposal][] championed by
 [previous discussions about pipeline placeholders in the previous pipe-operator
 proposal][previous pipeline-placeholder discussions], which culminated in an
 [invitation by Ehrenberg to try writing a specification draft][littledan
-invitation]. A prototype Babel plugin is also brewing.
+invitation]. A prototype Babel plugin is also privately brewing.
 
 You can take part in the discussions on the [GitHub issue tracker][]. When you
 file an issue, please note in it that you are talking specifically about
@@ -216,11 +216,11 @@ Listed from most to least important:
     code. This long lookahead in turn makes it more likely that the code will
     exhibit developer-unintended behavior.
 
-    This is true particularly for [distinguishing between bare style and topical
-    style][smart body syntax]. A pipeline’s meaning would often be ambiguous
-    between bare style and topical style, at least without checking the body
-    carefully to see in which style it is written. And this body may be a very
-    long expression.
+    This is true particularly for [distinguishing between different styles of
+    pipeline body syntax][smart body syntax]. A pipeline’s meaning would often
+    be ambiguous between these styles – at least without checking the pipeline’s
+    body carefully to see in which style it is written. And the pipeline body
+    may be a very long expression.
 
     By restricting the space of valid bare-style pipeline bodies (that is,
     without topic references), the rule minimizes garden-path syntax that would
@@ -248,7 +248,7 @@ Listed from most to least important:
 
     The rules of topic scoping is simple: **Topic references are bound in the
     bodies of pipelines, and they cannot be used within any block other than
-    arrow functions’ bodies.** See the section on [inner blocks][].
+    arrow functions.** See the section on [inner blocks][].
 
  7. **Static analyzability**: Early errors help the editing JavaScript developer
     avoid common footguns at compile time, such as preventing them from
@@ -369,11 +369,10 @@ matter. But to a human, it can make a significant difference.
      (compare with Goal 3).
 
      This proposal’s concept of a **topic reference does not need to be coupled
-     only to pipelines** The [topic concept is **generalizable to many syntactic
-     forms**][possible future extensions to the topic concept], such as.
-
-     These generalizations are **out of scope** of this proposal, which is only
-     for the smart pipe operator. They are **deferred** to [other, future
+     only to pipelines**. The [topic concept is **generalizable to many syntactic
+     forms**][possible future extensions to the topic concept]. These
+     generalizations are **out of scope** of this proposal, which is only for
+     the smart pipe operator; they are **deferred** to [other, future
      proposals][possible future extensions to the topic concept].
 
 10. **Distinguishability and terseness**: Another important aspect of code readability
@@ -2395,3 +2394,4 @@ do { do { do { do { 3 * 3 } } }
 
 [optional-chaining syntax proposal]: https://github.com/tc39/proposal-optional-chaining
 [“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
+[topical style]: #topical-style
