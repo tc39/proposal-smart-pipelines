@@ -308,7 +308,7 @@ matter. But to a human, it can make a significant difference.
       |> new User.Message
     ```
 
-    The introduction to this [motivations][] section already explained much of
+    The introduction to this [motivation][] section already explained much of
     the readability rationale, but it may also be useful to study the
     [real-world examples] below.
 
@@ -375,10 +375,10 @@ matter. But to a human, it can make a significant difference.
      the smart pipe operator; they are **deferred** to [other, future
      proposals][possible future extensions to the topic concept].
 
-10. **Distinguishability and terseness**: Another important aspect of code readability
-    is the visual distinguishability of its important pieces. Visually similar
-    symbols can distract or even mislead the human reader, as they attempt to
-    figure out the meaning of code.
+10. **Distinguishability and terseness**: Another important aspect of code
+    readability is the visual distinguishability of its important pieces.
+    Visually similar symbols can distract or even mislead the human reader, as
+    they attempt to figure out the meaning of code.
 
     This is particularly true of the choice of topic reference, which should not
     be visually confusable with unrelated syntax. For instance, if the topic
@@ -841,7 +841,7 @@ preferred to “LHS”. However, “RHS” is still a fine and acceptable name f
 body of the pipeline operator.
 
 “**Bare style**” can also be called “**tacit style**”, but the former is
-preferred to the latter. Eventually, certain [future possible extensions to the
+preferred to the latter. Eventually, certain [possible future extensions to the
 topic concept][] may enable [tacit programming][] even without using bare-style
 pipelines.
 
@@ -942,7 +942,7 @@ rules in this proposal.</summary>
 ### Syntax and static semantics
 The syntactic grammar of JavaScript can transform token sequences (defined by
 the [lexical grammar][]) into **parse trees**: rooted tree data structures made
-of **Parse Nodes**. This is described further in [ECMAScript Lexical Grammars][].
+of **Parse Nodes**. This is described further in [ECMAScript Lexical Grammar][].
 
 <details open>
 
@@ -1577,8 +1577,7 @@ PipelineBareConstructorCall :
 <details open>
 <summary>Runtime semantics</summary>
 
-This algorithm was adapted from [ECMAScript The new operator, § RS:
-Evaluation][]. [TO DO: Add link.]
+This algorithm was adapted from [ECMAScript `new` operator, § RS: Evaluation][].
 
 * PipelineBodyEvaluation
   * With parameter _headValue_.
@@ -2395,3 +2394,6 @@ do { do { do { do { 3 * 3 } } }
 [optional-chaining syntax proposal]: https://github.com/tc39/proposal-optional-chaining
 [“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 [topical style]: #topical-style
+[motivation]: #motivation
+[Huffman coding]: https://en.wikipedia.org/wiki/Huffman_coding
+[ECMAScript `new` operator, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-new-operator-runtime-semantics-evaluation
