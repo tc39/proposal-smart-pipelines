@@ -483,23 +483,17 @@ matter. But to a human, it can make a significant difference.
 and compare their readability with smart-pipelined versions. Numerous examples
 of code that may benefit from smart pipelines abound.</summary>
 
+#### [Prior pipeline proposal][]
+[Gilbert “mindeavor”][mindeavor] &c. ECMA International. 2017–2018. BSD License.
+
 <table>
 <thead>
 <tr>
-<th>Source
 <th>With smart pipes
 <th>Status quo
-<th>Notes
 
 <tbody>
 <tr>
-<td>
-
-**[Prior pipeline proposal][]**.\
-[Gilbert “mindeavor”][mindeavor] &c.\
-ECMA International.\
-2017–2018.\
-BSD License.
 
 <td>
 
@@ -543,15 +537,7 @@ new User.Message(
 )
 ```
 
-<td>
-
-Note that `|> capitalize` is a bare unary function call. The `#` is tacitly,
-invisibly implied. `|> capitalize(#)` would work but the `#` is unnecessary.\
-Ditto for `|> new User.Message`, which is a bare unary constructor call,
-abbreviated from `|> new User.Message(#)`.
-
 <tr>
-<td>″″
 <td>
 
 ```js
@@ -566,18 +552,28 @@ stringPromise
 
 <td>″″
 
-<td>When tiny functions are only used once, and their bodies would be
+</table>
+
+Note that `|> capitalize` is a bare unary function call. The `#` is tacitly,
+invisibly implied. `|> capitalize(#)` would work but the `#` is unnecessary.\
+Ditto for `|> new User.Message`, which is a bare unary constructor call,
+abbreviated from `|> new User.Message(#)`.
+
+When tiny functions are only used once, and their bodies would be
 self-documenting, they are ritual boilerplate that a developer’s style may
 prefer to inline.
 
+#### [Underscore.js][]
+[Jeremy Ashkenas][jashkenas] &c. 2009–2018. MIT License.
+
+<table>
+<thead>
 <tr>
-<td>
+<th>With smart pipes
+<th>Status quo
 
-**[Underscore.js][]** 1.8.3.\
-[Jeremy Ashkenas][jashkenas] &c.\
-2009–2018.\
-MIT License.
-
+<tbody>
+<tr>
 <td>
 
 ```js
@@ -590,7 +586,7 @@ function (obj, pred, context) {
 }
 ```
 
-<td>[TO DO]
+<td>
 
 ```js
 function (obj, pred, context) {
@@ -605,10 +601,7 @@ function (obj, pred, context) {
 }
 ```
 
-<td>[TO DO]
-
 <tr>
-<td>″″
 <td>
 
 ```js
@@ -631,10 +624,7 @@ function (obj, pred, context) {
 }
 ```
 
-<td>[TO DO]
-
 <tr>
-<td>″″
 <td>
 
 ```js
@@ -667,10 +657,7 @@ function (
 }
 ```
 
-<td>[TO DO]
-
 <tr>
-<td>″″
 <td>
 
 ```js
@@ -693,15 +680,19 @@ function (obj) {
 }
 ```
 
-<td>[TO DO]
+</table>
 
+#### [Pify][]
+[Sindre Sorhus][sindresorhus] &c. 2015–2018. MIT License.
+
+<table>
+<thead>
 <tr>
-<td>
+<th>With smart pipes
+<th>Status quo
 
-**[Pify][]** 3.0.0.\
-[Sindre Sorhus][sindresorhus] &c.\
-2015–2018.\
-MIT License.
+<tbody>
+<tr>
 
 <td>
 
@@ -721,17 +712,19 @@ pify(fs.readFile)('package.json', 'utf8')
   })
 ```
 
-<td>[TO DO]
+</table>
 
+#### [Fetch Standard][]
+[Anne van Kesteren][annevk] &c. 2011–2018. WHATWG. Creative Commons BY.
+
+<table>
+<thead>
 <tr>
-<td>
+<th>With smart pipes
+<th>Status quo
 
-**[Fetch Standard][]**.\
-[Anne van Kesteren][annevk] &c.\
-2011–2018.\
-WHATWG.\
-Creative Commons BY.
-
+<tbody>
+<tr>
 <td>
 
 ```js
@@ -749,10 +742,7 @@ fetch('/music/pk/altes-kamuffel')
   .then(playBlob)
 ```
 
-<td>[TO DO]
-
 <tr>
-<td>″″
 <td>
 
 ```js
@@ -772,10 +762,7 @@ fetch('https://example.com/',
 )
 ```
 
-<td>[TO DO]
-
 <tr>
-<td>″″
 <td>
 
 ```js
@@ -1905,23 +1892,13 @@ the `#|>` idiom.]
 
 [TO DO: Can partial application be integrated with topics?]
 
-<table>
-<thead>
-<tr>
-<th>Hypothetical future proposal with explanation
-<th>With hypothetical proposal
-<th>With only this proposal
-
-<tbody>
-<tr>
-<td>
-
-**Headless property access**: This example demonstrates a possible future
-“headless property” syntax in which the callee of a property-access expression
-may be omitted, assuming that no possible expression immediately precedes it.
-The omitted, invisible, tacit callee value is the lexical context’s topic. This
-would greatly increase the potential of tacit programming, especially when
-combined with the hypothetical syntaxes below.
+#### Headless property access
+This example demonstrates a possible future “headless property” syntax in which
+the callee of a property-access expression may be omitted, assuming that no
+possible expression immediately precedes it. The omitted, invisible, tacit
+callee value is the lexical context’s topic. This would greatly increase the
+potential of tacit programming, especially when combined with the hypothetical
+syntaxes below.
 
 (It should be noted that headless properties would introduce a mild ASI hazard:
 if a possible callee precedes the headless property, even on another line of
@@ -1930,6 +1907,14 @@ A semicolon would required to separate the possible callee and the headless
 property. More exploration would be needed to assess how severe this hazard
 would be compared to the benefits it would bring.)
 
+<table>
+<thead>
+<tr>
+<th>With hypothetical proposal
+<th>With only this proposal
+
+<tbody>
+<tr>
 <td>
 
 ```js
@@ -1942,10 +1927,10 @@ x |> f |> .property |> g
 x |> f |> #.property |> g
 ```
 
-<tr>
-<td>
+</table>
 
-**Headless pipelining**: This example demonstrates a possible future “headless
+#### Headless pipelining
+This example demonstrates a possible future “headless
 pipeline” syntax in which the head of a pipeline operation may be omitted,
 assuming that no possible expression immediately precedes it. The omitted,
 invisible, tacit pipeline head value is the outer lexical context’s topic.
@@ -1970,6 +1955,14 @@ Answer: bare `yield` and `await` are forbidden from the heads of pipelines.
 This should be done in this pipeline proposal, throwing a syntax error,
 because it’d be unclear anyway even without headless pipelining.]
 
+<table>
+<thead>
+<tr>
+<th>With hypothetical proposal
+<th>With only this proposal
+
+<tbody>
+<tr>
 <td>
 
 ```js
@@ -1982,12 +1975,12 @@ f |> .property |> g
 # |> f |> #.property |> g
 ```
 
-<tr>
-<td>
+</table>
 
-Topical **`for` loop**: With this smart-pipe proposal only, `for`–`of`
-statements would prohibit the use of `#` within their bodies, except where `#`
-is inside an inner pipeline inside the `for` loop.
+#### Topical **`for` loop**
+With this smart-pipe proposal only, `for`–`of` statements would prohibit the use
+of `#` within their bodies, except where `#` is inside an inner pipeline inside
+the `for` loop.
 
 With another, future proposal, all `for`–`of` loops would implicitly bind each
 iterator value to `#`. This implicit binding would be in addition to the
@@ -1999,6 +1992,14 @@ antecedent, would also be added. This tacit form is what is used in this example
 [TO DO: Link to section on deep nesting.] This example also uses the hypothetical
 headless pipelining syntax from above.
 
+<table>
+<thead>
+<tr>
+<th>With hypothetical proposal
+<th>With only this proposal
+
+<tbody>
+<tr>
 <td>
 
 ```js
@@ -2017,13 +2018,13 @@ for (const i of range(0, 50)) {
 }
 ```
 
-<tr>
-<td>
+</table>
 
-Topical **`for`–`await`** loop: This is similar to the tacit topical synchronous
-`for` loop above. With this proposal only, `for`–`await`–`of` statements would
-prohibit the use of `#` within their bodies, except where `#` is inside an inner
-pipeline inside the `for` loop.
+#### Topical `for`–`await` loop
+This is similar to the tacit topical synchronous `for` loop above. With this
+proposal only, `for`–`await`–`of` statements would prohibit the use of `#`
+within their bodies, except where `#` is inside an inner pipeline inside the
+`for` loop.
 
 With another, future proposal, all `for`–`await`–`of` loops would implicitly bind
 each iterator value to `#`. This implicit binding would be in addition to the
@@ -2032,9 +2033,17 @@ antecedent `for await (const i of …) { … }`.
 
 An additional tacit `for await` loop form, completely lacking a parenthesized
 antecedent, would also be added. This tacit form is what is used in this
-example. [TO DO: Link to section on deep nesting.] This example also uses the hypothetical
-headless pipelining syntax from above.
+example. [TO DO: Link to section on deep nesting.] This example also uses the
+hypothetical headless pipelining syntax from above.
 
+<table>
+<thead>
+<tr>
+<th>With hypothetical proposal
+<th>With only this proposal
+
+<tbody>
+<tr>
 <td>
 
 ```js
@@ -2055,14 +2064,13 @@ for await (const c of stream) {
 }
 ```
 
-<tr>
-<td>
+</table>
 
-Topical **function / method definition**: With this smart-pipe proposal only,
-all function / method definitions would prohibit the use of `#` within their
-bodies, except where `#` is inside an inner pipeline inside the function /
-method. (However, arrow functions do not have this restriction; they may use
-`#`, which refers to their outer lexical scope’s topic.)
+#### Topical function / method definition
+With this smart-pipe proposal only, all function / method definitions would
+prohibit the use of `#` within their bodies, except where `#` is inside an inner
+pipeline inside the function / method. (However, arrow functions do not have
+this restriction; they may use `#`, which refers to their outer scope’s topic.)
 
 With another, future proposal, all function / method definitions would
 implicitly bind their first arguments to `#`. This implicit binding would be in
@@ -2077,6 +2085,14 @@ parenthesized antecedent, could also be used. This tacit form is what is used in
 this example. [TO DO: Link to section on deep nesting.] This example also uses
 the hypothetical headless property syntax from above.
 
+<table>
+<thead>
+<tr>
+<th>With hypothetical proposal
+<th>With only this proposal
+
+<tbody>
+<tr>
 <td>
 
 ```js
@@ -2096,18 +2112,26 @@ function capitalize (str) {
 }
 ```
 
+</table>
+
+#### Topical block parameter
+The proposed syntax of [ECMAScript block parameters][] may greatly benefit from
+using the topic concept. As with topical function definitions, making all block
+parameters topical would enable the use of the topic reference as an implicit
+first parameter. The block-parameter proposal itself has not yet settled on how
+to parameterize its block parameters. The topic reference may be the key to
+solving this problem, making other, special block parameters unnecessary. This
+example also uses the hypothetical headless property syntax and headless
+pipelining syntax from above.
+
+<table>
+<thead>
 <tr>
-<td>
+<th>With hypothetical proposal
+<th>With only this proposal
 
-Topical **block parameter**: The proposed syntax of [ECMAScript block
-parameters][] may greatly benefit from using the topic concept. As with topical
-function definitions, making all block parameters topical would enable the use
-of the topic reference as an implicit first parameter. The block-parameter
-proposal itself has not yet settled on how to parameterize its block parameters.
-The topic reference may be the key to solving this problem, making other,
-special block parameters unnecessary. This example also uses the hypothetical
-headless property syntax and headless pipelining syntax from above.
-
+<tbody>
+<tr>
 <td>
 
 ```js
@@ -2148,15 +2172,22 @@ server(app) {
 }
 ```
 
+</table>
+
+#### Topical thin-arrow function
+This example uses a new token, the thin arrow, which is similar to the `=>` fat
+arrow in that it creates arrow functions. The only difference is that it also
+lexically binds `#` to its first argument, unlike the fat arrow. This example
+also uses the hypothetical headless pipelining syntax from above.
+
+<table>
+<thead>
 <tr>
-<td>
+<th>With hypothetical proposal
+<th>With only this proposal
 
-Topical **thin-arrow function**: This example uses a new token, the thin arrow,
-which is similar to the `=>` fat arrow in that it creates arrow functions. The
-only difference is that it also lexically binds `#` to its first argument,
-unlike the fat arrow. This example also uses the hypothetical
-headless pipelining syntax from above.
-
+<tbody>
+<tr>
 <td>
 
 ```js
@@ -2169,15 +2200,22 @@ materials.map(-> |> f |> .length)
 materials.map(m => m |> f |> #.length)
 ```
 
+</table>
+
+#### Topical pattern matching
+The proposed syntax of [ECMAScript pattern matching][] would bind the topic
+reference within the scope of a successful match clause’s scope. The topic value
+would be the truthy result of the successful `Symbol.matches` call. This example
+also uses the hypothetical headless property syntax from above.
+
+<table>
+<thead>
 <tr>
-<td>
+<th>With hypothetical proposal
+<th>With only this proposal
 
-Topical **pattern matching**: The proposed syntax of [ECMAScript pattern
-matching][] would bind the topic reference within the scope of a successful
-match clause’s scope. The topic value would be the truthy result of the
-successful `Symbol.matches` call. This example also uses the hypothetical
-headless property syntax from above.
-
+<tbody>
+<tr>
 <td>
 
 ```js
@@ -2204,16 +2242,24 @@ match (x) {
 }
 ```
 
+</table>
+
+#### Tacit pattern matching
+[ECMAScript pattern matching] could also have a completely tacit version, in
+which the parenthesized antecedent is completely omitted in favor of tacitly
+using the outer context’s topic. (This would have to somehow be distinguishable
+from a call to a function named `match` with a [bare block argument][ECMAScript
+block parameters].) This example also uses the hypothetical headless pipelining
+syntax from above.
+
+<table>
+<thead>
 <tr>
-<td>
+<th>With hypothetical proposal
+<th>With only this proposal
 
-**Tacit pattern matching**: [ECMAScript pattern matching] could also have a
-completely tacit version, in which the parenthesized antecedent is completely
-omitted in favor of tacitly using the outer context’s topic. (This would have to
-somehow be distinguishable from a call to a function named `match` with a [bare
-block argument][ECMAScript block parameters].) This example also uses the
-hypothetical headless pipelining syntax from above.
-
+<tbody>
+<tr>
 <td>
 
 ```js
@@ -2246,13 +2292,13 @@ function getLength (vector) {
 }
 ```
 
-<tr>
-<td>
+</table>
 
-**Tacit error capture**: With this smart-pipe proposal only, all `try`
-statements’ `catch` clauses would prohibit the use of `#` within their bodies,
-except where `#` is inside an inner pipeline inside the `catch` clause. [TO DO:
-Link to sections explaining these inner block rules.]
+#### Tacit error capture
+With this smart-pipe proposal only, all `try` statements’ `catch` clauses would
+prohibit the use of `#` within their bodies, except where `#` is inside an inner
+pipeline inside the `catch` clause. [TO DO: Link to sections explaining these
+inner block rules.]
 
 With another, future proposal, all `catch` causes would implicitly bind
 their caught errors to `#`. This implicit binding would be in addition to the
@@ -2266,6 +2312,14 @@ used in this example. [TO DO: Link to section on deep nesting.] The bare form,
 along with the hypothetical headless property syntax from above, are
 demonstrated here.
 
+<table>
+<thead>
+<tr>
+<th>With hypothetical proposal
+<th>With only this proposal
+
+<tbody>
+<tr>
 <td>
 
 ```js
@@ -2291,11 +2345,6 @@ try {
 ```
 
 <tr>
-<td>
-
-**Tacit error capture** with tacit **match**: This combination may be especially
-useful for polymorphic handling of caught errors by their types.
-
 <td>
 
 ```js
@@ -2334,13 +2383,12 @@ try {
 }
 ```
 
-<tr>
-<td>
+</table>
 
-Topical **metaprogramming reference**: In the event that TC39 seriously
-considers the topical function definitions shown above, a **`function.topic`**
-metaprogramming operator, in the style of the [`new.target`][] operator, could
-be useful in creating topic-aware functions.
+#### Topical metaprogramming reference
+In the event that TC39 seriously considers the topical function definitions
+shown above, a **`function.topic`** metaprogramming operator, in the style of
+the [`new.target`][] operator, could be useful in creating topic-aware functions.
 
 This might be especially useful in creating APIs resembling [domain-specific
 languages][DSLs] with [ECMAScript block parameters][]. This example creates
@@ -2350,8 +2398,6 @@ to be called always within the third function (`select`)’s callback block.
 
 An alternate solution without metaprogramming topics is not yet specified by the
 current proposal for [ECMAScript block parameters][].
-
-<td colspan=2>
 
 ```js
 class CompletionRecord { [[TO DO]] }
@@ -2407,7 +2453,6 @@ select ('world') {
 }
 ```
 
-</table>
 </details>
 
 ### Alternative solutions explored
@@ -2415,51 +2460,19 @@ There are a number of other ways of potentially accomplishing the above use
 cases. However, the authors of this proposal believe that the smart pipe
 operator may be the best choice. [TO DO]
 
-## Previous draft appendices
+## Term rewriting
 
 <details open>
 
-[TO DO: Rewrite everything in this section]
-
-### Old semantic section
-[TO DO: Rewrite this section to the conventions of the ECMAScript specification.]
-
-A pipe expression’s semantics are:
-1. The head is evaluated into the topic’s value; call this `topicValue`.
-2. [The body is tested for its type][smart body syntax]: Is it in bare style
-   (as a bare function or a bare constructor), is it in topical style, or is it
-   an invalid body?
-
-  * If the body is a bare function (such as `f` and `M.f`):
-    1. The body is evaluated (in the current lexical context); call this value
-       the `bodyFunction`.
-    2. The entire pipeline’s value is `bodyFunction(topicValue)`.
-
-  * If the body is a bare constructor (such as `new C` and `new M.C`):
-    1. The portion of the body after `new` is evaluated (in the current lexical
-       context); call this value the `BodyConstructor`.
-    2. The entire pipeline’s value is `new BodyConstructor(topicValue)`.
-
-  * If the body is in topical style (such as `f(#, n)`, `o[s][#]`, `# + n`, and `#.p`):
-    1. An inner lexical context is entered.
-    2. Within this inner context, `topicValue` is bound to a variable.
-    3. Within this inner context, with the variable binding to `topicValue`,
-       the body is evaluated; call the resulting value `bodyValue`.
-    4. The entire pipeline’s value is `bodyValue`.
-
-  * Otherwise, if the body is an invalid body (such as `f()`, `f(n)`, `o[s]`,
-    `+ n`, and `n`), then throw a syntax error explaining that the pipeline’s
-    topic reference is missing from its body.
-
 ### Term rewriting topical style
-Pipe bodies in topical style can be further explained with a nested `do`
-expression. There are two ways to illustrate this equivalency. The first way is
-to [replace each pipe expression’s topic references with an autogenerated
-variable][term rewriting with autogenerated variables], which must be guaranteed
-to be [lexically hygienic][] and to not conflict with other variables. The
-alternative way is to [use two variables – the topic reference `#` and a single
-dummy variable][term rewriting with single dummy variable] – which also
-preserves [lexical hygiene][lexically hygienic].
+Pipe bodies in topical style can be rewritten into a nested `do` expression.
+There are two ways to illustrate this equivalency. The first way is to [replace
+each pipe expression’s topic references with an autogenerated variable][term
+rewriting with autogenerated variables], which must be guaranteed to be
+[lexically hygienic][] and to not conflict with other variables. The alternative
+way is to [use two variables – the topic reference `#` and a single dummy
+variable][term rewriting with single dummy variable] – which also preserves
+[lexical hygiene][lexically hygienic].
 
 #### Term rewriting with autogenerated variables
 The first way to illustrate the operator’s semantics is to replace each pipe
