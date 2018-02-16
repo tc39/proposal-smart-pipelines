@@ -1175,7 +1175,7 @@ listed **above** it.
 | ″″             | Classes                 |`class … {…}`   | ″″                       |
 | ″″             | Generators              |                | ″″                       |
 | ″″             | Async functions         |                | ″″                       |
-| ″″             | Regular expression      |`/…/`…          | ″″                       |
+| ″″             | Regular expression      |`/…/…`          | ″″                       |
 | ″″             | Templates               |```…```         | ″″                       |
 | ″″             | Parentheses             |`(…)`           | ″″                       |
 | LHS            | Dynamic properties      |`…[…]`          | LTR infix with circumfix |
@@ -1689,12 +1689,12 @@ evaluates the RHS
     2. [TO DO: Create topic environment]
     3. [TO DO: Evaluate body in new environment]
 
-It sort of acts like **`do { const ` _topicIdentifier_ `=` _topic_`;
+Topical style behaves like **`do { const ` _topicIdentifier_ `=` _topic_`;
 `_substitutedBody_` }`**, where:
 
 * _topicVariable_ is any [identifier that is *not* already used by any
-  variable in the outer lexical context or the body’s inner topical
-  context][lexically hygienic],
+  variable][lexically hygienic], in the outer lexical context or the body’s
+  inner topical context,
 * And _substitutedBody_ is _body_ but with every instance of outside of
   the topic reference replaced by _topicVariable_.
 
