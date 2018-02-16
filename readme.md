@@ -11,10 +11,10 @@
       - [“Don’t shoot me in the foot with your syntax.”](#dont-shoot-me-in-the-foot-with-your-syntax)
       - [“Make my code simpler and easier with your syntax.”](#make-my-code-simpler-and-easier-with-your-syntax)
     - [Real-world examples](#real-world-examples)
-      - [[Prior pipeline proposal][]](#prior-pipeline-proposal)
-      - [[Underscore.js][]](#underscorejs)
-      - [[Pify][]](#pify)
-      - [[Fetch Standard][]](#fetch-standard)
+      - [Prior pipeline proposal](#prior-pipeline-proposal)
+      - [Underscore.js](#underscorejs)
+      - [Pify](#pify)
+      - [Fetch Web Standard](#fetch-web-standard)
   - [Nomenclature](#nomenclature)
   - [Grammar](#grammar)
     - [Lexical grammar](#lexical-grammar)
@@ -50,7 +50,7 @@
     - [Possible future extensions to the topic concept](#possible-future-extensions-to-the-topic-concept)
       - [Headless property access](#headless-property-access)
       - [Headless pipelining](#headless-pipelining)
-      - [Topical **`for` loop**](#topical-for-loop)
+      - [Topical `for` loop](#topical-for-loop)
       - [Topical `for`–`await` loop](#topical-forawait-loop)
       - [Topical function / method definition](#topical-function--method-definition)
       - [Topical block parameter](#topical-block-parameter)
@@ -497,8 +497,9 @@ matter. But to a human, it can make a significant difference.
 and compare their readability with smart-pipelined versions. Numerous examples
 of code that may benefit from smart pipelines abound.</summary>
 
-#### [Prior pipeline proposal][]
-[Gilbert “mindeavor”][mindeavor] &c. ECMA International. 2017–2018. BSD License.
+#### Prior pipeline proposal
+[Prior pipeline proposal][]. [Gilbert “mindeavor”][mindeavor] &c. ECMA
+International. 2017–2018. BSD License.
 
 <table>
 <thead>
@@ -577,8 +578,8 @@ When tiny functions are only used once, and their bodies would be
 self-documenting, they are ritual boilerplate that a developer’s style may
 prefer to inline.
 
-#### [Underscore.js][]
-[Jeremy Ashkenas][jashkenas] &c. 2009–2018. MIT License.
+#### Underscore.js
+[Underscore.js][]. [Jeremy Ashkenas][jashkenas] &c. 2009–2018. MIT License.
 
 <table>
 <thead>
@@ -696,8 +697,8 @@ function (obj) {
 
 </table>
 
-#### [Pify][]
-[Sindre Sorhus][sindresorhus] &c. 2015–2018. MIT License.
+#### Pify
+[Pify][]. [Sindre Sorhus][sindresorhus] &c. 2015–2018. MIT License.
 
 <table>
 <thead>
@@ -728,8 +729,9 @@ pify(fs.readFile)('package.json', 'utf8')
 
 </table>
 
-#### [Fetch Standard][]
-[Anne van Kesteren][annevk] &c. 2011–2018. WHATWG. Creative Commons BY.
+#### Fetch Web Standard
+[Fetch Standard][]. [Anne van Kesteren][annevk] &c. 2011–2018. WHATWG. Creative
+Commons BY.
 
 <table>
 <thead>
@@ -1991,7 +1993,7 @@ f |> .property |> g
 
 </table>
 
-#### Topical **`for` loop**
+#### Topical `for` loop
 With this smart-pipe proposal only, `for`–`of` statements would prohibit the use
 of `#` within their bodies, except where `#` is inside an inner pipeline inside
 the `for` loop.
