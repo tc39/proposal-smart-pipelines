@@ -1731,10 +1731,10 @@ the topic, the topic is still only ever evaluated once.</summary>
 
 The lines in each of the following rows are equivalent.
 
-| Pipeline                       | Block                                             |
-| ------------------------------ | ------------------------------------------------- |
-|`… \|> f(#, #)`                 |`const $ = …; f($, $)`                             |
-|`… \|> [#, # * 2, # * 3]`       |`const $ = …; [$, $ * 2, $ * 3]`                   |
+| Pipeline                         | Block                                             |
+| -------------------------------- | ------------------------------------------------- |
+|`… \|> f(#, #)`                   |`const $ = …; f($, $)`                             |
+|`… \|> [#, # * 2, # * 3]`         |`const $ = …; [$, $ * 2, $ * 3]`                   |
 
 [TO DO]
 
@@ -1747,10 +1747,10 @@ type of block expression.</summary>
 
 The lines in each of the following rows are equivalent.
 
-| Pipeline                       | Block                                              |
-| ------------------------------ | -------------------------------------------------- |
-|`… \|> x => # + x`              |`const $ = …; x => # + x`                           |
-|`… \|> settimeout(() => # * 5)` |`const $ = …; settimeout(() => $ * 5)`              |
+| Pipeline                         | Block                                              |
+| -------------------------------- | -------------------------------------------------- |
+|`… \|> x => # + x`                |`const $ = …; x => # + x`                           |
+|`… \|> settimeout(() => # * 5)`   |`const $ = …; settimeout(() => $ * 5)`              |
 
 However, you cannot use use topic references inside of other types of blocks:
 function, async function, generator, async generator, or class.
@@ -1759,9 +1759,9 @@ More precisely, all block expressions (other than arrow functions) shadow any
 outer lexical context’s topic with its own *absence* of a topic. This behavior
 is in order to fulfill both [Goals 3 and 6][goals].
 
-| Pipeline                       |                                                    |
-| ------------------------------ |--------------------------------------------------- |
-|`… \|> function () { # }`       | Syntax Error: Topic never used by pipeline’s body. |
+| Pipeline                         |                                                    |
+| -------------------------------- |--------------------------------------------------- |
+|`… \|> function () { # }`         | Syntax Error: Topic never used by pipeline’s body. |
 
 [TO DO]
 
@@ -1775,11 +1775,11 @@ permitted.</summary>
 
 The lines in each of the following rows are equivalent.
 
-| Pipeline                       | Block                                              |
-| ------------------------------ | -------------------------------------------------- |
-|`… \|> f(() => f(#) * 5)`       |`const $ = …; f(x => f($) * 5)`                     |
-|`… \|> f(() => f(#) |> # * 5)`  |`const $ = …; f(x => f($) |> # * 5)`                |
-|`… \|> f(() => #|> f |> # * 5)` |`const $ = …; f(x => $ |> f |> # * 5)`              |
+| Pipeline                         | Block                                              |
+| -------------------------------- | -------------------------------------------------- |
+|`… \|> f(() => f(#) * 5)`         |`const $ = …; f(x => f($) * 5)`                     |
+|`… \|> f(() => f(#) \|> # * 5)`   |`const $ = …; f(x => f($) \|> # * 5)`               |
+|`… \|> f(() => # \|> f \|> # * 5)`|`const $ = …; f(x => $ \|> f \|> # * 5)`            |
 
 [TO DO]
 
