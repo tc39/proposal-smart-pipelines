@@ -10,7 +10,7 @@
   - [Motivation](#motivation)
     - [Goals](#goals)
       - [“Don’t break my code with your syntax.”](#dont-break-my-code-with-your-syntax)
-      - [“Don’t make me think about your syntax.”](#dont-make-me-think-about-your-syntax)
+      - [“Don’t make me overthink about your syntax.”](#dont-make-me-overthink-about-your-syntax)
       - [“Don’t shoot me in the foot with your syntax.”](#dont-shoot-me-in-the-foot-with-your-syntax)
       - [“Make my code simpler and easier with your syntax.”](#make-my-code-simpler-and-easier-with-your-syntax)
     - [Real-world examples](#real-world-examples)
@@ -217,7 +217,7 @@ of this “smart pipe operator”][smart body syntax].
 There are twelve ordered Goals that the smart body syntax tries to fulfill,
 which may be summarized,
 “Don’t break my code your syntax,”<br>
-“Don’t make me think about your syntax,”<br>
+“Don’t make me overthink about your syntax,”<br>
 “Don’t shoot me in the foot with your syntax,” and<br>
 “Make my code simpler and easier with your syntax.”
 </summary>
@@ -283,7 +283,7 @@ Listed from most to least important:
     work][]. See also Goal 9 below. See also [inner blocks in pipelines][inner
     blocks].
 
-#### “Don’t make me think about your syntax.”
+#### “Don’t make me overthink about your syntax.”
  4. **Syntactic locality**: The syntax should minimize the parsing lookahead
     that the compiler must check. If the grammar makes [garden-path syntax][]
     common, then this increases the dependency that pieces of code have on other
@@ -459,28 +459,35 @@ matter. But to a human, it can make a significant difference.
     Visually similar symbols can distract or even mislead the human reader, as
     they attempt to figure out the meaning of code.
 
-    This is particularly true of the choice of topic reference, which should not
-    be visually confusable with unrelated syntax. For instance, if the topic
-    reference were `?`, and it were used anywhere near the visually similar
-    [optional-chaining syntax proposal][], then the topic reference might be
-    lost or unnoticed by the developer: for example, `?.??m(?)`.
+    * **Distinguishability of new symbols**: Any new symbol should be easily
+      distinguishable from existing symbols and should not be visually
+      confusable with unrelated syntax. This is particularly true for choosing
+      the topic-reference token, which would appear often in a wide variety of
+      expressions. If the topic reference hypothetically were `?`, and it were
+      used anywhere near the visually similar [optional-chaining syntax
+      proposal][], then the topic reference might be lost or unnoticed by the
+      developer: for example, `?.??m(?)`.
 
-    Terseness also aids distinguishability by obviating the need for boilerplate
-    syntactic noise. Parentheses are a prominent example: as long as operator
-    precedence is clear, then reducing parentheses always would JavaScript code
-    more visually terse and less cluttered.
+    * **Terseness by removing unnecessary parentheses**: Terseness also aids
+      distinguishability by obviating the need for boilerplate syntactic noise.
+      Parentheses are a prominent example: as long as operator precedence is
+      clear, then reducing parentheses always would JavaScript code more
+      visually terse and less cluttered.
 
-    The example above demonstrates how many parentheses would become unnecessary
-    with pipelines. The [“data-to-ink” visual ratio][chartjunk] has
-    significantly increased, emphasizing the program’s essential information.
-    The developer’s cognitive burden – of ignoring unimportant incidental
-    symbols as they read – has hopefully lightened.
+      The example above demonstrates how many parentheses would become unnecessary
+      with pipelines. The [“data-to-ink” visual ratio][chartjunk] has
+      significantly increased, emphasizing the program’s essential information.
+      The developer’s cognitive burden – of ignoring unimportant incidental
+      symbols as they read – has hopefully lightened.
 
-    Terseness may be optimized in other ways, in balance with Goals 4 and 5. In
-    particular, unary function/constructor calls are a frequent type of
-    expression. That is why certain [tacit or point-free styles][tacit
-    programming] of functional programming are used: they can dramatically
-    reduce the verbosity of unary function calls.
+    * **Terseness by removing unnecessary variable declarations**: Similarly, [TO DO]
+
+    * **Terseness by removing unnecessary unnecessary unary arguments**:
+      Terseness may be optimized in other ways, in balance with Goals 4 and 5.
+      In particular, unary function/constructor calls are a frequent type of
+      expression. That is why certain [tacit or point-free styles][tacit
+      programming] of functional programming are used: they can dramatically
+      reduce the verbosity of unary function calls.
 
     It is the hope of this proposal’s authors that its [smart body syntax][]
     reaches a good balance between this Goal and Goals 4 and 5, in the same
@@ -488,7 +495,24 @@ matter. But to a human, it can make a significant difference.
     frequency of use: more commonly used symbols are shorter.
 
 11. **Human writability**: Writability of code is less important a priority than
-    readability of code, because the former usually happens once
+    readability of code. Code is usually written a few days, perhaps by a few
+    authors – but code will be read dozens or hundreds of times, perhaps by many
+    more people. However, ease of writing and editing is still a good goal, and
+    it often naturally increases when code also becomes more readable.
+    A useful heuristic for writability is assessing the probability that a single
+    edit to one piece of code will necessitate changes to other parts of code
+    that are not directly related to the edit.
+
+    The simple addition or removal of a deeply nested expression may necessitate
+    the indentation, de-indentation, parenthetical grouping, and parenthetical
+    flattening of many lines of code; the tedium of these incidental changes is
+    a major factor in the general popularity of automatic code formatters.
+
+    Achieving Goal 8 therefore also improves the ease of composing and editing
+    code. By flattening deeply nested expression trees into single threads of
+    postfix steps, a step may be added oredited in isolation on a single line,
+    it may be rearranged up or down, it may be removed – all without affecting
+    the pipeline’s other steps in the lines above or below it.
 
 12. **Novice learnability**: [TO DO]
 
@@ -1685,7 +1709,7 @@ assuming that the topic value is first bound to the topic reference within the
 body scope.</summary>
 
 But more precisely, it binds the topic to the pipeline’s head value then
-evaluates the RHS
+evaluates the RHS [TO DO]
 
 * Evaluation
   * PipelineExpression : PipelineExpression `|>` PipelineBody
