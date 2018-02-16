@@ -311,67 +311,67 @@ should not matter. But to a human, it can make a significant difference.
     [real-world examples] below.
 
   9. **Versatile expressivity**: JavaScript is a language rich with [expressions
-    of numerous kinds][MDN expressions and operators], each of which may
-    usefully transform data from one form to another. There is **no single
-    type** of expression that forms a **majority of used expressions**.
+     of numerous kinds][MDN expressions and operators], each of which may
+     usefully transform data from one form to another. There is **no single
+     type** of expression that forms a **majority of used expressions**.
 
-    * Arithmetic operations.
-    * Array literals.
-    * Arrow functions.
-    * Assignment operations.
-    * `await` expressions.
-    * Class definitions.
-    * Conditional operations.
-    * Constructor calls one argument.
-    * Constructor calls with many n-ary arguments.
-    * Equality operations.
-    * Function calls with one unary argument.
-    * Function calls with many n-ary arguments.
-    * Function and async-function definitions.
-    * Function partial application.
-    * Generator and async-generator definitions.
-    * `instanceof` and `in` operations.
-    * Object literals.
-    * Property accessors and method calls.
-    * References to variables, `this`, and `new.target`.
-    * Regular-expression literals.
-    * `super` calls.
-    * Template literals.
-    * `typeof` operations.
-    * Unary function composition.
-    * `yield` expressions.
+     * Arithmetic operations.
+     * Array literals.
+     * Arrow functions.
+     * Assignment operations.
+     * `await` expressions.
+     * Class definitions.
+     * Conditional operations.
+     * Constructor calls one argument.
+     * Constructor calls with many n-ary arguments.
+     * Equality operations.
+     * Function calls with one unary argument.
+     * Function calls with many n-ary arguments.
+     * Function and async-function definitions.
+     * Function partial application.
+     * Generator and async-generator definitions.
+     * `instanceof` and `in` operations.
+     * Object literals.
+     * Property accessors and method calls.
+     * References to variables, `this`, and `new.target`.
+     * Regular-expression literals.
+     * `super` calls.
+     * Template literals.
+     * `typeof` operations.
+     * Unary function composition.
+     * `yield` expressions.
 
-    The goal of the pipe operator is to untangle deeply nested expressions into
-    flat threads of postfix expressions. To limit it to only one type of
-    expression, even a common type, truncates its benefits to that one type only
-    and compromises its expressivity and versatility.
+     The goal of the pipe operator is to untangle deeply nested expressions into
+     flat threads of postfix expressions. To limit it to only one type of
+     expression, even a common type, truncates its benefits to that one type only
+     and compromises its expressivity and versatility.
 
-    It would be possible to add ad-hoc handling, for selected other expression
-    types, to the operator’s grammar. This would expand its benefits to that
-    type. However, this conflicts with Goal 5 (adding cyclomatic complexity to
-    the parsing process, proportional to the number of ad-hoc handled cases). It
-    also does not fulfill this Goal well either: excluding, perhaps arbitrarily,
-    whatever classes its grammar’s branches do not handle.
+     It would be possible to add ad-hoc handling, for selected other expression
+     types, to the operator’s grammar. This would expand its benefits to that
+     type. However, this conflicts with Goal 5 (adding cyclomatic complexity to
+     the parsing process, proportional to the number of ad-hoc handled cases). It
+     also does not fulfill this Goal well either: excluding, perhaps arbitrarily,
+     whatever classes its grammar’s branches do not handle.
 
-    A pipeline operator that is versatile (this Goal) but conceptually and cyclomatically
-    simple (Goal 5) must be able to handle **all** expressions in a **single**
-    manner **uniformly** **universally** applicable to **all** expressions. It
-    is the hope of this proposal’s authors that its **[topical style][]**
-    fulfills both criteria.
+     A pipeline operator that is versatile (this Goal) but conceptually and cyclomatically
+     simple (Goal 5) must be able to handle **all** expressions in a **single**
+     manner **uniformly** **universally** applicable to **all** expressions. It
+     is the hope of this proposal’s authors that its **[topical style][]**
+     fulfills both criteria.
 
-    ***
+     ***
 
-    Another form of versatility and expressivity comes in how its concepts may
-    be applicable to other syntax, including existing syntax and future syntax
-    (compare with Goal 3).
+     Another form of versatility and expressivity comes in how its concepts may
+     be applicable to other syntax, including existing syntax and future syntax
+     (compare with Goal 3).
 
-    This proposal’s concept of a **topic reference does not need to be coupled
-    only to pipelines** The [topic concept is **generalizable to many syntactic
-    forms**][possible future extensions to the topic concept], such as.
+     This proposal’s concept of a **topic reference does not need to be coupled
+     only to pipelines** The [topic concept is **generalizable to many syntactic
+     forms**][possible future extensions to the topic concept], such as.
 
-    These generalizations are **out of scope** of this proposal, which is only
-    for the smart pipe operator. They are **deferred** to [other, future
-    proposals][possible future extensions to the topic concept].
+     These generalizations are **out of scope** of this proposal, which is only
+     for the smart pipe operator. They are **deferred** to [other, future
+     proposals][possible future extensions to the topic concept].
 
 10. **Visual distinguishability**: [TO DO]
 
