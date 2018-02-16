@@ -376,12 +376,27 @@ matter. But to a human, it can make a significant difference.
      for the smart pipe operator. They are **deferred** to [other, future
      proposals][possible future extensions to the topic concept].
 
-10. **Visual distinguishability**: Another important aspect of code readability
-    is the visual distinguishability of [TO DO]
+10. **Distinguishability and terseness**: Another important aspect of code readability
+    is the visual distinguishability of its important pieces. Visually similar
+    symbols can distract or even mislead the human reader, as they attempt to
+    figure out the meaning of code.
 
-11. **Visual terseness**: It is a good thing if new syntax could make much
-    JavaScript code more visually terse and less cluttered. The example above
-    demonstrates how many parentheses would become unnecessary with pipelines.
+    This is particularly true of the choice of topic reference, which should not
+    be visually confusable with unrelated syntax. For instance, if the topic
+    reference were `?`, and it were used anywhere near the visually similar
+    [optional-chaining syntax proposal][], then the topic reference might be
+    lost or unnoticed by the developer: for example, `?.??m(?)`.
+
+    Terseness also aids distinguishability by obviating the need for boilerplate
+    syntactic noise. Parentheses are a prominent example: as long as operator
+    precedence is clear, then reducing parentheses always would JavaScript code
+    more visually terse and less cluttered.
+
+    The example above demonstrates how many parentheses would become unnecessary
+    with pipelines. The [“data-to-ink” visual ratio][chartjunk] has
+    significantly increased, emphasizing the program’s essential information.
+    The developer’s cognitive burden – of ignoring unimportant incidental
+    symbols as they read – has hopefully lightened.
 
     Terseness may be optimized in other ways, in balance with Goals 4 and 5. In
     particular, unary function/constructor calls are a frequent type of
@@ -394,7 +409,9 @@ matter. But to a human, it can make a significant difference.
     manner that [Huffman coding][] optimizes textual symbols’ length for their
     frequency of use: more commonly used symbols are shorter.
 
-12. **Human writability**: [TO DO]
+11. **Human writability**: [TO DO]
+
+12. **Novice learnability**: [TO DO]
 
 </details>
 
@@ -2375,3 +2392,6 @@ do { do { do { do { 3 * 3 } } }
 [Underscore.js]: http://underscorejs.org
 [Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
+
+[optional-chaining syntax proposal]: https://github.com/tc39/proposal-optional-chaining
+[“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
