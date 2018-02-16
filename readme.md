@@ -51,7 +51,7 @@ file an issue, please note in it that you are talking specifically about
 
 **This specification uses `#`** as its [“topic token”][nomenclature]. However,
 this is not set in stone. In particular, **`?` and `@` could also be used**.
-Either would be similarly terse, visually distinguishable, and easily typeable.
+Either would be similarly terse and typeable.
 Bikeshedding over what characters to use for the topic token is occurring on
 GitHub at [tc39/proposal-pipeline-operator, issue #91][topic-token bikeshedding].
 
