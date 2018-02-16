@@ -428,6 +428,16 @@ matter. But to a human, it can make a significant difference.
      expression, even a common type, truncates its benefits to that one type only
      and compromises its expressivity and versatility.
 
+     In particular, relying on immediately invoked function expressions
+     ([IIFEs][]) to accomodate non-unary function is insufficient for idiomatic
+     JavaScript code. JavaScript functions have never fulfilled the [Tennent
+     correspondence principle][]. Several common types of expressions cannot be
+     equivalently used within inner functions, particularly `await` and `yield`.
+     In these frequent cases, attempting to replacing code with “equivalent”
+     IIFEs may cause different behavior, may cause different performance
+     behavior (see example in Goal 2), or may require dramatic rearrangement of
+     logic to conserve the old code’s behavior.
+
      It would be possible to add ad-hoc handling, for selected other expression
      types, to the operator’s grammar. This would expand its benefits to that
      type. However, this conflicts with Goal 5 (adding cyclomatic complexity to
@@ -474,25 +484,52 @@ matter. But to a human, it can make a significant difference.
       clear, then reducing parentheses always would JavaScript code more
       visually terse and less cluttered.
 
-      The example above demonstrates how many parentheses would become unnecessary
-      with pipelines. The [“data-to-ink” visual ratio][chartjunk] has
-      significantly increased, emphasizing the program’s essential information.
-      The developer’s cognitive burden – of ignoring unimportant incidental
-      symbols as they read – has hopefully lightened.
+      The example above demonstrates how numerous verbose parentheses could
+      become unnecessary with pipelines. In these cases the [“data-to-ink”
+      visual ratio][] would significantly increase, emphasizing the program’s
+      essential information. The developer’s cognitive burden – of ignoring
+      unimportant incidental symbols as they read – has hopefully lightened.
 
-    * **Terseness by removing unnecessary variable declarations**: Similarly, [TO DO]
+    * **Terseness by removing unnecessary variable declarations**: Similarly,
+      terseness of code may also be increased by removing variables where
+      possible. This in turn would increase the data-to-ink visual ratio of the
+      text and the distinguishability of important symbols. This style of
+      programming is known as [tacit or point-free programming][tacit
+      programming] (where “point” refers to function arguments). Jeremy Gibbons,
+      a computer scientist, expressed its claimed benefits in a 1970 paper as such:
 
-    * **Terseness by removing unnecessary unnecessary unary arguments**:
-      Terseness may be optimized in other ways, in balance with Goals 4 and 5.
-      In particular, unary function/constructor calls are a frequent type of
-      expression. That is why certain [tacit or point-free styles][tacit
-      programming] of functional programming are used: they can dramatically
-      reduce the verbosity of unary function calls.
+      > Our calculations got completely bogged down using [function arguments].
+      > In attempting to rephrase [function] definitions […] in particular,
+      > eliminating as many variables as possible and performing point-free (or
+      > ‘pointless‘) calculations at the level of functino compisition instead
+      > of point-wise calculations at the level of application, suddenly the
+      > calculations became almost trivial. This is the point of [point-free]
+      > calculations: when you travel light – discarding variables that do not
+      > contribute to the calculation – you can sometimes step lightly across
+      > the surface of the quagmire.
 
-    It is the hope of this proposal’s authors that its [smart body syntax][]
-    reaches a good balance between this Goal and Goals 4 and 5, in the same
-    manner that [Huffman coding][] optimizes textual symbols’ length for their
-    frequency of use: more commonly used symbols are shorter.
+      This sort of terseness, in which the explicit is made tacit and implicit,
+      must be balanced with Goals 4 and 5. Excessive implicitness compromises
+      comprehensibility, at least without low-level tracing of tacit arguments’
+      invisible paths, rather than the actual, high-level meaning of the code.
+      Yet at the same time, excessive explicitness generates ritual, verbose
+      boilerplate that also interferes with reading comprehension. Therefore,
+      Goal 10 must be balanced with Goals 1, 4, and 5.
+
+      [The Zen of Python][PEP 20] famously baldly states, “Explicit is better
+      than implicit,” but it also states, “Flat is better than nested,” and,
+      “Sparse is better than dense.”
+
+    * **Optimizing terseness by frequency of use**:
+      In particular, unary function / constructor calls are a frequent type of
+      expression. Enabling tacit function calls and constructors can
+      dramatically reduce the verbosity of unary function calls, though again
+      this must be balanced with Goals 1, 4, and 5.
+
+      It is the hope of this proposal’s authors that its [smart body syntax][]
+      reaches a good balance between this Goal and Goals 4 and 5, in the same
+      manner that [Huffman coding][] optimizes textual symbols’ length for their
+      frequency of use: more commonly used symbols are shorter.
 
 11. **Human writability**: Writability of code is less important a priority than
     readability of code. Code is usually written a few days, perhaps by a few
@@ -514,7 +551,20 @@ matter. But to a human, it can make a significant difference.
     it may be rearranged up or down, it may be removed – all without affecting
     the pipeline’s other steps in the lines above or below it.
 
-12. **Novice learnability**: [TO DO]
+12. **Novice learnability**: Learnability of the syntax is a desirable Goal:
+    the more intuitive the syntax is, the more rapidly it might be adopted by
+    developers. However, learnability in of itself is not more desirable than
+    the other Goals above. Most JavaScript developers would be novices to this
+    syntax at most once, during which the intuitiveness of the syntax will
+    dominate their experience. But after that honeymoon period, the syntax’s
+    usability in workaday programming will instead affect their reading and
+    writing most. Instead, readability, comprehensibility, locality, simplicity,
+    expressiveness, and terseness are prioritized first, where they would
+    conflict with learnability itself. However, a syntax that is simple but
+    expressive – and, most of all, readable – could well be easier to learn. Its
+    up-front cost in learning could be small, particularly in comparison to the
+    large gains in readability and comprehensibility that it might bring to code
+    in general.
 
 </details>
 
@@ -2838,3 +2888,6 @@ do { do { do { do { 3 * 3 } } }
 [ECMAScript optional catch binding]: https://github.com/tc39/proposal-optional-catch-binding
 [`new.target`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target
 [DSLs]: https://en.wikipedia.org/wiki/Domain-specific_language
+[Tennent correspondence principle]: http://gafter.blogspot.com/2006/08/tennents-correspondence-principle-and.html
+[IIFEs]: https://en.wikipedia.org/wiki/Immediately-invoked_function_expression
+[PEP 20]: https://www.python.org/dev/peps/pep-0020/
