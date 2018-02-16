@@ -1852,8 +1852,8 @@ the `#|>` idiom.]
 <table>
 <thead>
 <tr>
-<th>
-<th>With other, future proposal
+<th>Hypothetical future proposal with explanation
+<th>With hypothetical proposal
 <th>With only this proposal
 
 <tbody>
