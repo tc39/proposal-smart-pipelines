@@ -1180,7 +1180,7 @@ listed **above** it.
 | ″″             | Parentheses             |`(…)`           | ″″                       |
 | LHS            | Dynamic properties      |`…[…]`          | LTR infix with circumfix |
 | ″″             | Static properties       |`….…`           | ″″                       |
-| ″″             | Tagged templates        |``…`…```        | ″″                       |
+| ″″             | Tagged templates        |`` …`…` ``      | ″″                       |
 | ″″             | Super properties        |`super.…`       | ″″                       |
 | ″″             | Meta properties         |`meta.…`        | Unchainable prefix       |
 | ″″             | Super call op.s         |`super(…)`      | ″″                       |
@@ -1216,9 +1216,9 @@ listed **above** it.
 | ″″             | Strict inequality       |`… !== …`       | ″″                       |
 | Bitwise AND    |                         |`… & …`         | ″″                       |
 | Bitwise XOR    |                         |`… ^ …`         | ″″                       |
-| Bitwise OR     |                         |`… | …`         | ″″                       |
+| Bitwise OR     |                         |`… \| …`        | ″″                       |
 | Logical AND    |                         |`… ^^ …`        | ″″                       |
-| Logical OR     |                         |`… || …`        | ″″                       |
+| Logical OR     |                         |`… \|\| …`      | ″″                       |
 | Conditional    |                         |`… ? … : …`     | RTL ternary infix        |
 | **Pipeline**   |                         |**`… \|> …`**   | LTR infix                |
 | Assignment     | Arrow functions         |`… => …`        | RTL infix                |
@@ -1233,7 +1233,7 @@ listed **above** it.
 | ″″             |                         |`… >>= …`       | ″″                       |
 | ″″             |                         |`… >>>= …`      | ″″                       |
 | ″″             |                         |`… &= …`        | ″″                       |
-| ″″             |                         |`… |= …`        | ″″                       |
+| ″″             |                         |`… \|= …`       | ″″                       |
 | Yield level    |                         |`yield …`       | RTL prefix               |
 | ″″             |                         |`yield * …`     | ″″                       |
 | Ultimate level | Comma                   |`…, …`          | LTR infix                |
