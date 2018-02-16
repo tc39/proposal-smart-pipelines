@@ -12,9 +12,9 @@ variously called “pipeline”, “threading”, and “feed” operators. This
 developers find the concept useful.</summary>
 
 * [Clojure’s `->` and `as->`][Clojure pipe]
-* [Forth’s, Joy’s, Factor’s, Onyx’s, PostScript’s, and RPL’s term
+* [Forth’s and Joy’s, then Factor’s, Onyx’s, PostScript’s, and RPL’s term
   concatenation][concatenative programming]
-* [Elixir/Erlang’s `|>`][Elixir pipe]
+* [Elixir / Erlang’s `|>`][Elixir pipe]
 * [Elm’s `|>`][Elm pipe]
 * [F#’s `|>`][F# pipe]
 * [Hack’s `|>` and `$$`][Hack pipe]
@@ -140,12 +140,12 @@ of this “smart pipe operator”][smart body syntax].
 ### Goals
 
 <summary>
-There are thirteen ordered Goals that the smart body syntax tries to fulfill,
+There are twelve ordered Goals that the smart body syntax tries to fulfill,
 which may be summarized,
 “Don’t break my code your syntax,”<br>
 “Don’t make me think about your syntax,”<br>
 “Don’t shoot me in the foot with your syntax,” and<br>
-“Make my code simpler to read and easier to write.”
+“Make my code simpler and easier with your syntax.”
 </summary>
 
 Listed from most to least important:
@@ -260,13 +260,15 @@ Listed from most to least important:
     such as in `export function () { # }`, then this is also almost certainly a
     developer error.
 
-#### “Make my code simpler to read and easier to write.”
-This proposal should increase the human readability of much common code.
+#### “Make my code simpler and easier with your syntax.”
+The new syntax should increase the human readability and writability of much
+common code. It should be simpler to read and comprehend. And it should be
+easier to compose and update. Otherwise, the new syntax would be useless.
 
-Increasing the human readability and comprehensibility of JavaScript is the
-prime original purpose of this proposal. To a computer, whether complex
-expressions are expressed as deeply nested groups or as flat threads of steps
-should not matter. But to a human, it can make a significant difference.
+Making JavaScript expressions more ergonomic for humans is the prime, original
+purpose of this proposal. To a computer, the form of complex expressions –
+whether as deeply nested groups or as flat threads of postfix steps – should not
+matter. But to a human, it can make a significant difference.
 
  8. **Untangled threading**: When a human reads deeply nested groups of
     expressions – which are very common in JavaScript code – their attention
@@ -328,7 +330,8 @@ should not matter. But to a human, it can make a significant difference.
      * Function calls with one unary argument.
      * Function calls with many n-ary arguments.
      * Function and async-function definitions.
-     * Function partial application.
+     * [Functional partial application (eventually)][Syntactic partial
+       application].
      * Generator and async-generator definitions.
      * `instanceof` and `in` operations.
      * Object literals.
@@ -338,7 +341,7 @@ should not matter. But to a human, it can make a significant difference.
      * `super` calls.
      * Template literals.
      * `typeof` operations.
-     * Unary function composition.
+     * Unary function composition (eventually?).
      * `yield` expressions.
 
      The goal of the pipe operator is to untangle deeply nested expressions into
@@ -353,11 +356,11 @@ should not matter. But to a human, it can make a significant difference.
      also does not fulfill this Goal well either: excluding, perhaps arbitrarily,
      whatever classes its grammar’s branches do not handle.
 
-     A pipeline operator that is versatile (this Goal) but conceptually and cyclomatically
-     simple (Goal 5) must be able to handle **all** expressions in a **single**
-     manner **uniformly** **universally** applicable to **all** expressions. It
-     is the hope of this proposal’s authors that its **[topical style][]**
-     fulfills both criteria.
+     A pipeline operator that is versatile (this Goal) but conceptually and
+     cyclomatically simple (Goal 5) must be able to handle **all** expressions
+     in a **single** manner **uniformly** **universally** applicable to **all**
+     expressions. It is the hope of this proposal’s authors that its **[topical
+     style][]** fulfills both criteria.
 
      ***
 
@@ -373,17 +376,18 @@ should not matter. But to a human, it can make a significant difference.
      for the smart pipe operator. They are **deferred** to [other, future
      proposals][possible future extensions to the topic concept].
 
-10. **Visual distinguishability**: [TO DO]
+10. **Visual distinguishability**: Another important aspect of code readability
+    is the visual distinguishability of [TO DO]
 
-11. **Visual terseness**: JavaScript code also often becomes becomes more
-    visually terse and less cluttered. The example above demonstrates how
-    many parentheses would become unnecessary with pipelines.
+11. **Visual terseness**: It is a good thing if new syntax could make much
+    JavaScript code more visually terse and less cluttered. The example above
+    demonstrates how many parentheses would become unnecessary with pipelines.
 
     Terseness may be optimized in other ways, in balance with Goals 4 and 5. In
-    particular, unary function/constructor calls are a very frequent type of
+    particular, unary function/constructor calls are a frequent type of
     expression. That is why certain [tacit or point-free styles][tacit
-    programming] of functional programming dramatically optimize the ergonomics
-    of these cases.
+    programming] of functional programming are used: they can dramatically
+    reduce the verbosity of unary function calls.
 
     It is the hope of this proposal’s authors that its [smart body syntax][]
     reaches a good balance between this Goal and Goals 4 and 5, in the same
@@ -391,8 +395,6 @@ should not matter. But to a human, it can make a significant difference.
     frequency of use: more commonly used symbols are shorter.
 
 12. **Human writability**: [TO DO]
-
-13. **Novice learnability**: [TO DO]
 
 </details>
 
@@ -798,8 +800,8 @@ The term “**head**” is preferred to “**topic expression**” because, in t
 future, the [topic concept could be extended to other syntaxes such as
 `for`][possible future extensions to the topic concept], not just pipelines.
 
-In addition, “head” is preferred to “**LHS**”, because “LHS” in the ES
-specification usually refers to the [LHS of assignments][ES LHS expressions],
+In addition, “head” is preferred to “**LHS**”, because “LHS” in the ECMAScript
+specification usually refers to the [LHS of assignments][ECMAScript LHS expressions],
 which may be confusing. However, “topic expression” and “LHS” are still fine and
 acceptable, if not imprecise, names for a pipeline’s head.
 
@@ -831,12 +833,12 @@ pipelines.
 
 ## Grammar
 This grammar of the pipeline operator juxtaposes brief rules written for the
-JavaScript developer with formally written changes to the ES standard. The
-grammar itself is a [context-free grammar supplemented with static
+JavaScript developer with formally written changes to the ECMAScript standard.
+The grammar itself is a [context-free grammar supplemented with static
 semantics][syntax and static semantics].
 
 <details open>
-<summary>The ES specification explains further.</summary>
+<summary>The ECMAScript specification explains further.</summary>
 
 > A context-free grammar consists of a number of **productions**. Each
 > production has an abstract symbol called a **nonterminal** as its left-hand
@@ -848,9 +850,9 @@ semantics][syntax and static semantics].
 
 ***
 
-This proposal uses the [same notation as that from the ES standard][ES grammar
-notation] to denote context-free grammars; see [ES grammar notation][] for more
-information.
+This proposal uses the [same grammatical notation as that from the ECMAScript
+standard][ECMAScript Notational Conventions, § Grammars] to denote its lexical
+and syntactic grammars.
 
 ### Lexical grammar
 The smart pipe operator adds two new tokens to JavaScript: `|>` the binary pipe,
@@ -860,11 +862,12 @@ and `#` the topic reference.
 <summary>The lexical rule for punctuator tokens would be modified so that
 these two tokens are added.</summary>
 
-The specification explains in [ES Clause 5.1.2][]:
+The specification explains in [ECMAScript Notational Conventions, § Lexical
+Grammar][]:
 
-> A lexical grammar for ECMAScript is given in [ES Clause 11][]. This grammar
-> has as its terminal symbols Unicode code points…It defines a set of
-> productions…that describe how sequences of such code points are translated
+> A lexical grammar for ECMAScript is given in [ECMAScript Lexical Grammar][].
+> This grammar has as its terminal symbols Unicode code points…It defines a set
+> of productions…that describe how sequences of such code points are translated
 > into a sequence of input elements.
 >
 > Input elements other than white space and comments form the terminal symbols
@@ -876,8 +879,8 @@ The specification explains in [ES Clause 5.1.2][]:
 > space and…comments are discarded and do not appear in the stream of input
 > elements for the syntactic grammar.
 
-The _Punctuators_ production is defined in [ES punctuators][]. This production
-would be changed from this:
+The _Punctuators_ production is defined in [ECMAScript Punctuators][]. This
+production would be changed from this:
 
 ```
 Punctuator :: one of
@@ -905,9 +908,10 @@ Punctuator :: one of
 
 ### Grammar parameters
 <details open>
-<summary>In the ES standard, the rules that produce expressions are often parameterized
-with three flags, which are then recursively passed into their constituent
-rules. These parameters thus must also be used by the new rules in this proposal.</summary>
+<summary>In the ECMAScript standard, the rules that produce expressions are
+often parameterized with three flags, which are then recursively passed into
+their constituent rules. These parameters thus must also be used by the new
+rules in this proposal.</summary>
 
 * **_In_**: Whether the current context allows the [`in` relational operator][],
   which is false only in the headers of [`for` iteration statements][].
@@ -920,9 +924,9 @@ rules. These parameters thus must also be used by the new rules in this proposal
 </details>
 
 ### Syntax and static semantics
-The syntactic grammar of JavaScript can transform token sequences (defined by the [lexical grammar][])
-into **parse trees**: rooted tree data structures made of **Parse Nodes**. This
-is described further in [ES Clause 5.1.4][].
+The syntactic grammar of JavaScript can transform token sequences (defined by
+the [lexical grammar][]) into **parse trees**: rooted tree data structures made
+of **Parse Nodes**. This is described further in [ECMAScript Lexical Grammars][].
 
 <details open>
 
@@ -933,7 +937,7 @@ is described further in [ES Clause 5.1.4][].
 > syntactically in error if the tokens in the stream of input elements cannot be
 > parsed as a single instance of the goal nonterminal (Script or Module), with
 > no tokens left over.
-
+>
 > When a parse is successful, it constructs a parse tree, a rooted tree
 > structure in which each node is a **Parse Node**. Each Parse Node is an
 > instance of a symbol in the grammar; it represents a span of the source text
@@ -952,8 +956,8 @@ is described further in [ES Clause 5.1.4][].
 The syntactic grammar of JavaScript further relies upon several functions that
 analyze its syntactic structures. These functions are polymorphic on the types
 of their input syntactic structures, and their definitions are often also
-recursive. The ES specification goes into more detail on these **Static Semantic
-Rules** in [ES Clause 5.2.4][].
+recursive. The ECMAScript specification goes into more detail on these **static
+semantic rules** in [ECMAScript Static Semantic Rules][].
 
 <details open>
 
@@ -985,19 +989,19 @@ This specification defines additions for the following static semantic rules:
 | Uses Outer Topic?                  | New rule defined in this proposal.                |
 | Early Errors                       | Already defined in ES for many nodes.             |
 
-It should be noted that, in the ES standard, the Contains rule is currently
-written as an infix operator: “… Contains …” for historical reasons. This is
-unlike any other static semantic rule, which would be written as prefix
+It should be noted that, in the ECMAScript standard, the Contains rule is
+currently written as an infix operator: “… Contains …” for historical reasons.
+This is unlike any other static semantic rule, which would be written as prefix
 operators “_RuleName_ of … with arguments …”. There are plans to change all
 static semantic rules to instead have a consistent infix syntax resembling
-method calls: “…._ruleName_(…)”. For self-consistency, this proposal will use that
-planned method-like syntax.
+method calls: “…._ruleName_(…)”. For self-consistency, this proposal will use
+that planned method-like syntax.
 
 #### Static “Contains?”
 <details open>
-<summary>The ES spec imply defines the Contains rule for nearly all nodes.
-Conceptually, a node contains another node if the latter is somewhere in the
-former.</summary>
+<summary>The ECMAScript spec implicitly defines the Contains rule for nearly all
+nodes. Conceptually, a node Contains another node if the latter is somewhere in
+the former.</summary>
 
 >    b. If _child_ is an instance of a nonterminal, then
 >
@@ -1012,10 +1016,10 @@ former.</summary>
 
 ***
 
-In the ES standard, the Contains rule is used by many other Static Semantic
-Rules, such as [object initializers’ Computed Property Contains rule][]. The
-rule is also generally overridden by methods definitions and other function
-definitions, such that they hide their substructure from the rule.
+In the ECMAScript standard, the Contains rule is used by many other Static
+Semantic Rules, such as [object initializers’ Computed Property Contains
+rule][]. The rule is also generally overridden by methods definitions and other
+function definitions, such that they hide their substructure from the rule.
 
 It should also be noted that, uniquely among the static semantic rules, Contains
 is written as an infix operator: “… Contains …” for historical reasons. This
@@ -1156,9 +1160,10 @@ listed **above** it.
 </details>
 
 ### Topic reference • Syntax grammar
-The topic reference integrates into the ES syntax as one of the [ES primary
-expressions][], just like `this`. Their production rule needs to be modified so
-that the `#` appears as one of the types of primary expressions.
+The topic reference integrates into the ECMAScript syntax as one of the
+[ECMAScript Primary Expressions][], just like `this`. Their production rule
+needs to be modified so that the `#` appears as one of the types of primary
+expressions.
 
 <details open>
 <summary>An assignment-level expression currently may be a this reference,
@@ -1260,11 +1265,11 @@ environment.
 </details>
 
 ### Pipeline-level expressions • Syntax grammar
-The production rule for [ES assignment-level expressions][] needs to be modified
-so that pipe expressions slip in between it and conditional-level expressions in
-the hierarchy. Then the conditional-expression rule would be used in the
-production for pipeline-level expressions (also defined soon), preserving the
-unbroken recursive hierarchy of expression types.
+The production rule for [ECMAScript Assignment-level Expressions][] needs to be
+modified so that pipe expressions slip in between it and conditional-level
+expressions in the hierarchy. Then the conditional-expression rule would be used
+in the production for pipeline-level expressions (also defined soon), preserving
+the unbroken recursive hierarchy of expression types.
 
 <details open>
 <summary>An assignment-level expression currently may be a conditional
@@ -1456,9 +1461,9 @@ or …), then the pipeline is a **simple reference**.
 
 <details open>
 
-This is achieved by defining the _SimpleReference_ production using
-[_IdentifierReference_][], [_IdentifierName_][], and left recursion, in
-imitation of how [_MemberExpression_][] handles method chains.
+This is achieved by defining the _SimpleReference_ production using [ECMAScript
+_IdentifierReference_][], [ECMAScript _IdentifierName_][], and left recursion,
+in imitation of how [ECMAScript _MemberExpression_][] handles method chains.
 
 ```
 SimpleReference :
@@ -1474,15 +1479,15 @@ SimpleReference :
 <summary>Simple references’ runtime semantics are exactly the same as the
 member expressions they resemble.</summary>
 
-This section is adapted from the [ES Spec, § Property Accessors, § RS:
+This section is adapted from the [ECMAScript Property Accessors, § RS:
 Evaluation][].
 
 * Evaluation
   * SimpleReference : SimpleReference `.` IdentifierName
     * Is evaluated in exactly the same manner as [MemberExpression `:`
-      MemberExpression `.` IdentifierName][ES Spec, § Property Accessors, § RS:
-      Evaluation] except that the contained `SimpleReference` is evaluated in
-      step 1.
+      MemberExpression `.` IdentifierName][ECMAScript Property Accessors,
+      § RS: Evaluation] except that the contained `SimpleReference` is evaluated
+      in step 1.
 
 </details>
 
@@ -1513,7 +1518,8 @@ PipelineBareFunctionCall :
 <details open>
 <summary>Runtime semantics</summary>
 
-This algorithm was adapted from [ES Spec, § Function Calls, § RS: Evaluation][].
+This algorithm was adapted from [ECMAScript Function Calls, § RS:
+Evaluation][].
 
 * PipelineBodyEvaluation
   * With parameter _headValue_.
@@ -1524,8 +1530,8 @@ This algorithm was adapted from [ES Spec, § Function Calls, § RS: Evaluation
     2. Let _func_ be ? GetValue(_ref_).
     3. Let _thisCall_ be this _PipelineBareFunctionCall_.
     4. Let _tailCall_ be IsInTailPosition(thisCall).
-    5. Let _Arguments_ be a [List][ES Spec, § Lists and Records] containing the
-       one element which is _headValue_.
+    5. Let _Arguments_ be a [List][ECMAScript Lists and Records] containing
+       the one element which is _headValue_.
     6. Return ? EvaluateCall(_func_, _ref_, Arguments, tailCall).
 
 </details>
@@ -1555,8 +1561,8 @@ PipelineBareConstructorCall :
 <details open>
 <summary>Runtime semantics</summary>
 
-This algorithm was adapted from [ES Spec, § The new operator, § RS: Evaluation][].
-[TO DO: Add link.]
+This algorithm was adapted from [ECMAScript The new operator, § RS:
+Evaluation][]. [TO DO: Add link.]
 
 * PipelineBodyEvaluation
   * With parameter _headValue_.
@@ -1622,12 +1628,12 @@ Resolving the topic reference is a [TO DO]
 #### Lexical Environments
 
 <details open>
-<summary>The ES spec associates Identifiers with variables/functions using an
-abstract data structure called a Lexical Environment, which is essentially a
-linked list of Lexical Environments. A single piece of the chain of Lexical
-Environments is called an Environment Record. Syntactic structures such as
-functions and blocks each have their own Lexical Environments, created whenever
-such code is evaluated at runtime. </summary>
+<summary>The ECMAScript spec associates Identifiers with variables or functions
+using an abstract data structure called a Lexical Environment, which is
+essentially a linked list of Lexical Environments. A single piece of the chain
+of Lexical Environments is called an Environment Record. Syntactic structures
+such as functions and blocks each have their own Lexical Environments, created
+whenever such code is evaluated at runtime. </summary>
 
 > A Lexical Environment is a specification type used to define the association
 > of Identifiers to specific variables and functions based upon the lexical
@@ -1759,15 +1765,18 @@ The lines in each of the following rows are equivalent.
 </details>
 
 ## Relations to other work
-[TO DO: Include commentary on why “topic reference” instead of “placeholder” –
-because verbally confusing with partial-application placeholders – and because
-forward compatibility with [possible future extensions to the topic concept].]
+[TO DO: https://github.com/gajus/babel-plugin-transform-function-composition]
 
-[TO DO: Partial application.]
+[TO DO: refer to #background list of programming languages]
 
-[TO DO: Private class fields.]
-
+### Other ECMAScript proposals
 [TO DO: `do` expressions]
+
+[TO DO: Partial application: “topic reference” vs. “placeholder”.]
+
+[TO DO: Private class fields and `#`.]
+
+[TO DO: Class decorators and `@`.]
 
 ### Possible future extensions to the topic concept
 <details open>
@@ -2019,7 +2028,7 @@ operator may be the best choice. [TO DO]
 [TO DO: Rewrite everything in this section]
 
 ### Old semantic section
-[TO DO: Rewrite this section to the conventions of the ES specification.]
+[TO DO: Rewrite this section to the conventions of the ECMAScript specification.]
 
 A pipe expression’s semantics are:
 1. The head is evaluated into the topic’s value; call this `topicValue`.
@@ -2282,174 +2291,87 @@ do { do { do { do { 3 * 3 } } }
 ***
 
 [`for` iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
-
 [`in` relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
-
 [annevk]: https://github.com/annevk
-
 [antecedent]: https://en.wikipedia.org/wiki/Antecedent_(grammar)
-
-[ES assignment-level expressions]: https://tc39.github.io/ecma262/#sec-assignment-operators
-
 [associative property]: https://en.wikipedia.org/wiki/Associative_property
-
-[bidirectional associativity]: #bidirectional-associativity
-
-[binding]: https://en.wikipedia.org/wiki/Binding_(linguistics)
-
-[Clojure pipe]: https://clojuredocs.org/clojure.core/as-%3E
-
-[concatenative programming]: https://en.wikipedia.org/wiki/Concatenative_programming_language
-
-[Daniel “littledan” Ehrenberg of Igalia]: https://github.com/littledan
-
-[dataflow programming]: https://en.wikipedia.org/wiki/Dataflow_programming
-
-[Elixir pipe]: https://elixir-lang.org/getting-started/enumerables-and-streams.html
-
-[Elm pipe]: http://elm-lang.org/docs/syntax#infix-operators
-
-[ES grammar notation]: https://tc39.github.io/ecma262/#sec-syntactic-and-lexical-grammars
-
-[ES LHS expressions]: https://tc39.github.io/ecma262/#sec-left-hand-side-expressions
-
-[F# pipe]: https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining
-
-[formal grammar]: #grammar
-
-[functional programming]: https://en.wikipedia.org/wiki/Functional_programming
-
-[garden-path syntax]: https://en.wikipedia.org/wiki/Garden_path_sentence
-
-[GitHub issue tracker]: https://github.com/tc39/proposal-pipeline-operator/issues
-
-[Hack pipe]: https://docs.hhvm.com/hack/operators/pipe-operator
-
-[jashkenas]: https://github.com/jashkenas
-
-[Julia pipe]: https://docs.julialang.org/en/stable/stdlib/base/#Base.:|>
-
-[lexically hygienic]: https://en.wikipedia.org/wiki/Hygienic_macro
-
-[littledan invitation]: https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394
-
-[LiveScript pipe]: http://livescript.net/#operators-piping
-
-[MDN’s guide on expressions and operators]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
-
-[mindeavor]: https://github.com/gilbert
-
-[Node-stream piping]: https://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
-
-[nomenclature]: #nomenclature
-
-[OCaml pipe]: http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html
-
-[Perl 6 pipe]: https://docs.perl6.org/language/operators#infix_==&gt;
-
-[Pify]: https://github.com/sindresorhus/pify
-
-[pipeline syntax]: #pipeline-syntax
-
-[possible future extensions to the topic concept]: #possible-future-extensions-to-topic-concept
-
-[previous pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator
-
-[previous pipeline-placeholder discussions]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
-
-[prior pipeline proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
-
-[Proposal 4: Smart Mix on the pipe-proposal wiki]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
-
-[ES punctuators]: https://tc39.github.io/ecma262/#sec-punctuators
-
-[reverse Polish notation]: https://en.wikipedia.org/wiki/Reverse_Polish_notation
-
-[R pipe]: https://cran.r-project.org/web/packages/magrittr/index.html
-
-[runtime semantics]: #runtime-semantics
-
-[sindresorhus]: https://github.com/sindresorhus
-
-[smart body syntax]: #smart-body-syntax
-
-[syntactic partial application]: https://github.com/tc39/proposal-partial-application
-
-[tacit programming]: https://en.wikipedia.org/wiki/Tacit_programming
-
 [bare style]: #bare-style
-
-[TC39 process]: https://tc39.github.io/process-document/
-
-[term rewriting]: https://en.wikipedia.org/wiki/Term_rewriting
-
-[term rewriting topical style]: #term-rewriting-topical-style
-
-[term rewriting with autogenerated variables]: #term-rewriting-with-single-dummy-variable
-
-[term rewriting with autogenerated variables]: #term-rewriting-with-single-dummy-variable
-
-[term rewriting with single dummy variable]: #term-rewriting-with-single-dummy-variable
-
-[topic and comment]: https://en.wikipedia.org/wiki/Topic_and_comment
-
-[topic variables in other languages]: https://rosettacode.org/wiki/Topic_variable
-
-[Underscore.js]: http://underscorejs.org
-
-[Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
-
-[Fetch Standard]: https://fetch.spec.whatwg.org
-
-[WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
-
-[operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
-
-[expressions and operators (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
-
-[ES Clause 11]: https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar
-
-[ES Clause 5.1.2]: https://tc39.github.io/ecma262/#sec-lexical-and-regexp-grammars
-
-[grammar parameters]: #grammar-parameters
-
-[_IdentifierReference_]: https://tc39.github.io/ecma262/#prod-IdentifierReference
-
-[_MemberExpression_]: https://tc39.github.io/ecma262/#prod-MemberExpression
-
-[_IdentifierName_]: https://tc39.github.io/ecma262/#prod-IdentifierName
-
-[ES Clause 5.2.4]: https://tc39.github.io/ecma262/#sec-static-semantic-rules
-
-[lexical grammar]: #lexical-grammar
-
-[object initializers’ Computed Property Contains rule]: https://tc39.github.io/ecma262/#sec-object-initializer-static-semantics-computedpropertycontains
-
-[REPLs]: https://en.wikipedia.org/wiki/Read–eval–print_loop
-
-[Perl 6 topicalization]: https://www.perl.com/pub/2002/10/30/topic.html/
-
-[ES Clause 5.1.4]: https://tc39.github.io/ecma262/#sec-syntactic-grammar
-
-[ES primary expressions]: https://tc39.github.io/ecma262/#prod-PrimaryExpression
-
-[topic-token bikeshedding]: https://github.com/tc39/proposal-pipeline-operator/issues/91
-
-[resolving topics]: #resolve-topic
-
-[ES Spec, § Property Accessors, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-property-accessors-runtime-semantics-evaluation
-
-[ES Spec, § Function Calls, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-function-calls-runtime-semantics-evaluation
-
-[ES Spec, § Lists and Records]: https://tc39.github.io/ecma262/#sec-list-and-record-specification-type
-
+[bidirectional associativity]: #bidirectional-associativity
+[binding]: https://en.wikipedia.org/wiki/Binding_(linguistics)
+[Clojure pipe]: https://clojuredocs.org/clojure.core/as-%3E
+[concatenative programming]: https://en.wikipedia.org/wiki/Concatenative_programming_language
 [cyclomatic complexity]: https://en.wikipedia.org/wiki/Cyclomatic_complexity#Applications
-
-[relations to other work]: #relations-to-other-work
-
-[private class fields]: https://github.com/tc39/proposal-class-fields/
-
+[Daniel “littledan” Ehrenberg of Igalia]: https://github.com/littledan
+[dataflow programming]: https://en.wikipedia.org/wiki/Dataflow_programming
+[ECMAScript _IdentifierName_]: https://tc39.github.io/ecma262/#prod-IdentifierName
+[ECMAScript _IdentifierReference_]: https://tc39.github.io/ecma262/#prod-IdentifierReference
+[ECMAScript _MemberExpression_]: https://tc39.github.io/ecma262/#prod-MemberExpression
+[ECMAScript Assignment-level Expressions]: https://tc39.github.io/ecma262/#sec-assignment-operators
+[ECMAScript Function Calls, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-function-calls-runtime-semantics-evaluation
+[ECMAScript Lexical Grammar]: https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar
+[ECMAScript LHS expressions]: https://tc39.github.io/ecma262/#sec-left-hand-side-expressions
+[ECMAScript Lists and Records]: https://tc39.github.io/ecma262/#sec-list-and-record-specification-type
+[ECMAScript Notational Conventions, § Grammars]: https://tc39.github.io/ecma262/#sec-syntactic-and-lexical-grammars
+[ECMAScript Notational Conventions, § Lexical Grammar]: https://tc39.github.io/ecma262/#sec-lexical-and-regexp-grammars
+[ECMAScript Primary Expressions]: https://tc39.github.io/ecma262/#prod-PrimaryExpression
+[ECMAScript Property Accessors, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-property-accessors-runtime-semantics-evaluation
+[ECMAScript Punctuators]: https://tc39.github.io/ecma262/#sec-punctuators
+[ECMAScript Static Semantic Rules]: https://tc39.github.io/ecma262/#sec-static-semantic-rules
+[Elixir pipe]: https://elixir-lang.org/getting-started/enumerables-and-streams.html
+[Elm pipe]: http://elm-lang.org/docs/syntax#infix-operators
+[expressions and operators (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
+[F# pipe]: https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining
+[Fetch Standard]: https://fetch.spec.whatwg.org
+[formal grammar]: #grammar
+[functional programming]: https://en.wikipedia.org/wiki/Functional_programming
+[garden-path syntax]: https://en.wikipedia.org/wiki/Garden_path_sentence
+[GitHub issue tracker]: https://github.com/tc39/proposal-pipeline-operator/issues
 [goals]: #goals
-
+[grammar parameters]: #grammar-parameters
+[Hack pipe]: https://docs.hhvm.com/hack/operators/pipe-operator
 [inner blocks]: #inner-blocks
-
+[jashkenas]: https://github.com/jashkenas
+[Julia pipe]: https://docs.julialang.org/en/stable/stdlib/base/#Base.:|>
+[lexical grammar]: #lexical-grammar
+[lexically hygienic]: https://en.wikipedia.org/wiki/Hygienic_macro
+[littledan invitation]: https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394
+[LiveScript pipe]: http://livescript.net/#operators-piping
+[MDN’s guide on expressions and operators]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
+[mindeavor]: https://github.com/gilbert
+[Node-stream piping]: https://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
+[nomenclature]: #nomenclature
+[object initializers’ Computed Property Contains rule]: https://tc39.github.io/ecma262/#sec-object-initializer-static-semantics-computedpropertycontains
+[OCaml pipe]: http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html
+[operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
+[Perl 6 pipe]: https://docs.perl6.org/language/operators#infix_==&gt;
+[Perl 6 topicalization]: https://www.perl.com/pub/2002/10/30/topic.html/
+[Pify]: https://github.com/sindresorhus/pify
+[pipeline syntax]: #pipeline-syntax
+[possible future extensions to the topic concept]: #possible-future-extensions-to-topic-concept
+[previous pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator
+[previous pipeline-placeholder discussions]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
+[prior pipeline proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
+[private class fields]: https://github.com/tc39/proposal-class-fields/
+[Proposal 4: Smart Mix on the pipe-proposal wiki]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
+[R pipe]: https://cran.r-project.org/web/packages/magrittr/index.html
+[relations to other work]: #relations-to-other-work
+[REPLs]: https://en.wikipedia.org/wiki/Read–eval–print_loop
+[resolving topics]: #resolve-topic
+[reverse Polish notation]: https://en.wikipedia.org/wiki/Reverse_Polish_notation
+[runtime semantics]: #runtime-semantics
+[sindresorhus]: https://github.com/sindresorhus
+[smart body syntax]: #smart-body-syntax
+[syntactic partial application]: https://github.com/tc39/proposal-partial-application
+[tacit programming]: https://en.wikipedia.org/wiki/Tacit_programming
+[TC39 process]: https://tc39.github.io/process-document/
+[term rewriting topical style]: #term-rewriting-topical-style
+[term rewriting with autogenerated variables]: #term-rewriting-with-single-dummy-variable
+[term rewriting with autogenerated variables]: #term-rewriting-with-single-dummy-variable
+[term rewriting with single dummy variable]: #term-rewriting-with-single-dummy-variable
+[term rewriting]: https://en.wikipedia.org/wiki/Term_rewriting
+[topic and comment]: https://en.wikipedia.org/wiki/Topic_and_comment
+[topic variables in other languages]: https://rosettacode.org/wiki/Topic_variable
+[topic-token bikeshedding]: https://github.com/tc39/proposal-pipeline-operator/issues/91
+[Underscore.js]: http://underscorejs.org
+[Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
+[WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
