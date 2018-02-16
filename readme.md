@@ -236,6 +236,11 @@ Listed from most to least important:
     hopefully reduce the probability that the developer will misunderstand the
     code they read or write.
 
+    Similarly, reducing edge cases reduces the amount of trivia that a developer
+    must learn and remember in order to use the syntax. The more uniform and
+    simple the syntax’s rules, the more the developer may focus on the actual
+    meaning of their code.
+
 #### “Don’t shoot me in the foot with your syntax.”
  6. **Simple scoping**: It should not be easy to accidentally shadow a reference
     from an outer lexical scope. When the developer does so, any use of that
@@ -408,7 +413,8 @@ matter. But to a human, it can make a significant difference.
     manner that [Huffman coding][] optimizes textual symbols’ length for their
     frequency of use: more commonly used symbols are shorter.
 
-11. **Human writability**: [TO DO]
+11. **Human writability**: Writability of code is less important a priority than
+    readability of code, because the former usually happens once
 
 12. **Novice learnability**: [TO DO]
 
@@ -442,8 +448,8 @@ BSD License.
 <td>
 
 ```js
-function doubleSay (str, separatorStr) {
-  return `${str}${separatorStr}${string}`
+function doubleSay (str, separator) {
+  return `${str}${separator}${string}`
 }
 
 function capitalize (str) {
@@ -462,8 +468,8 @@ stringPromise
 <td>
 
 ```js
-function doubleSay (str, separatorStr) {
-  return `${str}${separatorStr}${str}`
+function doubleSay (str, separator) {
+  return `${str}${separator}${str}`
 }
 
 function capitalize (str) {
@@ -932,9 +938,9 @@ rules in this proposal.</summary>
 * **_In_**: Whether the current context allows the [`in` relational operator][],
   which is false only in the headers of [`for` iteration statements][].
 * **_Yield_**: Whether the current context allows a `yield`
-  expression/declaration (that is, is the current function context a generator?).
+  expression/statement (that is, is the current function context a generator?).
 * **_Await_**: Whether the current context allows an `await`
-  expression/declaration (that is, is the current function context an async
+  expression/statement (that is, is the current function context an async
   function/generator?).
 
 </details>
@@ -1793,6 +1799,12 @@ The lines in each of the following rows are equivalent.
 
 [TO DO: Class decorators and `@`.]
 
+[TO DO: Block params: https://github.com/samuelgoto/proposal-block-params]
+
+[TO DO: Function bind: https://github.com/zenparsing/es-function-bind]
+
+[TO DO: pattern matching https://github.com/tc39/proposal-pattern-matching]
+
 ### Possible future extensions to the topic concept
 <details open>
 
@@ -1841,19 +1853,102 @@ the `#|>` idiom.]
 <thead>
 <tr>
 <th>
-<th>With future proposal
+<th>With other, future proposal
 <th>With only this proposal
-<th>Notes
 
 <tbody>
 <tr>
-<th>Topical for loop
+<td>
+
+**Headless property access**: This example demonstrates a possible future
+“headless property” syntax in which the callee of a property-access expression
+may be omitted, assuming that no possible expression immediately precedes it.
+The omitted, invisible, tacit callee value is the lexical context’s topic. This
+would greatly increase the potential of tacit programming, especially when
+combined with the hypothetical syntaxes below.
+
+(It should be noted that headless properties would introduce a mild ASI hazard:
+if a possible callee precedes the headless property, even on another line of
+code, then the headless property would instead chain onto that preceding callee.
+A semicolon would required to separate the possible callee and the headless
+property. More exploration would be needed to assess how severe this hazard
+would be compared to the benefits it would bring.)
+
+<td>
+
+```js
+x |> f |> .property |> g
+```
+
+<td>
+
+```js
+x |> f |> #.property |> g
+```
+
+<tr>
+<td>
+
+**Headless pipelining**: This example demonstrates a possible future “headless
+pipeline” syntax in which the head of a pipeline operation may be omitted,
+assuming that no possible expression immediately precedes it. The omitted,
+invisible, tacit pipeline head value is the outer lexical context’s topic.
+
+This also would greatly increase the potential of tacit programming when
+combined with the hypothetical syntaxes below, which define additional contexts
+in which the topic is lexically bound.
+
+(It should be noted that headless properties would also introduce a mild ASI
+hazard: if a possible callee precedes the headless pipeline, even on another
+line of code, then the headless pipeline would instead chain onto that preceding
+pipeline. A semicolon would required to separate the possible callee and the
+headless property. More exploration would be needed to assess how severe this
+hazard would be compared to the benefits it would bring.)
+
+[TO DO: Add handling of `yield`/`await` statements versus expressions.
+Example: Is
+`function * () => yield |> 3` grouped as
+`function * () => (yield) |> 3` or is it
+`function * () => yield (|> 3)`?
+Answer: bare `yield` and `await` are forbidden from the heads of pipelines.
+This should be done in this pipeline proposal, throwing a syntax error,
+because it’d be unclear anyway even without headless pipelining.]
+
+<td>
+
+```js
+f |> .property |> g
+```
+
+<td>
+
+```js
+# |> f |> #.property |> g
+```
+
+<tr>
+<td>
+
+Topical **`for` loop**: With this smart-pipe proposal only, `for`–`of`
+statements would prohibit the use of `#` within their bodies, except where `#`
+is inside an inner pipeline inside the `for` loop.
+
+With another, future proposal, all `for`–`of` loops would implicitly bind each
+iterator value to `#`. This implicit binding would be in addition to the
+explicit binding of a normal variable `i` declared within the parenthesized
+antecedent `for (const i of … { … })`.
+
+An additional tacit `for` loop form, completely lacking a parenthesized
+antecedent, would also be added. This tacit form is what is used in this example.
+[TO DO: Link to section on deep nesting.] This example also uses the hypothetical
+headless pipelining syntax from above.
+
 <td>
 
 ```js
 for (range(0, 50)) {
   log(# ** 2);
-  log(#|> Math.sqrt);
+  log(|> Math.sqrt);
 }
 ```
 
@@ -1866,70 +1961,215 @@ for (const i of range(0, 50)) {
 }
 ```
 
+<tr>
 <td>
 
-A `for ` statement would bind the topic reference only when statement’s
-parentheses is not of the form `(… of …)` or `(…; …; …)`. This is anticipated to
-be backward compatible with existing `for` statements.
+Topical **`for`–`await`** loop: This is similar to the tacit topical synchronous
+`for` loop above. With this proposal only, `for`–`await`–`of` statements would
+prohibit the use of `#` within their bodies, except where `#` is inside an inner
+pipeline inside the `for` loop.
 
-When this is so, then it would act as if it were a `for (const # of …) { … }`
-loop: pulling each of the given iterator’s items, then tacitly binding the item
-to the topic reference, then running the block with that topic reference in its
-scope. This maintains forward compatibility with pipelines whose bodies contain
-`for` statements that in turn use the topic reference.
+With another, future proposal, all `for`–`await`–`of` loops would implicitly bind
+each iterator value to `#`. This implicit binding would be in addition to the
+explicit binding of a normal variable `i` declared within the parenthesized
+antecedent `for await (const i of …) { … }`.
 
-[TO DO: Link to section on deep nesting.]
+An additional tacit `for await` loop form, completely lacking a parenthesized
+antecedent, would also be added. This tacit form is what is used in this
+example. [TO DO: Link to section on deep nesting.] This example also uses the hypothetical
+headless pipelining syntax from above.
 
-<tr>
-<th>Topical for–await loop
 <td>
 
 ```js
-for await (lineStream) {
-  yield #|>
-    …
+for await (stream) {
+  yield
+    |> f
+    |> # + 3
 }
 ```
 
 <td>
 
 ```js
-for await (const line of lineStream) {
-  yield line |>
-    …
+for await (const c of stream) {
+  yield c
+    |> f
+    |> # + 3
 }
 ```
 
-<td>Similar.
-
 <tr>
-<th>Topical arrow function
+<td>
+
+Topical **function / method definition**: With this smart-pipe proposal only,
+all function / method definitions would prohibit the use of `#` within their
+bodies, except where `#` is inside an inner pipeline inside the function /
+method. (However, arrow functions do not have this restriction; they may use
+`#`, which refers to their outer lexical scope’s topic.)
+
+With another, future proposal, all function / method definitions would
+implicitly bind their first arguments to `#`. This implicit binding would be in
+addition to the explicit binding of a normal parameter variable `x` declared
+within the parenthesized antecedent of `function (x, …) { … }` or a `method { m
+(x, …) { … } }`. `#` here would be practically similar to `arguments`. But
+unlike `arguments`, `#` in function bodies would obey the same lexical static
+rules imposed upon `#` in pipeline bodies and elsewhere.
+
+As is already possible, a tacit `function` definition, completely lacking a
+parenthesized antecedent, could also be used. This tacit form is what is used in
+this example. [TO DO: Link to section on deep nesting.] This example also uses
+the hypothetical headless property syntax from above.
+
 <td>
 
 ```js
-materials.map(=> #.length)
+function capitalize {
+  return
+    #[0].toUpperCase()
+    + .substring(1)
+}
 ```
 
 <td>
 
 ```js
-materials.map(m => m.length)
+function capitalize (str) {
+  return str[0].toUpperCase()
+    + str.substring(1)
+}
+```
+
+<tr>
+<td>
+
+Topical **block parameter**: The proposed syntax of [ECMAScript block
+parameters][] may greatly benefit from using the topic concept. As with topical
+function definitions, making all block parameters topical would enable the use
+of the topic reference as an implicit first parameter. The block-parameter
+proposal itself has not yet settled on how to parameterize its block parameters.
+The topic reference may be the key to solving this problem, making other,
+special block parameters unnecessary. This example also uses the hypothetical
+headless property syntax and headless pipelining syntax from above.
+
+<td>
+
+```js
+materials.map { |> f |> .length }
+```
+```js
+server(app) {
+  .get('/') do (response) {
+    request()
+      |> .get('param1')
+      |> `hello world ${#}`
+      |> response.send
+  }
+
+  .listen(3000) {
+    log('hello')
+  }
+}
 ```
 
 <td>
 
-This is anticipated to be backward compatible with current arrow functions,
-which always require a head (an identifier reference or a parenthesized
-parameter list) before the `=>`.
+```js
+materials.map { f(???).length }
+```
+```js
+server(app) {
+  ???.get('/') do (response) {
+    request()
+      |> #.get('param1')
+      |> `hello world ${#}`
+      |> response.send
+  }
+
+  ???.listen(3000) {
+    log('hello')
+  }
+}
+```
 
 <tr>
-<th>Topical match
+<td>
+
+Topical **thin-arrow function**: This example uses a new token, the thin arrow,
+which is similar to the `=>` fat arrow in that it creates arrow functions. The
+only difference is that it also lexically binds `#` to its first argument,
+unlike the fat arrow. This example also uses the hypothetical
+headless pipelining syntax from above.
+
 <td>
 
 ```js
-function getLength (#) {
-  return match {
-    …
+materials.map(-> |> f |> .length)
+```
+
+<td>
+
+```js
+materials.map(m => m |> f |> #.length)
+```
+
+<tr>
+<td>
+
+Topical **pattern matching**: The proposed syntax of [ECMAScript pattern
+matching][] would bind the topic reference within the scope of a successful
+match clause’s scope. The topic value would be the truthy result of the
+successful `Symbol.matches` call. This example also uses the hypothetical
+headless property syntax from above.
+
+<td>
+
+```js
+match (x) {
+  100: #
+  Array:
+    .length
+  /(\d)(\d)(\d)/:
+    #.groups |>
+      #[0] + #[1] + #[2]
+}
+```
+
+<td>
+
+```js
+match (x) {
+  100: x
+  Array:
+    x.length
+  /(\d)(\d)(\d)/ -> m:
+    m.groups |>
+      #[0] + #[1] + #[2]
+}
+```
+
+<tr>
+<td>
+
+**Tacit pattern matching**: [ECMAScript pattern matching] could also have a
+completely tacit version, in which the parenthesized antecedent is completely
+omitted in favor of tacitly using the outer context’s topic. (This would have to
+somehow be distinguishable from a call to a function named `match` with a [bare
+block argument][ECMAScript block parameters].) This example also uses the
+hypothetical headless pipelining syntax from above.
+
+<td>
+
+```js
+function getLength {
+  match {
+    { x, y }:
+      (x ** 2 + y ** 2)
+        |> Math.sqrt
+    [...]:
+      .length
+    else:
+      throw new Error(#)
   }
 }
 ```
@@ -1938,43 +2178,45 @@ function getLength (#) {
 
 ```js
 function getLength (vector) {
-  return match (vector) {
-    …
+  match (vector) {
+    { x, y }:
+      (x ** 2 + y ** 2)
+        |> Math.sqrt
+    [...]:
+      #.length
+    else:
+      throw new Error(vector)
   }
 }
 ```
 
-<td>[TO DO: Link to match proposal.]
-
 <tr>
-<th>Topical arrow function with topical match
 <td>
 
-```js
-const getLength = => match {
-  …
-}
-```
+**Tacit error capture**: With this smart-pipe proposal only, all `try`
+statements’ `catch` clauses would prohibit the use of `#` within their bodies,
+except where `#` is inside an inner pipeline inside the `catch` clause. [TO DO:
+Link to sections explaining these inner block rules.]
 
-<td>
+With another, future proposal, all `catch` causes would implicitly bind
+their caught errors to `#`. This implicit binding would be in addition to the
+explicit binding of a normal variable `error` declared within the parenthesized
+antecedent `try { … } catch (error) { … }`.
 
-```js
-const getLength = v => match (v) {
-  …
-}
-```
+An additional bare `catch` form, completely lacking a parenthesized antecedent,
+has already been proposed as [ECMAScript optional catch binding][]. This bare
+form would also support implicit `#` binding, serving as the fully tacit form
+used in this example. [TO DO: Link to section on deep nesting.] The bare form,
+along with the hypothetical headless property syntax from above, are
+demonstrated here.
 
-<td>[TO DO]
-
-<tr>
-<th>Topical error capture
 <td>
 
 ```js
 try {
   …
 } catch {
-  log(#.message)
+  log(.message)
 } finally {
   …
 }
@@ -1992,10 +2234,12 @@ try {
 }
 ```
 
-<td>[TO DO: Link to bare error proposal.]
-
 <tr>
-<th>Topical error capture with topical match
+<td>
+
+**Tacit error capture** with tacit **match**: This combination may be especially
+useful for polymorphic handling of caught errors by their types.
+
 <td>
 
 ```js
@@ -2003,10 +2247,14 @@ try {
   …
 } catch {
   match {
-    MyError: …
-    TypeError: …
-    SyntaxError: …
-    Error: …
+    MyError:
+      #|> f
+    TypeError:
+      #|> g
+    SyntaxError:
+      #|> f |> g
+    Error:
+      `Error: ${#.message}`
   }
 }
 ```
@@ -2018,15 +2266,90 @@ try {
   …
 } catch (error) {
   match (error) {
-    MyError: …
-    TypeError: …
-    SyntaxError: …
-    Error: …
+    MyError:
+      error |> f
+    TypeError:
+      error |> g
+    SyntaxError:
+      error |> f |> g
+    Error:
+      `Error: ${error.message}`
   }
 }
 ```
 
-<td>[TO DO]
+<tr>
+<td>
+
+Topical **metaprogramming reference**: In the event that TC39 seriously
+considers the topical function definitions shown above, a **`function.topic`**
+metaprogramming operator, in the style of the [`new.target`][] operator, could
+be useful in creating topic-aware functions.
+
+This might be especially useful in creating APIs resembling [domain-specific
+languages][DSLs] with [ECMAScript block parameters][]. This example creates
+three functions that form an API resembling [Visual Basic’s `select`
+statement][]. Two of these functions (`when` and `otherwise`) that are expected
+to be called always within the third function (`select`)’s callback block.
+
+An alternate solution without metaprogramming topics is not yet specified by the
+current proposal for [ECMAScript block parameters][].
+
+<td colspan=2>
+
+```js
+class CompletionRecord { [[TO DO]] }
+
+function select (value, callback) {
+  const contextTopic =
+    [[TO DO: create completion record]]
+  return callback(topic) // TO DO
+}
+
+function otherwise (callback) { [[TO DO]] }
+
+function when (testValue, callback) {
+  const contextTopic = function.topic
+  return match (contextTopic) {
+    [TO DO]:
+      |> applyWhen(#, testValue, callback)
+    else:
+      throw new Error('when used outside select block')
+  }
+}
+
+function applyWhen (contextTopic, testValue) {
+  match (.value) {
+    [...]: |> applyWhenArray
+    else: |> applyWhenValue
+  }
+}
+
+function applyWhenArray (contextTopic, testArray) {
+  .some(arrayValue =>
+    contextTopic |> when(arrayValue, callback))
+}
+
+function applyWhenValue (contextTopic, testArray) {
+  return #[Symbol.matches](contextValue)
+    ? contextTopic |> callback |> [[TO DO]]
+    : [[TO DO: Pass to next when]]
+}
+```
+***
+```js
+select ('world') {
+  when ([Boolean, Number]) {
+    log(#)
+  }
+  when (String) {
+    log(`Hello ${#}`)
+  }
+  otherwise {
+    throw new Error(`Error: ${# |> format}`)
+  }
+}
+```
 
 </table>
 </details>
@@ -2397,3 +2720,8 @@ do { do { do { do { 3 * 3 } } }
 [motivation]: #motivation
 [Huffman coding]: https://en.wikipedia.org/wiki/Huffman_coding
 [ECMAScript `new` operator, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-new-operator-runtime-semantics-evaluation
+[ECMAScript pattern matching]: https://github.com/tc39/proposal-pattern-matching
+[ECMAScript block parameters]: https://github.com/samuelgoto/proposal-block-params
+[ECMAScript optional catch binding]: https://github.com/tc39/proposal-optional-catch-binding
+[`new.target`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target
+[DSLs]: https://en.wikipedia.org/wiki/Domain-specific_language
