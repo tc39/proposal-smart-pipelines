@@ -502,7 +502,7 @@ operator that improves readability should be versatile (this Goal) but
 conceptually and cyclomatically simple (Goal 5). Such an operator should be able
 to handle **all** expressions, in a **single** manner **uniformly**
 **universally** applicable to **all** expressions. It is the hope of this
-proposal’s authors that its **[topical style][]** fulfills both criteria.
+proposal’s authors that its [smart body syntax][] fulfills both criteria.
 
 ##### Distinguishable punctuators
 Another important aspect of code readability is the visual distinguishability of
@@ -665,9 +665,9 @@ Ditto for `|> new User.Message`, which is a bare unary constructor call,
 abbreviated from `|> new User.Message(#)`.
 
 This is the [smart part of the pipe operator][smart body syntax], which can
-distinguish between a [bare style][] and the usual `#`-using [topical style][]
-by using a simple rule: only identifiers, dots, and `new`; no parentheses,
-brackets, braces, or other operators.
+distinguish between two syntax styles (bare vs. topical) by using a simple rule:
+bare uses only identifiers, dots, and `new`, and never parentheses, brackets,
+braces, or other operators.
 
 <td>
 
@@ -1002,7 +1002,7 @@ A pipeline’s body may be in one of two **styles**:\
 topical style and\
 bare style.
 
-**[Topical style][]** is the default style. A pipeline body in topical style forms
+**Topical style** is the default style. A pipeline body in topical style forms
 an inner lexical scope – called the pipeline’s **topical scope** – within which
 a special token is bound to the value of the head; the section below explains.
 
@@ -1473,7 +1473,7 @@ listed **above** it.
 
 </details>
 
-### Topic reference • Syntax grammar
+### Topic reference • Syntactic grammar
 The topic reference integrates into the ECMAScript syntax as one of the
 [ECMAScript Primary Expressions][], just like `this`. Their production rule
 needs to be modified so that the `#` appears as one of the types of primary
@@ -1543,7 +1543,7 @@ for identifiers, parenthesized expressions, and arrow parameter lists.</summary>
 
 </details>
 
-### Pipeline-level expressions • Syntax grammar
+### Pipeline-level expressions • Syntactic grammar
 The production rule for [ECMAScript Assignment-level Expressions][] needs to be
 modified so that pipe expressions slip in between it and conditional-level
 expressions in the hierarchy. Then the conditional-expression rule would be used
@@ -1652,11 +1652,11 @@ But for two certain simple cases – unary functions and constructors – you ma
 omit the topic reference from the body. This is called **bare style**.
 
 When a pipe is in bare style, we refer to the body as a **bare function** or a
-**bare constructor**, depending on the rules in [bare style][]. The body acts
-as just a simple reference to a function or constructor, such as with `… |>
-capitalize` and `… |> new User.Message`. The body’s value would then be called
-as a unary function or constructor, without having to use the topic reference as
-an explicit argument.
+**bare constructor**, depending on the rules in [bare style • syntactic
+grammar][]. The body acts as just a simple reference to a function or
+constructor, such as with `… |> capitalize` and `… |> new User.Message`. The
+body’s value would then be called as a unary function or constructor, without
+having to use the topic reference as an explicit argument.
 
 <details open>
 
@@ -1801,7 +1801,7 @@ then the pipeline is a **bare function call**. The **pipeline’s value** is
 **_body_`(`_topic_`)`**.
 
 <details open>
-<summary>Syntax grammar</summary>
+<summary>Syntactic grammar</summary>
 
 * **_Pipeline Bare Constructor Call_** :
   * `new` _Simple Reference_
@@ -1872,6 +1872,72 @@ Topical style behaves like **`do { const ` _topic Identifier_ `=` _topic_`;
 [TO DO: Add link to term-rewriting appendix.]
 
 </details>
+
+### Multiple topic references and inner functions
+<details open>
+<summary>The topic reference may be used multiple times in a pipeline body. Each
+use refers to the same value (wherever the topic reference is not overridden by
+another, inner pipeline’s topical scope). Because it is bound to the result of
+the topic, the topic is still only ever evaluated once.</summary>
+
+The lines in each of the following rows are equivalent.
+
+| Pipeline                         | Block                                             |
+| -------------------------------- | ------------------------------------------------- |
+|`… \|> f(#, #)`                   |`const $ = …; f($, $)`                             |
+|`… \|> [#, # * 2, # * 3]`         |`const $ = …; [$, $ * 2, $ * 3]`                   |
+
+[TO DO]
+
+</details>
+
+### Inner blocks
+<details open>
+<summary>The body of a pipeline may contain an inner arrow function but no other
+type of block expression.</summary>
+
+The lines in each of the following rows are equivalent.
+
+| Pipeline                         | Block                                              |
+| -------------------------------- | -------------------------------------------------- |
+|`… \|> x => # + x`                |`const $ = …; x => # + x`                           |
+|`… \|> settimeout(() => # * 5)`   |`const $ = …; settimeout(() => $ * 5)`              |
+
+However, you cannot use use topic references inside of other types of blocks:
+function, async function, generator, async generator, or class.
+
+More precisely, all block expressions (other than arrow functions) shadow any
+outer lexical context’s topic with its own *absence* of a topic. This behavior
+is in order to fulfill both [Goals 3 and 6][goals].
+
+| Pipeline                         |                                                    |
+| -------------------------------- |--------------------------------------------------- |
+|`… \|> function () { # }`         | Syntax Error: Topic never used by pipeline’s body. |
+
+[TO DO]
+
+</details>
+
+### Nested pipelines
+<details open>
+<summary>Both the head and the body of a pipeline may contain nested inner
+pipelines. Nested pipelines in the body is not encouraged, but it is still
+permitted.</summary>
+
+The lines in each of the following rows are equivalent.
+
+| Pipeline                         | Block                                              |
+| -------------------------------- | -------------------------------------------------- |
+|`… \|> f(() => f(#) * 5)`         |`const $ = …; f(x => f($) * 5)`                     |
+|`… \|> f(() => f(#) \|> # * 5)`   |`const $ = …; f(x => f($) \|> # * 5)`               |
+|`… \|> f(() => # \|> f \|> # * 5)`|`const $ = …; f(x => $ \|> f \|> # * 5)`            |
+
+[TO DO]
+
+</details>
+
+## Runtime semantics
+[TO DO]
 
 ### Topic resolution
 Resolving the topic reference is a [TO DO]
@@ -1950,72 +2016,6 @@ is “topical” in the usual adjectival sense.]
 #### Abstract operations
 **Resolve Topic** is a new abstract operation that acts upon a Lexical Environment.
 
-[TO DO]
-
-### Multiple topic references and inner functions
-<details open>
-<summary>The topic reference may be used multiple times in a pipeline body. Each
-use refers to the same value (wherever the topic reference is not overridden by
-another, inner pipeline’s topical scope). Because it is bound to the result of
-the topic, the topic is still only ever evaluated once.</summary>
-
-The lines in each of the following rows are equivalent.
-
-| Pipeline                         | Block                                             |
-| -------------------------------- | ------------------------------------------------- |
-|`… \|> f(#, #)`                   |`const $ = …; f($, $)`                             |
-|`… \|> [#, # * 2, # * 3]`         |`const $ = …; [$, $ * 2, $ * 3]`                   |
-
-[TO DO]
-
-</details>
-
-### Inner blocks
-<details open>
-<summary>The body of a pipeline may contain an inner arrow function but no other
-type of block expression.</summary>
-
-The lines in each of the following rows are equivalent.
-
-| Pipeline                         | Block                                              |
-| -------------------------------- | -------------------------------------------------- |
-|`… \|> x => # + x`                |`const $ = …; x => # + x`                           |
-|`… \|> settimeout(() => # * 5)`   |`const $ = …; settimeout(() => $ * 5)`              |
-
-However, you cannot use use topic references inside of other types of blocks:
-function, async function, generator, async generator, or class.
-
-More precisely, all block expressions (other than arrow functions) shadow any
-outer lexical context’s topic with its own *absence* of a topic. This behavior
-is in order to fulfill both [Goals 3 and 6][goals].
-
-| Pipeline                         |                                                    |
-| -------------------------------- |--------------------------------------------------- |
-|`… \|> function () { # }`         | Syntax Error: Topic never used by pipeline’s body. |
-
-[TO DO]
-
-</details>
-
-### Nested pipelines
-<details open>
-<summary>Both the head and the body of a pipeline may contain nested inner
-pipelines. Nested pipelines in the body is not encouraged, but it is still
-permitted.</summary>
-
-The lines in each of the following rows are equivalent.
-
-| Pipeline                         | Block                                              |
-| -------------------------------- | -------------------------------------------------- |
-|`… \|> f(() => f(#) * 5)`         |`const $ = …; f(x => f($) * 5)`                     |
-|`… \|> f(() => f(#) \|> # * 5)`   |`const $ = …; f(x => f($) \|> # * 5)`               |
-|`… \|> f(() => # \|> f \|> # * 5)`|`const $ = …; f(x => $ \|> f \|> # * 5)`            |
-
-[TO DO]
-
-</details>
-
-## Runtime semantics
 [TO DO]
 
 ### Topic reference • Runtime semantics
@@ -2926,7 +2926,7 @@ do { do { do { do { 3 * 3 } } }
 [annevk]: https://github.com/annevk
 [antecedent]: https://en.wikipedia.org/wiki/Antecedent_(grammar)
 [associative property]: https://en.wikipedia.org/wiki/Associative_property
-[bare style]: #bare-style
+[bare style • syntactic grammar]: #bare-style-syntactic-grammar
 [bidirectional associativity]: #bidirectional-associativity
 [binding]: https://en.wikipedia.org/wiki/Binding_(linguistics)
 [Clojure pipe]: https://clojuredocs.org/clojure.core/as-%3E
@@ -3020,7 +3020,6 @@ do { do { do { do { 3 * 3 } } }
 [topic and comment]: https://en.wikipedia.org/wiki/Topic_and_comment
 [topic variables in other languages]: https://rosettacode.org/wiki/Topic_variable
 [topic-token bikeshedding]: https://github.com/tc39/proposal-pipeline-operator/issues/91
-[topical style]: #topical-style
 [Underscore.js]: http://underscorejs.org
 [Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
