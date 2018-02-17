@@ -1085,9 +1085,18 @@ semantics][syntax and static semantics].
 
 This proposal uses the [grammatical notation as that from the ECMAScript
 standard][ECMAScript Notational Conventions, § Grammars] to denote its lexical
-and syntactic grammars, with two modifications for human readability:
-“camelCase” is spaced out: “camel Camel” and adjacent variables, production
-names, and rule names are separated by the middle dot “·”.
+and syntactic grammars, with three modifications for human readability:
+
+* “camelCase” is spaced out as “camel Camel” for all variables, production
+  names, and rule names.
+
+* Adjacent variables, production names, and rule names are separated by the
+  middle dot “·”. This prevents two adjacent identifiers from being confused as
+  the same identifier separated by spaces. (Middle dot is omitted between code
+  literals, which are obviously separate through their formatting.)
+
+* References to rules are written in a method style: “…._Rule Name_(…)”, rather
+  than “_Rule Name_ of … with arguments …” or “… Contains …”.
 
 ### Lexical grammar
 The smart pipe operator adds two new tokens to JavaScript: `|>` the binary pipe,
