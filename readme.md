@@ -2211,7 +2211,7 @@ because it’d be unclear anyway even without headless pipelining.]
 <td>
 
 ```js
-f |> .property |> g
+|> f |> .property |> g
 ```
 
 <td>
