@@ -685,10 +685,11 @@ new User.Message(
 )
 ```
 In contrast to the version with pipes, this code is deeply nested, not flat. The
-expression has four levels of indentation instead of two. Reading its data flow
-requires checking both the beginning and end of each expression, and each step
-expression gradually increases in size. Inserting or removing any step of the
-data flow also requires changes to the indentation of any previous steps’ lines.
+expression has four levels of indentation instead of two.\
+Reading its data flow requires checking both the beginning and end of each
+expression, and each step expression gradually increases in size.\
+Inserting or removing any step of the data flow also requires changes to the
+indentation of any previous steps’ lines.
 
 <tr>
 <td>
@@ -705,6 +706,30 @@ stringPromise
 When tiny functions are only used once, and their bodies would be obvious and
 self-documenting in meaning, they might be ritual boilerplate that a developer
 may prefer to inline.
+
+<td>″″
+
+<tr>
+<td>
+
+```js
+//🚫 SyntaxError: ambiguous await at start of pipeline.
+await stringPromise
+  |> # ?? throw new TypeError()
+  |> `${#}, ${#}`
+  |> #[0].toUpperCase() + #.substring(1)
+  |> # + '!'
+  |> new User.Message
+```
+This is a syntax error, designed to avoid a foot gun. If this were a statement,
+then does the developer want to apply pipeline’s steps to `stringPromise`,
+*then* await the pipeline’s result: `await (stringPromise |> …)`? Or does the
+developer want to first await `stringPromise` and then apply the rest of the
+pipeline: `(await stringPromise) |> …`? To avoid this foot gun, `await` and
+`yield` are prohibited from the start of pipeline heads. Just wrap the head in
+parentheses `(await stringPromise) |> …` or move the `await` to another line
+`stringPromise |> await # |> …`. [TO DO: Link to section on await / yield in
+head expressions.]
 
 <td>″″
 
@@ -966,7 +991,8 @@ operator**, or a **pipeline operator**; all these names are equivalent. This
 specification will prefer the term “pipe operator”.
 
 A pipe operator between two expressions forms a **pipe expression**. One or more
-pipe expressions in a chain form a **pipeline**.
+pipe expressions in a chain form a **pipeline**, and each pipe expression is
+a **step** of the pipeline.
 
 A **pipeline-level expression** is an expression at the same [precedence level
 of the pipe operator][operator precedence]. Although all pipelines are
