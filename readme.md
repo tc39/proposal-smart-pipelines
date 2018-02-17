@@ -1324,6 +1324,8 @@ With parameter _symbol_.
 
   [Unchanged.]
 
+</details>
+
 #### Static Early Errors
 Certain syntax errors cannot be detected by the context-free grammar alone yet
 must still be detected at compile time. Early Error Rules are Static Semantic
