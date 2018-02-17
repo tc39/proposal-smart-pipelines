@@ -1774,24 +1774,6 @@ then the pipeline is a **bare constructor call**.
 
 </details>
 
-<details open>
-<summary>Runtime semantics</summary>
-
-This algorithm was adapted from [ECMAScript `new` operator, § RS: Evaluation][].
-
-* **_Pipeline Body Evaluation_**\
-  With parameter _head Value_.
-
-  Note that this Pipeline Body Evaluation rule is used in the evaluation of
-  _Pipeline Expression_, defined previously.
-
-  * **_Pipeline Bare Constructor Call_** : `new` _Simple Reference_
-    * [TO DO: Can we use Evaluate New if _Simple Reference_ is technically not the
-      same as Member Expression? Should we just use Member Expression with some
-      limitations?]
-
-</details>
-
 ##### Practical consequences
 Therefore, a pipeline in **bare style *never*** has **parentheses `(…)` or
 brackets `[…]`** in its body. Neither `… |> object.method()` nor `… |>
@@ -1909,7 +1891,7 @@ Resolving the topic reference is a [TO DO]
 
 #### Lexical Environments
 
-<details open>
+<details>
 <summary>The ECMAScript spec associates Identifiers with variables or functions
 using an abstract data structure called a Lexical Environment, which is
 essentially a linked list of Lexical Environments. A single piece of the chain
@@ -2054,6 +2036,38 @@ This algorithm was adapted from [ECMAScript `new` operator, § RS: Evaluation][
     * [TO DO: Can we use Evaluate New if _Simple Reference_ is technically not the
       same as Member Expression? Should we just use Member Expression with some
       limitations?]
+
+</details>
+
+#### Topical style • Runtime semantics
+**If a pipeline** of the form _topic_ |> _body_ is ***not* match the [bare style
+• syntactic grammar][]** (that is, it is *not* a bare function call or bare
+constructor call), then it **must be in topical style**.
+
+<details open>
+<summary>The pipeline’s value is whatever the body expression evaluates into,
+assuming that the topic value is first bound to the topic reference within the
+body scope.</summary>
+
+But more precisely, it binds the topic to the pipeline’s head value then
+evaluates the RHS [TO DO]
+
+* **Evaluation**
+  * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_
+    1. Let _head Value_ be the result of evaluating _Pipeline Expression_.
+    2. [TO DO: Create topic environment]
+    3. [TO DO: Evaluate body in new environment]
+
+Topical style behaves like **`do { const ` _topic Identifier_ `=` _topic_`;
+`_substituted Body_` }`**, where:
+
+* _topic Variable_ is any [identifier that is *not* already used by any
+  variable][lexically hygienic], in the outer lexical context or the body’s
+  inner topical context,
+* And _substituted Body_ is _body_ but with every instance of outside of
+  the topic reference replaced by _topic Variable_.
+
+[TO DO: Add link to term-rewriting appendix.]
 
 </details>
 
