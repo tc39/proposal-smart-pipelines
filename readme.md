@@ -381,15 +381,16 @@ of pipelines, and they cannot be used within any block other than arrow
 functions.** See the section on [inner blocks][].
 
 ##### Static analyzability
-Early errors help the editing JavaScript developer avoid common footguns at
-compile time, such as preventing them from accidentally omitting a topic
+[Early errors][] help the editing JavaScript developer avoid common [footguns][]
+at compile time, such as preventing them from accidentally omitting a topic
 reference where they meant to put one. For instance, if `x |> 3` were not a
 syntax error, then it would be a useless operation and almost certainly not what
-the developer intended.
+the developer intended. Situations like these should be statically detectable
+and cause compile-time [early errors][].
 
 Similarly, if the topic reference is used outside of a pipeline RHS’s scope,
 such as in `export function () { # }`, then this is also almost certainly a
-developer error.
+developer error. This too should be a compile-time early error.
 
 #### “Make my code easier to read.”
 The new syntax should increase the human readability and writability of much
@@ -721,15 +722,15 @@ await stringPromise
   |> # + '!'
   |> new User.Message
 ```
-This is a syntax error, designed to avoid a foot gun. If this were a statement,
-then does the developer want to apply pipeline’s steps to `stringPromise`,
-*then* await the pipeline’s result: `await (stringPromise |> …)`? Or does the
-developer want to first await `stringPromise` and then apply the rest of the
-pipeline: `(await stringPromise) |> …`? To avoid this foot gun, `await` (and
-`yield`) are prohibited from the start of pipeline heads. Just wrap the head in
-parentheses `(await stringPromise) |> …` or move the `await` to another line
-`stringPromise |> await # |> …`. [TO DO: Link to section on await / yield in
-head expressions.]
+This is a syntax error, designed to [avoid a footgun at compile time][static
+analyzability]. If this were a statement, then does the developer want to apply
+pipeline’s steps to `stringPromise`, *then* await the pipeline’s result: `await
+(stringPromise |> …)`? Or does the developer want to first await `stringPromise`
+and then apply the rest of the pipeline: `(await stringPromise) |> …`? To avoid
+this footgun, `await` (and `yield`) are prohibited from the start of pipeline
+heads. Just wrap the head in parentheses `(await stringPromise) |> …` or move
+the `await` to another line `stringPromise |> await # |> …`. [TO DO: Link to
+section on await / yield in head expressions.]
 
 <td>″″
 
@@ -1232,13 +1233,13 @@ semantic rules** in [ECMAScript Static Semantic Rules][].
 
 This specification defines additions for the following static semantic rules:
 
-| Form                               | Notes                                             |
-| ---------------------------------- | ------------------------------------------------- |
-| Contains?                          | Already defined in ES for nearly all nodes        |
-| Is Function Definition?            | Already defined in ES: all expressions            |
-| Is Identifier Reference?           | Already defined: primary- & LHS-level expressions |
-| Is Valid Simple Assignment Target? | Already defined: primary- & LHS-level expressions |
-| Early Errors                       | Already defined in ES for nearly all nodes        |
+| Form                              | Notes                                             |
+| --------------------------------- | ------------------------------------------------- |
+| [Contains][]                      | Already defined in ES for nearly all nodes        |
+| Is Function Definition            | Already defined in ES: all expressions            |
+| Is Identifier Reference           | Already defined: primary- & LHS-level expressions |
+| Is Valid Simple Assignment Target | Already defined: primary- & LHS-level expressions |
+| [Early Errors][]                  | Already defined in ES for nearly all nodes        |
 
 It should be noted that, in the ECMAScript standard, the Contains rule is
 currently written as an infix operator: “… Contains …” for historical reasons.
@@ -1275,14 +1276,19 @@ Semantic Rules, such as [object initializers’ Computed Property Contains
 rule][]. The rule is also generally overridden by methods definitions and other
 function definitions, such that they hide their substructure from the rule.
 
-It should be noted that, uniquely among the static semantic rules, Contains is
+(It should be noted that, uniquely among the static semantic rules, Contains is
 written as an infix operator: “… Contains …” for historical reasons. This
-proposal will instead use the planned future new syntax “….contains(…)”.
+proposal will instead use the planned future new syntax “….contains(…)”.)
 
-In addition, Contains does not penetrate into the bodies of function and method
-definitions, hiding them from the rules in outside contexts. All definitions for
-functions, generators, methods, and so forth override Contains to always return
-false, with this note:
+**This proposal will use Contains to determine whether a pipeline’s body uses
+its `#` topic reference.** This is so that many [footguns may be statically
+detected as an early error][static analyzability] – for instance, using a
+pipeline in topical style without ever using its topic in its body [TO DO: Link].
+
+Contains does not penetrate into the bodies of function and method definitions,
+hiding them from the rules in outside contexts. All definitions for functions,
+generators, methods, and so forth override Contains to always return false, with
+this note:
 
 > Static semantic rules that depend upon substructure generally do not look into
 > function definitions.
@@ -1319,6 +1325,9 @@ With parameter _symbol_.
 Certain syntax errors cannot be detected by the context-free grammar alone yet
 must still be detected at compile time. Early Error Rules are Static Semantic
 Rules that define when such extra syntax errors occur.
+
+Two such static early errors are mentioned in both the Goal [static analyzability][] and
+the static [Contains][] rule.
 
 <details open>
 
@@ -2092,7 +2101,7 @@ of a pipeline body. [TO DO: Link to pertinent grammar sections.]
 
 Should this proposal be accepted, the door becomes opened to extending the topic
 concept to other syntax forms, potentially multiplying its benefits toward
-reading and writing, while perhaps preserving static analyzability and… [TO DO]
+reading and writing, while perhaps preserving [static analyzability][] and… [TO DO]
 
 [TO DO: Note on forward compatibility with these possibilities.]
 
@@ -3009,3 +3018,6 @@ do { do { do { do { 3 * 3 } } }
 [essential complexity]: https://en.wikipedia.org/wiki/Essential_complexity
 [examples]: #examples
 [ECMAScript arrow functions, § SS: Contains]: https://tc39.github.io/ecma262/#sec-arrow-function-definitions-static-semantics-contains
+[footguns]: https://en.wiktionary.org/wiki/footgun
+[early errors]: #static-early-errors
+[Contains]: #static-contains
