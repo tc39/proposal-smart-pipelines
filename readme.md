@@ -1482,17 +1482,17 @@ The old version:
 
 * **_Primary Expression_** [_Yield_, _Await_]:
   * `this`
-  * _Identifier Reference_ [? _Yield_, ? _Await_]
+  * _Identifier Reference_ [? _Yield_, ? _Await_]
   * _Literal_
-  * _Array Literal_ [? _Yield_, ? _Await_]
-  * _Object Literal_ [? _Yield_, ? _Await_]
+  * _Array Literal_ [? _Yield_, ? _Await_]
+  * _Object Literal_ [? _Yield_, ? _Await_]
   * _Function Expression_
-  * _Class Expression_ [? _Yield_, ? _Await_]
+  * _Class Expression_ [? _Yield_, ? _Await_]
   * _Generator Expression_
   * _Async Function Expression_
   * _Regular Expression Literal_
-  * _Template Literal_ [? _Yield_, ? _Await_, ~ _Tagged_]
-  * _Cover Parenthesized Expression and Arrow Parameter List_ [? _Yield_, ? _Await_]
+  * _Template Literal_ [? _Yield_, ? _Await_, ~ _Tagged_]
+  * _Cover Parenthesized Expression and Arrow Parameter List_ [? _Yield_, ? _Await_]
 
 </details>
 
@@ -1506,7 +1506,7 @@ The new version:
 * **_Primary Expression_** [_Yield_, _Await_]:
   * `this`
   * **`#`**
-  * _Identifier Reference_ [? _Yield_, ? _Await_]
+  * _Identifier Reference_ [? _Yield_, ? _Await_]
   * …
 
 </details>
@@ -1544,7 +1544,7 @@ environment.
 
 * **Evaluation**
   * **_Primary Expression_** : `#`
-    * Return ? Resolve Topic([TO DO])
+    * Return ? Resolve Topic([TO DO])
 
 </details>
 
@@ -1564,14 +1564,14 @@ assignment-level expression happens to have also gotten.</summary>
 The old version:
 
 * **_Assignment Expression_** [_In_, _Yield_, _Await_] :
-  * _Conditional Expression_ [? _In_, ? _Yield_, ? _Await_]
-  *  [+ _Yield_] _Yield Expression_ [? _In_, ? _Await_]
-  * _Arrow Function_ [? _In_, ? _Yield_, ? _Await_]
-  * _Async Arrow Function_ [? _In_, ? _Yield_, ? _Await_]
-  * _Left Hand Side Expression_ [? _Yield_, ? _Await_]\
-    `=` _Assignment Expression_ [? _In_, ? _Yield_, ? _Await_]
-  * _Left Hand Side Expression_ [? _Yield_, ? _Await_]\
-    · _Assignment Operator_ · _Assignment Expression_ [? _In_, ? _Yield_, ? _Await_]
+  * _Conditional Expression_ [? _In_, ? _Yield_, ? _Await_]
+  *  [+ _Yield_] _Yield Expression_ [? _In_, ? _Await_]
+  * _Arrow Function_ [? _In_, ? _Yield_, ? _Await_]
+  * _Async Arrow Function_ [? _In_, ? _Yield_, ? _Await_]
+  * _Left Hand Side Expression_ [? _Yield_, ? _Await_]\
+    `=` _Assignment Expression_ [? _In_, ? _Yield_, ? _Await_]
+  * _Left Hand Side Expression_ [? _Yield_, ? _Await_]\
+    · _Assignment Operator_ · _Assignment Expression_ [? _In_, ? _Yield_, ? _Await_]
 
 </details>
 
@@ -1583,9 +1583,9 @@ next.</summary>
 The new version:
 
 * **_Assignment Expression_** [_In_, _Yield_, _Await_] :
-  * _Pipeline Expression_ [? _In_, ? _Yield_, ? _Await_]
-  * [+ _Yield_] _Yield Expression_ [? _In_, ? _Await_]
-  * _Arrow Function_ [? _In_, ? _Yield_, ? _Await_]
+  * _Pipeline Expression_ [? _In_, ? _Yield_, ? _Await_]
+  * [+ _Yield_] _Yield Expression_ [? _In_, ? _Await_]
+  * _Arrow Function_ [? _In_, ? _Yield_, ? _Await_]
   * …
 
 </details>
@@ -1604,9 +1604,9 @@ parameters][]) only if:
 <summary>This would be defined in a new production rule.</summary>
 
 * **_Pipeline Expression_** [_In_, _Yield_, _Await_] :
-  * _Conditional Expression_ [? _In_, ? _Yield_, ? _Await_]
-  * _Pipeline Expression_ [? _In_, ? _Yield_, ? _Await_] `|>`\
-    _Pipeline Body_ [? _In_, ? _Yield_, ? _Await_]
+  * _Conditional Expression_ [? _In_, ? _Yield_, ? _Await_]
+  * _Pipeline Expression_ [? _In_, ? _Yield_, ? _Await_] `|>`\
+    _Pipeline Body_ [? _In_, ? _Yield_, ? _Await_]
 
 </details>
 
@@ -1655,11 +1655,11 @@ During runtime, [TO DO]
 
 * **Evaluation**
   * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_
-    1. Let _head Ref_ be the result of evaluating ? _Pipeline Expression_.
-    2. Let _head Value_ be the result of ? Get Value (_head Ref_).
+    1. Let _head Ref_ be the result of evaluating ? _Pipeline Expression_.
+    2. Let _head Value_ be the result of ? Get Value (_head Ref_).
     3. Let _body Ref_ be Pipeline Body Evaluation of _Pipeline Body_ with argument
        _head Value_.
-    4. Return ? Get Value(_body Ref_).
+    4. Return ? Get Value(_body Ref_).
 
 </details>
 
@@ -1687,7 +1687,7 @@ an explicit argument.
 * **_Pipeline Body_** [_In_, _Yield_, _Await_] :
   * _Pipeline Bare Function Call_
   * _Pipeline Bare Constructor Call_
-  * _Pipeline Topical Body_ [? _In_, ? _Yield_, ? _Await_]
+  * _Pipeline Topical Body_ [? _In_, ? _Yield_, ? _Await_]
 
 </details>
 
@@ -1799,12 +1799,12 @@ Evaluation][].
   _Pipeline Expression_, defined previously.
   * _Pipeline Bare Function Call_ : _Simple Reference_
     1. Let _ref_ be the result of evaluating _Simple Reference_.
-    2. Let _func_ be ? Get Value(_ref_).
+    2. Let _func_ be ? Get Value(_ref_).
     3. Let _this Call_ be this _Pipeline Bare Function Call_.
     4. Let _tail Call_ be Is In Tail Position(_this Call_).
     5. Let _Arguments_ be a [List][ECMAScript Lists and Records] containing
        the one element which is _head Value_.
-    6. Return ? Evaluate Call(_func_, _ref_, Arguments, _tail Call_).
+    6. Return ? Evaluate Call(_func_, _ref_, Arguments, _tail Call_).
 
 </details>
 
