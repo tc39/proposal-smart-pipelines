@@ -1742,7 +1742,7 @@ with no parentheses, brackets, or operators – a **simple reference**.
 
 **If an expression** is of the form **_identifier_**\
 or _topic_ `|>` _identifier0_`.`_identifier1_\
-or _topic_ `|>` _identifier0_`.`_identifier1_._identifier2_\
+or _topic_ `|>` _identifier0_`.`_identifier1_`.`_identifier2_\
 or …), then the pipeline is a **simple reference**.
 
 <details open>
@@ -2916,8 +2916,10 @@ do { do { do { do { 3 * 3 } } }
 
 ***
 
+[“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 [`for` iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
 [`in` relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
+[`new.target`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target
 [annevk]: https://github.com/annevk
 [antecedent]: https://en.wikipedia.org/wiki/Antecedent_(grammar)
 [associative property]: https://en.wikipedia.org/wiki/Associative_property
@@ -2926,28 +2928,40 @@ do { do { do { do { 3 * 3 } } }
 [binding]: https://en.wikipedia.org/wiki/Binding_(linguistics)
 [Clojure pipe]: https://clojuredocs.org/clojure.core/as-%3E
 [concatenative programming]: https://en.wikipedia.org/wiki/Concatenative_programming_language
+[Contains]: #static-contains
 [cyclomatic complexity]: https://en.wikipedia.org/wiki/Cyclomatic_complexity#Applications
 [Daniel “littledan” Ehrenberg of Igalia]: https://github.com/littledan
 [dataflow programming]: https://en.wikipedia.org/wiki/Dataflow_programming
+[DSLs]: https://en.wikipedia.org/wiki/Domain-specific_language
+[early errors]: #static-early-errors
 [ECMAScript _Identifier Name_]: https://tc39.github.io/ecma262/#prod-IdentifierName
 [ECMAScript _Identifier Reference_]: https://tc39.github.io/ecma262/#prod-IdentifierReference
 [ECMAScript _Member Expression_]: https://tc39.github.io/ecma262/#prod-MemberExpression
+[ECMAScript `new` operator, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-new-operator-runtime-semantics-evaluation
+[ECMAScript arrow functions, § SS: Contains]: https://tc39.github.io/ecma262/#sec-arrow-function-definitions-static-semantics-contains
 [ECMAScript Assignment-level Expressions]: https://tc39.github.io/ecma262/#sec-assignment-operators
+[ECMAScript block parameters]: https://github.com/samuelgoto/proposal-block-params
 [ECMAScript Function Calls, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-function-calls-runtime-semantics-evaluation
 [ECMAScript Lexical Grammar]: https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar
 [ECMAScript LHS expressions]: https://tc39.github.io/ecma262/#sec-left-hand-side-expressions
 [ECMAScript Lists and Records]: https://tc39.github.io/ecma262/#sec-list-and-record-specification-type
 [ECMAScript Notational Conventions, § Grammars]: https://tc39.github.io/ecma262/#sec-syntactic-and-lexical-grammars
 [ECMAScript Notational Conventions, § Lexical Grammar]: https://tc39.github.io/ecma262/#sec-lexical-and-regexp-grammars
-[ECMAScript Primary Expressions]: https://tc39.github.io/ecma262/#prod-Primary Expression
+[ECMAScript optional catch binding]: https://github.com/tc39/proposal-optional-catch-binding
+[ECMAScript pattern matching]: https://github.com/tc39/proposal-pattern-matching
+[ECMAScript Primary Expressions]: https://tc39.github.io/ecma262/#prod-PrimaryExpression
 [ECMAScript Property Accessors, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-property-accessors-runtime-semantics-evaluation
 [ECMAScript Punctuators]: https://tc39.github.io/ecma262/#sec-punctuators
 [ECMAScript static semantic rules]: https://tc39.github.io/ecma262/#sec-static-semantic-rules
 [Elixir pipe]: https://elixir-lang.org/getting-started/enumerables-and-streams.html
 [Elm pipe]: http://elm-lang.org/docs/syntax#infix-operators
+[essential complexity]: https://en.wikipedia.org/wiki/Essential_complexity
+[examples]: #examples
 [expressions and operators (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
 [F# pipe]: https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining
 [Fetch Standard]: https://fetch.spec.whatwg.org
+[first pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
+[footguns]: https://en.wiktionary.org/wiki/footgun
 [formal grammar]: #grammar
 [functional programming]: https://en.wikipedia.org/wiki/Functional_programming
 [garden-path syntax]: https://en.wikipedia.org/wiki/Garden_path_sentence
@@ -2955,6 +2969,9 @@ do { do { do { do { 3 * 3 } } }
 [goals]: #goals
 [grammar parameters]: #grammar-parameters
 [Hack pipe]: https://docs.hhvm.com/hack/operators/pipe-operator
+[Huffman coding]: https://en.wikipedia.org/wiki/Huffman_coding
+[IIFEs]: https://en.wikipedia.org/wiki/Immediately-invoked_function_expression
+[incidental complexity]: https://en.wikipedia.org/wiki/Incidental_complexity
 [inner blocks]: #inner-blocks
 [jashkenas]: https://github.com/jashkenas
 [Julia pipe]: https://docs.julialang.org/en/stable/stdlib/base/#Base.:|>
@@ -2964,18 +2981,20 @@ do { do { do { do { 3 * 3 } } }
 [LiveScript pipe]: http://livescript.net/#operators-piping
 [MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
 [mindeavor]: https://github.com/gilbert
+[motivation]: #motivation
 [Node-stream piping]: https://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
 [nomenclature]: #nomenclature
 [object initializers’ Computed Property Contains rule]: https://tc39.github.io/ecma262/#sec-object-initializer-static-semantics-computedpropertycontains
 [OCaml pipe]: http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html
 [operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
+[optional-chaining syntax proposal]: https://github.com/tc39/proposal-optional-chaining
+[PEP 20]: https://www.python.org/dev/peps/pep-0020/
 [Perl 6 pipe]: https://docs.perl6.org/language/operators#infix_==&gt;
 [Perl 6 topicalization]: https://www.perl.com/pub/2002/10/30/topic.html/
 [Pify]: https://github.com/sindresorhus/pify
 [pipeline syntax]: #pipeline-syntax
 [possible future extensions to the topic concept]: #possible-future-extensions-to-topic-concept
 [previous pipeline-placeholder discussions]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
-[first pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
 [private class fields]: https://github.com/tc39/proposal-class-fields/
 [Proposal 4: Smart Mix on the pipe-proposal wiki]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
 [R pipe]: https://cran.r-project.org/web/packages/magrittr/index.html
@@ -2989,6 +3008,7 @@ do { do { do { do { 3 * 3 } } }
 [syntactic partial application]: https://github.com/tc39/proposal-partial-application
 [tacit programming]: https://en.wikipedia.org/wiki/Tacit_programming
 [TC39 process]: https://tc39.github.io/process-document/
+[Tennent correspondence principle]: http://gafter.blogspot.com/2006/08/tennents-correspondence-principle-and.html
 [term rewriting topical style]: #term-rewriting-topical-style
 [term rewriting with autogenerated variables]: #term-rewriting-with-single-dummy-variable
 [term rewriting with autogenerated variables]: #term-rewriting-with-single-dummy-variable
@@ -2997,27 +3017,7 @@ do { do { do { do { 3 * 3 } } }
 [topic and comment]: https://en.wikipedia.org/wiki/Topic_and_comment
 [topic variables in other languages]: https://rosettacode.org/wiki/Topic_variable
 [topic-token bikeshedding]: https://github.com/tc39/proposal-pipeline-operator/issues/91
+[topical style]: #topical-style
 [Underscore.js]: http://underscorejs.org
 [Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
-[optional-chaining syntax proposal]: https://github.com/tc39/proposal-optional-chaining
-[“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
-[topical style]: #topical-style
-[motivation]: #motivation
-[Huffman coding]: https://en.wikipedia.org/wiki/Huffman_coding
-[ECMAScript `new` operator, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-new-operator-runtime-semantics-evaluation
-[ECMAScript pattern matching]: https://github.com/tc39/proposal-pattern-matching
-[ECMAScript block parameters]: https://github.com/samuelgoto/proposal-block-params
-[ECMAScript optional catch binding]: https://github.com/tc39/proposal-optional-catch-binding
-[`new.target`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target
-[DSLs]: https://en.wikipedia.org/wiki/Domain-specific_language
-[Tennent correspondence principle]: http://gafter.blogspot.com/2006/08/tennents-correspondence-principle-and.html
-[IIFEs]: https://en.wikipedia.org/wiki/Immediately-invoked_function_expression
-[PEP 20]: https://www.python.org/dev/peps/pep-0020/
-[incidental complexity]: https://en.wikipedia.org/wiki/Incidental_complexity
-[essential complexity]: https://en.wikipedia.org/wiki/Essential_complexity
-[examples]: #examples
-[ECMAScript arrow functions, § SS: Contains]: https://tc39.github.io/ecma262/#sec-arrow-function-definitions-static-semantics-contains
-[footguns]: https://en.wiktionary.org/wiki/footgun
-[early errors]: #static-early-errors
-[Contains]: #static-contains
