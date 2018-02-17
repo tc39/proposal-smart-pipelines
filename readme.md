@@ -658,7 +658,8 @@ stringPromise
 Note that `|> capitalize` is a bare unary function call. The `#` is tacitly,
 invisibly implied. `|> capitalize(#)` would work but the `#` is unnecessary.\
 Ditto for `|> new User.Message`, which is a bare unary constructor call,
-abbreviated from `|> new User.Message(#)`.
+abbreviated from `|> new User.Message(#)`.\
+This is called the [bare style][] of pipeline bodies.
 
 <td>
 
@@ -682,11 +683,10 @@ new User.Message(
 )
 ```
 In contrast to the version with pipes, this code is deeply nested, not flat. The
-expression has four levels of indentation instead of two.\
-Reading its data flow requires checking both the beginning and end of each
-expression, and each step expression gradually increases in size.\
-Inserting or removing any step of the data flow also requires changes to the
-indentation of any previous steps’ lines.
+expression has four levels of indentation instead of two. Reading its data flow
+requires checking both the beginning and end of each expression, and each step
+expression gradually increases in size. Inserting or removing any step of the
+data flow also requires changes to the indentation of any previous steps’ lines.
 
 <tr>
 <td>
