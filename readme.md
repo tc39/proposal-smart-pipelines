@@ -715,8 +715,8 @@ may prefer to inline.
 <td>
 
 ```js
-//🚫 SyntaxError:
-//🚫 ambiguous await at start of pipeline.
+// 🚫 Syntax Error:
+// Ambiguous await at start of pipeline.
 await stringPromise
   |> # ?? throw new TypeError()
   |> `${#}, ${#}`
