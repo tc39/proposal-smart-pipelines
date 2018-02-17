@@ -1083,9 +1083,11 @@ semantics][syntax and static semantics].
 
 ***
 
-This proposal uses the [same grammatical notation as that from the ECMAScript
+This proposal uses the [grammatical notation as that from the ECMAScript
 standard][ECMAScript Notational Conventions, § Grammars] to denote its lexical
-and syntactic grammars.
+and syntactic grammars, with two modifications for human readability:
+“camelCase” is spaced out: “camel Camel” and adjacent variables, production
+names, and rule names are separated by the middle dot “·”.
 
 ### Lexical grammar
 The smart pipe operator adds two new tokens to JavaScript: `|>` the binary pipe,
@@ -1115,27 +1117,23 @@ Grammar][]:
 The _Punctuators_ production is defined in [ECMAScript Punctuators][]. This
 production would be changed from this:
 
-```
-Punctuator :: one of
-  `{` `(` `)` `[` `]` `.` `...` `;` `,`
-  `<` `>` `<=` `>=` `==` `!=` `===` `!==`
-  `+` `-` `*` `%` `**` `++` `--`
-  `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:`
-  `=` `+=` `-=` `*=` `%=` `**=`
+* **_Punctuator_** :: one of\
+  `{` `(` `)` `[` `]` `.` `...` `;` `,`\
+  `<` `>` `<=` `>=` `==` `!=` `===` `!==`\
+  `+` `-` `*` `%` `**` `++` `--`\
+  `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:`\
+  `=` `+=` `-=` `*=` `%=` `**=`\
   `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
-```
 
 …to this:
 
-```
-Punctuator :: one of
-  `{` `(` `)` `[` `]` `.` `...` `;` `,` `#`
-  `<` `>` `<=` `>=` `==` `!=` `===` `!==`
-  `+` `-` `*` `%` `**` `++` `--`
-  `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` `|>`
-  `=` `+=` `-=` `*=` `%=` `**=`
+* **_Punctuator_** :: one of\
+  `{` `(` `)` `[` `]` **`#`** `.` `...` `;` `,`\
+  `<` `>` `<=` `>=` `==` `!=` `===` `!==`\
+  `+` `-` `*` `%` `**` `++` `--`\
+  `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` **`|>`**\
+  `=` `+=` `-=` `*=` `%=` `**=`\
   `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
-```
 
 </details>
 
@@ -1224,12 +1222,12 @@ This specification defines additions for the following static semantic rules:
 It should be noted that, in the ECMAScript standard, the Contains rule is
 currently written as an infix operator: “… Contains …” for historical reasons.
 This is unlike any other static semantic rule, which would be written as prefix
-operators “_RuleName_ of … with arguments …”. There are plans to change all
+operators “_Rule Name_ of … with arguments …”. There are plans to change all
 static semantic rules to instead have a consistent infix syntax resembling
-method calls: “…._ruleName_(…)”. For self-consistency, this proposal will use
+method calls: “…._Rule Name_(…)”. For self-consistency, this proposal will use
 that planned method-like syntax.
 
-#### Static “Contains?”
+#### Static Contains
 <details open>
 <summary>The ECMAScript spec implicitly defines the Contains rule for nearly all
 nodes. Conceptually, a node Contains another node if the latter is somewhere in
@@ -1240,8 +1238,8 @@ modified to use the new method-like syntax.
 
 >    b. If _child_ is an instance of a nonterminal, then
 >
->       i.  Let contained be the result of _child_.contains(_symbol_).
->       ii. If contained is true, return true.
+>       i.  Let _contained_ be the result of _child_.Contains (_symbol_).
+>       ii. If _contained_ is true, return true.
 >
 > 2. Return false.
 >
@@ -1259,7 +1257,7 @@ function definitions, such that they hide their substructure from the rule.
 (Uniquely among the static semantic rules, Contains is written as an infix
 operator in the ECMAScript specification – “… Contains …” – for historical
 reasons. This proposal will instead use the planned future new syntax
-“….contains(…)”.)
+“….contains (…)”.)
 
 **This proposal will use Contains to determine whether a pipeline’s body uses
 its `#` topic reference.** This is so that many [footguns may be statically
@@ -1289,18 +1287,18 @@ See [TO DO: Topics and inner functions].
 
 [ECMAScript arrow functions, § SS: Contains][] is amended.
 
-With parameter _symbol_.
+* **Contains**\
+  With parameter _symbol_.
 
-* _ArrowFunction_ : _ArrowParameters_ `=>` _ConciseBody_
+  * **_ArrowFunction_** : _ArrowParameters_ `=>` _ConciseBody_
 
-  1. If _symbol_ is not one of _NewTarget_, _SuperProperty_, _SuperCall_,
-    `super`, `this` or `#`, return false.
-  2. If _ArrowParameters_.contains(_symbol_) is true, return true.
-  3. Return _ConciseBody_.contains(_symbol_).
+    1. If _symbol_ is not one of _NewTarget_, _SuperProperty_, _SuperCall_,
+      `super`, `this` or `#`, return false.
+    2. If _ArrowParameters_.Contains (_symbol_) is true, return true.
+    3. Return _ConciseBody_.Contains (_symbol_).
 
-* _ArrowParameters_ : _CoverParenthesizedExpressionAndArrowParameterList_
-
-  [Unchanged.]
+  * **_ArrowParameters_** : _Cover Parenthesized Expression and Arrow Parameter List_\
+    [Unchanged.]
 
 </details>
 
@@ -1350,10 +1348,12 @@ to clarify their intent.
   * Just as with pipeline heads, pipeline bodies that start with `yield` must be
     parenthesized. Otherwise they are early errors. This is because the `yield`
     operator has such a loose precedence that `x |> yield # |> f` is an
-    ambiguous footgun. It is very likely that the developer meant `(x |> (yield
-    #)) |> f`, but because `yield` has such loose precedence, without
-    parentheses, the pipeline will be parsed instead as `x |> (yield (# |> f))`,
-    which has a very different meaning.
+    ambiguous footgun.
+
+    It is very likely that the developer meant `(x |> (yield #)) |> f` here, but
+    because `yield` has such loose precedence, without parentheses, the pipeline
+    will be parsed instead as `x |> (yield (# |> f))`, which has a very
+    different meaning.
 
     With this early error, the developer is forced to clarify their `yield`:
     either `x |> (yield #) |> f` or `x |> (yield # |> f)`. [TO DO: Link.]
@@ -1479,21 +1479,20 @@ assignment-level expression happens to have also gotten, except where they
 would be unnecessary, such as for the this token.</summary>
 
 The old version:
-```
-PrimaryExpression[Yield, Await]:
-  `this`
-  IdentifierReference[?Yield, ?Await]
-  Literal
-  ArrayLiteral[?Yield, ?Await]
-  ObjectLiteral[?Yield, ?Await]
-  FunctionExpression
-  ClassExpression[?Yield, ?Await]
-  GeneratorExpression
-  AsyncFunctionExpression
-  RegularExpressionLiteral
-  TemplateLiteral[?Yield, ?Await, ~Tagged]
-  CoverParenthesizedExpressionAndArrowParameterList[?Yield, ?Await]
-```
+
+* **_Primary Expression_** [_Yield_, _Await_]:
+  * `this`
+  * _Identifier Reference_ [? _Yield_, ? _Await_]
+  * _Literal_
+  * _Array Literal_ [? _Yield_, ? _Await_]
+  * _Object Literal_ [? _Yield_, ? _Await_]
+  * _Function Expression_
+  * _Class Expression_ [? _Yield_, ? _Await_]
+  * _Generator Expression_
+  * _Async Function Expression_
+  * _Regular Expression Literal_
+  * _Template Literal_ [? _Yield_, ? _Await_, ~ _Tagged_]
+  * _Cover Parenthesized Expression and Arrow Parameter List_ [? _Yield_, ? _Await_]
 
 </details>
 
@@ -1503,14 +1502,12 @@ PrimaryExpression[Yield, Await]:
 <summary>Added to this list would be the topic token.</summary>
 
 The new version:
-```
-PrimaryExpression[Yield, Await]:
-  `this`
-  `#`
-  IdentifierReference[?Yield, ?Await]
-  Literal
-  …
-```
+
+* **_Primary Expression_** [_Yield_, _Await_]:
+  * `this`
+  * **`#`**
+  * _Identifier Reference_ [? _Yield_, ? _Await_]
+  * …
 
 </details>
 
@@ -1521,37 +1518,33 @@ PrimaryExpression[Yield, Await]:
 reference. This is the same as almost every other primary expression, except
 for identifiers, parenthesized expressions, and arrow parameter lists.</summary>
 
-* IsIdentifierRef
-  * `PrimaryExpression : IdentifierReference`
-
+* **Is Identifier Ref**
+  * **_Primary Expression_** : _Identifier Reference_\
     Return true.
 
-  * ``PrimaryExpression : `this` | `#` | Literal | …``
-
+  * **_Primary Expression_** : `this` | `#` | _Literal_ | …\
     Return false.
 
-* IsValidSimpleAssignmentTarget
-  * ``PrimaryExpression : `this` | `#` | Literal | …``
-
+* **Is Valid Simple Assignment Target**
+  * _Primary Expression_ : `this` | `#` | _Literal_ | …\
     Return false.
 
-  * `PrimaryExpression : CoverParenthesizedExpressionAndArrowParameterList`
-
+  * _Primary Expression_ : _Cover Parenthesized Expression and Arrow Parameter List_\
     [Unchanged from original specification.]
 
 </details>
 
 ### Topic reference • Runtime semantics
 
-During runtime, the topic reference uses the [ResolveTopic abstract
+During runtime, the topic reference uses the [Resolve Topic abstract
 operation][resolving topics] on the running execution context’s lexical
 environment.
 
 <details open>
 
-* Evaluation
-  * PrimaryExpression : `#`
-    * Return ? ResolveTopic()
+* **Evaluation**
+  * **_Primary Expression_** : `#`
+    * Return ? Resolve Topic([TO DO])
 
 </details>
 
@@ -1570,17 +1563,15 @@ assignment-level expression happens to have also gotten.</summary>
 
 The old version:
 
-```
-AssignmentExpression[In, Yield, Await] :
-  ConditionalExpression[?In, ?Yield, ?Await]
-  [+Yield] YieldExpression[?In, ?Await]
-  ArrowFunction[?In, ?Yield, ?Await]
-  AsyncArrowFunction[?In, ?Yield, ?Await]
-  LeftHandSideExpression[?Yield, ?Await]
-    `=` AssignmentExpression[?In, ?Yield, ?Await]
-  LeftHandSideExpression[?Yield, ?Await]
-    AssignmentOperator AssignmentExpression[?In, ?Yield, ?Await]
-```
+* **_Assignment Expression_** [_In_, _Yield_, _Await_] :
+  * _Conditional Expression_ [? _In_, ? _Yield_, ? _Await_]
+  *  [+ _Yield_] _Yield Expression_ [? _In_, ? _Await_]
+  * _Arrow Function_ [? _In_, ? _Yield_, ? _Await_]
+  * _Async Arrow Function_ [? _In_, ? _Yield_, ? _Await_]
+  * _Left Hand Side Expression_ [? _Yield_, ? _Await_]\
+    `=` _Assignment Expression_ [? _In_, ? _Yield_, ? _Await_]
+  * _Left Hand Side Expression_ [? _Yield_, ? _Await_]\
+    · _Assignment Operator_ · _Assignment Expression_ [? _In_, ? _Yield_, ? _Await_]
 
 </details>
 
@@ -1591,13 +1582,11 @@ next.</summary>
 
 The new version:
 
-```
-AssignmentExpression[In, Yield, Await] :
-  PipelineExpression[?In, ?Yield, ?Await]
-  [+Yield] YieldExpression[?In, ?Await]
-  ArrowFunction[?In, ?Yield, ?Await]
-  …
-```
+* **_Assignment Expression_** [_In_, _Yield_, _Await_] :
+  * _Pipeline Expression_ [? _In_, ? _Yield_, ? _Await_]
+  * [+ _Yield_] _Yield Expression_ [? _In_, ? _Await_]
+  * _Arrow Function_ [? _In_, ? _Yield_, ? _Await_]
+  * …
 
 </details>
 
@@ -1614,13 +1603,10 @@ parameters][]) only if:
 <details open>
 <summary>This would be defined in a new production rule.</summary>
 
-```
-// New rule
-PipelineExpression[In, Yield, Await] :
-  ConditionalExpression[?In, ?Yield, ?Await]
-  PipelineExpression[?In, ?Yield, ?Await] `|>`
-    PipelineBody[?In, ?Yield, ?Await]
-```
+* **_Pipeline Expression_** [_In_, _Yield_, _Await_] :
+  * _Conditional Expression_ [? _In_, ? _Yield_, ? _Await_]
+  * _Pipeline Expression_ [? _In_, ? _Yield_, ? _Await_] `|>`\
+    _Pipeline Body_ [? _In_, ? _Yield_, ? _Await_]
 
 </details>
 
@@ -1630,28 +1616,35 @@ PipelineExpression[In, Yield, Await] :
 <summary>The pipeline-level expression is neither a function definition nor an
 identifier reference.</summary>
 
-* IsIdentifierRef
-  * PipelineExpression : PipelineExpression `|>` PipelineBody
-
+* **Is Identifier Ref**
+  * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_\
     Return false.
 
-* IsValidSimpleAssignmentTarget
-  * PipelineExpression : PipelineExpression `|>` PipelineBody
-
+* **Is Valid Simple Assignment Target**
+  * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_\
     Return false.
 
 </details>
 
-<details open>A pipeline expression uses its outer lexical context’s topic only if
-the pipeline’s head uses the outer context’s topic. The pipeline’s body cannot
-use the outer context’s topic, because the body is evaluated within a second,
-inner lexical context, within which the topic reference is rebound to another
-value. If there is a topic reference defined in the outer context, then it is
-shadowed within the body.</summary>
+<details open>A pipeline expression contains its outer lexical context’s topic
+only if the pipeline’s head uses the outer context’s topic. The pipeline’s body
+cannot use the outer context’s topic, because the body is evaluated within a
+second, inner lexical context, within which the topic reference is rebound to
+another value. If there is a topic reference defined in the outer context, then
+it is shadowed within the body.</summary>
 
-* UsesOuterTopic
+* **Contains**\
+  With parameter _symbol_.
 
   [TO DO]
+<!--
+  * **_Arrow Function_** : _Arrow Parameters_ `=>` _Concise Body_
+
+    1. If _symbol_ is not one of _New Target_, _Super Property_, _Super Call_,
+      `super`, `this` or `#`, return false.
+    2. If _Arrow Parameters_.contains (_symbol_) is true, return true.
+    3. Return _Concise Body_.contains (_symbol_).
+-->
 
 </details>
 
@@ -1660,13 +1653,13 @@ During runtime, [TO DO]
 
 <details open>
 
-* Evaluation
-  * PipelineExpression : PipelineExpression `|>` PipelineBody
-    1. Let _headRef_ be the result of evaluating ? _PipelineExpression_.
-    2. Let _headValue_ be the result of ? GetValue(_headRef_).
-    3. Let _bodyRef_ be PipelineBodyEvaluation of _PipelineBody_ with argument
-       _headValue_.
-    4. Return ? GetValue(_bodyRef_).
+* **Evaluation**
+  * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_
+    1. Let _head Ref_ be the result of evaluating ? _Pipeline Expression_.
+    2. Let _head Value_ be the result of ? Get Value (_head Ref_).
+    3. Let _body Ref_ be Pipeline Body Evaluation of _Pipeline Body_ with argument
+       _head Value_.
+    4. Return ? Get Value(_body Ref_).
 
 </details>
 
@@ -1691,13 +1684,10 @@ an explicit argument.
 
 [TO DO: Note no parameters in bare style.]
 
-```
-// New rule
-PipelineBody[In, Yield, Await] :
-  PipelineBareFunctionCall
-  PipelineBareConstructorCall
-  PipelineTopicalBody[?In, ?Yield, ?Await]
-```
+* **_Pipeline Body_** [_In_, _Yield_, _Await_] :
+  * _Pipeline Bare Function Call_
+  * _Pipeline Bare Constructor Call_
+  * _Pipeline Topical Body_ [? _In_, ? _Yield_, ? _Await_]
 
 </details>
 
@@ -1748,15 +1738,13 @@ or …), then the pipeline is a **simple reference**.
 
 <details open>
 
-This is achieved by defining the _SimpleReference_ production using [ECMAScript
-_IdentifierReference_][], [ECMAScript _IdentifierName_][], and left recursion,
-in imitation of how [ECMAScript _MemberExpression_][] handles method chains.
+This is achieved by defining the _Simple Reference_ production using [ECMAScript
+_Identifier Reference_][], [ECMAScript _Identifier Name_][], and left recursion,
+in imitation of how [ECMAScript _Member Expression_][] handles method chains.
 
-```
-SimpleReference :
-  IdentifierReference
-  SimpleReference `.` IdentifierName
-```
+* **_Simple Reference_** :
+  * _Identifier Reference_
+  * _Simple Reference_ `.` _Identifier Name_
 
 </details>
 
@@ -1766,14 +1754,13 @@ SimpleReference :
 <summary>Simple references’ runtime semantics are exactly the same as the
 member expressions they resemble.</summary>
 
-This section is adapted from the [ECMAScript Property Accessors, § RS:
-Evaluation][].
+This section is adapted from [ECMAScript Property Accessors, § RS: Evaluation][].
 
-* Evaluation
-  * SimpleReference : SimpleReference `.` IdentifierName
-    * Is evaluated in exactly the same manner as [MemberExpression `:`
-      MemberExpression `.` IdentifierName][ECMAScript Property Accessors,
-      § RS: Evaluation] except that the contained `SimpleReference` is evaluated
+* **Evaluation**
+  * _Simple Reference_ : _Simple Reference_ `.` _Identifier Name_
+    * Is evaluated in exactly the same manner as [_Member Expression_ `:`
+      _Member Expression_ `.` _Identifier Name_][ECMAScript Property Accessors,
+      § RS: Evaluation] except that the contained _Simple Reference_ is evaluated
       in step 1.
 
 </details>
@@ -1793,10 +1780,8 @@ then the pipeline is a **bare function call**. The **pipeline’s value** is
 <details open>
 <summary>Syntactic grammar</summary>
 
-```
-PipelineBareFunctionCall :
-  SimpleReference
-```
+* **_Pipeline Bare Function Call_** :
+  * _Simple Reference_
 
 </details>
 
@@ -1808,18 +1793,18 @@ PipelineBareFunctionCall :
 This algorithm was adapted from [ECMAScript Function Calls, § RS:
 Evaluation][].
 
-* PipelineBodyEvaluation
-  * With parameter _headValue_.
-  * Note that this PipelineBodyEvaluation rule is used in the evaluation of
-    PipelineExpression, defined previously.
-  * PipelineBareFunctionCall : SimpleReference
-    1. Let _ref_ be the result of evaluating _SimpleReference_.
-    2. Let _func_ be ? GetValue(_ref_).
-    3. Let _thisCall_ be this _PipelineBareFunctionCall_.
-    4. Let _tailCall_ be IsInTailPosition(thisCall).
+* **Pipeline Body Evaluation**\
+  With parameter _head Value_.
+  Note that this Pipeline Body Evaluation rule is used in the evaluation of
+  _Pipeline Expression_, defined previously.
+  * _Pipeline Bare Function Call_ : _Simple Reference_
+    1. Let _ref_ be the result of evaluating _Simple Reference_.
+    2. Let _func_ be ? Get Value(_ref_).
+    3. Let _this Call_ be this _Pipeline Bare Function Call_.
+    4. Let _tail Call_ be Is In Tail Position(_this Call_).
     5. Let _Arguments_ be a [List][ECMAScript Lists and Records] containing
-       the one element which is _headValue_.
-    6. Return ? EvaluateCall(_func_, _ref_, Arguments, tailCall).
+       the one element which is _head Value_.
+    6. Return ? Evaluate Call(_func_, _ref_, Arguments, _tail Call_).
 
 </details>
 
@@ -1838,10 +1823,8 @@ then the pipeline is a **bare function call**. The **pipeline’s value** is
 <details open>
 <summary>Syntax grammar</summary>
 
-```
-PipelineBareConstructorCall :
-  `new` SimpleReference
-```
+* **_Pipeline Bare Constructor Call_** :
+  * `new` _Simple Reference_
 
 </details>
 
@@ -1850,13 +1833,15 @@ PipelineBareConstructorCall :
 
 This algorithm was adapted from [ECMAScript `new` operator, § RS: Evaluation][].
 
-* PipelineBodyEvaluation
-  * With parameter _headValue_.
-  * Note that this PipelineBodyEvaluation rule is used in the evaluation of
-    PipelineExpression, defined previously.
-  * PipelineBareConstructorCall : `new` SimpleReference
-    * [TO DO: Can we use EvaluateNew if _SimpleReference_ is technically not the
-      same as MemberExpression? Should we just use MemberExpression with some
+* **_Pipeline Body Evaluation_**\
+  With parameter _head Value_.
+
+  Note that this Pipeline Body Evaluation rule is used in the evaluation of
+  _Pipeline Expression_, defined previously.
+
+  * **_Pipeline Bare Constructor Call_** : `new` _Simple Reference_
+    * [TO DO: Can we use Evaluate New if _Simple Reference_ is technically not the
+      same as Member Expression? Should we just use Member Expression with some
       limitations?]
 
 </details>
@@ -1889,20 +1874,20 @@ body scope.</summary>
 But more precisely, it binds the topic to the pipeline’s head value then
 evaluates the RHS [TO DO]
 
-* Evaluation
-  * PipelineExpression : PipelineExpression `|>` PipelineBody
-    1. Let _headValue_ be the result of evaluating _PipelineExpression_.
+* **Evaluation**
+  * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_
+    1. Let _head Value_ be the result of evaluating _Pipeline Expression_.
     2. [TO DO: Create topic environment]
     3. [TO DO: Evaluate body in new environment]
 
-Topical style behaves like **`do { const ` _topicIdentifier_ `=` _topic_`;
-`_substitutedBody_` }`**, where:
+Topical style behaves like **`do { const ` _topic Identifier_ `=` _topic_`;
+`_substituted Body_` }`**, where:
 
-* _topicVariable_ is any [identifier that is *not* already used by any
+* _topic Variable_ is any [identifier that is *not* already used by any
   variable][lexically hygienic], in the outer lexical context or the body’s
   inner topical context,
-* And _substitutedBody_ is _body_ but with every instance of outside of
-  the topic reference replaced by _topicVariable_.
+* And _substituted Body_ is _body_ but with every instance of outside of
+  the topic reference replaced by _topic Variable_.
 
 [TO DO: Add link to term-rewriting appendix.]
 
@@ -1926,13 +1911,13 @@ whenever such code is evaluated at runtime. </summary>
 > nesting structure of ECMAScript code. A Lexical Environment consists of an
 > Environment Record and a possibly null reference to an outer Lexical
 > Environment. Usually a Lexical Environment is associated with some specific
-> syntactic structure of ECMAScript code such as a FunctionDeclaration, a
-> BlockStatement, or a Catch clause of a TryStatement and a new Lexical
+> syntactic structure of ECMAScript code such as a _Function Declaration_, a
+> _Block Statement_, or a Catch clause of a _Try Statement_ and a new Lexical
 > Environment is created each time such code is evaluated.
->
+> >
 > An Environment Record records the identifier bindings that are created within
 > the scope of its associated Lexical Environment. It is referred to as the
-> Lexical Environment's EnvironmentRecord
+> Lexical Environment's _Environment Record_.
 >
 > The outer environment reference is used to model the logical nesting of
 > Lexical Environment values. The outer reference of a (inner) Lexical
@@ -1940,24 +1925,24 @@ whenever such code is evaluated at runtime. </summary>
 > the inner Lexical Environment. An outer Lexical Environment may, of course,
 > have its own outer Lexical Environment. A Lexical Environment may serve as the
 > outer environment for multiple inner Lexical Environments. For example, if a
-> FunctionDeclaration contains two nested FunctionDeclarations then the Lexical
-> Environments of each of the nested functions will have as their outer Lexical
-> Environment the Lexical Environment of the current evaluation of the
+> _Function Declaration_ contains two nested _Function Declaration_s then the
+> Lexical Environments of each of the nested functions will have as their outer
+> Lexical Environment the Lexical Environment of the current evaluation of the
 > surrounding function.
->
+> >
 > A global environment is a Lexical Environment which does not have an outer
 > environment. The global environment's outer environment reference is null. A
-> global environment's EnvironmentRecord may be prepopulated with identifier
+> global environment's _EnvironmentRecord_ may be prepopulated with identifier
 > bindings and includes an associated global object whose properties provide
 > some of the global environment's identifier bindings. As ECMAScript code is
 > executed, additional properties may be added to the global object and the
 > initial properties may be modified.
->
+> >
 > A module environment is a Lexical Environment that contains the bindings for
 > the top level declarations of a Module. It also contains the bindings that are
 > explicitly imported by the Module. The outer environment of a module
 > environment is a global environment.
->
+> >
 > A function environment is a Lexical Environment that corresponds to the
 > invocation of an ECMAScript function object. A function environment may
 > establish a new this binding. A function environment also captures the state
@@ -1983,7 +1968,7 @@ is “topical” in the usual adjectival sense.]
 [TO DO]
 
 #### Abstract operations
-ResolveTopic is a new abstract operation that acts upon a Lexical Environment.
+**Resolve Topic** is a new abstract operation that acts upon a Lexical Environment.
 
 [TO DO]
 
@@ -2710,6 +2695,7 @@ use `#ₙ` variables.) Let us also group the expressions with left associativity
 work][bidirectional associativity]).
 
 With this notation, each line in this example would be equivalent to the other lines.
+
 ```js
 1 |> # + 2 |> # * 3
 
@@ -2726,6 +2712,7 @@ do { do { 3 * 3 } }
 ```
 
 Consider also the motivating first example above:
+
 ```js
 stringPromise
   |> await #
@@ -2736,6 +2723,7 @@ stringPromise
 ```
 
 Under left associativity, this would be statically equivalent to the following:
+
 ```js
 do {
   const #₃ = do {
@@ -2756,15 +2744,15 @@ In general, for each pipe expression `topic |> body`, assuming that `body` is in
 topical style, that is, assuming that `body` contains an unshadowed topic
 reference:
 
-* Let `#ₙ` be a [hygienically autogenerated][lexically hygienic] topic
-  reference, `#ₙ`, where <var>n</var> is a number that would not conflict with
+* Let _#<sub>n</sub>_ be a [hygienically autogenerated][lexically hygienic] topic
+  reference, _#<sub>n</sub>_, where <var>n</var> is a number that would not conflict with
   the name of any other autogenerated topic reference in the scope of the
   entire pipe expression.
-* Also let `substitutedBody` be `body` but with all instances of `#` replaced
-  with `#ₙ`.
+* Also let _substituted Body_ be `body` but with all instances of `#` replaced
+  with _#<sub>n</sub>_.
 * Then the static term rewriting (left associative and inside to outside) would
-  simply be: `do { const #ₙ = topic; substitutedBody }`. This `do` expression
-  would act as at the topical scope.
+  simply be: `do { const ` _#<sub>n</sub>_ `= topic; ` _substituted Body_ `}`.
+  This `do` expression would act as at the topical scope.
 
 #### Term rewriting with single dummy variable
 The other way to demonstrate topical style is to use two variables: the topic
@@ -2932,9 +2920,9 @@ do { do { do { do { 3 * 3 } } }
 [cyclomatic complexity]: https://en.wikipedia.org/wiki/Cyclomatic_complexity#Applications
 [Daniel “littledan” Ehrenberg of Igalia]: https://github.com/littledan
 [dataflow programming]: https://en.wikipedia.org/wiki/Dataflow_programming
-[ECMAScript _IdentifierName_]: https://tc39.github.io/ecma262/#prod-IdentifierName
-[ECMAScript _IdentifierReference_]: https://tc39.github.io/ecma262/#prod-IdentifierReference
-[ECMAScript _MemberExpression_]: https://tc39.github.io/ecma262/#prod-MemberExpression
+[ECMAScript _Identifier Name_]: https://tc39.github.io/ecma262/#prod-IdentifierName
+[ECMAScript _Identifier Reference_]: https://tc39.github.io/ecma262/#prod-IdentifierReference
+[ECMAScript _Member Expression_]: https://tc39.github.io/ecma262/#prod-MemberExpression
 [ECMAScript Assignment-level Expressions]: https://tc39.github.io/ecma262/#sec-assignment-operators
 [ECMAScript Function Calls, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-function-calls-runtime-semantics-evaluation
 [ECMAScript Lexical Grammar]: https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar
@@ -2942,7 +2930,7 @@ do { do { do { do { 3 * 3 } } }
 [ECMAScript Lists and Records]: https://tc39.github.io/ecma262/#sec-list-and-record-specification-type
 [ECMAScript Notational Conventions, § Grammars]: https://tc39.github.io/ecma262/#sec-syntactic-and-lexical-grammars
 [ECMAScript Notational Conventions, § Lexical Grammar]: https://tc39.github.io/ecma262/#sec-lexical-and-regexp-grammars
-[ECMAScript Primary Expressions]: https://tc39.github.io/ecma262/#prod-PrimaryExpression
+[ECMAScript Primary Expressions]: https://tc39.github.io/ecma262/#prod-Primary Expression
 [ECMAScript Property Accessors, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-property-accessors-runtime-semantics-evaluation
 [ECMAScript Punctuators]: https://tc39.github.io/ecma262/#sec-punctuators
 [ECMAScript static semantic rules]: https://tc39.github.io/ecma262/#sec-static-semantic-rules
@@ -3003,7 +2991,6 @@ do { do { do { do { 3 * 3 } } }
 [Underscore.js]: http://underscorejs.org
 [Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
-
 [optional-chaining syntax proposal]: https://github.com/tc39/proposal-optional-chaining
 [“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 [topical style]: #topical-style
