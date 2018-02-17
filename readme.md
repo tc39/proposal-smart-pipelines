@@ -1535,10 +1535,10 @@ for identifiers, parenthesized expressions, and arrow parameter lists.</summary>
     Return false.
 
 * **Is Valid Simple Assignment Target**
-  * _Primary Expression_ : `this` | `#` | _Literal_ | …\
+  * **_Primary Expression_** : `this` | `#` | _Literal_ | …\
     Return false.
 
-  * _Primary Expression_ : _Cover Parenthesized Expression and Arrow Parameter List_\
+  * **_Primary Expression_** : _Cover Parenthesized Expression and Arrow Parameter List_\
     [Unchanged from original specification.]
 
 </details>
