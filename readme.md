@@ -388,10 +388,6 @@ syntax error, then it would be a useless operation and almost certainly not what
 the developer intended. Situations like these should be statically detectable
 and cause compile-time [early errors][].
 
-Similarly, if the topic reference is used outside of a pipeline RHS’s scope,
-such as in `export function () { # }`, then this is also almost certainly a
-developer error. This too should be a compile-time early error.
-
 #### “Make my code easier to read.”
 The new syntax should increase the human readability and writability of much
 common code. It should be simpler to read and comprehend. And it should be
@@ -1276,9 +1272,10 @@ Semantic Rules, such as [object initializers’ Computed Property Contains
 rule][]. The rule is also generally overridden by methods definitions and other
 function definitions, such that they hide their substructure from the rule.
 
-(It should be noted that, uniquely among the static semantic rules, Contains is
-written as an infix operator: “… Contains …” for historical reasons. This
-proposal will instead use the planned future new syntax “….contains(…)”.)
+(Uniquely among the static semantic rules, Contains is written as an infix
+operator in the ECMAScript specification – “… Contains …” – for historical
+reasons. This proposal will instead use the planned future new syntax
+“….contains(…)”.)
 
 **This proposal will use Contains to determine whether a pipeline’s body uses
 its `#` topic reference.** This is so that many [footguns may be statically
@@ -1326,9 +1323,6 @@ Certain syntax errors cannot be detected by the context-free grammar alone yet
 must still be detected at compile time. Early Error Rules are Static Semantic
 Rules that define when such extra syntax errors occur.
 
-Two such static early errors are mentioned in both the Goal [static analyzability][] and
-the static [Contains][] rule.
-
 <details open>
 
 > A special kind of static semantic rule is an Early Error Rule. Early error
@@ -1341,6 +1335,15 @@ the static [Contains][] rule.
 > Module is invalid and cannot be evaluated.
 
 </details>
+
+***
+
+One such static early error is mentioned in both the section on the Goal [static
+analyzability][] and the section on the [Contains][] rule:
+
+Pipelines that are in topical style but that do not ever use their topics
+anywhere in their bodies, such as `x |> 3` are an early error. This error is
+defined in [TO DO: Link].
 
 ### Operator precedence
 As a binary operation forming compound expressions, the [operator precedence and
@@ -1520,20 +1523,6 @@ for identifiers, parenthesized expressions, and arrow parameter lists.</summary>
   * `PrimaryExpression : CoverParenthesizedExpressionAndArrowParameterList`
 
     [Unchanged from original specification.]
-
-</details>
-
-When any expression, anywhere, uses the topic, then somewhere in there is a
-topic reference. That…
-
-<details open>
-<summary>Most primary expressions do not use the topic. But primary expressions
-formed by enclosing other expressions could use the topic. And, of course, the
-topic reference itself uses the topic.</summary>
-
-* UsesOuterTopic
-
-  [TO DO]
 
 </details>
 
