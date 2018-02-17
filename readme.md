@@ -714,32 +714,6 @@ may prefer to inline.
 
 <td>″″
 
-<tr>
-<td>
-
-```js
-// 🚫 Syntax Error:
-// Ambiguous await at start of pipeline.
-await stringPromise
-  |> # ?? throw new TypeError()
-  |> `${#}, ${#}`
-  |> #[0].toUpperCase() + #.substring(1)
-  |> # + '!'
-  |> new User.Message
-```
-This is a static [early error][], designed to [avoid a footgun at compile
-time][static analyzability]. If this were a statement, then does the developer
-want to apply the pipeline’s steps to `stringPromise`, *then* await the
-pipeline’s result: `await (stringPromise |> …)`? Or does the developer want to
-first await `stringPromise` and then apply the rest of the pipeline:
-`(await stringPromise) |> …`? To avoid this footgun, `await` (and `yield`) are
-prohibited from the start of pipeline heads. Just wrap the head in parentheses
-`(await stringPromise) |> …` or move the `await` to another line
-`stringPromise |> await # |> …`. [TO DO: Link to section on await / yield in
-head expressions.]
-
-<td>″″
-
 </table>
 
 #### Real-world examples
@@ -1356,15 +1330,16 @@ others, each designed to prevent a footgun of ambiguity, by forcing the develope
 to clarify their intent.
 
 * Pipeline heads:
-  * Pipeline heads must not directly start with `await` or `yield`. This is an early
-    error. If `await promise |> …` were a statement, then did the author want to apply
-    the pipeline’s steps to `promise`, *then* await the pipeline’s result:
-    `await (promise |> …)`? Or does the developer want to first await `promise`
-    and then apply the rest of the pipeline: `(await promise) |> …`? To avoid
-    this footgun, `await` (and `yield`) are prohibited from the start of
-    pipeline heads. Just wrap the head in parentheses `(await promise) |> …` or
-    move the `await` to another line `promise |> await # |> …`. [TO DO: Link to
-    section on await / yield in head expressions.]
+  * Pipeline heads that start with `yield` must be parenthesized. Otherwise they are
+    early error. If `yield x |> …` were a statement, then did the author want to
+    apply the pipeline’s steps to `x`, *then* yield the pipeline’s result:
+    `yield (x |> …)`? Or does the developer want to first yield `x` and then
+    apply the rest of the pipeline to the result of the yield expression:
+    `(yield x) |> …`?
+
+    To avoid this footgun, `yield` is prohibited from the start of pipeline
+    heads. Just wrap the yield expression in parentheses: `(yield x) |> …` or
+    `x |> (yield #) |> …`. [TO DO: Link to section on yield in head expressions.]
 
 * Pipeline bodies:
   * Pipelines that are in topical style but that do not ever use their topics
@@ -1372,14 +1347,16 @@ to clarify their intent.
     would be always useless and almost certainly not what the author had intended.
     [TO DO: Link.]
 
-  * Pipeline bodies that start with `yield` must be parenthesized. Otherwise
-    they are an early error. This is because the `yield` operator has such a
-    loose precedence that `x |> yield # |> f` is an ambiguous footgun. It is very
-    likely that the developer meant `(x |> (yield #)) |> f`, but because `yield`
-    has such loose precedence, without parentheses, the pipeline will be parsed
-    instead as `x |> (yield (# |> f))`, which has a very different meaning. With
-    this early error, the developer is forced to clarify their `yield`: either
-    `x |> (yield #) |> f` or `x |> (yield # |> f)`. [TO DO: Link.]
+  * Just as with pipeline heads, pipeline bodies that start with `yield` must be
+    parenthesized. Otherwise they are early errors. This is because the `yield`
+    operator has such a loose precedence that `x |> yield # |> f` is an
+    ambiguous footgun. It is very likely that the developer meant `(x |> (yield
+    #)) |> f`, but because `yield` has such loose precedence, without
+    parentheses, the pipeline will be parsed instead as `x |> (yield (# |> f))`,
+    which has a very different meaning.
+
+    With this early error, the developer is forced to clarify their `yield`:
+    either `x |> (yield #) |> f` or `x |> (yield # |> f)`. [TO DO: Link.]
 
 [TO DO: Add bidirectional associativity to Goals]
 
