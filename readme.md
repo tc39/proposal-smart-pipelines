@@ -132,7 +132,7 @@ forwards-compatible style of chaining nested expressions into a readable,
 left-to-right manner. Nested transformations become untangled into short steps
 in a zero-cost abstraction.
 
-The proposal is a variant of a [previous pipe-operator proposal][] championed by
+The proposal is a variant of the [first pipe-operator proposal][] championed by
 [Daniel “littledan” Ehrenberg of Igalia][]. This variant is listed as
 [Proposal 4: Smart Mix on the pipe-proposal wiki][]. The variant resulted from
 [previous discussions about pipeline placeholders in the previous pipe-operator
@@ -225,6 +225,7 @@ equivalent to:
   |> doubleSay(#, ', ')
   |> capitalize(#)
   |> # + '!'
+  |> new User.Message
 ```
 
 Being able to automatically detect this [bare style][] is the [**smart** part
@@ -440,7 +441,7 @@ stringPromise
 
 The introduction to this [motivation][] section already explained much of
 the readability rationale, but it may also be useful to study the
-[real-world examples] below.
+[examples][] below.
 
 ##### Expressive versatility
 JavaScript is a language rich with [expressions of numerous kinds][MDN
@@ -621,16 +622,13 @@ readability and comprehensibility that it might bring to code in general.
 
 </details>
 
-### Real-world examples
+### Examples
 
-<details open>
-<summary>It is useful to look at code several real-world libraries or standards,
-and compare their readability with smart-pipelined versions. Numerous examples
-of code that may benefit from smart pipelines abound.</summary>
+#### Prior proposals’ examples
 
-#### Prior pipeline proposal
-[Prior pipeline proposal][]. [Gilbert “mindeavor”][mindeavor] &c. ECMA
-International. 2017–2018. BSD License.
+##### First pipe-operator proposal
+[tc39/pipeline-operator-proposal][first pipe-operator proposal]. [Gilbert
+“mindeavor”][mindeavor] &c. ECMA International. 2017–2018. BSD License.
 
 <table>
 <thead>
@@ -660,6 +658,10 @@ stringPromise
   |> capitalize |> # + '!'
   |> new User.Message
 ```
+Note that `|> capitalize` is a bare unary function call. The `#` is tacitly,
+invisibly implied. `|> capitalize(#)` would work but the `#` is unnecessary.\
+Ditto for `|> new User.Message`, which is a bare unary constructor call,
+abbreviated from `|> new User.Message(#)`.
 
 <td>
 
@@ -695,19 +697,19 @@ stringPromise
   |> # + '!'
   |> new User.Message
 ```
+When tiny functions are only used once, and their bodies would be obvious and
+self-documenting in meaning, they might be ritual boilerplate that a developer
+may prefer to inline.
 
 <td>″″
 
 </table>
 
-Note that `|> capitalize` is a bare unary function call. The `#` is tacitly,
-invisibly implied. `|> capitalize(#)` would work but the `#` is unnecessary.\
-Ditto for `|> new User.Message`, which is a bare unary constructor call,
-abbreviated from `|> new User.Message(#)`.
-
-When tiny functions are only used once, and their bodies would be
-self-documenting, they are ritual boilerplate that a developer’s style may
-prefer to inline.
+#### Real-world examples
+<details open>
+<summary>It is also useful to look at code from real-world libraries or
+standards and compare their readability with smart-pipelined versions. Numerous
+examples of code that may benefit from smart pipelines abound.</summary>
 
 #### Underscore.js
 [Underscore.js][]. [Jeremy Ashkenas][jashkenas] &c. 2009–2018. MIT License.
@@ -988,7 +990,7 @@ A pipeline’s body may be in one of two **styles**:\
 topical style and\
 bare style.
 
-[**Topical style**][] is the default style. A pipeline body in topical style forms
+**[Topical style][]** is the default style. A pipeline body in topical style forms
 an inner lexical scope – called the pipeline’s **topical scope** – within which
 a special token is bound to the value of the head; the section below explains.
 
@@ -1205,8 +1207,7 @@ This specification defines additions for the following static semantic rules:
 | Is Function Definition?            | Already defined in ES: all expressions            |
 | Is Identifier Reference?           | Already defined: primary- & LHS-level expressions |
 | Is Valid Simple Assignment Target? | Already defined: primary- & LHS-level expressions |
-| Uses Outer Topic?                  | New rule defined in this proposal.                |
-| Early Errors                       | Already defined in ES for many nodes.             |
+| Early Errors                       | Already defined in ES for nearly all nodes        |
 
 It should be noted that, in the ECMAScript standard, the Contains rule is
 currently written as an infix operator: “… Contains …” for historical reasons.
@@ -1240,21 +1241,17 @@ Semantic Rules, such as [object initializers’ Computed Property Contains
 rule][]. The rule is also generally overridden by methods definitions and other
 function definitions, such that they hide their substructure from the rule.
 
-It should also be noted that, uniquely among the static semantic rules, Contains
-is written as an infix operator: “… Contains …” for historical reasons. This
+It should be noted that, uniquely among the static semantic rules, Contains is
+written as an infix operator: “… Contains …” for historical reasons. This
 proposal will instead use the planned future new syntax “….contains(…)”.
 
-#### Static “Is Function Definition?”
-[TO DO]
+In addition, Contains does not penetrate into the bodies of function and method
+definitions, hiding them from the rules in outside contexts. There is one
+exception: arrow functions expose their
 
-#### Static “Is Identifier Reference?”
-[TO DO]
-
-#### Static “Is Valid Simple Assignment Target?”
-[TO DO]
-
-#### Static “Uses Outer Topic?”
-[TO DO]
+This proposal further extends that exception so that arrow functions also reveal
+any use of `#` within their bodies. This is because arrow functions, alone among
+. See [TO DO].
 
 #### Static Early Errors
 Certain syntax errors cannot be detected by the context-free grammar alone yet
@@ -2909,9 +2906,8 @@ do { do { do { do { 3 * 3 } } }
 [Pify]: https://github.com/sindresorhus/pify
 [pipeline syntax]: #pipeline-syntax
 [possible future extensions to the topic concept]: #possible-future-extensions-to-topic-concept
-[previous pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator
 [previous pipeline-placeholder discussions]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
-[prior pipeline proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
+[first pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
 [private class fields]: https://github.com/tc39/proposal-class-fields/
 [Proposal 4: Smart Mix on the pipe-proposal wiki]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
 [R pipe]: https://cran.r-project.org/web/packages/magrittr/index.html
@@ -2953,3 +2949,4 @@ do { do { do { do { 3 * 3 } } }
 [PEP 20]: https://www.python.org/dev/peps/pep-0020/
 [incidental complexity]: https://en.wikipedia.org/wiki/Incidental_complexity
 [essential complexity]: https://en.wikipedia.org/wiki/Essential_complexity
+[examples]: #examples
