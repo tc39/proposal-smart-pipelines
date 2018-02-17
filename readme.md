@@ -234,7 +234,7 @@ of this “smart pipe operator”][smart body syntax].
 ### Goals
 
 <summary>
-There are fourteen ordered Goals that the smart body syntax tries to fulfill,
+There are sixteen ordered Goals that the smart body syntax tries to fulfill,
 which may be summarized,
 “Don’t break my code,”<br>
 “Don’t make me overthink,”<br>
@@ -245,20 +245,24 @@ and other.
 
 Listed by priority, from most to least important:
 
-- “Don’t break my code.”
+* “Don’t break my code.”
+
    1. [Backward compatibility](#backward-compatibility)
    2. [Zero runtime cost](#zero-runtime-cost)
    3. [Forward compatibility](#forward-compatibility)
 
-- “Don’t make me overthink.”
+* “Don’t make me overthink.”
+
    4. [Syntactic locality](#syntactic-locality)
    5. [Cyclomatic simplicity](#cyclomatic-simplicity)
 
-- “Don’t shoot me in the foot.”
+* “Don’t shoot me in the foot.”
+
    6. [Simple scoping](#simple-scoping)
    7. [Static analyzability](#static-analyzability)
 
-- “Make my code easier to read.”
+* “Make my code easier to read.”
+
    8. [Untangled flow](#untangled-flow)
    9. [Expressive versatility](#expressive-versatility)
   10. [Distinguishability](#distinguishability)
@@ -266,7 +270,8 @@ Listed by priority, from most to least important:
   12. [Terse variables](#terse-variables)
   13. [Terse function calls](#terse-function-calls)
 
-- Other
+* Other
+
   14. [Conceptual generality](#conceptual-generality)
   15. [Human writability](#human-writability)
   16. [Novice learnability](#novice-learnability)
