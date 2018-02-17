@@ -1331,41 +1331,30 @@ Rules that define when such extra syntax errors occur.
 
 ***
 
-One such static early error is mentioned in both the section on the Goal [static
-analyzability][] and the section on the [Contains][] rule. There are also several
-others, each designed to prevent a footgun of ambiguity, by forcing the developer
-to clarify their intent.
+The two static early errors in this proposal are designed to prevent some ambiguity
+from shooting the developer in the foot – by forcing the developer to clarify
+their intent.
 
-* Pipeline heads:
-  * Pipeline heads that start with `yield` must be parenthesized. Otherwise they are
-    early error. If `yield x |> …` were a statement, then did the author want to
-    apply the pipeline’s steps to `x`, *then* yield the pipeline’s result:
-    `yield (x |> …)`? Or does the developer want to first yield `x` and then
-    apply the rest of the pipeline to the result of the yield expression:
-    `(yield x) |> …`?
+* Pipelines that are in topical style but that do not ever use their topics
+  anywhere in their bodies, such as `x |> 3`, are an early error. Such expressions
+  would be always useless and almost certainly not what the author had intended.
+  [TO DO: Link.]
 
-    To avoid this footgun, `yield` is prohibited from the start of pipeline
-    heads. Just wrap the yield expression in parentheses: `(yield x) |> …` or
-    `x |> (yield #) |> …`. [TO DO: Link to section on yield in head expressions.]
+  One such footgun has already been mentioned in both the section on the Goal
+  [static analyzability][] and the section on the [Contains][] rule.
 
-* Pipeline bodies:
-  * Pipelines that are in topical style but that do not ever use their topics
-    anywhere in their bodies, such as `x |> 3`, are an early error. Such expressions
-    would be always useless and almost certainly not what the author had intended.
-    [TO DO: Link.]
+* Just as with pipeline heads, pipeline bodies that start with `yield` must be
+  parenthesized. Otherwise they are early errors. This is because the `yield`
+  operator has such a loose precedence that `x |> yield # |> f` is an
+  ambiguous footgun.
 
-  * Just as with pipeline heads, pipeline bodies that start with `yield` must be
-    parenthesized. Otherwise they are early errors. This is because the `yield`
-    operator has such a loose precedence that `x |> yield # |> f` is an
-    ambiguous footgun.
+  It is very likely that the developer meant `(x |> (yield #)) |> f` here, but
+  because `yield` has such loose precedence, without parentheses, the pipeline
+  will be parsed instead as `x |> (yield (# |> f))`, which has a very different
+  meaning.
 
-    It is very likely that the developer meant `(x |> (yield #)) |> f` here, but
-    because `yield` has such loose precedence, without parentheses, the pipeline
-    will be parsed instead as `x |> (yield (# |> f))`, which has a very
-    different meaning.
-
-    With this early error, the developer is forced to clarify their `yield`:
-    either `x |> (yield #) |> f` or `x |> (yield # |> f)`. [TO DO: Link.]
+  With this early error, the developer is forced to clarify their `yield`:
+  either `x |> (yield #) |> f` or `x |> (yield # |> f)`. [TO DO: Link.]
 
 [TO DO: Add bidirectional associativity to Goals]
 
