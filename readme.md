@@ -9,16 +9,37 @@
   - [Background](#background)
   - [Motivation](#motivation)
     - [Goals](#goals)
-      - [“Don’t break my code with your syntax.”](#dont-break-my-code-with-your-syntax)
-      - [“Don’t make me overthink about your syntax.”](#dont-make-me-overthink-about-your-syntax)
-      - [“Don’t shoot me in the foot with your syntax.”](#dont-shoot-me-in-the-foot-with-your-syntax)
-      - [“Make my code simpler and easier with your syntax.”](#make-my-code-simpler-and-easier-with-your-syntax)
+      - [“Don’t break my code.”](#dont-break-my-code)
+        - [Backward compatibility](#backward-compatibility)
+        - [Zero runtime cost](#zero-runtime-cost)
+        - [Forward compatibility](#forward-compatibility)
+      - [“Don’t make me overthink.”](#dont-make-me-overthink)
+        - [Syntactic locality](#syntactic-locality)
+        - [Cyclomatic simplicity](#cyclomatic-simplicity)
+      - [“Don’t shoot me in the foot.”](#dont-shoot-me-in-the-foot)
+        - [Simple scoping](#simple-scoping)
+        - [Static analyzability](#static-analyzability)
+      - [“Make my code easier to read.”](#make-my-code-easier-to-read)
+        - [Untangled flow](#untangled-flow)
+      - [Expressive versatility](#expressive-versatility)
+        - [Distinguishable punctuators](#distinguishable-punctuators)
+          - [Terse parentheses](#terse-parentheses)
+          - [Terse variables](#terse-variables)
+          - [Terse function calls](#terse-function-calls)
+      - [Other Goals](#other-goals)
+        - [Conceptual generality](#conceptual-generality)
+        - [Human writability](#human-writability)
+        - [Novice learnability](#novice-learnability)
     - [Real-world examples](#real-world-examples)
       - [Prior pipeline proposal](#prior-pipeline-proposal)
       - [Underscore.js](#underscorejs)
       - [Pify](#pify)
       - [Fetch Web Standard](#fetch-web-standard)
   - [Nomenclature](#nomenclature)
+    - [Pipe operator, pipeline, pipeline-level expression](#pipe-operator-pipeline-pipeline-level-expression)
+    - [Head, head value, body, pipeline value, topical style, bare style](#head-head-value-body-pipeline-value-topical-style-bare-style)
+    - [Topic, topic reference](#topic-topic-reference)
+    - [Explanation of conventions](#explanation-of-conventions)
   - [Grammar](#grammar)
     - [Lexical grammar](#lexical-grammar)
     - [Grammar parameters](#grammar-parameters)
@@ -214,132 +235,162 @@ of this “smart pipe operator”][smart body syntax].
 ### Goals
 
 <summary>
-There are twelve ordered Goals that the smart body syntax tries to fulfill,
+There are fourteen ordered Goals that the smart body syntax tries to fulfill,
 which may be summarized,
-“Don’t break my code your syntax,”<br>
-“Don’t make me overthink about your syntax,”<br>
-“Don’t shoot me in the foot with your syntax,” and<br>
-“Make my code simpler and easier with your syntax.”
+“Don’t break my code,”<br>
+“Don’t make me overthink,”<br>
+“Don’t shoot me in the foot,”<br>
+“Make my code easier to read,”<br>
+and other.
 </summary>
 
-Listed from most to least important:
+Listed by priority, from most to least important:
 
-#### “Don’t break my code with your syntax.”
- 1. **Backward compatibility**: The syntax must avoid stepping on the toes of
-    existing code, including but not limited to JavaScript libraries such as
-    jQuery and Underscore.js. In particular, the topic reference should not be
-    an existing identifier such as `$` or `_`, which both may cause surprising
-    results to a developer who adopts pipelines while also using a globally
-    bound convenience variable. It is a common pattern to do this even without a
-    library: `var $ = document.querySelectorAll`”. The silent shadowing of such
-    outer-context variables may silently cause bugs, which may also be difficult
-    to debug (see Goal 6).
+- “Don’t break my code.”
+   1. [Backward compatibility](#backward-compatibility)
+   2. [Zero runtime cost](#zero-runtime-cost)
+   3. [Forward compatibility](#forward-compatibility)
 
-    Nor can it cause previously valid code to become invalid. This includes,
-    to a lesser extent, common nonstandard extensions to JavaScript: for instance,
-    using `<>` for the topic reference would retroactively invalidate existing
-    E4X and JSX code.
+- “Don’t make me overthink.”
+   4. [Syntactic locality](#syntactic-locality)
+   5. [Cyclomatic simplicity](#cyclomatic-simplicity)
 
-    This proposal uses `#` for its topic reference. This is compatible with all
-    known previous JavaScript code. `?` and `@` could be chosen instead, which
-    are each also backwards compatible.
+- “Don’t shoot me in the foot.”
+   6. [Simple scoping](#simple-scoping)
+   7. [Static analyzability](#static-analyzability)
 
- 2. **Zero runtime cost**: This could be considered a specific type of backward
-    compatibility. When translating old code into the new syntax, doing so
-    should not cause unexpected performance regression. For instance, the new
-    syntax should not require memory allocation for newly created functions that
-    were not necessary in the old code. Instead, it should, at least
-    theoretically, perform as well the old code did for both memory and CPU. And
-    it should be able to do this without dramatically rearranging code logic or
-    relying on hidden, uncontrollable compiler optimization.
+- “Make my code easier to read.”
+   8. [Untangled flow](#untangled-flow)
+   9. [Expressive versatility](#expressive-versatility)
+  10. [Distinguishability](#distinguishability)
+  11. [Terse parentheses](#terse-parentheses)
+  12. [Terse variables](#terse-variables)
+  13. [Terse function calls](#terse-function-calls)
 
-    For instance, in order to apply the syntax to the logic of an async
-    functions, a hypothetical new pipeline syntax might not support using
-    `await` in the same async context as the pipeline itself. Such a syntax
-    would, for each of its pipelines’ steps, require inner async functions that
-    would return wrapper promises and pass them between consecutive steps. Such
-    an approach would be be unnecessarily expensive to naively evaluate for both
-    CPU and memory. But inlining these async functions may be internally
-    complicated, and such optimizations would be difficult for the developer to
-    correctly predict and might differ widely between JavaScript engines.
+- Other
+  14. [Conceptual generality](#conceptual-generality)
+  15. [Human writability](#human-writability)
+  16. [Novice learnability](#novice-learnability)
 
-    Instead, this proposal’s use of a topic reference enables the zero-cost
-    rewriting of any expression within the current environmental context,
-    including `await` operations in async functions, without having to create
-    unnecessary inner async functions, and without having to wrap values in
-    unnecessary promises.
+#### “Don’t break my code.”
 
- 3. **Forward compatibility**: The syntax should not preclude other proposals:
-    both already-proposed features, such as [syntactic partial application][]
-    and [private class fields][] – as well as [possible future extensions to the
-    topic concept][], such as topic-binding versions of `function`, `for`, and
-    `catch` blocks.
+##### Backward compatibility
+The syntax must avoid stepping on the toes of existing code, including but not
+limited to JavaScript libraries such as jQuery and Underscore.js. In particular,
+the topic reference should not be an existing identifier such as `$` or `_`,
+which both may cause surprising results to a developer who adopts pipelines
+while also using a globally bound convenience variable. It is a common pattern
+to do this even without a library: `var $ = document.querySelectorAll`”. The
+silent shadowing of such outer-context variables may silently cause bugs, which
+may also be difficult to debug (see Goal 6).
 
-    This proposal is forward compatible with all these proposals, in both its
-    choice of topic reference and in its prohibition of topic references within
-    any block (other than arrow functions).
+Nor can it cause previously valid code to become invalid. This includes, to a
+lesser extent, common nonstandard extensions to JavaScript: for instance, using
+`<>` for the topic reference would retroactively invalidate existing E4X and JSX
+code.
 
-    Forward compatibility is elaborated in the section on [relations to other
-    work][]. See also Goal 9 below. See also [inner blocks in pipelines][inner
-    blocks].
+This proposal uses `#` for its topic reference. This is compatible with all
+known previous JavaScript code. `?` and `@` could be chosen instead, which are
+each also backwards compatible.
 
-#### “Don’t make me overthink about your syntax.”
- 4. **Syntactic locality**: The syntax should minimize the parsing lookahead
-    that the compiler must check. If the grammar makes [garden-path syntax][]
-    common, then this increases the dependency that pieces of code have on other
-    code. This long lookahead in turn makes it more likely that the code will
-    exhibit developer-unintended behavior.
+##### Zero runtime cost
+This could be considered a specific type of backward compatibility. When
+translating old code into the new syntax, doing so should not cause unexpected
+performance regression. For instance, the new syntax should not require memory
+allocation for newly created functions that were not necessary in the old code.
+Instead, it should, at least theoretically, perform as well the old code did for
+both memory and CPU. And it should be able to do this without dramatically
+rearranging code logic or relying on hidden, uncontrollable compiler
+optimization.
 
-    This is true particularly for [distinguishing between different styles of
-    pipeline body syntax][smart body syntax]. A pipeline’s meaning would often
-    be ambiguous between these styles – at least without checking the pipeline’s
-    body carefully to see in which style it is written. And the pipeline body
-    may be a very long expression.
+For instance, in order to apply the syntax to the logic of an async functions, a
+hypothetical new pipeline syntax might not support using `await` in the same
+async context as the pipeline itself. Such a syntax would, for each of its
+pipelines’ steps, require inner async functions that would return wrapper
+promises and pass them between consecutive steps. Such an approach would be be
+unnecessarily expensive to naively evaluate for both CPU and memory. But
+inlining these async functions may be internally complicated, and such
+optimizations would be difficult for the developer to correctly predict and
+might differ widely between JavaScript engines.
 
-    By restricting the space of valid bare-style pipeline bodies (that is,
-    without topic references), the rule minimizes garden-path syntax that would
-    otherwise be possible—such as `… |> compose(f, g, h, i, j, k, #)`. Syntax
-    becomes more locally readable. It becomes easier to reason about code
-    without thinking about code elsewhere.
+Instead, this proposal’s use of a topic reference enables the zero-cost
+rewriting of any expression within the current environmental context, including
+`await` operations in async functions, without having to create unnecessary
+inner async functions, and without having to wrap values in unnecessary promises.
 
- 5. **Cyclomatic simplicity**: Each edge case of the grammar increases the
-    [cyclomatic complexity][] of parsing the new syntax, increasing cognitive
-    burden on both machine compiler and human reader in writing and reading code
-    without error. If edge cases and branching are minimized, then the resulting
-    syntax will be uniform and consistent. The reduced complexity would
-    hopefully reduce the probability that the developer will misunderstand the
-    code they read or write.
+##### Forward compatibility
+The syntax should not preclude other proposals: both already-proposed features,
+such as [syntactic partial application][] and [private class fields][] – as well
+as [possible future extensions to the topic concept][], such as topic-binding
+versions of `function`, `for`, and `catch` blocks.
 
-    Similarly, reducing edge cases reduces the amount of trivia that a developer
-    must learn and remember in order to use the syntax. The more uniform and
-    simple the syntax’s rules, the more the developer may focus on the actual
-    meaning of their code.
+This proposal is forward compatible with all these proposals, in both its choice
+of topic reference and in its prohibition of topic references within any block
+(other than arrow functions).
 
-#### “Don’t shoot me in the foot with your syntax.”
- 6. **Simple scoping**: It should not be easy to accidentally shadow a reference
-    from an outer lexical scope. When the developer does so, any use of that
-    reference could result in subtle, pernicious bugs.
+Forward compatibility is elaborated in the section on [relations to other
+work][]. See also Goal 9 below. See also [inner blocks in pipelines][inner
+blocks].
 
-    The rules for when the topic is bound should be simple and consistent. It
-    should be clear and obvious when a topic is bound and in what scope it
-    exists. And forgetting these rules should result in early, compile-time
-    errors, not subtle runtime bugs.
+#### “Don’t make me overthink.”
+##### Syntactic locality
+The syntax should minimize the parsing lookahead that the compiler must check.
+If the grammar makes [garden-path syntax][] common, then this increases the
+dependency that pieces of code have on other code. This long lookahead in turn
+makes it more likely that the code will exhibit developer-unintended behavior.
 
-    The rules of topic scoping is simple: **Topic references are bound in the
-    bodies of pipelines, and they cannot be used within any block other than
-    arrow functions.** See the section on [inner blocks][].
+This is true particularly for [distinguishing between different styles of
+pipeline body syntax][smart body syntax]. A pipeline’s meaning would often be
+ambiguous between these styles – at least without checking the pipeline’s body
+carefully to see in which style it is written. And the pipeline body may be a
+very long expression.
 
- 7. **Static analyzability**: Early errors help the editing JavaScript developer
-    avoid common footguns at compile time, such as preventing them from
-    accidentally omitting a topic reference where they meant to put one. For
-    instance, if `x |> 3` were not a syntax error, then it would be a useless
-    operation and almost certainly not what the developer intended.
+By restricting the space of valid bare-style pipeline bodies (that is, without
+topic references), the rule minimizes garden-path syntax that would otherwise be
+possible—such as `… |> compose(f, g, h, i, j, k, #)`. Syntax becomes more
+locally readable. It becomes easier to reason about code without thinking about
+code elsewhere.
 
-    Similarly, if the topic reference is used outside of a pipeline RHS’s scope,
-    such as in `export function () { # }`, then this is also almost certainly a
-    developer error.
+##### Cyclomatic simplicity
+Each edge case of the grammar increases the [cyclomatic complexity][] of parsing
+the new syntax, increasing cognitive burden on both machine compiler and human
+reader in writing and reading code without error. If edge cases and branching
+are minimized, then the resulting syntax will be uniform and consistent. The
+reduced complexity would hopefully reduce the probability that the developer
+will misunderstand the code they read or write.
 
-#### “Make my code simpler and easier with your syntax.”
+Similarly, reducing edge cases reduces the amount of trivia that a developer
+must learn and remember in order to use the syntax. The more uniform and
+simple the syntax’s rules, the more the developer may focus on the actual
+meaning of their code.
+
+#### “Don’t shoot me in the foot.”
+##### Simple scoping
+It should not be easy to accidentally shadow a reference from an outer lexical
+scope. When the developer does so, any use of that reference could result in
+subtle, pernicious bugs.
+
+The rules for when the topic is bound should be simple and consistent. It should
+be clear and obvious when a topic is bound and in what scope it exists. And
+forgetting these rules should result in early, compile-time errors, not subtle
+runtime bugs.
+
+The rules of topic scoping is simple: **Topic references are bound in the bodies
+of pipelines, and they cannot be used within any block other than arrow
+functions.** See the section on [inner blocks][].
+
+##### Static analyzability
+Early errors help the editing JavaScript developer avoid common footguns at
+compile time, such as preventing them from accidentally omitting a topic
+reference where they meant to put one. For instance, if `x |> 3` were not a
+syntax error, then it would be a useless operation and almost certainly not what
+the developer intended.
+
+Similarly, if the topic reference is used outside of a pipeline RHS’s scope,
+such as in `export function () { # }`, then this is also almost certainly a
+developer error.
+
+#### “Make my code easier to read.”
 The new syntax should increase the human readability and writability of much
 common code. It should be simpler to read and comprehend. And it should be
 easier to compose and update. Otherwise, the new syntax would be useless.
@@ -349,222 +400,224 @@ purpose of this proposal. To a computer, the form of complex expressions –
 whether as deeply nested groups or as flat threads of postfix steps – should not
 matter. But to a human, it can make a significant difference.
 
- 8. **Untangled threading**: When a human reads deeply nested groups of
-    expressions – which are very common in JavaScript code – their attention
-    must switch between the start and end of each nested expression. And
-    these expressions will dramatically differ in length, depending on their
-    level in the syntactic tree. To use the example above:
-    ```js
-    new User.Message(
-      capitalize(
-        doubledSay(
-          (await stringPromise)
-            ?? throw new TypeError(`Expected string from ${stringPromise}`)
-        )
-      ) + '!'
+##### Untangled flow
+When a human reads deeply nested groups of expressions – which are very common
+in JavaScript code – their attention must switch between the start and end of
+each nested expression. And these expressions will dramatically differ in
+length, depending on their level in the syntactic tree. To use the example above:
+```js
+new User.Message(
+  capitalize(
+    doubledSay(
+      (await stringPromise)
+        ?? throw new TypeError(`Expected string from ${stringPromise}`)
     )
-    ```
-    …the deep inner expression `await stringPromise` is relatively short. In
-    contrast, the shallow outer expression `` capitalize(doubledSay((await
-    stringPromise) ?? throw new TypeError(`Expected string from
-    ${stringPromise}`))) + '!'`) `` is very long. Yet both are
-    quite similar: they are transformations of a string into another. This
-    insight is lost in the deeply nested noise.
+  ) + '!'
+)
+```
+…the deep inner expression `await stringPromise` is relatively short. In
+contrast, the shallow outer expression `` capitalize(doubledSay((await
+stringPromise) ?? throw new TypeError(`Expected string from
+${stringPromise}`))) + '!'`) `` is very long. Yet both are
+quite similar: they are transformations of a string into another. This
+insight is lost in the deeply nested noise.
 
-    With pipelines, the code forms a flat thread of postfix steps. It is much
-    easier for a human to read and comprehend. Each of its steps are roughly the
-    same length. In order to understand what occurs before a given step, one
-    only need to scan left, rather than in both directions as the deeply nested
-    tree would require. To read the whole thing, a reader may simply follow
-    along left to right, not back and forth.
-    ```js
-    stringPromise
-      |> await #
-      |> # ?? throw new TypeError()
-      |> doubleSay(#, ', ')
-      |> capitalize
-      |> # + '!'
-      |> new User.Message
-    ```
+With pipelines, the code forms a flat thread of postfix steps. It is much
+easier for a human to read and comprehend. Each of its steps are roughly the
+same length. In order to understand what occurs before a given step, one
+only need to scan left, rather than in both directions as the deeply nested
+tree would require. To read the whole thing, a reader may simply follow
+along left to right, not back and forth.
+```js
+stringPromise
+  |> await #
+  |> # ?? throw new TypeError()
+  |> doubleSay(#, ', ')
+  |> capitalize
+  |> # + '!'
+  |> new User.Message
+```
 
-    The introduction to this [motivation][] section already explained much of
-    the readability rationale, but it may also be useful to study the
-    [real-world examples] below.
+The introduction to this [motivation][] section already explained much of
+the readability rationale, but it may also be useful to study the
+[real-world examples] below.
 
-  9. **Versatile expressivity**: JavaScript is a language rich with [expressions
-     of numerous kinds][MDN expressions and operators], each of which may
-     usefully transform data from one form to another. There is **no single
-     type** of expression that forms a **majority of used expressions**.
+#### Expressive versatility
+JavaScript is a language rich with [expressions of numerous kinds][MDN
+expressions and operators], each of which may usefully transform data from one
+form to another. There is **no single type** of expression that forms a
+**majority of used expressions**.
 
-     * Arithmetic operations.
-     * Array literals.
-     * Arrow functions.
-     * Assignment operations.
-     * `await` expressions.
-     * Class definitions.
-     * Conditional operations.
-     * Constructor calls one argument.
-     * Constructor calls with many n-ary arguments.
-     * Equality operations.
-     * Function calls with one unary argument.
-     * Function calls with many n-ary arguments.
-     * Function and async-function definitions.
-     * [Functional partial application (eventually)][Syntactic partial
-       application].
-     * Generator and async-generator definitions.
-     * `instanceof` and `in` operations.
-     * Object literals.
-     * Property accessors and method calls.
-     * References to variables, `this`, and `new.target`.
-     * Regular-expression literals.
-     * `super` calls.
-     * Template literals.
-     * `typeof` operations.
-     * Unary function composition (eventually?).
-     * `yield` expressions.
+* Arithmetic operations.
+* Array literals.
+* Arrow functions.
+* Assignment operations.
+* `await` expressions.
+* Class definitions.
+* Conditional operations.
+* Constructor calls one argument.
+* Constructor calls with many n-ary arguments.
+* Equality operations.
+* Function calls with one unary argument.
+* Function calls with many n-ary arguments.
+* Function and async-function definitions.
+* [Functional partial application (eventually)][Syntactic partial application].
+* Generator and async-generator definitions.
+* `instanceof` and `in` operations.
+* Object literals.
+* Property accessors and method calls.
+* References to variables, `this`, and `new.target`.
+* Regular-expression literals.
+* `super` calls.
+* Template literals.
+* `typeof` operations.
+* Unary function composition (eventually?).
+* `yield` expressions.
 
-     The goal of the pipe operator is to untangle deeply nested expressions into
-     flat threads of postfix expressions. To limit it to only one type of
-     expression, even a common type, truncates its benefits to that one type only
-     and compromises its expressivity and versatility.
+The goal of the pipe operator is to untangle deeply nested expressions into flat
+threads of postfix expressions. To limit it to only one type of expression, even
+a common type, truncates its benefits to that one type only and compromises its
+expressivity and versatility.
 
-     In particular, relying on immediately invoked function expressions
-     ([IIFEs][]) to accomodate non-unary function is insufficient for idiomatic
-     JavaScript code. JavaScript functions have never fulfilled the [Tennent
-     correspondence principle][]. Several common types of expressions cannot be
-     equivalently used within inner functions, particularly `await` and `yield`.
-     In these frequent cases, attempting to replacing code with “equivalent”
-     IIFEs may cause different behavior, may cause different performance
-     behavior (see example in Goal 2), or may require dramatic rearrangement of
-     logic to conserve the old code’s behavior.
+In particular, relying on immediately invoked function expressions ([IIFEs][])
+to accomodate non-unary function is insufficient for idiomatic JavaScript code.
+JavaScript functions have never fulfilled the [Tennent correspondence
+principle][]. Several common types of expressions cannot be equivalently used
+within inner functions, particularly `await` and `yield`. In these frequent
+cases, attempting to replacing code with “equivalent” IIFEs may cause different
+behavior, may cause different performance behavior (see example in Goal 2), or
+may require dramatic rearrangement of logic to conserve the old code’s behavior.
 
-     It would be possible to add ad-hoc handling, for selected other expression
-     types, to the operator’s grammar. This would expand its benefits to that
-     type. However, this conflicts with Goal 5 (adding cyclomatic complexity to
-     the parsing process, proportional to the number of ad-hoc handled cases). It
-     also does not fulfill this Goal well either: excluding, perhaps arbitrarily,
-     whatever classes its grammar’s branches do not handle.
+It would be possible to add ad-hoc handling, for selected other expression
+types, to the operator’s grammar. This would expand its benefits to that type.
+However, this conflicts with Goal 5 (adding cyclomatic complexity to the parsing
+process, proportional to the number of ad-hoc handled cases). It also does not
+fulfill this Goal well either: excluding, perhaps arbitrarily, whatever classes
+its grammar’s branches do not handle.
 
-     A pipeline operator that is versatile (this Goal) but conceptually and
-     cyclomatically simple (Goal 5) must be able to handle **all** expressions
-     in a **single** manner **uniformly** **universally** applicable to **all**
-     expressions. It is the hope of this proposal’s authors that its **[topical
-     style][]** fulfills both criteria.
+Such new [incidental complexity][] makes code less readable and distracts the
+developer from the program’s [essential logic][essential complexity]. A pipeline
+operator that improves readability should be versatile (this Goal) but
+conceptually and cyclomatically simple (Goal 5). Such an operator should be able
+to handle **all** expressions, in a **single** manner **uniformly**
+**universally** applicable to **all** expressions. It is the hope of this
+proposal’s authors that its **[topical style][]** fulfills both criteria.
 
-     ***
+##### Distinguishable punctuators
+Another important aspect of code readability is the visual distinguishability of
+its most important words or symbols. Visually similar punctuators can distract
+or even mislead the human reader, as they attempt to figure out the true meaning
+of their code.
 
-     Another form of versatility and expressivity comes in how its concepts may
-     be applicable to other syntax, including existing syntax and future syntax
-     (compare with Goal 3).
+Any new punctuator should be easily distinguishable from existing symbols and should
+not be visually confusable with unrelated syntax. This is particularly true for
+choosing the topic-reference token, which would appear often in a wide variety
+of expressions. If the topic reference hypothetically were `?`, and it were used
+anywhere near the visually similar [optional-chaining syntax proposal][], then
+the topic reference might be lost or unnoticed by the developer: for example,
+`?.??m(?)`.
 
-     This proposal’s concept of a **topic reference does not need to be coupled
-     only to pipelines**. The [topic concept is **generalizable to many syntactic
-     forms**][possible future extensions to the topic concept]. These
-     generalizations are **out of scope** of this proposal, which is only for
-     the smart pipe operator; they are **deferred** to [other, future
-     proposals][possible future extensions to the topic concept].
+###### Terse parentheses
+Terseness also aids distinguishability by obviating the need for boilerplate
+syntactic noise. Parentheses are a prominent example: as long as operator
+precedence is clear, then reducing parentheses always would JavaScript code more
+visually terse and less cluttered.
 
-10. **Distinguishability and terseness**: Another important aspect of code
-    readability is the visual distinguishability of its important pieces.
-    Visually similar symbols can distract or even mislead the human reader, as
-    they attempt to figure out the meaning of code.
+The example above demonstrates how numerous verbose parentheses could become
+unnecessary with pipelines. In these cases the [“data-to-ink” visual ratio][]
+would significantly increase, emphasizing the program’s essential information.
+The developer’s cognitive burden – of ignoring unimportant incidental symbols as
+they read – has hopefully lightened.
 
-    * **Distinguishability of new symbols**: Any new symbol should be easily
-      distinguishable from existing symbols and should not be visually
-      confusable with unrelated syntax. This is particularly true for choosing
-      the topic-reference token, which would appear often in a wide variety of
-      expressions. If the topic reference hypothetically were `?`, and it were
-      used anywhere near the visually similar [optional-chaining syntax
-      proposal][], then the topic reference might be lost or unnoticed by the
-      developer: for example, `?.??m(?)`.
+###### Terse variables
+Similarly, terseness of code may also be increased by removing variables where
+possible. This in turn would increase the data-to-ink visual ratio of the text
+and the distinguishability of important symbols. This style of programming is
+known as [tacit or point-free programming][tacit programming] (where “point”
+refers to function arguments). Jeremy Gibbons, a computer scientist, expressed
+its claimed benefits in a 1970 paper as such:
 
-    * **Terseness by removing unnecessary parentheses**: Terseness also aids
-      distinguishability by obviating the need for boilerplate syntactic noise.
-      Parentheses are a prominent example: as long as operator precedence is
-      clear, then reducing parentheses always would JavaScript code more
-      visually terse and less cluttered.
+> Our calculations got completely bogged down using [function arguments]. In
+> attempting to rephrase [function] definitions […] in particular, eliminating
+> as many variables as possible and performing point-free (or ‘pointless‘)
+> calculations at the level of functino compisition instead of point-wise
+> calculations at the level of application, suddenly the calculations became
+> almost trivial. This is the point of [point-free] calculations: when you
+> travel light – discarding variables that do not contribute to the calculation
+> – you can sometimes step lightly across the surface of the quagmire.
+>
+This sort of terseness, in which the explicit is made tacit and implicit, must
+be balanced with Goals 4 and 5. Excessive implicitness compromises
+comprehensibility, at least without low-level tracing of tacit arguments’
+invisible paths, rather than the actual, high-level meaning of the code. Yet at
+the same time, excessive explicitness generates ritual, verbose boilerplate that
+also interferes with reading comprehension. Therefore, Goal 10 must be balanced
+with Goals 1, 4, and 5.
 
-      The example above demonstrates how numerous verbose parentheses could
-      become unnecessary with pipelines. In these cases the [“data-to-ink”
-      visual ratio][] would significantly increase, emphasizing the program’s
-      essential information. The developer’s cognitive burden – of ignoring
-      unimportant incidental symbols as they read – has hopefully lightened.
+[The Zen of Python][PEP 20] famously says, “Explicit is better than implicit,”
+but it also says, “Flat is better than nested,” and, “Sparse is better than
+dense.”
 
-    * **Terseness by removing unnecessary variable declarations**: Similarly,
-      terseness of code may also be increased by removing variables where
-      possible. This in turn would increase the data-to-ink visual ratio of the
-      text and the distinguishability of important symbols. This style of
-      programming is known as [tacit or point-free programming][tacit
-      programming] (where “point” refers to function arguments). Jeremy Gibbons,
-      a computer scientist, expressed its claimed benefits in a 1970 paper as such:
+###### Terse function calls
+Unary function / constructor calls are a particularly frequent type of
+expression and a good target for especial human optimization. However, such
+extra shortening might dramatically reduce the verbosity of unary function
+calls, but again this must be balanced with Goals 1, 4, and 5.
 
-      > Our calculations got completely bogged down using [function arguments].
-      > In attempting to rephrase [function] definitions […] in particular,
-      > eliminating as many variables as possible and performing point-free (or
-      > ‘pointless‘) calculations at the level of functino compisition instead
-      > of point-wise calculations at the level of application, suddenly the
-      > calculations became almost trivial. This is the point of [point-free]
-      > calculations: when you travel light – discarding variables that do not
-      > contribute to the calculation – you can sometimes step lightly across
-      > the surface of the quagmire.
+It is the hope of this proposal’s authors that its [smart body syntax][] reaches
+a good balance between this Goal and Goals 4 and 5, in the same manner that
+[Huffman coding][] optimizes textual symbols’ length for their frequency of use:
+more commonly used symbols are shorter.
 
-      This sort of terseness, in which the explicit is made tacit and implicit,
-      must be balanced with Goals 4 and 5. Excessive implicitness compromises
-      comprehensibility, at least without low-level tracing of tacit arguments’
-      invisible paths, rather than the actual, high-level meaning of the code.
-      Yet at the same time, excessive explicitness generates ritual, verbose
-      boilerplate that also interferes with reading comprehension. Therefore,
-      Goal 10 must be balanced with Goals 1, 4, and 5.
+#### Other Goals
+##### Conceptual generality
+If a concept is uniformly generalizable to many other cases, then this
+multiplies its usefulness. The more versatile its concepts, the more it may be
+applied to other syntax, including existing syntax and future syntax (compare
+with Goal 3).
 
-      [The Zen of Python][PEP 20] famously baldly states, “Explicit is better
-      than implicit,” but it also states, “Flat is better than nested,” and,
-      “Sparse is better than dense.”
+This proposal’s concept of a **topic reference does not need to be coupled only
+to pipelines**. The [topic concept is **generalizable to many syntactic
+forms**][possible future extensions to the topic concept]. These generalizations
+are **out of scope** of this proposal, which is only for the smart pipe
+operator; they are **deferred** to [other, future proposals][possible future
+extensions to the topic concept].
 
-    * **Optimizing terseness by frequency of use**:
-      In particular, unary function / constructor calls are a frequent type of
-      expression. Enabling tacit function calls and constructors can
-      dramatically reduce the verbosity of unary function calls, though again
-      this must be balanced with Goals 1, 4, and 5.
+##### Human writability
+Writability of code is less important a priority than readability of code. Code
+is usually written a few days, perhaps by a few authors – but code will be read
+dozens or hundreds of times, perhaps by many more people. However, ease of
+writing and editing is still a good goal, and it often naturally increases when
+code also becomes more readable. A useful heuristic for writability is assessing
+the probability that a single edit to one piece of code will necessitate changes
+to other parts of code that are not directly related to the edit.
 
-      It is the hope of this proposal’s authors that its [smart body syntax][]
-      reaches a good balance between this Goal and Goals 4 and 5, in the same
-      manner that [Huffman coding][] optimizes textual symbols’ length for their
-      frequency of use: more commonly used symbols are shorter.
+The simple addition or removal of a deeply nested expression may necessitate the
+indentation, de-indentation, parenthetical grouping, and parenthetical
+flattening of many lines of code; the tedium of these incidental changes is a
+major factor in the general popularity of automatic code formatters.
 
-11. **Human writability**: Writability of code is less important a priority than
-    readability of code. Code is usually written a few days, perhaps by a few
-    authors – but code will be read dozens or hundreds of times, perhaps by many
-    more people. However, ease of writing and editing is still a good goal, and
-    it often naturally increases when code also becomes more readable.
-    A useful heuristic for writability is assessing the probability that a single
-    edit to one piece of code will necessitate changes to other parts of code
-    that are not directly related to the edit.
+Achieving Goal 8 therefore also improves the ease of composing and editing code.
+By flattening deeply nested expression trees into single threads of postfix
+steps, a step may be added oredited in isolation on a single line, it may be
+rearranged up or down, it may be removed – all without affecting the pipeline’s
+other steps in the lines above or below it.
 
-    The simple addition or removal of a deeply nested expression may necessitate
-    the indentation, de-indentation, parenthetical grouping, and parenthetical
-    flattening of many lines of code; the tedium of these incidental changes is
-    a major factor in the general popularity of automatic code formatters.
+##### Novice learnability
+Learnability of the syntax is a desirable Goal: the more intuitive the syntax
+is, the more rapidly it might be adopted by developers. However, learnability in
+of itself is not more desirable than the other Goals above. Most JavaScript
+developers would be novices to this syntax at most once, during which the
+intuitiveness of the syntax will dominate their experience. But after that
+honeymoon period, the syntax’s usability in workaday programming will instead
+affect their reading and writing most.
 
-    Achieving Goal 8 therefore also improves the ease of composing and editing
-    code. By flattening deeply nested expression trees into single threads of
-    postfix steps, a step may be added oredited in isolation on a single line,
-    it may be rearranged up or down, it may be removed – all without affecting
-    the pipeline’s other steps in the lines above or below it.
-
-12. **Novice learnability**: Learnability of the syntax is a desirable Goal:
-    the more intuitive the syntax is, the more rapidly it might be adopted by
-    developers. However, learnability in of itself is not more desirable than
-    the other Goals above. Most JavaScript developers would be novices to this
-    syntax at most once, during which the intuitiveness of the syntax will
-    dominate their experience. But after that honeymoon period, the syntax’s
-    usability in workaday programming will instead affect their reading and
-    writing most. Instead, readability, comprehensibility, locality, simplicity,
-    expressiveness, and terseness are prioritized first, where they would
-    conflict with learnability itself. However, a syntax that is simple but
-    expressive – and, most of all, readable – could well be easier to learn. Its
-    up-front cost in learning could be small, particularly in comparison to the
-    large gains in readability and comprehensibility that it might bring to code
-    in general.
+So instead, readability, comprehensibility, locality, simplicity,
+expressiveness, and terseness are prioritized first, where they would conflict
+with learnability itself. However, a syntax that is simple but expressive – and,
+most of all, readable – could well be easier to learn. Its up-front cost in
+learning could be small, particularly in comparison to the large gains in
+readability and comprehensibility that it might bring to code in general.
 
 </details>
 
@@ -2898,3 +2951,5 @@ do { do { do { do { 3 * 3 } } }
 [Tennent correspondence principle]: http://gafter.blogspot.com/2006/08/tennents-correspondence-principle-and.html
 [IIFEs]: https://en.wikipedia.org/wiki/Immediately-invoked_function_expression
 [PEP 20]: https://www.python.org/dev/peps/pep-0020/
+[incidental complexity]: https://en.wikipedia.org/wiki/Incidental_complexity
+[essential complexity]: https://en.wikipedia.org/wiki/Essential_complexity
