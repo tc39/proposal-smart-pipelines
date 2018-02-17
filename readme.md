@@ -663,7 +663,7 @@ abbreviated from `|> new User.Message(#)`.
 
 This is the [smart part of the pipe operator][smart body syntax], which can
 distinguish between a [bare style][] and the usual `#`-using [topical style][]
-using a simple rule: only identifiers, dots, and `new`; no parentheses,
+by using a simple rule: only identifiers, dots, and `new`; no parentheses,
 brackets, braces, or other operators.
 
 <td>
@@ -947,7 +947,7 @@ fetch('https://example.com/',
 <td>
 
 ```js
-const response = 'https://pk.example/berlin-calling'
+'https://pk.example/berlin-calling'
   |> await fetch(#, { mode: 'cors' });
 response
   |> #.headers.get('content-type')
