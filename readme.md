@@ -725,8 +725,8 @@ This is a syntax error, designed to avoid a foot gun. If this were a statement,
 then does the developer want to apply pipeline’s steps to `stringPromise`,
 *then* await the pipeline’s result: `await (stringPromise |> …)`? Or does the
 developer want to first await `stringPromise` and then apply the rest of the
-pipeline: `(await stringPromise) |> …`? To avoid this foot gun, `await` and
-`yield` are prohibited from the start of pipeline heads. Just wrap the head in
+pipeline: `(await stringPromise) |> …`? To avoid this foot gun, `await` (and
+`yield`) are prohibited from the start of pipeline heads. Just wrap the head in
 parentheses `(await stringPromise) |> …` or move the `await` to another line
 `stringPromise |> await # |> …`. [TO DO: Link to section on await / yield in
 head expressions.]
@@ -1254,9 +1254,12 @@ that planned method-like syntax.
 nodes. Conceptually, a node Contains another node if the latter is somewhere in
 the former.</summary>
 
+[This quotation from the ECMAScript spec][ECMAScript static semantic rules] is
+modified to use the new method-like syntax.
+
 >    b. If _child_ is an instance of a nonterminal, then
 >
->       i.  Let contained be the result of _child_ Contains _symbol_.
+>       i.  Let contained be the result of _child_.contains(_symbol_).
 >       ii. If contained is true, return true.
 >
 > 2. Return false.
@@ -1277,12 +1280,40 @@ written as an infix operator: “… Contains …” for historical reasons. Thi
 proposal will instead use the planned future new syntax “….contains(…)”.
 
 In addition, Contains does not penetrate into the bodies of function and method
-definitions, hiding them from the rules in outside contexts. There is one
-exception: arrow functions expose their
+definitions, hiding them from the rules in outside contexts. All definitions for
+functions, generators, methods, and so forth override Contains to always return
+false, with this note:
+
+> Static semantic rules that depend upon substructure generally do not look into
+> function definitions.
+
+There is one exception: arrow functions expose the use of `new.target`, `this`,
+and `super`, because, unlike other functions, they do no rebind those three
+forms; they use the outer context to evaluate them. (See [ECMAScript arrow
+functions, § SS: Contains][]).
 
 This proposal further extends that exception so that arrow functions also reveal
 any use of `#` within their bodies. This is because arrow functions, alone among
-. See [TO DO].
+functions, also do not rebind or shadow the outer context’s topic. (`#` cannot
+be used within arrow-function parameter lists or any function’s parameter list.)
+See [TO DO: Topics and inner functions].
+
+<details>
+
+[ECMAScript arrow functions, § SS: Contains][] is amended.
+
+With parameter _symbol_.
+
+* _ArrowFunction_ : _ArrowParameters_ `=>` _ConciseBody_
+
+  1. If _symbol_ is not one of _NewTarget_, _SuperProperty_, _SuperCall_,
+    `super`, `this` or `#`, return false.
+  2. If _ArrowParameters_.contains(_symbol_) is true, return true.
+  3. Return _ConciseBody_.contains(_symbol_).
+
+* _ArrowParameters_ : _CoverParenthesizedExpressionAndArrowParameterList_
+
+  [Unchanged.]
 
 #### Static Early Errors
 Certain syntax errors cannot be detected by the context-free grammar alone yet
@@ -2901,7 +2932,7 @@ do { do { do { do { 3 * 3 } } }
 [ECMAScript Primary Expressions]: https://tc39.github.io/ecma262/#prod-PrimaryExpression
 [ECMAScript Property Accessors, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-property-accessors-runtime-semantics-evaluation
 [ECMAScript Punctuators]: https://tc39.github.io/ecma262/#sec-punctuators
-[ECMAScript Static Semantic Rules]: https://tc39.github.io/ecma262/#sec-static-semantic-rules
+[ECMAScript static semantic rules]: https://tc39.github.io/ecma262/#sec-static-semantic-rules
 [Elixir pipe]: https://elixir-lang.org/getting-started/enumerables-and-streams.html
 [Elm pipe]: http://elm-lang.org/docs/syntax#infix-operators
 [expressions and operators (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
@@ -2977,3 +3008,4 @@ do { do { do { do { 3 * 3 } } }
 [incidental complexity]: https://en.wikipedia.org/wiki/Incidental_complexity
 [essential complexity]: https://en.wikipedia.org/wiki/Essential_complexity
 [examples]: #examples
+[ECMAScript arrow functions, § SS: Contains]: https://tc39.github.io/ecma262/#sec-arrow-function-definitions-static-semantics-contains
