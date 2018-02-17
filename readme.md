@@ -383,10 +383,10 @@ functions.** See the section on [inner blocks][].
 ##### Static analyzability
 [Early errors][] help the editing JavaScript developer avoid common [footguns][]
 at compile time, such as preventing them from accidentally omitting a topic
-reference where they meant to put one. For instance, if `x |> 3` were not a
-syntax error, then it would be a useless operation and almost certainly not what
-the developer intended. Situations like these should be statically detectable
-and cause compile-time [early errors][].
+reference where they meant to put one. For instance, if `x |> 3` were not an
+error, then it would be a useless operation and almost certainly not what the
+developer intended. Situations like these should be statically detectable and
+cause compile-time [early errors][].
 
 #### “Make my code easier to read.”
 The new syntax should increase the human readability and writability of much
@@ -724,15 +724,16 @@ await stringPromise
   |> # + '!'
   |> new User.Message
 ```
-This is a syntax error, designed to [avoid a footgun at compile time][static
-analyzability]. If this were a statement, then does the developer want to apply
-pipeline’s steps to `stringPromise`, *then* await the pipeline’s result: `await
-(stringPromise |> …)`? Or does the developer want to first await `stringPromise`
-and then apply the rest of the pipeline: `(await stringPromise) |> …`? To avoid
-this footgun, `await` (and `yield`) are prohibited from the start of pipeline
-heads. Just wrap the head in parentheses `(await stringPromise) |> …` or move
-the `await` to another line `stringPromise |> await # |> …`. [TO DO: Link to
-section on await / yield in head expressions.]
+This is a static [early error][], designed to [avoid a footgun at compile
+time][static analyzability]. If this were a statement, then does the developer
+want to apply the pipeline’s steps to `stringPromise`, *then* await the
+pipeline’s result: `await (stringPromise |> …)`? Or does the developer want to
+first await `stringPromise` and then apply the rest of the pipeline:
+`(await stringPromise) |> …`? To avoid this footgun, `await` (and `yield`) are
+prohibited from the start of pipeline heads. Just wrap the head in parentheses
+`(await stringPromise) |> …` or move the `await` to another line
+`stringPromise |> await # |> …`. [TO DO: Link to section on await / yield in
+head expressions.]
 
 <td>″″
 
@@ -1347,11 +1348,37 @@ Rules that define when such extra syntax errors occur.
 ***
 
 One such static early error is mentioned in both the section on the Goal [static
-analyzability][] and the section on the [Contains][] rule:
+analyzability][] and the section on the [Contains][] rule. There are also several
+others, each designed to prevent a footgun of ambiguity, by forcing the developer
+to clarify their intent.
 
-Pipelines that are in topical style but that do not ever use their topics
-anywhere in their bodies, such as `x |> 3` are an early error. This error is
-defined in [TO DO: Link].
+* Pipeline heads:
+  * Pipeline heads must not directly start with `await` or `yield`. This is an early
+    error. If `await promise |> …` were a statement, then did the author want to apply
+    the pipeline’s steps to `promise`, *then* await the pipeline’s result:
+    `await (promise |> …)`? Or does the developer want to first await `promise`
+    and then apply the rest of the pipeline: `(await promise) |> …`? To avoid
+    this footgun, `await` (and `yield`) are prohibited from the start of
+    pipeline heads. Just wrap the head in parentheses `(await promise) |> …` or
+    move the `await` to another line `promise |> await # |> …`. [TO DO: Link to
+    section on await / yield in head expressions.]
+
+* Pipeline bodies:
+  * Pipelines that are in topical style but that do not ever use their topics
+    anywhere in their bodies, such as `x |> 3`, are an early error. Such expressions
+    would be always useless and almost certainly not what the author had intended.
+    [TO DO: Link.]
+
+  * Pipeline bodies that start with `yield` must be parenthesized. Otherwise
+    they are an early error. This is because the `yield` operator has such a
+    loose precedence that `x |> yield # |> f` is an ambiguous footgun. It is very
+    likely that the developer meant `(x |> (yield #)) |> f`, but because `yield`
+    has such loose precedence, without parentheses, the pipeline will be parsed
+    instead as `x |> (yield (# |> f))`, which has a very different meaning. With
+    this early error, the developer is forced to clarify their `yield`: either
+    `x |> (yield #) |> f` or `x |> (yield # |> f)`. [TO DO: Link.]
+
+[TO DO: Add bidirectional associativity to Goals]
 
 ### Operator precedence
 As a binary operation forming compound expressions, the [operator precedence and
