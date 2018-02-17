@@ -900,6 +900,7 @@ fetch('https://pk.example/berlin-calling',
 <summary>Because this proposal introduces several new concepts, it is important
 to use a consistent set of terminology.</summary>
 
+### Pipe operator, pipeline, pipeline-level expression
 The binary operator itself `|>` may be referred to as a **pipe**, a **pipe
 operator**, or a **pipeline operator**; all these names are equivalent. This
 specification will prefer the term “pipe operator”.
@@ -907,6 +908,14 @@ specification will prefer the term “pipe operator”.
 A pipe operator between two expressions forms a **pipe expression**. One or more
 pipe expressions in a chain form a **pipeline**.
 
+A **pipeline-level expression** is an expression at the same [precedence level
+of the pipe operator][operator precedence]. Although all pipelines are
+pipeline-level expressions, most pipeline-level expressions are not actually
+pipelines. Conditional operations, logical-or operations, or any other
+expressions that have tighter [operator precedence][] than the pipe operation –
+those are also pipeline-level expressions.
+
+### Head, head value, body, pipeline value, topical style, bare style
 For each pipe expression, the expression before the pipe is the pipeline’s
 **head**. A pipeline’s head may also be called its **left-hand side (LHS)**,
 because it’s left to the pipe. (The head could also be referred to as the pipe’s
@@ -922,17 +931,26 @@ value may be referred to the **pipeline’s value**.
 Where “pipeline” is used as a verb, the pipe operator is said **to pipeline its
 topic through its body**, resulting in the pipeline’s value.
 
-A **pipeline-level expression** is an expression at the same [ level level of
-the pipe operator][operator precedence]. Although all pipelines are
-pipeline-level expressions, most pipeline-level expressions are not actually
-pipelines. Conditional operations, logical-or operations, or any other
-expressions that have tighter [operator precedence][] than the pipe
-operation – those are also pipeline-level expressions.
+A pipeline’s body may be in one of two **styles**:\
+topical style and\
+bare style.
 
-The special token `#` is the **topic token**. It represents the **topic
-reference**, aka the **topic bindee**, **topic placeholder** or **topic
+[**Topical style**][] is the default style. A pipeline body in topical style forms
+an inner lexical scope – called the pipeline’s **topical scope** – within which
+a special token is bound to the value of the head; the section below explains.
+
+Alternatively, you may omit the topic references entirely, if the body is just a
+**simple reference** to a function or constructor, such as with `… |>
+capitalize` and `… |> new User.Message`. Such a pipeline body is in **[bare
+style][]**; bare style is described in more detail below.
+
+### Topic, topic reference
+The **topic** (or **topic value**) of a lexical context is a value that the
+lexical context is “about”. Not all lexical contexts has a topic. But in each
+lexical context that does, its topic is bound to `#`, a special token called the
+**topic reference**, aka the **topic bindee**, **topic placeholder** or **topic
 anaphor**. `#` is a nullary operator that acts like a special variable:
-implicitly bound to its value, but still lexically scoped.
+implicitly bound to the topic value, but still lexically scoped.
 
 The topic reference could also be called a “**topic variable**” or “**topic
 identifier**”, [as they are called in other programming languages][topic
@@ -942,16 +960,7 @@ cannot be manually declared (`const #` is a syntax error), nor can it be
 assigned with a value (`# = 3` is a syntax error). Instead, the topic reference
 is implicitly, lexically bound only within pipeline bodies.
 
-When a pipeline’s body is in this **topical style**. A pipeline body in topical
-style forms an inner lexical scope – called the pipeline’s **topical scope** –
-within which the topic reference is implicitly bound to the value of the topic,
-acting as a **placeholder** for the topic’s value.
-
-Alternatively, you may omit the topic references entirely, if the body is just a
-**simple reference** to a function or constructor, such as with `… |>
-capitalize` and `… |> new User.Message`. Such a pipeline body is in **bare
-style**. [Bare style][] is described in more detail later.
-
+### Explanation of conventions
 The term [“**topic**” comes from linguistics][topic and comment] and have
 precedent in prior programming languages’ use of “topic variables”.
 
@@ -976,8 +985,6 @@ different nature than topic references. Instead of referring to a single value
 bound earlier in the surrounding lexical context, these **parameter
 placeholders** act as the parameter to a new function. When this new function is
 called, those parameter placeholders will be bound to multiple argument values.
-
-[TO DO: define “topic” alone.]
 
 The term “**body**” is preferred instead of “**RHS**” because “topic” is
 preferred to “LHS”. However, “RHS” is still a fine and acceptable name for the
@@ -1653,7 +1660,7 @@ Evaluation][].
 ##### Bare function call
 If the body is a merely a simple reference, then that identifier is interpreted
 to be a **bare function call**. The pipeline’s value will be the result of
-calling the body with the topic value as its argument.
+calling the body with the current topic as its argument.
 
 That is: **if a pipeline** is of the form **_topic_ `|>` _identifier_**\
 or _topic_ |> _identifier0_._identifier1_\
