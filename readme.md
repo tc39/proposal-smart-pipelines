@@ -546,7 +546,7 @@ its claimed benefits in a 1970 paper as such:
 > almost trivial. This is the point of [point-free] calculations: when you
 > travel light – discarding variables that do not contribute to the calculation
 > – you can sometimes step lightly across the surface of the quagmire.
->
+
 This sort of terseness, in which the explicit is made tacit and implicit, must
 be balanced with Goals 4 and 5. Excessive implicitness compromises
 comprehensibility, at least without low-level tracing of tacit arguments’
