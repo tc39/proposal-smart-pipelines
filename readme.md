@@ -1701,13 +1701,13 @@ detail, but an overview is given in a table.</summary>
 
 </details>
 
-#### Bare style
+#### Bare style • Syntactic grammar
 The **bare style** supports using simple identifiers, possibly with chains of
 simple property identifiers. If there are any operators, parentheses (including
 for method calls), brackets, or anything other than identifiers and dot
 punctuators, then it is in topical style, not in bare style.
 
-##### Simple reference
+##### Simple reference • Syntactic grammar
 First, let’s call a mere identifier – optionally with a chain of properties, and
 with no parentheses, brackets, or operators – a **simple reference**.
 
@@ -1745,17 +1745,16 @@ This section is adapted from [ECMAScript Property Accessors, § RS: Evaluation]
 
 </details>
 
-##### Bare function call
+##### Bare function call • Syntactic grammar
 If the body is a merely a simple reference, then that identifier is interpreted
 to be a **bare function call**. The pipeline’s value will be the result of
 calling the body with the current topic as its argument.
 
 That is: **if a pipeline** is of the form **_topic_ `|>` _identifier_**\
-or _topic_ |> _identifier0_._identifier1_\
-or _topic_ |> _identifier0_._identifier1_._identifier2_\
+or _topic_ `|>` _identifier0_`.`_identifier1_\
+or _topic_ `|>` _identifier0_`.`_identifier1_`.`_identifier2_\
 or …,\
-then the pipeline is a **bare function call**. The **pipeline’s value** is
-**_body_`(`_topic_`)`**.
+then the pipeline is a **bare function call**.
 
 <details open>
 <summary>Syntactic grammar</summary>
@@ -1767,38 +1766,16 @@ then the pipeline is a **bare function call**. The **pipeline’s value** is
 
 [TO DO: Make sure that `eval` and other special “functions” are not allowed.]
 
-<details open>
-<summary>Runtime semantics</summary>
-
-This algorithm was adapted from [ECMAScript Function Calls, § RS:
-Evaluation][].
-
-* **Pipeline Body Evaluation**\
-  With parameter _head Value_.
-  Note that this Pipeline Body Evaluation rule is used in the evaluation of
-  _Pipeline Expression_, defined previously.
-  * _Pipeline Bare Function Call_ : _Simple Reference_
-    1. Let _ref_ be the result of evaluating _Simple Reference_.
-    2. Let _func_ be ? Get Value(_ref_).
-    3. Let _this Call_ be this _Pipeline Bare Function Call_.
-    4. Let _tail Call_ be Is In Tail Position(_this Call_).
-    5. Let _Arguments_ be a [List][ECMAScript Lists and Records] containing
-       the one element which is _head Value_.
-    6. Return ? Evaluate Call(_func_, _ref_, Arguments, _tail Call_).
-
-</details>
-
-##### Bare constructor call
+##### Bare constructor call • Syntactic grammar
 If the body starts with `new`, followed by mere identifier, optionally with a
 chain of properties, and with no parentheses or brackets, then that identifier
 is interpreted to be a **bare constructor**.
 
-That is: **if a pipeline** is of the form **_topic_ |> _identifier_**\
-or _topic_ |> _identifier0_._identifier1_\
-or _topic_ |> _identifier0_._identifier1_._identifier2_\
+That is: **if a pipeline** is of the form **_topic_ `|>` new _identifier_**\
+or _topic_ `|> new` _identifier0_`.`_identifier1_\
+or _topic_ `|> new` _identifier0_`.`_identifier1_`.`_identifier2_\
 or …,\
-then the pipeline is a **bare function call**. The **pipeline’s value** is
-**_body_`(`_topic_`)`**.
+then the pipeline is a **bare constructor call**.
 
 <details open>
 <summary>Syntactic grammar</summary>
@@ -1826,8 +1803,7 @@ This algorithm was adapted from [ECMAScript `new` operator, § RS: Evaluation][
 
 </details>
 
-***
-
+##### Practical consequences
 Therefore, a pipeline in **bare style *never*** has **parentheses `(…)` or
 brackets `[…]`** in its body. Neither `… |> object.method()` nor `… |>
 object.method(arg)` nor `… |> object[symbol]` nor `… |> object.createFunction()`
@@ -1842,9 +1818,9 @@ The JavaScript developer is encouraged to use topic references and avoid bare
 style, where bare style may be visually confusing to the reader.
 
 #### Topical style
-**If a pipeline** of the form _topic_ |> _body_ is ***not* in bare
-style** (that is, it is *not* a bare function call or bare constructor call),
-then it **must be in topical style**.
+**If a pipeline** of the form _topic_ |> _body_ is ***not* match the [bare style
+• syntactic grammar][]** (that is, it is *not* a bare function call or bare
+constructor call), then it **must be in topical style**.
 
 <details open>
 <summary>The pipeline’s value is whatever the body expression evaluates into,
@@ -1873,7 +1849,7 @@ Topical style behaves like **`do { const ` _topic Identifier_ `=` _topic_`;
 
 </details>
 
-### Multiple topic references and inner functions
+##### Multiple topic references and inner functions
 <details open>
 <summary>The topic reference may be used multiple times in a pipeline body. Each
 use refers to the same value (wherever the topic reference is not overridden by
@@ -1891,7 +1867,7 @@ The lines in each of the following rows are equivalent.
 
 </details>
 
-### Inner blocks
+##### Inner blocks
 <details open>
 <summary>The body of a pipeline may contain an inner arrow function but no other
 type of block expression.</summary>
@@ -1918,7 +1894,7 @@ is in order to fulfill both [Goals 3 and 6][goals].
 
 </details>
 
-### Nested pipelines
+##### Nested pipelines
 <details open>
 <summary>Both the head and the body of a pipeline may contain nested inner
 pipelines. Nested pipelines in the body is not encouraged, but it is still
@@ -2044,6 +2020,51 @@ During runtime, [TO DO]
     3. Let _body Ref_ be Pipeline Body Evaluation of _Pipeline Body_ with argument
        _head Value_.
     4. Return ? Get Value(_body Ref_).
+
+</details>
+
+#### Bare function call • Runtime semantics
+If the body is a merely a simple reference, then that identifier is interpreted
+to be a **bare function call**. The pipeline’s value will be the result of
+calling the body with the current topic as its argument.
+
+<details open>
+<summary>Runtime semantics</summary>
+
+This algorithm was adapted from [ECMAScript Function Calls, § RS:
+Evaluation][].
+
+* **Pipeline Body Evaluation**\
+  With parameter _head Value_.
+  Note that this Pipeline Body Evaluation rule is used in the evaluation of
+  _Pipeline Expression_, defined previously.
+  * _Pipeline Bare Function Call_ : _Simple Reference_
+    1. Let _ref_ be the result of evaluating _Simple Reference_.
+    2. Let _func_ be ? Get Value(_ref_).
+    3. Let _this Call_ be this _Pipeline Bare Function Call_.
+    4. Let _tail Call_ be Is In Tail Position(_this Call_).
+    5. Let _Arguments_ be a [List][ECMAScript Lists and Records] containing
+       the one element which is _head Value_.
+    6. Return ? Evaluate Call(_func_, _ref_, Arguments, _tail Call_).
+
+</details>
+
+#### Bare constructor call • Runtime semantics
+<details open>
+<summary>Runtime semantics</summary>
+
+This algorithm was adapted from [ECMAScript `new` operator, § RS: Evaluation][].
+
+* **_Pipeline Body Evaluation_**\
+  With parameter _head Value_.
+
+  Note that this Pipeline Body Evaluation rule is used in the evaluation of
+  _Pipeline Expression_, defined previously.
+
+  * **_Pipeline Bare Constructor Call_** : `new` _Simple Reference_
+    * [TO DO: Can we use Evaluate New if _Simple Reference_ is technically not the
+      same as Member Expression? Should we just use Member Expression with some
+      limitations?]
 
 </details>
 
