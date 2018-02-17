@@ -1563,10 +1563,6 @@ identifier reference.</summary>
 * IsIdentifierRef
   * PipelineExpression : PipelineExpression `|>` PipelineBody
 
-    Return true.
-
-  * PipelineExpression : PipelineExpression `|>` PipelineBody
-
     Return false.
 
 * IsValidSimpleAssignmentTarget
