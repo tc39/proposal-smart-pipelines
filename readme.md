@@ -1355,16 +1355,15 @@ defined in [TO DO: Link].
 
 ### Operator precedence
 As a binary operation forming compound expressions, the [operator precedence and
-associativity][MDN’s guide on expressions and operators] of pipelining must be
-determined, relative to other operations.
+associativity][MDN operator precedence] of pipelining must be determined,
+relative to other operations.
 
 Precedence is tighter than assignment (`=`, `+=`, …), generator `yield` and
 `yield *`, and sequence `,`; and it is looser than every other type of
-expression. See also [MDN’s guide on expressions and operators][]. If the pipe
-operation were any tighter than this level, its body would have to be
-parenthesized for many frequent types of expressions. However, the result of a
-pipeline is also expected to often serve as the body of a variable assignment
-`=`, so it is tighter than assignment operators.
+expression. If the pipe operation were any tighter than this level, its body
+would have to be parenthesized for many frequent types of expressions. However,
+the result of a pipeline is also expected to often serve as the body of a
+variable assignment `=`, so it is tighter than assignment operators.
 
 The pipe operator actually has [bidirectional associativity][]. However, for the
 purposes of this grammar, it will have left associativity.
@@ -1409,9 +1408,10 @@ listed **above** it.
 | Prefix unary   | Prefix decrements       |`--…`           | ″″                       |
 | ″″             | Deletes                 |`delete …`      | ″″                       |
 | ″″             | Voids                   |`void …`        | ″″                       |
-| ″″             | Unary `+`/`-`           |″″              | ″″                       |
-| ″″             | Bitwise NOT `~…`        |″″              | ″″                       |
-| ″″             | Logical NOT `!…`        |″″              | ″″                       |
+| ″″             | Unary `+`/`-`           |`+…`            | ″″                       |
+| ″″             | Bitwise NOT `~…`        |`~…`            | ″″                       |
+| ″″             | Logical NOT `!…`        |`!…`            | ″″                       |
+| ″″             | Await                   |`await …`       | ″″                       |
 | Exponentiation | Exponentiation          |`… ** …`        | RTL infix                |
 | Multiplicative | Multiplication          |`… * …`         | LTR infix                |
 | ″″             | Division                |`… / …`         | ″″                       |
@@ -2958,7 +2958,7 @@ do { do { do { do { 3 * 3 } } }
 [lexically hygienic]: https://en.wikipedia.org/wiki/Hygienic_macro
 [littledan invitation]: https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394
 [LiveScript pipe]: http://livescript.net/#operators-piping
-[MDN’s guide on expressions and operators]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
+[MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
 [mindeavor]: https://github.com/gilbert
 [Node-stream piping]: https://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
 [nomenclature]: #nomenclature
