@@ -656,9 +656,11 @@ stringPromise
   |> new User.Message
 ```
 Note that `|> capitalize` is a bare unary function call. The `#` is tacitly,
-invisibly implied. `|> capitalize(#)` would work but the `#` is unnecessary.\
+invisibly implied. `|> capitalize(#)` would work but the `#` is unnecessary.
+
 Ditto for `|> new User.Message`, which is a bare unary constructor call,
-abbreviated from `|> new User.Message(#)`.\
+abbreviated from `|> new User.Message(#)`.
+
 This is called the [bare style][] of pipeline bodies.
 
 <td>
