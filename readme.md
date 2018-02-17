@@ -684,6 +684,11 @@ new User.Message(
   ) + '!'
 )
 ```
+In contrast to the version with pipes, this code is deeply nested, not flat. The
+expression has four levels of indentation instead of two. Reading its data flow
+requires checking both the beginning and end of each expression, and each step
+expression gradually increases in size. Inserting or removing any step of the
+data flow also requires changes to the indentation of any previous steps’ lines.
 
 <tr>
 <td>
@@ -779,7 +784,7 @@ function (obj, pred, context) {
 function (
   srcFn, boundFn, ctxt, callingCtxt, args
 ) {
-  if (callingCtxt |> # instanceof boundFn |> !#)
+  if (!(callingCtxt instanceof boundFn))
     return srcFn.apply(ctxt, args);
   var self = srcFn
     |> #.prototype |> baseCreate;
