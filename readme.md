@@ -661,7 +661,10 @@ invisibly implied. `|> capitalize(#)` would work but the `#` is unnecessary.
 Ditto for `|> new User.Message`, which is a bare unary constructor call,
 abbreviated from `|> new User.Message(#)`.
 
-This is called the [bare style][] of pipeline bodies.
+This is the [smart part of the pipe operator][smart body syntax], which can
+distinguish between a [bare style][] and the usual `#`-using [topical style][]
+using a simple rule: only identifiers, dots, and `new`; no parentheses,
+brackets, braces, or other operators.
 
 <td>
 
