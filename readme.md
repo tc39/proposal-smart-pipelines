@@ -3021,3 +3021,4 @@ do { do { do { do { 3 * 3 } } }
 [Underscore.js]: http://underscorejs.org
 [Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
+[static analyzability]: #static-analyzability
