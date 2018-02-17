@@ -442,7 +442,7 @@ The introduction to this [motivation][] section already explained much of
 the readability rationale, but it may also be useful to study the
 [real-world examples] below.
 
-#### Expressive versatility
+##### Expressive versatility
 JavaScript is a language rich with [expressions of numerous kinds][MDN
 expressions and operators], each of which may usefully transform data from one
 form to another. There is **no single type** of expression that forms a
@@ -517,7 +517,7 @@ anywhere near the visually similar [optional-chaining syntax proposal][], then
 the topic reference might be lost or unnoticed by the developer: for example,
 `?.??m(?)`.
 
-###### Terse parentheses
+##### Terse parentheses
 Terseness also aids distinguishability by obviating the need for boilerplate
 syntactic noise. Parentheses are a prominent example: as long as operator
 precedence is clear, then reducing parentheses always would JavaScript code more
@@ -529,7 +529,7 @@ would significantly increase, emphasizing the program’s essential information.
 The developer’s cognitive burden – of ignoring unimportant incidental symbols as
 they read – has hopefully lightened.
 
-###### Terse variables
+##### Terse variables
 Similarly, terseness of code may also be increased by removing variables where
 possible. This in turn would increase the data-to-ink visual ratio of the text
 and the distinguishability of important symbols. This style of programming is
@@ -558,7 +558,7 @@ with Goals 1, 4, and 5.
 but it also says, “Flat is better than nested,” and, “Sparse is better than
 dense.”
 
-###### Terse function calls
+##### Terse function calls
 Unary function / constructor calls are a particularly frequent type of
 expression and a good target for especial human optimization. However, such
 extra shortening might dramatically reduce the verbosity of unary function
