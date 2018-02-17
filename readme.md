@@ -1543,20 +1543,6 @@ for identifiers, parenthesized expressions, and arrow parameter lists.</summary>
 
 </details>
 
-### Topic reference • Runtime semantics
-
-During runtime, the topic reference uses the [Resolve Topic abstract
-operation][resolving topics] on the running execution context’s lexical
-environment.
-
-<details open>
-
-* **Evaluation**
-  * **_Primary Expression_** : `#`
-    * Return ? Resolve Topic([TO DO])
-
-</details>
-
 ### Pipeline-level expressions • Syntax grammar
 The production rule for [ECMAScript Assignment-level Expressions][] needs to be
 modified so that pipe expressions slip in between it and conditional-level
@@ -1654,21 +1640,6 @@ it is shadowed within the body.</summary>
     2. If _Arrow Parameters_.contains (_symbol_) is true, return true.
     3. Return _Concise Body_.contains (_symbol_).
 -->
-
-</details>
-
-### Pipeline-level expressions • Runtime semantics
-During runtime, [TO DO]
-
-<details open>
-
-* **Evaluation**
-  * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_
-    1. Let _head Ref_ be the result of evaluating ? _Pipeline Expression_.
-    2. Let _head Value_ be the result of ? Get Value (_head Ref_).
-    3. Let _body Ref_ be Pipeline Body Evaluation of _Pipeline Body_ with argument
-       _head Value_.
-    4. Return ? Get Value(_body Ref_).
 
 </details>
 
@@ -2041,6 +2012,38 @@ The lines in each of the following rows are equivalent.
 |`… \|> f(() => # \|> f \|> # * 5)`|`const $ = …; f(x => $ \|> f \|> # * 5)`            |
 
 [TO DO]
+
+</details>
+
+## Runtime semantics
+[TO DO]
+
+### Topic reference • Runtime semantics
+When evaluated during runtime, the topic reference uses the Resolve Topic
+abstract operation on the running execution context’s lexical environment.
+
+<details open>
+
+* **Evaluation**
+  * **_Primary Expression_ : `#`**
+    * Return ? Resolve Topic([TO DO])
+
+</details>
+
+[TO DO: Define Resolve Topic abstract operation]
+
+### Pipeline-level expressions • Runtime semantics
+During runtime, [TO DO]
+
+<details open>
+
+* **Evaluation**
+  * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_
+    1. Let _head Ref_ be the result of evaluating ? _Pipeline Expression_.
+    2. Let _head Value_ be the result of ? Get Value (_head Ref_).
+    3. Let _body Ref_ be Pipeline Body Evaluation of _Pipeline Body_ with argument
+       _head Value_.
+    4. Return ? Get Value(_body Ref_).
 
 </details>
 
