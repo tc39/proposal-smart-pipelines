@@ -1360,8 +1360,8 @@ their intent.
 
 ### Operator precedence
 As a binary operation forming compound expressions, the [operator precedence and
-associativity][MDN operator precedence] of pipelining must be determined,
-relative to other operations.
+associativity][operator precedence] of pipelining must be determined, relative
+to other operations.
 
 Precedence is tighter than assignment (`=`, `+=`, …), generator `yield` and
 `yield *`, and sequence `,`; and it is looser than every other type of
@@ -3006,7 +3006,6 @@ do { do { do { do { 3 * 3 } } }
 [lexically hygienic]: https://en.wikipedia.org/wiki/Hygienic_macro
 [littledan invitation]: https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394
 [LiveScript pipe]: http://livescript.net/#operators-piping
-[MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
 [mindeavor]: https://github.com/gilbert
 [motivation]: #motivation
 [Node-stream piping]: https://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
