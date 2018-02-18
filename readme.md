@@ -238,11 +238,6 @@ of this “smart pipe operator”][smart body syntax].
 
 <tbody>
 <tr>
-<th colspan=2>
-
-[Original pipe-operator proposal][first pipe-operator proposal]
-
-<tr>
 <td>
 
 ```js
@@ -253,6 +248,8 @@ value
   |> -#
   |> g(#, x)
 ```
+This pipeline is relatively flat, with only one level of indentation, and with
+each transformation step on its own line.
 
 Note that `|> f` is a bare unary function call. This is the same as `|> f(#)`,
 but the `#` is unnecessary; it is invisibly, tacitly implied.
@@ -300,8 +297,12 @@ stringPromise
   |> capitalize |> # + '!'
   |> new User.Message
 ```
-`|> capitalize` is a bare unary function call. Similarly, `|> new User.Message`
-is a bare unary constructor call, abbreviated from `|> new User.Message(#)`.
+This pipeline is relatively flat, with only one level of indentation, and with
+each transformation step on its own line.
+
+`|> capitalize` is a bare unary function call, equivalent to `|> capitalize(#)`.
+Similarly, `|> new User.Message` is a bare unary constructor call, abbreviated
+from `|> new User.Message(#)`.
 
 <td>
 
@@ -450,33 +451,6 @@ the pipe operator.)
 <td>
 
 ```js
-… |> function () { return # }
-// 🚫 SyntaxError:
-// Pipeline body binds but never uses topic.
-```
-However, you cannot use use topic references inside of other types of blocks:
-function, async function, generator, async generator, or class.
-
-<td>
-
-<tr>
-<td>
-
-```js
-… |> class { m: () { return # }}
-// 🚫 SyntaxError:
-// Pipeline body binds but never uses topic.
-```
-More precisely, all block expressions (other than arrow functions) shadow any
-outer lexical context’s topic with its own *absence* of a topic. This behavior
-is in order to fulfill both [Goals 3 and 6][goals].
-
-<td>
-
-<tr>
-<td>
-
-```js
 … |> f(() => f(#) * 5)
 ```
 
@@ -531,6 +505,39 @@ f(x => {
 })
 ```
 But the code still behaves consistently.
+
+<tr>
+<td>
+
+```js
+… |> function () { return # }
+// 🚫 SyntaxError:
+// Pipeline body binds but never uses topic.
+```
+Arrow functions are special in that they do not shadow the topic. Every other
+block prevents you from using an outside context’s topic. You cannot use use
+topic references inside of other types of blocks: function, async function,
+generator, async generator, or class.
+
+<td>
+
+<tr>
+<td>
+
+```js
+… |> class { m: () { return # }}
+// 🚫 SyntaxError:
+// Pipeline body binds but never uses topic.
+```
+More precisely, all block expressions (other than arrow functions) shadow any
+outer lexical context’s topic with its own *absence* of a topic. This behavior
+is in order to fulfill the [Goals][] of [simple scoping][] and of [“don’t shoot
+me in the foot”][]: it makes the origin of a topic easier to find.
+
+(If `do` expressions come in the future, they will be like arrow functions in
+that they will not shadow topics either. See [other ECMAScript proposals][].)
+
+<td>
 
 <tr>
 <th colspan=2>
@@ -3189,3 +3196,6 @@ do { do { do { do { 3 * 3 } } }
 [ECMAScript Declarative Environment Records]: https://tc39.github.io/ecma262/#sec-declarative-environment-records
 [ECMAScript Function Environment Records]: https://tc39.github.io/ecma262/#sec-function-environment-records
 [ECMAScript Get This Environment]: https://tc39.github.io/ecma262/#sec-getthisenvironment
+[simple scoping]: #simple-scoping
+[“don’t shoot me in the foot”]: #dont-shoot-me-in-the-foot
+[other ECMAScript proposals]: #other-ecmascript-proposals
