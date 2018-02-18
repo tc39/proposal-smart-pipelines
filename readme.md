@@ -2518,6 +2518,8 @@ numbers.sort(function (a, b) {
 ```
 
 <tr>
+
+<tr>
 <td>
 
 ```js
@@ -2559,8 +2561,6 @@ maxGreaterThanZero(-1, -2) // 0
 ```
 In this case, the topic function version looks once again nearly identical to
 the other proposal’s code.
-
-<tr>
 
 <tr>
 
