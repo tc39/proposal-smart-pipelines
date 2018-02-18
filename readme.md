@@ -2562,6 +2562,8 @@ the other proposal’s code.
 
 <tr>
 
+<tr>
+
 <th>
 
 Topic `for` loop
