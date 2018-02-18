@@ -2249,19 +2249,23 @@ Pipe function
 
 <td>
 
-A new type of function, the pipe function -> …, would act as if it were `$ => $
-|> …`, where `$` is a hygienically unique variable. A pipe function would
-also not need a parameter list (whether it could optionally take one is up for
-debate—see also [Brian Terlson’s proposal for headless arrows][ECMAScript
+A new type of function, the pipe function `->` …, would act as if it were
+`$ => $ |> …`, where `$` is a hygienically unique variable. A pipe function
+would also not need a parameter list (whether it could optionally take one is up
+for debate—see also [Brian Terlson’s proposal for headless arrows][ECMAScript
 headless-arrow proposal]).
 
 A pipe function would bind its first argument to the topic reference within its
 body. It would also parse its body using the same smart body syntax that the
 pipe operator uses.
 
-Just this one more operator seems to solve tacit unary-functional composition,
-tacit unary-functional partial application, and tacit method extraction, all
-with a single additional concept.
+**More than any other** possible extension in this table, pipe functions would
+dramatically increase the potential of tacit programming. Just this single
+additional operator seems to solve:\
+tacit unary-**functional composition**,\
+tacit unary-functional **partial application**,\
+and tacit **method extraction**,\
+…all with a single additional concept.
 
 <tr>
 <td>
@@ -2317,6 +2321,9 @@ $ => f(2, $)
 ```js
 -> f |> g |> h(2, #) |> # + 2
 ```
+**Functional composition** on unary functions is equivalent to piping a value
+through several function calls, within a unary function, starting with the outer
+function’s single tacit parameter.
 
 <td>
 
@@ -2346,11 +2353,6 @@ const doubleThenSquareThenHalfAsync =
 From the proposal for [syntactic functional composition][]
 by [Gilbert “mindeavor”][mindeavor].
 
-<tr>
-<th colspan=2>
-
-
-<tr>
 <td>
 
 ```js
@@ -2402,6 +2404,73 @@ let newScore = player.score
   |> add(7, ?)
   |> clamp(0, 100, ?)
 ```
+
+<tr>
+
+<th>
+
+<td>
+
+[zenparsing’s syntactic binding proposal][syntactic binding proposal] proposed a
+polymorphic `::` operator that would variously perform three behaviors – tacit
+method extraction, terse method binding, and terse method calling – depending on
+its configuration.
+
+Pipe functions alone can perform one these three behaviors.
+
+<tr>
+<td>
+
+```js
+Promise.resolve(123).then(-> console.log)
+```
+**Method extraction** can be addressed by pipe functions alone, as a natural
+result of their pipe-operator-like semantics.\
+`-> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
+bare style. This in turn is `$ => console.log($)`…
+
+<td>
+
+```js
+Promise.resolve(123).then(::console.log)
+```
+…and `$ => console.log($)` is just a wordier version of which evaluates into a
+function equivalent to `console.log.bind(console)`.
+
+<tr>
+<td>
+
+```js
+$('.some-link').on('click', -> view.reset)
+```
+
+<td>
+
+```js
+$('.some-link').on('click', ::view.reset)
+```
+
+<tr>
+<td>
+
+```js
+const { hasOwnProperty } = Object.prototype
+const x = { key: 5 }
+x::hasOwnProperty
+x::hasOwnProperty('key')
+```
+To do terse **method calling/binding**, the `::` operator would still be required.
+
+<td>
+
+```js
+const { hasOwnProperty } = Object.prototype
+const x = { key: 5 }
+x::hasOwnProperty
+x::hasOwnProperty('key')
+```
+But the `::` would only need to handle method calls. No operator overloading of
+`::` for method extraction would be needed.
 
 <tr>
 <th>
@@ -2467,8 +2536,8 @@ const f = (x, y, z) => [x, y, z]
 const g = f(#, 4, ##)
 g(1, 2) // [1, 4, 2]
 ```
-When using pipe functions to perform partial application into a binary/trinary/…
-function, you would need multiple-topic environments.
+**Partial application into an n-ary function** is solved by pipe functions with
+multiple topics.
 
 <td>
 
@@ -2485,12 +2554,12 @@ difference in conceptual models.
 <td>
 
 ```js
-const maxGreaterThanZero = Math.max(0, ...)
+const maxGreaterThanZero = -> Math.max(0, ...)
 maxGreaterThanZero(1, 2) // 2
 maxGreaterThanZero(-1, -2) // 0
 ```
 Partial application into a variadic function requires a multi-topic environment
-and rest-topic references.
+and a rest-topic reference `...`.
 
 <td>
 
@@ -2499,16 +2568,21 @@ const maxGreaterThanZero = Math.max(0, ...)
 maxGreaterThanZero(1, 2) // 2
 maxGreaterThanZero(-1, -2) // 0
 ```
+In this case, the topic function version looks once again nearly identical to
+the other proposal’s code.
 
-</table>
+<tr>
+<th>
 
-#### Headless property access
-This example demonstrates a possible future “headless property” syntax in which
-the callee of a property-access expression may be omitted, assuming that no
-possible expression immediately precedes it. The omitted, invisible, tacit
-callee value is the lexical context’s topic. This would greatly increase the
-potential of tacit programming, especially when combined with the hypothetical
-syntaxes below.
+Headless property access
+
+<td>
+
+A “headless property” syntax omits its the callee, assuming that no possible
+chainable expression immediately precedes it. The omitted, invisible, tacit
+callee value is the lexical context’s (first) topic. This would greatly increase
+the potential of tacit programming, especially when combined with the
+hypothetical syntaxes below.
 
 (It should be noted that headless properties would introduce a mild ASI hazard:
 if a possible callee precedes the headless property, even on another line of
@@ -2517,13 +2591,6 @@ A semicolon would required to separate the possible callee and the headless
 property. More exploration would be needed to assess how severe this hazard
 would be compared to the benefits it would bring.)
 
-<table>
-<thead>
-<tr>
-<th>With hypothetical proposal
-<th>With only this proposal
-
-<tbody>
 <tr>
 <td>
 
@@ -2537,7 +2604,8 @@ x |> f |> .property |> g
 x |> f |> #.property |> g
 ```
 
-</table>
+<tr>
+<td>
 
 ```js
 array
@@ -2545,7 +2613,8 @@ array
   .forEach(x => console.log(x));
 ```
 
-…becomes:
+<td>
+
 ```js
 array
   .map(-> .character())
@@ -2555,26 +2624,7 @@ array
   // just like # |> console.log
 ```
 
-The headless property coupled with the topical arrow function addresses
-**[syntactic method extraction][method extraction]**. With the smart pipe
-operator alone, a method extraction `object.property.bind(object, …)` is already
-possible with `x => x |> object.property`. With headless properties, this
-function becomes even pithier: `-> object.property`. *And* it is composable with
-other functions: `-> object.property |> f |> g` evaluates to a function that
-behaves as the composition of `object.property.bind(object)`, `f`, and `g`.
-
-```js
-Promise.resolve(123).then(::console.log);
-```
-
-```js
-Promise.resolve(123).then(-> console.log);
-```
-
-Binding still requires an additional binary operator such as the already
-proposed binary `::` operator. The proposed unary `::` operator would become
-obsolete (though it could become equivalent to `#::method`, like headless
-properties.
+</table>
 
 #### Headless pipelining
 This example demonstrates a possible future “headless
