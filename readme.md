@@ -2246,8 +2246,6 @@ Yes! A topical arrow function `->` plus multiple topics `#` (aka `#0`), `#1`,
 `#2`, `#3`, `…#` could pithily express both functional composition and partial
 application.
 
-The lexical environment defined by
-
 <table>
 
 <tr>
@@ -2279,38 +2277,42 @@ const doubleThenSquareThenHalfAsync =
 <td>
 
 ```js
-const addOne = -> add(1, #);
-addOne(2); // 3
+const addOne = -> add(1, #)
+addOne(2) // 3
 
-const addTen = -> add(#, 10);
-addTen(2); // 12
+const addTen = -> add(#, 10)
+addTen(2) // 12
 
 // with pipeline
 let newScore = player.score
   |> add(7, #)
-  |> clamp(0, 100, #);
+  |> clamp(0, 100, #)
 
-const maxGreaterThanZero = Math.max(0, ...#);
-maxGreaterThanZero(1, 2); // 2
-maxGreaterThanZero(-1, -2); // 0
+const maxGreaterThanZero = Math.max(0, ...#)
+maxGreaterThanZero(1, 2) // 2
+maxGreaterThanZero(-1, -2) // 0
 ```
 
 <td>
 
 ```js
-const addOne = add(1, ?); // apply from the left
-addOne(2); // 3
+const addOne = add(1, ?)
+addOne(2) // 3
 
-const addTen = add(?, 10); // apply from the right
-addTen(2); // 12
+const addTen = add(?, 10)
+addTen(2) // 12
 
 let newScore = player.score
   |> add(7, ?)
-  |> clamp(0, 100, ?);
+  |> clamp(0, 100, ?)
 
-const maxGreaterThanZero = Math.max(0, ...);
-maxGreaterThanZero(1, 2); // 2
-maxGreaterThanZero(-1, -2); // 0
+const maxGreaterThanZero = Math.max(0, ...#)
+maxGreaterThanZero(1, 2) // 2
+maxGreaterThanZero(-1, -2) // 0
+
+const f = (x, y, z) => [x, y, z]
+const g = f(?, 4, ?)
+g(1, 2) // [1, 4, 2]
 ```
 
 </table>
