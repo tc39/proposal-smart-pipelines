@@ -242,9 +242,36 @@ of this “smart pipe operator”][smart body syntax].
 
 <details open>
 
-| With smart pipes                         | Status quo
-| ---------------------------------------- | -------------------------------------
-|`x \|> f \|> # + 2 \|> # * 3 \|> -# \|> g`|`g(-(f(x) + 2) * 3)`
+<table>
+<thead>
+<tr>
+<th>With smart pipes
+<th>Status quo
+
+<tbody>
+<tr>
+
+<td>
+
+```js
+value
+  |> f
+  |> # + 2
+  |> # * 3
+  |> -#
+  |> g
+```
+
+<td>
+
+```js
+g(
+  -(f(value) + 2)
+    * 3
+)
+```
+
+</table>
 
 </details>
 
@@ -502,9 +529,9 @@ function (
 ```js
 function (obj) {
   if (obj == null) return 0;
-  return obj |> isArrayLike
-    ? obj.length
-    : obj |> _.keys |> #.length;
+  return (obj |> isArrayLike)
+    ? (obj |> #.length)
+    : (obj |> _.keys |> #.length);
 }
 ```
 
@@ -1869,81 +1896,61 @@ reference; it is a topic reference, its own thing.</summary>
 </details>
 
 ## Runtime semantics
-[TODO]
+[ECMAScript Notational Conventions, § Algorithm Conventions][] and [ECMAScript
+Notational Conventions, § Runtime Semantics][] explain the notation used here
+for runtime algorithms, which always return “[completion records][]”.
 
-### Topic resolution
-Resolving the topic reference is a [TODO]
+This section defines the algorithms for the syntax-directed operation
+**Evaluation** from the ECMAScript specification. It also defines an abstract
+operation that may be reused by other proposals: **Resolve Topic**.
 
-#### Lexical Environments
+### Environment Records
 
-<details>
-<summary>The ECMAScript standard associates Identifiers with variables or functions
-using an abstract data structure called a Lexical Environment, which is
-essentially a linked list of Lexical Environments. A single piece of the chain
-of Lexical Environments is called an Environment Record. Syntactic structures
-such as functions and blocks each have their own Lexical Environments, created
-whenever such code is evaluated at runtime. </summary>
+[ECMAScript Lexical Environments][] defines an abstract data structure called a
+“**Lexical Environment**” that associates Identifiers with variables or
+functions for the context within a lexical scope. A Lexical Environment is
+actually a **linked list** of Lexical Environments. A single piece of the chain
+of Lexical Environments is called an **Environment Record**. Syntactic
+structures such as functions and blocks each have their own Lexical
+Environments, created whenever such code is evaluated at runtime.
 
-> A Lexical Environment is a specification type used to define the association
-> of Identifiers to specific variables and functions based upon the lexical
-> nesting structure of ECMAScript code. A Lexical Environment consists of an
-> Environment Record and a possibly null reference to an outer Lexical
-> Environment. Usually a Lexical Environment is associated with some specific
-> syntactic structure of ECMAScript code such as a _Function Declaration_, a
-> _Block Statement_, or a Catch clause of a _Try Statement_ and a new Lexical
-> Environment is created each time such code is evaluated.
-> >
-> An Environment Record records the identifier bindings that are created within
-> the scope of its associated Lexical Environment. It is referred to as the
-> Lexical Environment's _Environment Record_.
->
-> The outer environment reference is used to model the logical nesting of
-> Lexical Environment values. The outer reference of a (inner) Lexical
-> Environment is a reference to the Lexical Environment that logically surrounds
-> the inner Lexical Environment. An outer Lexical Environment may, of course,
-> have its own outer Lexical Environment. A Lexical Environment may serve as the
-> outer environment for multiple inner Lexical Environments. For example, if a
-> _Function Declaration_ contains two nested _Function Declaration_s then the
-> Lexical Environments of each of the nested functions will have as their outer
-> Lexical Environment the Lexical Environment of the current evaluation of the
-> surrounding function.
-> >
-> A global environment is a Lexical Environment which does not have an outer
-> environment. The global environment's outer environment reference is null. A
-> global environment's _Environment Record_ may be prepopulated with identifier
-> bindings and includes an associated global object whose properties provide
-> some of the global environment's identifier bindings. As ECMAScript code is
-> executed, additional properties may be added to the global object and the
-> initial properties may be modified.
-> >
-> A module environment is a Lexical Environment that contains the bindings for
-> the top level declarations of a Module. It also contains the bindings that are
-> explicitly imported by the Module. The outer environment of a module
-> environment is a global environment.
-> >
-> A function environment is a Lexical Environment that corresponds to the
-> invocation of an ECMAScript function object. A function environment may
-> establish a new this binding. A function environment also captures the state
-> necessary to support super method invocations.
->
-> Lexical Environments and Environment Record values are purely specification
-> mechanisms and need not correspond to any specific artefact of an ECMAScript
-> implementation. It is impossible for an ECMAScript program to directly access
-> or manipulate such values.
+Certain Lexical Environments establish new **topic bindings**; these are called
+**topic environments**. Topic environments are created by topic pipeline
+bodies, as well as function blocks, method blocks, and all other sorts of
+blocks. [TODO: Link to future proposals.]
 
-</details>
+This proposal adds one new abstract method to all Environment Records.
 
-***
-
-Any topic-binding syntactic [TODO]
-
-A topic environment is a Lexical Environment that corresponds
-
-[TODO: Change “topical style” to “topic style”, to be consistent with “topic
-environment”. After all, this is a style of topics, not a style that itself
-is “topical” in the usual adjectival sense.]
+Method                        | Purpose
+----------------------------- | --------------------------------------------
+Has Topic Binding ()          | Does the record establish a topic binding?
 
 [TODO]
+
+[ECMAScript declarative Environment Records][] are the usual lexical environment
+records that are declared by syntax blocks `{`…`}`. [ECMAScript function
+Environment Records][] are a special type of declarative Environment Record.
+
+Method                        | Purpose
+----------------------------- | --------------------------------------------
+Get Topic Binding ()          | What is the value of the topic binding?
+
+### Abstract Get-Topic-Environment
+
+The new abstract operation Get Topic Environment finds the Environment Record
+that currently supplies the topic binding. Its definition has been adapted from
+[ECMAScript Get This Environment][]. It may return null if not a single one of
+the current lexical context’s ancestors
+
+1. Let _lex_ be the running execution context’s LexicalEnvironment.
+2. Repeat,
+    1. Let _env Rec_ be _lex_’s Environment Record.
+    2. Let _exists_ be _env Rec_ . Has Topic Binding ().
+    3. If _exists_ is true, return _env Rec_.
+    4. Let _outer_ be the value of _lex_’s outer environment reference.
+    5. If _outer_ is null, return null.
+    6. Set lex to outer.
+
 
 ### Abstract Resolve-Topic
 **Resolve Topic** is a new abstract operation that acts upon a Lexical Environment.
@@ -1989,7 +1996,7 @@ evaluates the RHS [TODO]
     2. [TODO: Create topic environment]
     3. [TODO: Evaluate body in new environment]
 
-Topical style behaves like **`do { const ` _topic Identifier_ `=` _topic_`;
+Topic style behaves like **`do { const ` _topic Identifier_ `=` _topic_`;
 `_substituted Body_` }`**, where:
 
 * _topic Variable_ is any [identifier that is *not* already used by any
@@ -3098,3 +3105,4 @@ do { do { do { do { 3 * 3 } } }
 [ECMAScript Lexical Environments]: https://tc39.github.io/ecma262/#sec-lexical-environments
 [ECMAScript Declarative Environment Records]: https://tc39.github.io/ecma262/#sec-declarative-environment-records
 [ECMAScript Function Environment Records]: https://tc39.github.io/ecma262/#sec-function-environment-records
+[ECMAScript Get This Environment]: https://tc39.github.io/ecma262/#sec-getthisenvironment
