@@ -47,15 +47,15 @@
     - [Grammar parameters](#grammar-parameters)
     - [Syntactic grammar](#syntactic-grammar)
     - [Operator precedence](#operator-precedence)
-    - [Topic reference • Syntactic grammar](#topic-reference-%E2%80%A2-syntactic-grammar)
-    - [Pipeline-level expressions • Syntactic grammar](#pipeline-level-expressions-%E2%80%A2-syntactic-grammar)
+    - [Topic reference • Grammar](#topic-reference-%E2%80%A2-syntactic-grammar)
+    - [Pipeline-level expressions • Grammar](#pipeline-level-expressions-%E2%80%A2-syntactic-grammar)
     - [Smart body syntax](#smart-body-syntax)
-      - [Bare style • Syntactic grammar](#bare-style-%E2%80%A2-syntactic-grammar)
-        - [Simple reference • Syntactic grammar](#simple-reference-%E2%80%A2-syntactic-grammar)
-        - [Bare function call • Syntactic grammar](#bare-function-call-%E2%80%A2-syntactic-grammar)
-        - [Bare constructor call • Syntactic grammar](#bare-constructor-call-%E2%80%A2-syntactic-grammar)
+      - [Bare style • Grammar](#bare-style-%E2%80%A2-syntactic-grammar)
+        - [Simple reference • Grammar](#simple-reference-%E2%80%A2-syntactic-grammar)
+        - [Bare function call • Grammar](#bare-function-call-%E2%80%A2-syntactic-grammar)
+        - [Bare constructor call • Grammar](#bare-constructor-call-%E2%80%A2-syntactic-grammar)
         - [Practical consequences](#practical-consequences)
-      - [Topical style • Syntactic grammar](#topical-style-%E2%80%A2-syntactic-grammar)
+      - [Topical style • Grammar](#topical-style-%E2%80%A2-syntactic-grammar)
         - [Multiple topic references and inner functions](#multiple-topic-references-and-inner-functions)
         - [Inner blocks](#inner-blocks)
         - [Nested pipelines](#nested-pipelines)
@@ -67,12 +67,12 @@
     - [Topic resolution](#topic-resolution)
       - [Lexical Environments](#lexical-environments)
       - [Abstract operations](#abstract-operations)
-    - [Topic reference • Runtime Evaluation](#topic-reference-%E2%80%A2-runtime-evaluation)
-    - [Pipeline-level expressions • Runtime Evaluation](#pipeline-level-expressions-%E2%80%A2-runtime-evaluation)
-      - [Bare function call • Runtime Evaluation](#bare-function-call-%E2%80%A2-runtime-evaluation)
-      - [Bare constructor call • Runtime Evaluation](#bare-constructor-call-%E2%80%A2%C2%A0runtime-evaluation)
-      - [Simple Reference • Runtime Evaluation](#simple-reference-%E2%80%A2-runtime-evaluation)
-      - [Topical style • Runtime Evaluation](#topical-style-%E2%80%A2-runtime-evaluation)
+    - [Topic reference](#topic-reference-%E2%80%A2-runtime-evaluation)
+    - [Pipeline-level expressions](#pipeline-level-expressions-%E2%80%A2-runtime-evaluation)
+      - [Bare function call](#bare-function-call-%E2%80%A2-runtime-evaluation)
+      - [Bare constructor call • Evaluation](#bare-constructor-call-%E2%80%A2%C2%A0runtime-evaluation)
+      - [Simple Reference](#simple-reference-%E2%80%A2-runtime-evaluation)
+      - [Topical style](#topical-style-%E2%80%A2-runtime-evaluation)
   - [Relations to other work](#relations-to-other-work)
     - [Other ECMAScript proposals](#other-ecmascript-proposals)
     - [Possible future extensions to the topic concept](#possible-future-extensions-to-the-topic-concept)
@@ -1301,7 +1301,7 @@ listed **above** it.
 
 </details>
 
-### Topic reference • Syntactic grammar
+### Topic reference • Grammar
 The topic reference integrates into the ECMAScript syntax as one of the
 [ECMAScript Primary Expressions][], just like `this`. Their production rule
 needs to be modified so that the `#` appears as one of the types of primary
@@ -1348,7 +1348,7 @@ The new version:
 
 </details>
 
-### Pipeline-level expressions • Syntactic grammar
+### Pipeline-level expressions • Grammar
 The production rule for [ECMAScript Assignment-level Expressions][] needs to be
 modified so that pipe expressions slip in between it and conditional-level
 expressions in the hierarchy. Then the conditional-expression rule would be used
@@ -1419,7 +1419,7 @@ But for two certain simple cases – unary functions and constructors – you ma
 omit the topic reference from the body. This is called **bare style**.
 
 When a pipe is in bare style, we refer to the body as a **bare function** or a
-**bare constructor**, depending on the rules in [bare style • syntactic
+**bare constructor**, depending on the rules in [bare style • syntactic
 grammar][]. The body acts as just a simple reference to a function or
 constructor, such as with `… |> capitalize` and `… |> new User.Message`. The
 body’s value would then be called as a unary function or constructor, without
@@ -1468,13 +1468,13 @@ detail, but an overview is given in a table.</summary>
 
 </details>
 
-#### Bare style • Syntactic grammar
+#### Bare style • Grammar
 The **bare style** supports using simple identifiers, possibly with chains of
 simple property identifiers. If there are any operators, parentheses (including
 for method calls), brackets, or anything other than identifiers and dot
 punctuators, then it is in topical style, not in bare style.
 
-##### Simple reference • Syntactic grammar
+##### Simple reference • Grammar
 First, let’s call a mere identifier – optionally with a chain of properties, and
 with no parentheses, brackets, or operators – a **simple reference**.
 
@@ -1495,7 +1495,7 @@ in imitation of how [ECMAScript _Member Expression_][] handles method chains.
 
 </details>
 
-##### Bare function call • Syntactic grammar
+##### Bare function call • Grammar
 If the body is a merely a simple reference, then that identifier is interpreted
 to be a **bare function call**. The pipeline’s value will be the result of
 calling the body with the current topic as its argument.
@@ -1516,7 +1516,7 @@ then the pipeline is a **bare function call**.
 
 [TO DO: Make sure that `eval` and other special “functions” are not allowed.]
 
-##### Bare constructor call • Syntactic grammar
+##### Bare constructor call • Grammar
 If the body starts with `new`, followed by mere identifier, optionally with a
 chain of properties, and with no parentheses or brackets, then that identifier
 is interpreted to be a **bare constructor**.
@@ -1549,9 +1549,9 @@ variable**, then **use that variable as a bare body**.
 The JavaScript developer is encouraged to use topic references and avoid bare
 style, where bare style may be visually confusing to the reader.
 
-#### Topical style • Syntactic grammar
+#### Topical style • Grammar
 **If a pipeline** of the form _topic_ |> _body_ is ***not* match the [bare style
-• syntactic grammar][]** (that is, it is *not* a bare function call or bare
+• Grammar][]** (that is, it is *not* a bare function call or bare
 constructor call), then it **must be in topical style**.
 
 A topical pipeline body is an expression at the [precedence level once tighter
@@ -1910,7 +1910,7 @@ is “topical” in the usual adjectival sense.]
 
 [TO DO]
 
-### Topic reference • Runtime Evaluation
+### Topic reference • Evaluation
 When evaluated during runtime, the topic reference uses the Resolve Topic
 abstract operation on the running execution context’s lexical environment.
 
@@ -1924,85 +1924,9 @@ abstract operation on the running execution context’s lexical environment.
 
 [TO DO: Define Resolve Topic abstract operation]
 
-### Pipeline-level expressions • Runtime Evaluation
-During runtime, [TO DO]
-
-<details open>
-
-* **Evaluation**
-  * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_
-    1. Let _head Ref_ be the result of evaluating ? _Pipeline Expression_.
-    2. Let _head Value_ be the result of ? Get Value (_head Ref_).
-    3. Let _body Ref_ be Pipeline Body Evaluation of _Pipeline Body_ with argument
-       _head Value_.
-    4. Return ? Get Value(_body Ref_).
-
-</details>
-
-#### Bare function call • Runtime Evaluation
-If the body is a merely a simple reference, then that identifier is interpreted
-to be a **bare function call**. The pipeline’s value will be the result of
-calling the body with the current topic as its argument.
-
-<details open>
-<summary>Runtime semantics</summary>
-
-This algorithm was adapted from [ECMAScript Function Calls, § RS:
-Evaluation][].
-
-* **Pipeline Body Evaluation**\
-  With parameter _head Value_.
-  Note that this Pipeline Body Evaluation rule is used in the evaluation of
-  _Pipeline Expression_, defined previously.
-  * _Pipeline Bare Function Call_ : _Simple Reference_
-    1. Let _ref_ be the result of evaluating _Simple Reference_.
-    2. Let _func_ be ? Get Value(_ref_).
-    3. Let _this Call_ be this _Pipeline Bare Function Call_.
-    4. Let _tail Call_ be Is In Tail Position(_this Call_).
-    5. Let _Arguments_ be a [List][ECMAScript Lists and Records] containing
-       the one element which is _head Value_.
-    6. Return ? Evaluate Call(_func_, _ref_, Arguments, _tail Call_).
-
-</details>
-
-#### Bare constructor call • Runtime Evaluation
-<details open>
-<summary>Runtime semantics</summary>
-
-This algorithm was adapted from [ECMAScript `new` operator, § RS: Evaluation][].
-
-* **_Pipeline Body Evaluation_**\
-  With parameter _head Value_.
-
-  Note that this Pipeline Body Evaluation rule is used in the evaluation of
-  _Pipeline Expression_, defined previously.
-
-  * **_Pipeline Bare Constructor Call_** : `new` _Simple Reference_
-    * [TO DO: Can we use Evaluate New if _Simple Reference_ is technically not the
-      same as Member Expression? Should we just use Member Expression with some
-      limitations?]
-
-</details>
-
-#### Simple Reference • Runtime Evaluation
-<details open>
-<summary>Simple references’ runtime semantics are exactly the same as the
-member expressions they resemble.</summary>
-
-This section is adapted from [ECMAScript Property Accessors, § RS: Evaluation][].
-
-* **Evaluation**
-  * _Simple Reference_ : _Simple Reference_ `.` _Identifier Name_
-    * Is evaluated in exactly the same manner as [_Member Expression_ `:`
-      _Member Expression_ `.` _Identifier Name_][ECMAScript Property Accessors,
-      § RS: Evaluation] except that the contained _Simple Reference_ is evaluated
-      in step 1.
-
-</details>
-
-#### Topical style • Runtime Evaluation
+#### Topical style • Evaluation
 **If a pipeline** of the form _topic_ |> _body_ is ***not* match the [bare style
-• syntactic grammar][]** (that is, it is *not* a bare function call or bare
+• Grammar][]** (that is, it is *not* a bare function call or bare
 constructor call), then it **must be in topical style**.
 
 <details open>
@@ -2029,6 +1953,82 @@ Topical style behaves like **`do { const ` _topic Identifier_ `=` _topic_`;
   the topic reference replaced by _topic Variable_.
 
 [TO DO: Add link to term-rewriting appendix.]
+
+</details>
+
+#### Simple reference • Evaluation
+<details open>
+<summary>Simple references’ runtime semantics are exactly the same as the
+member expressions they resemble.</summary>
+
+This section is adapted from [ECMAScript Property Accessors, § RS: Evaluation][].
+
+* **Evaluation**
+  * _Simple Reference_ : _Simple Reference_ `.` _Identifier Name_
+    * Is evaluated in exactly the same manner as [_Member Expression_ `:`
+      _Member Expression_ `.` _Identifier Name_][ECMAScript Property Accessors,
+      § RS: Evaluation] except that the contained _Simple Reference_ is evaluated
+      in step 1.
+
+</details>
+
+#### Bare function call
+If the body is a merely a simple reference, then that identifier is interpreted
+to be a **bare function call**. The pipeline’s value will be the result of
+calling the body with the current topic as its argument.
+
+<details open>
+<summary>Runtime semantics</summary>
+
+This algorithm was adapted from [ECMAScript Function Calls, § RS:
+Evaluation][].
+
+* **Pipeline Body Evaluation**\
+  With parameter _head Value_.
+  Note that this Pipeline Body Evaluation rule is used in the evaluation of
+  _Pipeline Expression_, defined previously.
+  * _Pipeline Bare Function Call_ : _Simple Reference_
+    1. Let _ref_ be the result of evaluating _Simple Reference_.
+    2. Let _func_ be ? Get Value(_ref_).
+    3. Let _this Call_ be this _Pipeline Bare Function Call_.
+    4. Let _tail Call_ be Is In Tail Position(_this Call_).
+    5. Let _Arguments_ be a [List][ECMAScript Lists and Records] containing
+       the one element which is _head Value_.
+    6. Return ? Evaluate Call(_func_, _ref_, Arguments, _tail Call_).
+
+</details>
+
+#### Bare constructor call • Evaluation
+<details open>
+<summary>Runtime semantics</summary>
+
+This algorithm was adapted from [ECMAScript `new` operator, § RS: Evaluation][].
+
+* **_Pipeline Body Evaluation_**\
+  With parameter _head Value_.
+
+  Note that this Pipeline Body Evaluation rule is used in the evaluation of
+  _Pipeline Expression_, defined previously.
+
+  * **_Pipeline Bare Constructor Call_** : `new` _Simple Reference_
+    * [TO DO: Can we use Evaluate New if _Simple Reference_ is technically not the
+      same as Member Expression? Should we just use Member Expression with some
+      limitations?]
+
+</details>
+
+### Pipeline-level expressions
+During runtime, [TO DO]
+
+<details open>
+
+* **Evaluation**
+  * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_
+    1. Let _head Ref_ be the result of evaluating ? _Pipeline Expression_.
+    2. Let _head Value_ be the result of ? Get Value (_head Ref_).
+    3. Let _body Ref_ be Pipeline Body Evaluation of _Pipeline Body_ with argument
+       _head Value_.
+    4. Return ? Get Value(_body Ref_).
 
 </details>
 
@@ -2911,7 +2911,7 @@ do { do { do { do { 3 * 3 } } }
 [annevk]: https://github.com/annevk
 [antecedent]: https://en.wikipedia.org/wiki/Antecedent_(grammar)
 [associative property]: https://en.wikipedia.org/wiki/Associative_property
-[bare style • syntactic grammar]: #bare-style-syntactic-grammar
+[bare style • Grammar]: #bare-style-syntactic-grammar
 [bidirectional associativity]: #bidirectional-associativity
 [binding]: https://en.wikipedia.org/wiki/Binding_(linguistics)
 [Clojure pipe]: https://clojuredocs.org/clojure.core/as-%3E
