@@ -206,8 +206,7 @@ The resulting code’s terseness and flatness may be both easier for the
 JavaScript developer to read and to edit. The reader may follow the flow of data
 more easily through this single flattened thread of postfix operations. And the
 developer may more easily add or remove operations at the beginning, end, or
-middle of the thread, without changing the indentation of many nearby, unrelated
-lines.
+middle of the thread, without changing the indentation of many unrelated lines.
 
 Similar use cases appear numerous times in JavaScript code, whenever any value
 is transformed by expressions of any type: function calls, property calls,
@@ -219,8 +218,8 @@ The smart pipe operator can simply handle them all.
 
 Note also that it was not necessary to include parentheses for `capitalize` or
 `new User.Message`; they were implicitly included as a unary function call and a
-unary constructor call, respectively. That is, the preceding example is
-equivalent to:
+unary constructor call, respectively.
+In othe words, the preceding example is equivalent to:
 ```js
 'hello'
   |> await #
@@ -236,11 +235,13 @@ of this “smart pipe operator”][smart body syntax].
 
 [TODO: Link to Goals.]
 
-## Examples
-
 ### Basic concepts
 
 <details open>
+
+These examples are adapted from these other proposals:
+[original pipe-operator proposal][first pipe-operator proposal]
+([Gilbert “mindeavor”][mindeavor] &c. ECMA International. 2017–2018. BSD License.)\[TODO]
 
 <table>
 <thead>
@@ -259,37 +260,36 @@ value
   |> # + 2
   |> # * 3
   |> -#
-  |> g
+  |> g(#, x)
 ```
+
+Note that `|> f` is a bare unary function call. This is the same as `|> f(#)`,
+but the `#` is unnecessary; it is invisibly, tacitly implied.
+
+This is the [smart part of the pipe operator][smart body syntax], which can
+distinguish between two syntax styles (bare vs. topic) by using a simple rule:
+bare style uses only identifiers, dots, and `new`, and never parentheses,
+brackets, braces, or other operators.
 
 <td>
 
 ```js
 g(
   -(f(value) + 2)
-    * 3
+    * 3,
+  x
 )
 ```
+In contrast to the version with pipes, this code is deeply nested, not flat.
 
-</table>
+The expression has two levels of indentation instead of one.
+Reading its data flow requires checking both the beginning and end of each
+expression, and each step expression gradually increases in size.
 
-</details>
+Inserting or removing any step of the data flow also requires changes to the
+indentation of any previous steps’ lines.
 
-This next example is adapted from the [original pipe-operator proposal][first
-pipe-operator proposal].\
-([Gilbert “mindeavor”][mindeavor] &c. ECMA International. 2017–2018. BSD License.)
-
-<details open>
-
-<table>
-<thead>
 <tr>
-<th>With smart pipes
-<th>Status quo
-
-<tbody>
-<tr>
-
 <td>
 
 ```js
@@ -309,16 +309,8 @@ stringPromise
   |> capitalize |> # + '!'
   |> new User.Message
 ```
-Note that `|> capitalize` is a bare unary function call. The `#` is tacitly,
-invisibly implied. `|> capitalize(#)` would work but the `#` is unnecessary.
-
-Ditto for `|> new User.Message`, which is a bare unary constructor call,
-abbreviated from `|> new User.Message(#)`.
-
-This is the [smart part of the pipe operator][smart body syntax], which can
-distinguish between two syntax styles (bare vs. topic) by using a simple rule:
-bare uses only identifiers, dots, and `new`, and never parentheses, brackets,
-braces, or other operators.
+`|> capitalize` is a bare unary function call. Similarly, `|> new User.Message`
+is a bare unary constructor call, abbreviated from `|> new User.Message(#)`.
 
 <td>
 
@@ -341,11 +333,8 @@ new User.Message(
   ) + '!'
 )
 ```
-In contrast to the version with pipes, this code is deeply nested, not flat. The
-expression has four levels of indentation instead of two. Reading its data flow
-requires checking both the beginning and end of each expression, and each step
-expression gradually increases in size. Inserting or removing any step of the
-data flow also requires changes to the indentation of any previous steps’ lines.
+This deeply nested expression has four levels of indentation instead of two.
+Reading its data flow requires checking both the beginning and end of each expression.
 
 <tr>
 <td>
@@ -361,7 +350,7 @@ stringPromise
 ```
 When tiny functions are only used once, and their bodies would be obvious and
 self-documenting in meaning, they might be ritual boilerplate that a developer
-may prefer to inline.
+may prefer to inline, trading off self-documentation for localization of meaning.
 
 <td>″″
 
@@ -1010,8 +999,7 @@ stringPromise
 ```
 
 The introduction to this [motivation][] section already explained much of
-the readability rationale, but it may also be useful to study the
-[examples][].
+the readability rationale.
 
 #### Distinguishable punctuators
 Another important aspect of code readability is the visual distinguishability of
