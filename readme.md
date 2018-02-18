@@ -1427,8 +1427,6 @@ having to use the topic reference as an explicit argument.
 
 <details open>
 
-<summary>Syntactic grammar</summary>
-
 [TO DO: Note no parameters in bare style.]
 
 * **_Pipeline Body_** [_In_, _Yield_, _Await_] :
@@ -1507,7 +1505,6 @@ or …,\
 then the pipeline is a **bare function call**.
 
 <details open>
-<summary>Syntactic grammar</summary>
 
 * **_Pipeline Bare Function Call_** :
   * _Simple Reference_
@@ -1528,7 +1525,6 @@ or …,\
 then the pipeline is a **bare constructor call**.
 
 <details open>
-<summary>Syntactic grammar</summary>
 
 * **_Pipeline Bare Constructor Call_** :
   * `new` _Simple Reference_
@@ -1559,7 +1555,6 @@ than pipeline-level expressions][operator precedence] – that is, it is a
 conditional-level expression.
 
 <details open>
-<summary>Syntactic grammar</summary>
 
 * **_Pipeline Topical Body_** [_In_, _Yield_, _Await_] :
   * _Conditional Expression_ [? _In_, ? _Yield_, ? _Await_]
@@ -1978,7 +1973,6 @@ to be a **bare function call**. The pipeline’s value will be the result of
 calling the body with the current topic as its argument.
 
 <details open>
-<summary>Runtime semantics</summary>
 
 This algorithm was adapted from [ECMAScript Function Calls, § RS:
 Evaluation][].
@@ -2000,7 +1994,6 @@ Evaluation][].
 
 #### Bare constructor call • Evaluation
 <details open>
-<summary>Runtime semantics</summary>
 
 This algorithm was adapted from [ECMAScript `new` operator, § RS: Evaluation][].
 
