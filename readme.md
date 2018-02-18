@@ -250,41 +250,56 @@ which may be summarized,
 and other.
 </summary>
 
-Listed by priority, from most to least important:
+<table>
+<tr>
+<td>
 
-* **“Don’t break my code.”**
+**“Don’t break my code.”**
 
-   1. [Backward compatibility](#backward-compatibility)
-   2. [Zero runtime cost](#zero-runtime-cost)
-   3. [Forward compatibility](#forward-compatibility)
+ 1. [Backward compatibility](#backward-compatibility)
+ 2. [Zero runtime cost](#zero-runtime-cost)
+ 3. [Forward compatibility](#forward-compatibility)
 
-* **“Don’t make me overthink.”**
+<td>
 
-   4. [Syntactic locality](#syntactic-locality)
-   5. [Cyclomatic simplicity](#cyclomatic-simplicity)
+**“Don’t make me overthink.”**
 
-* **“Don’t shoot me in the foot.”**
+ 4. [Syntactic locality](#syntactic-locality)
+ 5. [Cyclomatic simplicity](#cyclomatic-simplicity)
+ 6. [Expressive versatility](#expressive-versatility)
 
-   6. [Simple scoping](#simple-scoping)
-   7. [Static analyzability](#static-analyzability)
-   8. [Arbitrary associativity](#arbitrary-associativity)
+<td>
 
-* **“Make my code easier to read.”**
+**“Don’t shoot me in the foot.”**
 
-   9. [Untangled flow](#untangled-flow)
-  10. [Expressive versatility](#expressive-versatility)
-  11. [Distinguishability](#distinguishability)
-  12. [Terse parentheses](#terse-parentheses)
-  13. [Terse variables](#terse-variables)
-  14. [Terse function calls](#terse-function-calls)
+ 7. [Simple scoping](#simple-scoping)
+ 8. [Static analyzability](#static-analyzability)
+ 9. [Arbitrary associativity](#arbitrary-associativity)
 
-* **Other**
+<tr>
+<td>
 
-  15. [Conceptual generality](#conceptual-generality)
-  16. [Human writability](#human-writability)
-  17. [Novice learnability](#novice-learnability)
+**“Make my code easier to read.”**
+
+10. [Untangled flow](#untangled-flow)
+11. [Distinguishability](#distinguishability)
+12. [Terse parentheses](#terse-parentheses)
+13. [Terse variables](#terse-variables)
+14. [Terse function calls](#terse-function-calls)
+
+<td>
+
+**Other**
+
+15. [Conceptual generality](#conceptual-generality)
+16. [Human writability](#human-writability)
+17. [Novice learnability](#novice-learnability)
+
+</table>
 
 #### “Don’t break my code.”
+The syntax should not break any existing code; it should also be forward
+compatible with future code.
 
 ##### Backward compatibility
 The syntax must avoid stepping on the toes of existing code, including but not
@@ -345,6 +360,9 @@ work][]. See also Goal 9 below. See also [inner blocks in pipelines][inner
 blocks].
 
 #### “Don’t make me overthink.”
+The syntax should not make a developer overthink about the syntax, rather than
+their product.
+
 ##### Syntactic locality
 The syntax should minimize the parsing lookahead that the compiler must check.
 If the grammar makes [garden-path syntax][] common, then this increases the
@@ -376,7 +394,71 @@ must learn and remember in order to use the syntax. The more uniform and
 simple the syntax’s rules, the more the developer may focus on the actual
 meaning of their code.
 
+##### Expressive versatility
+JavaScript is a language rich with [expressions of numerous kinds][MDN
+expressions and operators], each of which may usefully transform data from one
+form to another. There is **no single type** of expression that forms a
+**majority of used expressions**.
+
+* Arithmetic operations.
+* Array literals.
+* Arrow functions.
+* Assignment operations.
+* `await` expressions.
+* Class definitions.
+* Conditional operations.
+* Constructor calls one argument.
+* Constructor calls with many n-ary arguments.
+* Equality operations.
+* Function calls with one unary argument.
+* Function calls with many n-ary arguments.
+* Function and async-function definitions.
+* [Functional partial application (eventually)][Syntactic partial application].
+* Generator and async-generator definitions.
+* `instanceof` and `in` operations.
+* Object literals.
+* Property accessors and method calls.
+* References to variables, `this`, and `new.target`.
+* Regular-expression literals.
+* `super` calls.
+* Template literals.
+* `typeof` operations.
+* Unary function composition (eventually?).
+* `yield` expressions.
+
+The goal of the pipe operator is to untangle deeply nested expressions into flat
+threads of postfix expressions. To limit it to only one type of expression, even
+a common type, truncates its benefits to that one type only and compromises its
+expressivity and versatility.
+
+In particular, relying on immediately invoked function expressions ([IIFEs][])
+to accomodate non-unary function is insufficient for idiomatic JavaScript code.
+JavaScript functions have never fulfilled the [Tennent correspondence
+principle][]. Several common types of expressions cannot be equivalently used
+within inner functions, particularly `await` and `yield`. In these frequent
+cases, attempting to replacing code with “equivalent” IIFEs may cause different
+behavior, may cause different performance behavior (see example in Goal 2), or
+may require dramatic rearrangement of logic to conserve the old code’s behavior.
+
+It would be possible to add ad-hoc handling, for selected other expression
+types, to the operator’s grammar. This would expand its benefits to that type.
+However, this conflicts with Goal 5 (adding cyclomatic complexity to the parsing
+process, proportional to the number of ad-hoc handled cases). It also does not
+fulfill this Goal well either: excluding, perhaps arbitrarily, whatever classes
+its grammar’s branches do not handle.
+
+Such new [incidental complexity][] makes code less readable and distracts the
+developer from the program’s [essential logic][essential complexity]. A pipeline
+operator that improves readability should be versatile (this Goal) but
+conceptually and cyclomatically simple (Goal 5). Such an operator should be able
+to handle **all** expressions, in a **single** manner **uniformly**
+**universally** applicable to **all** expressions. It is the hope of this
+proposal’s authors that its [smart body syntax][] fulfills both criteria.
+
 #### “Don’t shoot me in the foot.”
+The syntax should not be a footgun: it should not easy for a developer to
+accidentally shoot themselves in the foot with it.
+
 ##### Simple scoping
 It should not be easy to accidentally shadow a reference from an outer lexical
 scope. When the developer does so, any use of that reference could result in
@@ -454,67 +536,6 @@ The introduction to this [motivation][] section already explained much of
 the readability rationale, but it may also be useful to study the
 [examples][] below.
 
-##### Expressive versatility
-JavaScript is a language rich with [expressions of numerous kinds][MDN
-expressions and operators], each of which may usefully transform data from one
-form to another. There is **no single type** of expression that forms a
-**majority of used expressions**.
-
-* Arithmetic operations.
-* Array literals.
-* Arrow functions.
-* Assignment operations.
-* `await` expressions.
-* Class definitions.
-* Conditional operations.
-* Constructor calls one argument.
-* Constructor calls with many n-ary arguments.
-* Equality operations.
-* Function calls with one unary argument.
-* Function calls with many n-ary arguments.
-* Function and async-function definitions.
-* [Functional partial application (eventually)][Syntactic partial application].
-* Generator and async-generator definitions.
-* `instanceof` and `in` operations.
-* Object literals.
-* Property accessors and method calls.
-* References to variables, `this`, and `new.target`.
-* Regular-expression literals.
-* `super` calls.
-* Template literals.
-* `typeof` operations.
-* Unary function composition (eventually?).
-* `yield` expressions.
-
-The goal of the pipe operator is to untangle deeply nested expressions into flat
-threads of postfix expressions. To limit it to only one type of expression, even
-a common type, truncates its benefits to that one type only and compromises its
-expressivity and versatility.
-
-In particular, relying on immediately invoked function expressions ([IIFEs][])
-to accomodate non-unary function is insufficient for idiomatic JavaScript code.
-JavaScript functions have never fulfilled the [Tennent correspondence
-principle][]. Several common types of expressions cannot be equivalently used
-within inner functions, particularly `await` and `yield`. In these frequent
-cases, attempting to replacing code with “equivalent” IIFEs may cause different
-behavior, may cause different performance behavior (see example in Goal 2), or
-may require dramatic rearrangement of logic to conserve the old code’s behavior.
-
-It would be possible to add ad-hoc handling, for selected other expression
-types, to the operator’s grammar. This would expand its benefits to that type.
-However, this conflicts with Goal 5 (adding cyclomatic complexity to the parsing
-process, proportional to the number of ad-hoc handled cases). It also does not
-fulfill this Goal well either: excluding, perhaps arbitrarily, whatever classes
-its grammar’s branches do not handle.
-
-Such new [incidental complexity][] makes code less readable and distracts the
-developer from the program’s [essential logic][essential complexity]. A pipeline
-operator that improves readability should be versatile (this Goal) but
-conceptually and cyclomatically simple (Goal 5). Such an operator should be able
-to handle **all** expressions, in a **single** manner **uniformly**
-**universally** applicable to **all** expressions. It is the hope of this
-proposal’s authors that its [smart body syntax][] fulfills both criteria.
-
 ##### Distinguishable punctuators
 Another important aspect of code readability is the visual distinguishability of
 its most important words or symbols. Visually similar punctuators can distract
@@ -582,6 +603,8 @@ a good balance between this Goal and Goals 4 and 5, in the same manner that
 more commonly used symbols are shorter.
 
 #### Other Goals
+Although these have been prioritized last, they are still important.
+
 ##### Conceptual generality
 If a concept is uniformly generalizable to many other cases, then this
 multiplies its usefulness. The more versatile its concepts, the more it may be
