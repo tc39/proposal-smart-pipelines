@@ -382,6 +382,7 @@ const $ = …; f($, $)
 ```
 
 <td>
+
 ```js
 const $ = …; [$, $ * 2, $ * 3]
 ```
@@ -504,7 +505,9 @@ const $ = …; f(x => $ \|> f \|> # * 5)
 ```js
 function (obj, pred, context) {
   return obj
-    |> isArrayLike(#) ? _.findIndex : _.findKey
+    |> isArrayLike(#)
+      ? _.findIndex
+      : _.findKey
     |> #(obj, pred, context)
     |> (# !== void 0 && # !== -1)
       ? obj[#] : undefined;
