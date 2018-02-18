@@ -2505,7 +2505,7 @@ numbers.sort(function (a, b) {
 
 ```js
 [ { x: 22 }, { x: 42 } ]
-  .map(el => el.x)
+  .map(-> #.x)
   .reduce(-> Math.max(#, ##), -Infinity)
 ```
 
