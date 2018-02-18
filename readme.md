@@ -3401,3 +3401,8 @@ do { do { do { do { 3 * 3 } } }
 [ECMAScript headless-arrow proposal]: https://bterlson.github.io/headless-arrows/
 [Ron Buckton]: https://github.com/rbuckton
 [syntactic functional composition]: https://github.com/TheNavigateur/proposal-pipeline-operator-for-function-composition
+
+
+
+* [TO DO: Change goals to definition list]
+* [TO DO: Close specification-blockquote widgets by default]
