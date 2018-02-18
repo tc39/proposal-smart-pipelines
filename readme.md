@@ -2174,10 +2174,14 @@ During runtime, [TODO]
 </details>
 
 ## Relations to other work
+
+<!--
 [TODO: https://github.com/gajus/babel-plugin-transform-function-composition]
 
 [TODO: refer to #background list of programming languages]
+ -->
 
+<!--
 ### Other ECMAScript proposals
 [TODO: `do` expressions]
 
@@ -2192,6 +2196,8 @@ During runtime, [TODO]
 [TODO: Function bind: https://github.com/zenparsing/es-function-bind]
 
 [TODO: pattern matching https://github.com/tc39/proposal-pattern-matching]
+
+ -->
 
 ### Possible future extensions to the topic concept
 <details open>
@@ -2236,6 +2242,78 @@ reading and writing, while perhaps preserving [static analyzability][] and… [T
 the `#|>` idiom.]
 
 [TODO: Can partial application be integrated with topics?]
+Yes! A topical arrow function `->` plus multiple topics `#` (aka `#0`), `#1`,
+`#2`, `#3`, `…#` could pithily express both functional composition and partial
+application.
+
+The lexical environment defined by
+
+<table>
+
+<tr>
+<th colspan=2>
+
+[Functional composition](https://github.com/TheNavigateur/proposal-pipeline-operator-for-function-composition)
+
+<tr>
+<td>
+
+```js
+const doubleThenSquareThenHalfAsync =
+  -> double |> squareAsync |> half
+```
+
+<td>
+
+```js
+const doubleThenSquareThenHalfAsync =
+  double +> squareAsync +> half
+```
+
+<tr>
+<th colspan=2>
+
+[Functional partial application](https://github.com/tc39/proposal-partial-application)
+
+<tr>
+<td>
+
+```js
+const addOne = -> add(1, #);
+addOne(2); // 3
+
+const addTen = -> add(#, 10);
+addTen(2); // 12
+
+// with pipeline
+let newScore = player.score
+  |> add(7, #)
+  |> clamp(0, 100, #);
+
+const maxGreaterThanZero = Math.max(0, ...#);
+maxGreaterThanZero(1, 2); // 2
+maxGreaterThanZero(-1, -2); // 0
+```
+
+<td>
+
+```js
+const addOne = add(1, ?); // apply from the left
+addOne(2); // 3
+
+const addTen = add(?, 10); // apply from the right
+addTen(2); // 12
+
+let newScore = player.score
+  |> add(7, ?)
+  |> clamp(0, 100, ?);
+
+const maxGreaterThanZero = Math.max(0, ...);
+maxGreaterThanZero(1, 2); // 2
+maxGreaterThanZero(-1, -2); // 0
+```
+
+</table>
 
 #### Headless property access
 This example demonstrates a possible future “headless property” syntax in which
@@ -2273,6 +2351,43 @@ x |> f |> #.property |> g
 ```
 
 </table>
+
+```js
+array
+  .map(x => x.character())
+  .forEach(x => console.log(x));
+```
+
+…becomes:
+```js
+array
+  .map(-> .character())
+  .forEach(-> console.log);
+  // Smart function call ↑
+  // because console.log is simple identifier,
+  // just like # |> console.log
+```
+
+The headless property coupled with the topical arrow function addresses
+**[syntactic method extraction][method extraction]**. With the smart pipe
+operator alone, a method extraction `object.property.bind(object, …)` is already
+possible with `x => x |> object.property`. With headless properties, this
+function becomes even pithier: `-> object.property`. *And* it is composable with
+other functions: `-> object.property |> f |> g` evaluates to a function that
+behaves as the composition of `object.property.bind(object)`, `f`, and `g`.
+
+```js
+Promise.resolve(123).then(::console.log);
+```
+
+```js
+Promise.resolve(123).then(-> console.log);
+```
+
+Binding still requires an additional binary operator such as the already
+proposed binary `::` operator. The proposed unary `::` operator would become
+obsolete (though it could become equivalent to `#::method`, like headless
+properties.
 
 #### Headless pipelining
 This example demonstrates a possible future “headless
