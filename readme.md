@@ -714,6 +714,7 @@ fetch('https://pk.example/berlin-calling',
 
 ## Goals
 
+<details open>
 <summary>
 There are seventeen ordered Goals that the smart body syntax tries to fulfill,
 which may be summarized,<br>
