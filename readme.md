@@ -1093,41 +1093,6 @@ cannot be manually declared (`const #` is a syntax error), nor can it be
 assigned with a value (`# = 3` is a syntax error). Instead, the topic reference
 is implicitly, lexically bound only within pipeline bodies.
 
-### Explanation of conventions
-The term [“**topic**” comes from linguistics][topic and comment] and have
-precedent in prior programming languages’ use of “topic variables”.
-
-The term “**head**” is preferred to “**topic expression**” because, in the
-future, the [topic concept could be extended to other syntaxes such as
-`for`][possible future extensions to the topic concept], not just pipelines.
-
-In addition, “head” is preferred to “**LHS**”, because “LHS” in the ECMAScript
-specification usually refers to the [LHS of assignments][ECMAScript LHS expressions],
-which may be confusing. However, “topic expression” and “LHS” are still fine and
-acceptable, if not imprecise, names for a pipeline’s head.
-
-The term “**topic reference**” is preferred to the phrase “**topic variable**”
-because the latter is a misnomer. The topic reference is *not* a variable
-identifier. Unlike variables, it cannot be manually declared (`const #` is a
-syntax error), nor can it be assigned with a value (`# = 3` is a syntax error).
-
-“Topic reference” is also preferred to “**topic placeholder**”, to avoid
-confusion with the placeholders of another TC39 proposal – [syntactic partial
-application][]. These placeholders (currently denoted by nullary `?`) are of a
-different nature than topic references. Instead of referring to a single value
-bound earlier in the surrounding lexical context, these **parameter
-placeholders** act as the parameter to a new function. When this new function is
-called, those parameter placeholders will be bound to multiple argument values.
-
-The term “**body**” is preferred instead of “**RHS**” because “topic” is
-preferred to “LHS”. However, “RHS” is still a fine and acceptable name for the
-body of the pipeline operator.
-
-“**Bare style**” can also be called “**tacit style**”, but the former is
-preferred to the latter. Eventually, certain [possible future extensions to the
-topic concept][] may enable [tacit programming][] even without using bare-style
-pipelines.
-
 </details>
 
 ## Grammar
@@ -2660,7 +2625,44 @@ There are a number of other ways of potentially accomplishing the above use
 cases. However, the authors of this proposal believe that the smart pipe
 operator may be the best choice. [TO DO]
 
-## Term rewriting
+## Appendix • Explanation of nomenclature
+<details open>
+
+The term [“**topic**” comes from linguistics][topic and comment] and have
+precedent in prior programming languages’ use of “topic variables”.
+
+The term “**head**” is preferred to “**topic expression**” because, in the
+future, the [topic concept could be extended to other syntaxes such as
+`for`][possible future extensions to the topic concept], not just pipelines.
+
+In addition, “head” is preferred to “**LHS**”, because “LHS” in the ECMAScript
+specification usually refers to the [LHS of assignments][ECMAScript LHS expressions],
+which may be confusing. However, “topic expression” and “LHS” are still fine and
+acceptable, if not imprecise, names for a pipeline’s head.
+
+The term “**topic reference**” is preferred to the phrase “**topic variable**”
+because the latter is a misnomer. The topic reference is *not* a variable
+identifier. Unlike variables, it cannot be manually declared (`const #` is a
+syntax error), nor can it be assigned with a value (`# = 3` is a syntax error).
+
+“Topic reference” is also preferred to “**topic placeholder**”, to avoid
+confusion with the placeholders of another TC39 proposal – [syntactic partial
+application][]. These placeholders (currently denoted by nullary `?`) are of a
+different nature than topic references. Instead of referring to a single value
+bound earlier in the surrounding lexical context, these **parameter
+placeholders** act as the parameter to a new function. When this new function is
+called, those parameter placeholders will be bound to multiple argument values.
+
+The term “**body**” is preferred instead of “**RHS**” because “topic” is
+preferred to “LHS”. However, “RHS” is still a fine and acceptable name for the
+body of the pipeline operator.
+
+“**Bare style**” can also be called “**tacit style**”, but the former is
+preferred to the latter. Eventually, certain [possible future extensions to the
+topic concept][] may enable [tacit programming][] even without using bare-style
+pipelines.
+
+</details>
 
 <details open>
 
