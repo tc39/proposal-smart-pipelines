@@ -1686,7 +1686,7 @@ modified to use the new method-like syntax.
 > 1. For each child node _child_ of this Parse Node, do
 >    1. If child is an instance of _symbol_, return true.
 >    2. If _child_ is an instance of a nonterminal, then
->       1. Let _contained_ be the result of _child_.Contains (_symbol_).
+>       1. Let _contained_ be the result of _child_ . Contains (_symbol_).
 >       2. If _contained_ is true, return true.
 >
 > 2. Return false.
@@ -1705,7 +1705,7 @@ function definitions, such that they hide their substructure from the rule.
 (Uniquely among the static semantic rules, Contains is written as an infix
 operator in the ECMAScript specification – “… Contains …” – for historical
 reasons. This proposal will instead use the planned future new syntax
-“….Contains (…)”.)
+“… . Contains (…)”.)
 
 **This proposal will use Contains to determine whether a pipeline’s body uses
 its `#` topic reference.** This is so that many [footguns may be statically
@@ -1742,8 +1742,8 @@ See [TO DO: Topics and inner functions].
 
     1. If _symbol_ is not one of _New Target_, _Super Property_, _Super Call_,
       `super`, `this` or `#`, return false.
-    2. If _Arrow Parameters_.Contains (_symbol_) is true, return true.
-    3. Return _Concise Body_.Contains (_symbol_).
+    2. If _Arrow Parameters_ . Contains (_symbol_) is true, return true.
+    3. Return _Concise Body_ . Contains (_symbol_).
 
   * **_Arrow Parameters_** : _Cover Parenthesized Expression and Arrow Parameter List_\
     [Unchanged.]
