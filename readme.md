@@ -628,11 +628,71 @@ readability and comprehensibility that it might bring to code in general.
 
 </details>
 
-### Examples
+## Examples
 
-#### Prior proposals’ examples
+### Basic concepts
 
-##### First pipe-operator proposal
+#### Multiple topic references
+<details open>
+<summary>The topic reference may be used multiple times in a pipeline body. Each
+use refers to the same value (wherever the topic reference is not overridden by
+another, inner pipeline’s topical scope). Because it is bound to the result of
+the topic, the topic is still only ever evaluated once.</summary>
+
+The lines in each of the following rows are equivalent.
+
+| With smart pipes                 | Block                                             |
+| -------------------------------- | ------------------------------------------------- |
+|`… \|> f(#, #)`                   |`const $ = …; f($, $)`                             |
+|`… \|> [#, # * 2, # * 3]`         |`const $ = …; [$, $ * 2, $ * 3]`                   |
+
+</details>
+
+#### Inner blocks
+<details open>
+<summary>The body of a pipeline may contain an inner arrow function but no other
+type of block expression.</summary>
+
+The lines in each of the following rows are equivalent.
+
+| With smart pipes                 | Block                                              |
+| -------------------------------- | -------------------------------------------------- |
+|`… \|> x => # + x`                |`const $ = …; x => # + x`                           |
+|`… \|> settimeout(() => # * 5)`   |`const $ = …; settimeout(() => $ * 5)`              |
+
+However, you cannot use use topic references inside of other types of blocks:
+function, async function, generator, async generator, or class.
+
+More precisely, all block expressions (other than arrow functions) shadow any
+outer lexical context’s topic with its own *absence* of a topic. This behavior
+is in order to fulfill both [Goals 3 and 6][goals].
+
+| With smart pipes                  | Syntax error                                      |
+| --------------------------------- |-------------------------------------------------- |
+|`… \|> function () { return # }`   | 🚫 Topic never used by pipeline’s body.
+|`… \|> class { m: () { return # }}`| 🚫 Topic never used by pipeline’s body.
+
+</details>
+
+#### Nested pipelines
+<details open>
+<summary>Both the head and the body of a pipeline may contain nested inner
+pipelines. Nested pipelines in the body is not encouraged, but it is still
+permitted.</summary>
+
+The lines in each of the following rows are equivalent.
+
+| With smart pipes                 | Block                                              |
+| -------------------------------- | -------------------------------------------------- |
+|`… \|> f(() => f(#) * 5)`         |`const $ = …; f(x => f($) * 5)`                     |
+|`… \|> f(() => f(#) \|> # * 5)`   |`const $ = …; f(x => f($) \|> # * 5)`               |
+|`… \|> f(() => # \|> f \|> # * 5)`|`const $ = …; f(x => $ \|> f \|> # * 5)`            |
+
+[TO DO]
+
+</details>
+
+#### First pipe-operator proposal
 [tc39/pipeline-operator-proposal][first pipe-operator proposal]. [Gilbert
 “mindeavor”][mindeavor] &c. ECMA International. 2017–2018. BSD License.
 
@@ -722,7 +782,7 @@ may prefer to inline.
 
 </table>
 
-#### Real-world examples
+### Real-world cases
 <details open>
 <summary>It is also useful to look at code from real-world libraries or
 standards and compare their readability with smart-pipelined versions. Numerous
@@ -1473,27 +1533,6 @@ simple property identifiers. If there are any operators, parentheses (including
 for method calls), brackets, or anything other than identifiers and dot
 punctuators, then it is in topical style, not in bare style.
 
-##### Simple reference • Grammar
-First, let’s call a mere identifier – optionally with a chain of properties, and
-with no parentheses, brackets, or operators – a **simple reference**.
-
-**If an expression** is of the form **_identifier_**\
-or _topic_ `|>` _identifier0_`.`_identifier1_\
-or _topic_ `|>` _identifier0_`.`_identifier1_`.`_identifier2_\
-or …), then the pipeline is a **simple reference**.
-
-<details open>
-
-This is achieved by defining the _Simple Reference_ production using [ECMAScript
-_Identifier Reference_][], [ECMAScript _Identifier Name_][], and left recursion,
-in imitation of how [ECMAScript _Member Expression_][] handles method chains.
-
-* **_Simple Reference_** :
-  * _Identifier Reference_
-  * _Simple Reference_ `.` _Identifier Name_
-
-</details>
-
 ##### Bare function call • Grammar
 If the body is a merely a simple reference, then that identifier is interpreted
 to be a **bare function call**. The pipeline’s value will be the result of
@@ -1511,8 +1550,6 @@ then the pipeline is a **bare function call**.
   * _Simple Reference_
 
 </details>
-
-[TO DO: Make sure that `eval` and other special “functions” are not allowed.]
 
 ##### Bare constructor call • Grammar
 If the body starts with `new`, followed by mere identifier, optionally with a
@@ -1532,8 +1569,29 @@ then the pipeline is a **bare constructor call**.
 
 </details>
 
+##### Simple reference • Grammar
+A **simple reference** is an identifier reference, optionally with a chain of
+properties, and with no parentheses, brackets, braces, or operators.
+
+**If an expression** is of the form **_identifier_**\
+or _topic_ `|>` _identifier0_`.`_identifier1_\
+or _topic_ `|>` _identifier0_`.`_identifier1_`.`_identifier2_\
+or …), then the pipeline is a **simple reference**.
+
+<details open>
+
+This is achieved by defining the _Simple Reference_ production using [ECMAScript
+_Identifier Reference_][], [ECMAScript _Identifier Name_][], and left recursion,
+in imitation of how [ECMAScript _Member Expression_][] handles method chains.
+
+* **_Simple Reference_** :
+  * _Identifier Reference_
+  * _Simple Reference_ `.` _Identifier Name_
+
+</details>
+
 ##### Practical consequences
-Therefore, a pipeline in **bare style *never*** has **parentheses `(…)` or
+Therefore, a pipeline in **bare style *never* ** has **parentheses `(…)` or
 brackets `[…]`** in its body. Neither `… |> object.method()` nor `… |>
 object.method(arg)` nor `… |> object[symbol]` nor `… |> object.createFunction()`
 are in bare style (in fact, they all have invalid syntax, due to their being in
@@ -1559,69 +1617,6 @@ conditional-level expression.
 
 * **_Pipeline Topical Body_** [_In_, _Yield_, _Await_] :
   * _Conditional Expression_ [? _In_, ? _Yield_, ? _Await_]
-
-</details>
-
-##### Multiple topic references and inner functions
-<details open>
-<summary>The topic reference may be used multiple times in a pipeline body. Each
-use refers to the same value (wherever the topic reference is not overridden by
-another, inner pipeline’s topical scope). Because it is bound to the result of
-the topic, the topic is still only ever evaluated once.</summary>
-
-The lines in each of the following rows are equivalent.
-
-| Pipeline                         | Block                                             |
-| -------------------------------- | ------------------------------------------------- |
-|`… \|> f(#, #)`                   |`const $ = …; f($, $)`                             |
-|`… \|> [#, # * 2, # * 3]`         |`const $ = …; [$, $ * 2, $ * 3]`                   |
-
-[TO DO]
-
-</details>
-
-##### Inner blocks
-<details open>
-<summary>The body of a pipeline may contain an inner arrow function but no other
-type of block expression.</summary>
-
-The lines in each of the following rows are equivalent.
-
-| Pipeline                         | Block                                              |
-| -------------------------------- | -------------------------------------------------- |
-|`… \|> x => # + x`                |`const $ = …; x => # + x`                           |
-|`… \|> settimeout(() => # * 5)`   |`const $ = …; settimeout(() => $ * 5)`              |
-
-However, you cannot use use topic references inside of other types of blocks:
-function, async function, generator, async generator, or class.
-
-More precisely, all block expressions (other than arrow functions) shadow any
-outer lexical context’s topic with its own *absence* of a topic. This behavior
-is in order to fulfill both [Goals 3 and 6][goals].
-
-| Pipeline                         |                                                    |
-| -------------------------------- |--------------------------------------------------- |
-|`… \|> function () { # }`         | Syntax Error: Topic never used by pipeline’s body. |
-
-[TO DO]
-
-</details>
-
-##### Nested pipelines
-<details open>
-<summary>Both the head and the body of a pipeline may contain nested inner
-pipelines. Nested pipelines in the body is not encouraged, but it is still
-permitted.</summary>
-
-The lines in each of the following rows are equivalent.
-
-| Pipeline                         | Block                                              |
-| -------------------------------- | -------------------------------------------------- |
-|`… \|> f(() => f(#) * 5)`         |`const $ = …; f(x => f($) * 5)`                     |
-|`… \|> f(() => f(#) \|> # * 5)`   |`const $ = …; f(x => f($) \|> # * 5)`               |
-|`… \|> f(() => # \|> f \|> # * 5)`|`const $ = …; f(x => $ \|> f \|> # * 5)`            |
-
-[TO DO]
 
 </details>
 
