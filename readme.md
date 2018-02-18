@@ -16,32 +16,32 @@
     - [Underscore.js](#underscorejs)
     - [Pify](#pify)
     - [Fetch Web Standard](#fetch-web-standard)
-    - [Goals](#goals)
-      - [“Don’t break my code.”](#dont-break-my-code)
-        - [Backward compatibility](#backward-compatibility)
-        - [Zero runtime cost](#zero-runtime-cost)
-        - [Forward compatibility](#forward-compatibility)
-      - [“Don’t make me overthink.”](#dont-make-me-overthink)
-        - [Syntactic locality](#syntactic-locality)
-        - [Cyclomatic simplicity](#cyclomatic-simplicity)
-        - [Expressive versatility](#expressive-versatility)
-      - [“Don’t shoot me in the foot.”](#dont-shoot-me-in-the-foot)
-        - [Simple scoping](#simple-scoping)
-        - [Static analyzability](#static-analyzability)
-        - [Arbitrary associativity](#arbitrary-associativity)
-      - [“Make my code easier to read.”](#make-my-code-easier-to-read)
-        - [Untangled flow](#untangled-flow)
-        - [Distinguishable punctuators](#distinguishable-punctuators)
-        - [Terse parentheses](#terse-parentheses)
-        - [Terse variables](#terse-variables)
-        - [Terse function calls](#terse-function-calls)
-      - [Other Goals](#other-goals)
-        - [Conceptual generality](#conceptual-generality)
-        - [Human writability](#human-writability)
-        - [Novice learnability](#novice-learnability)
+  - [Goals](#goals)
+    - [“Don’t break my code.”](#dont-break-my-code)
+      - [Backward compatibility](#backward-compatibility)
+      - [Zero runtime cost](#zero-runtime-cost)
+      - [Forward compatibility](#forward-compatibility)
+    - [“Don’t make me overthink.”](#dont-make-me-overthink)
+      - [Syntactic locality](#syntactic-locality)
+      - [Cyclomatic simplicity](#cyclomatic-simplicity)
+      - [Expressive versatility](#expressive-versatility)
+    - [“Don’t shoot me in the foot.”](#dont-shoot-me-in-the-foot)
+      - [Simple scoping](#simple-scoping)
+      - [Static analyzability](#static-analyzability)
+      - [Arbitrary associativity](#arbitrary-associativity)
+    - [“Make my code easier to read.”](#make-my-code-easier-to-read)
+      - [Untangled flow](#untangled-flow)
+      - [Distinguishable punctuators](#distinguishable-punctuators)
+      - [Terse parentheses](#terse-parentheses)
+      - [Terse variables](#terse-variables)
+      - [Terse function calls](#terse-function-calls)
+    - [Other Goals](#other-goals)
+      - [Conceptual generality](#conceptual-generality)
+      - [Human writability](#human-writability)
+      - [Novice learnability](#novice-learnability)
   - [Nomenclature](#nomenclature)
     - [Pipe operator, pipeline, pipeline-level expression](#pipe-operator-pipeline-pipeline-level-expression)
-    - [Head, head value, body, pipeline value, topical style, bare style](#head-head-value-body-pipeline-value-topical-style-bare-style)
+    - [Head, head value, body, pipeline value, topic style, bare style](#head-head-value-body-pipeline-value-topic-style-bare-style)
     - [Topic, topic reference](#topic-topic-reference)
   - [Grammar](#grammar)
     - [Lexical grammar](#lexical-grammar)
@@ -56,7 +56,7 @@
         - [Bare constructor call • Grammar](#bare-constructor-call-%E2%80%A2-grammar)
         - [Simple reference • Grammar](#simple-reference-%E2%80%A2-grammar)
         - [Practical consequences](#practical-consequences)
-      - [Topical style • Grammar](#topical-style-%E2%80%A2-grammar)
+      - [Topic style • Grammar](#topic-style-%E2%80%A2-grammar)
   - [Static semantics](#static-semantics)
     - [Static Contains](#static-contains)
     - [Static Early Errors](#static-early-errors)
@@ -66,7 +66,7 @@
       - [Lexical Environments](#lexical-environments)
       - [Abstract operations](#abstract-operations)
     - [Topic reference • Evaluation](#topic-reference-%E2%80%A2-evaluation)
-      - [Topical style • Evaluation](#topical-style-%E2%80%A2-evaluation)
+      - [Topic style • Evaluation](#topic-style-%E2%80%A2-evaluation)
       - [Simple reference • Evaluation](#simple-reference-%E2%80%A2-evaluation)
       - [Bare function call](#bare-function-call)
       - [Bare constructor call • Evaluation](#bare-constructor-call-%E2%80%A2-evaluation)
@@ -76,19 +76,19 @@
     - [Possible future extensions to the topic concept](#possible-future-extensions-to-the-topic-concept)
       - [Headless property access](#headless-property-access)
       - [Headless pipelining](#headless-pipelining)
-      - [Topical `for` loop](#topical-for-loop)
-      - [Topical `for`–`await` loop](#topical-forawait-loop)
-      - [Topical function / method definition](#topical-function--method-definition)
-      - [Topical block parameter](#topical-block-parameter)
-      - [Topical thin-arrow function](#topical-thin-arrow-function)
-      - [Topical pattern matching](#topical-pattern-matching)
+      - [Topic `for` loop](#topic-for-loop)
+      - [Topic `for`–`await` loop](#topic-forawait-loop)
+      - [Topic function / method definition](#topic-function--method-definition)
+      - [Topic block parameter](#topic-block-parameter)
+      - [Topic thin-arrow function](#topic-thin-arrow-function)
+      - [Topic pattern matching](#topic-pattern-matching)
       - [Tacit pattern matching](#tacit-pattern-matching)
       - [Tacit error capture](#tacit-error-capture)
-      - [Topical metaprogramming reference](#topical-metaprogramming-reference)
+      - [Topic metaprogramming reference](#topic-metaprogramming-reference)
     - [Alternative solutions explored](#alternative-solutions-explored)
   - [Appendix • Explanation of nomenclature](#appendix-%E2%80%A2-explanation-of-nomenclature)
   - [Appendix • Term rewriting](#appendix-%E2%80%A2-term-rewriting)
-    - [Term rewriting topical style](#term-rewriting-topical-style)
+    - [Term rewriting topic style](#term-rewriting-topic-style)
       - [Term rewriting with autogenerated variables](#term-rewriting-with-autogenerated-variables)
       - [Term rewriting with single dummy variable](#term-rewriting-with-single-dummy-variable)
     - [Term rewriting • Arbitrary associativity](#term-rewriting-%E2%80%A2%C2%A0arbitrary-associativity)
@@ -289,7 +289,7 @@ Ditto for `|> new User.Message`, which is a bare unary constructor call,
 abbreviated from `|> new User.Message(#)`.
 
 This is the [smart part of the pipe operator][smart body syntax], which can
-distinguish between two syntax styles (bare vs. topical) by using a simple rule:
+distinguish between two syntax styles (bare vs. topic) by using a simple rule:
 bare uses only identifiers, dots, and `new`, and never parentheses, brackets,
 braces, or other operators.
 
@@ -346,7 +346,7 @@ may prefer to inline.
 <details open>
 <summary>The topic reference may be used multiple times in a pipeline body. Each
 use refers to the same value (wherever the topic reference is not overridden by
-another, inner pipeline’s topical scope). Because it is bound to the result of
+another, inner pipeline’s topic scope). Because it is bound to the result of
 the topic, the topic is still only ever evaluated once.</summary>
 
 The lines in each of the following rows are equivalent.
@@ -1127,7 +1127,7 @@ pipelines. Conditional operations, logical-or operations, or any other
 expressions that have tighter [operator precedence][] than the pipe operation –
 those are also pipeline-level expressions.
 
-### Head, head value, body, pipeline value, topical style, bare style
+### Head, head value, body, pipeline value, topic style, bare style
 For each pipe expression, the expression before the pipe is the pipeline’s
 **head**. A pipeline’s head may also be called its **left-hand side (LHS)**,
 because it’s left to the pipe. (The head could also be referred to as the pipe’s
@@ -1144,11 +1144,11 @@ Where “pipeline” is used as a verb, the pipe operator is said **to pipeline 
 topic through its body**, resulting in the pipeline’s value.
 
 A pipeline’s body may be in one of two **styles**:\
-topical style and\
+topic style and\
 bare style.
 
-**Topical style** is the default style. A pipeline body in topical style forms
-an inner lexical scope – called the pipeline’s **topical scope** – within which
+**Topic style** is the default style. A pipeline body in topic style forms
+an inner lexical scope – called the pipeline’s **topic scope** – within which
 a special token is bound to the value of the head; the section below explains.
 
 Alternatively, you may omit the topic references entirely, if the body is just a
@@ -1516,7 +1516,7 @@ parameters][]) only if:
 
 ### Smart body syntax
 Most pipelines will use the topic reference `#` in their bodies. As already
-explained above in [nomenclature][], this style of pipeline is called **topical
+explained above in [nomenclature][], this style of pipeline is called **topic
 style**.
 
 But for two certain simple cases – unary functions and constructors – you may
@@ -1537,7 +1537,7 @@ be made up of identifiers, `.`, and `new`.
 * **_Pipeline Body_** [_In_, _Yield_, _Await_] :
   * _Pipeline Bare Function Call_
   * _Pipeline Bare Constructor Call_
-  * _Pipeline Topical Body_ [? _In_, ? _Yield_, ? _Await_]
+  * _Pipeline Topic Body_ [? _In_, ? _Yield_, ? _Await_]
 
 </details>
 
@@ -1548,7 +1548,7 @@ be made up of identifiers, `.`, and `new`.
 <summary>The rules of the two respective styles will be explained in more
 detail, but an overview is given in a table.</summary>
 
-| Valid topical style     | Valid bare style                  | Invalid bare style
+| Valid topic style     | Valid bare style                  | Invalid bare style
 | ----------------------- | --------------------------------- | --------------------
 |`… \|> o(#)`             |`… \|> o`                          |  `… \|> o()` 🚫
 | ″″                      | ″″                                | `… \|> (o)` 🚫
@@ -1575,7 +1575,7 @@ detail, but an overview is given in a table.</summary>
 The **bare style** supports using simple identifiers, possibly with chains of
 simple property identifiers. If there are any operators, parentheses (including
 for method calls), brackets, or anything other than identifiers and dot
-punctuators, then it is in topical style, not in bare style.
+punctuators, then it is in topic style, not in bare style.
 
 ##### Bare function call • Grammar
 If the body is a merely a simple reference, then that identifier is interpreted
@@ -1639,7 +1639,7 @@ Therefore, a pipeline in **bare style *never* ** has **parentheses `(…)` or
 brackets `[…]`** in its body. Neither `… |> object.method()` nor `… |>
 object.method(arg)` nor `… |> object[symbol]` nor `… |> object.createFunction()`
 are in bare style (in fact, they all have invalid syntax, due to their being in
-topical style without any topic references).
+topic style without any topic references).
 
 **When a body needs parentheses or brackets**, then **don’t use bare style**,
 and instead **use a topic reference** in the body……or **assign the body to a
@@ -1648,18 +1648,18 @@ variable**, then **use that variable as a bare body**.
 The JavaScript developer is encouraged to use topic references and avoid bare
 style, where bare style may be visually confusing to the reader.
 
-#### Topical style • Grammar
-**If a pipeline** of the form _topic_ |> _body_ is ***not* match the [bare style
-• Grammar][]** (that is, it is *not* a bare function call or bare
-constructor call), then it **must be in topical style**.
+#### Topic style • Grammar
+**If a pipeline** of the form _topic_ |> _body_ does ***not* match the [bare
+style • grammar][]** (that is, it is *not* a bare function call or bare
+constructor call), then it **must be in topic style**.
 
-A topical pipeline body is an expression at the [precedence level once tighter
+A topic pipeline body is an expression at the [precedence level once tighter
 than pipeline-level expressions][operator precedence] – that is, it is a
 conditional-level expression.
 
 <details open>
 
-* **_Pipeline Topical Body_** [_In_, _Yield_, _Await_] :
+* **_Pipeline Topic Body_** [_In_, _Yield_, _Await_] :
   * _Conditional Expression_ [? _In_, ? _Yield_, ? _Await_]
 
 </details>
@@ -1750,7 +1750,7 @@ reasons. This proposal will instead use the planned future new syntax
 **This proposal will use Contains to determine whether a pipeline’s body uses
 its `#` topic reference.** This is so that many [footguns may be statically
 detected as an early error][static analyzability] – for instance, using a
-pipeline in topical style without ever using its topic in its body [TODO: Link].
+pipeline in topic style without ever using its topic in its body [TODO: Link].
 
 Contains does not penetrate into the bodies of function and method definitions,
 hiding them from the rules in outside contexts. All definitions for functions,
@@ -1814,7 +1814,7 @@ The two static early errors in this proposal are designed to prevent some ambigu
 from shooting the developer in the foot – by forcing the developer to clarify
 their intent.
 
-* Pipelines that are in topical style but that do not ever use their topics
+* Pipelines that are in topic style but that do not ever use their topics
   anywhere in their bodies, such as `x |> 3`, are an early error. Such expressions
   would be always useless and almost certainly not what the author had intended.
   [TODO: Link.]
@@ -1863,7 +1863,7 @@ reference; it is a topic reference, its own thing.</summary>
   * **_Pipeline Bare Constructor Call_** : `new` _Simple Reference_\
     Return false.
 
-  * **_Pipeline Body_** : _Pipeline Topical Body_\
+  * **_Pipeline Body_** : _Pipeline Topic Body_\
     Return false.
 
 </details>
@@ -1945,10 +1945,20 @@ is “topical” in the usual adjectival sense.]
 
 [TODO]
 
-#### Abstract operations
+### Abstract Resolve-Topic
 **Resolve Topic** is a new abstract operation that acts upon a Lexical Environment.
 
-[TODO]
+The Resolve Topic abstract operation is used to determine the binding of name
+passed as a String value. The optional argument env can be used to explicitly
+provide the Lexical Environment that is to be searched for the binding. During
+execution of ECMAScript code, ResolveBinding is performed using the following
+algorithm:
+
+If env is not present or if env is undefined, then
+Set env to the running execution context's LexicalEnvironment.
+Assert: env is a Lexical Environment.
+If the code matching the syntactic production that is being evaluated is contained in strict mode code, let strict be true, else let strict be false.
+Return ? GetIdentifierReference(env, name, strict).
 
 ### Topic reference • Evaluation
 When evaluated during runtime, the topic reference uses the Resolve Topic
@@ -1958,17 +1968,13 @@ abstract operation on the running execution context’s lexical environment.
 
 * **Evaluation**
   * **_Primary Expression_ : `#`**
-    * Return ? Resolve Topic([TODO])
+    * Return ? Resolve Topic ([TODO])
 
 </details>
 
 [TODO: Define Resolve Topic abstract operation]
 
-#### Topical style • Evaluation
-**If a pipeline** of the form _topic_ |> _body_ is ***not* match the [bare style
-• Grammar][]** (that is, it is *not* a bare function call or bare
-constructor call), then it **must be in topical style**.
-
+#### Topic style • Evaluation
 <details open>
 <summary>The pipeline’s value is whatever the body expression evaluates into,
 assuming that the topic value is first bound to the topic reference within the
@@ -1988,7 +1994,7 @@ Topical style behaves like **`do { const ` _topic Identifier_ `=` _topic_`;
 
 * _topic Variable_ is any [identifier that is *not* already used by any
   variable][lexically hygienic], in the outer lexical context or the body’s
-  inner topical context,
+  inner topic context,
 * And _substituted Body_ is _body_ but with every instance of outside of
   the topic reference replaced by _topic Variable_.
 
@@ -2097,7 +2103,7 @@ The [concept of the “topic variable” already exists in many other programmin
 languages][topic variables in other languages], commonly named with an
 underscore `_` or `$_`. These languages often integrate their topic variables
 into their function-call control-flow syntaxes, with [Perl 6 as perhaps the most
-extensive, unified example][Perl 6 topicalization]. Integration of topic with
+extensive, unified example][Perl 6 topicization]. Integration of topic with
 syntax enables especially pithy, terse [tacit programming][].
 
 In addition, many JavaScript console [REPLs][], such as those of the WebKit Web
@@ -2219,7 +2225,7 @@ because it’d be unclear anyway even without headless pipelining.]
 
 </table>
 
-#### Topical `for` loop
+#### Topic `for` loop
 With this smart-pipe proposal only, `for`–`of` statements would prohibit the use
 of `#` within their bodies, except where `#` is inside an inner pipeline inside
 the `for` loop.
@@ -2262,8 +2268,8 @@ for (const i of range(0, 50)) {
 
 </table>
 
-#### Topical `for`–`await` loop
-This is similar to the tacit topical synchronous `for` loop above. With this
+#### Topic `for`–`await` loop
+This is similar to the tacit topic synchronous `for` loop above. With this
 proposal only, `for`–`await`–`of` statements would prohibit the use of `#`
 within their bodies, except where `#` is inside an inner pipeline inside the
 `for` loop.
@@ -2308,7 +2314,7 @@ for await (const c of stream) {
 
 </table>
 
-#### Topical function / method definition
+#### Topic function / method definition
 With this smart-pipe proposal only, all function / method definitions would
 prohibit the use of `#` within their bodies, except where `#` is inside an inner
 pipeline inside the function / method. (However, arrow functions do not have
@@ -2356,10 +2362,10 @@ function capitalize (str) {
 
 </table>
 
-#### Topical block parameter
+#### Topic block parameter
 The proposed syntax of [ECMAScript block parameters][] may greatly benefit from
-using the topic concept. As with topical function definitions, making all block
-parameters topical would enable the use of the topic reference as an implicit
+using the topic concept. As with topic function definitions, making all block
+parameters topic would enable the use of the topic reference as an implicit
 first parameter. The block-parameter proposal itself has not yet settled on how
 to parameterize its block parameters. The topic reference may be the key to
 solving this problem, making other, special block parameters unnecessary. This
@@ -2416,7 +2422,7 @@ server(app) {
 
 </table>
 
-#### Topical thin-arrow function
+#### Topic thin-arrow function
 This example uses a new token, the thin arrow, which is similar to the `=>` fat
 arrow in that it creates arrow functions. The only difference is that it also
 lexically binds `#` to its first argument, unlike the fat arrow. This example
@@ -2444,7 +2450,7 @@ materials.map(m => m |> f |> #.length)
 
 </table>
 
-#### Topical pattern matching
+#### Topic pattern matching
 The proposed syntax of [ECMAScript pattern matching][] would bind the topic
 reference within the scope of a successful match clause’s scope. The topic value
 would be the truthy result of the successful `Symbol.matches` call. This example
@@ -2627,8 +2633,8 @@ try {
 
 </table>
 
-#### Topical metaprogramming reference
-In the event that TC39 seriously considers the topical function definitions
+#### Topic metaprogramming reference
+In the event that TC39 seriously considers the topic function definitions
 shown above, a **`function.topic`** metaprogramming operator, in the style of
 the [`new.target`][] operator, could be useful in creating topic-aware functions.
 
@@ -2744,8 +2750,8 @@ pipelines.
 ## Appendix • Term rewriting
 <details open>
 
-### Term rewriting topical style
-Pipe bodies in topical style can be rewritten into a nested `do` expression.
+### Term rewriting topic style
+Pipe bodies in topic style can be rewritten into a nested `do` expression.
 There are two ways to illustrate this equivalency. The first way is to [replace
 each pipe expression’s topic references with an autogenerated variable][term
 rewriting with autogenerated variables], which must be guaranteed to be
@@ -2814,7 +2820,7 @@ do {
 ```
 
 In general, for each pipe expression `topic |> body`, assuming that `body` is in
-topical style, that is, assuming that `body` contains an unshadowed topic
+topic style, that is, assuming that `body` contains an unshadowed topic
 reference:
 
 * Let _#<sub>n</sub>_ be a [hygienically autogenerated][lexically hygienic] topic
@@ -2825,10 +2831,10 @@ reference:
   with _#<sub>n</sub>_.
 * Then the static term rewriting (left associative and inside to outside) would
   simply be: `do { const ` _#<sub>n</sub>_ `= topic; ` _substituted Body_ `}`.
-  This `do` expression would act as at the topical scope.
+  This `do` expression would act as at the topic scope.
 
 #### Term rewriting with single dummy variable
-The other way to demonstrate topical style is to use two variables: the topic
+The other way to demonstrate topic style is to use two variables: the topic
 reference `#` and single [lexically hygienic][] dummy variable `•`. It should be
 noted that `const # = …` is not a valid statement under this proposal’s actual
 syntax; likewise, `•` is not a part of the proposal’s syntax. Both forms are for
@@ -2887,7 +2893,7 @@ the steps of the computation would be:
 
 1. The head is first evaluated in the current lexical context.
 2. The topic’s result is bound to a hidden special variable `•`.
-3. In a new inner lexical context (the topical scope), the value of `•` is
+3. In a new inner lexical context (the topic scope), the value of `•` is
   bound to the topic reference `#`.
 4. The pipe’s body is evaluated within this inner lexical context.
 5. The pipe’s result is the result of the body.
@@ -3055,7 +3061,7 @@ do { do { do { do { 3 * 3 } } }
 [optional-chaining syntax proposal]: https://github.com/tc39/proposal-optional-chaining
 [PEP 20]: https://www.python.org/dev/peps/pep-0020/
 [Perl 6 pipe]: https://docs.perl6.org/language/operators#infix_==&gt;
-[Perl 6 topicalization]: https://www.perl.com/pub/2002/10/30/topic.html/
+[Perl 6 topicization]: https://www.perl.com/pub/2002/10/30/topic.html/
 [Pify]: https://github.com/sindresorhus/pify
 [pipeline syntax]: #pipeline-syntax
 [possible future extensions to the topic concept]: #possible-future-extensions-to-topic-concept
@@ -3074,7 +3080,7 @@ do { do { do { do { 3 * 3 } } }
 [tacit programming]: https://en.wikipedia.org/wiki/Tacit_programming
 [TC39 process]: https://tc39.github.io/process-document/
 [Tennent correspondence principle]: http://gafter.blogspot.com/2006/08/tennents-correspondence-principle-and.html
-[term rewriting topical style]: #term-rewriting-topical-style
+[term rewriting topic style]: #term-rewriting-topic-style
 [term rewriting with autogenerated variables]: #term-rewriting-with-single-dummy-variable
 [term rewriting with autogenerated variables]: #term-rewriting-with-single-dummy-variable
 [term rewriting with single dummy variable]: #term-rewriting-with-single-dummy-variable
@@ -3086,3 +3092,9 @@ do { do { do { do { 3 * 3 } } }
 [Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
 [static analyzability]: #static-analyzability
+[ECMAScript Notational Conventions, § Runtime Semantics]: https://tc39.github.io/ecma262/#sec-runtime-semantics
+[completion records]: https://timothygu.me/es-howto/#completion-records-and-shorthands
+[ECMAScript Notational Conventions, § Algorithm Conventions]: https://tc39.github.io/ecma262/#sec-algorithm-conventions-abstract-operations
+[ECMAScript Lexical Environments]: https://tc39.github.io/ecma262/#sec-lexical-environments
+[ECMAScript Declarative Environment Records]: https://tc39.github.io/ecma262/#sec-declarative-environment-records
+[ECMAScript Function Environment Records]: https://tc39.github.io/ecma262/#sec-function-environment-records
