@@ -1076,7 +1076,7 @@ JavaScript developer with formally written changes to the ECMAScript standard.
 The grammar itself is a [context-free grammar supplemented with static
 semantics][syntax and static semantics].
 
-<details open>
+<details>
 <summary>The ECMAScript specification explains further.</summary>
 
 > A context-free grammar consists of a number of **productions**. Each
@@ -1669,18 +1669,25 @@ method calls: “…._Rule Name_(…)”. For self-consistency, this proposal wi
 that planned method-like syntax.
 
 ### Static Contains
-<details open>
-<summary>The ECMAScript spec implicitly defines the Contains rule for nearly all
-nodes. Conceptually, a node Contains another node if the latter is somewhere in
+<details>
+<summary>The ECMAScript standard implicitly defines the Contains rule for all parse
+nodes except where explicitly overridden. Conceptually, a node Contains another node if the latter is somewhere in
 the former.</summary>
 
-[This quotation from the ECMAScript spec][ECMAScript static semantic rules] is
+[This quotation from the ECMAScript standard][ECMAScript static semantic rules] is
 modified to use the new method-like syntax.
 
->    b. If _child_ is an instance of a nonterminal, then
+> Unless otherwise specified every grammar production alternative in this
+> specification implicitly has a definition for a static semantic rule named
+> **Contains** which takes an argument named _symbol_ whose value is a terminal
+> or nonterminal of the grammar that includes the associated production. The
+> default definition of Contains is:
 >
->       i.  Let _contained_ be the result of _child_.Contains (_symbol_).
->       ii. If _contained_ is true, return true.
+> 1. For each child node _child_ of this Parse Node, do
+>    1. If child is an instance of _symbol_, return true.
+>    2. If _child_ is an instance of a nonterminal, then
+>       1. Let _contained_ be the result of _child_.Contains (_symbol_).
+>       2. If _contained_ is true, return true.
 >
 > 2. Return false.
 >
@@ -1698,7 +1705,7 @@ function definitions, such that they hide their substructure from the rule.
 (Uniquely among the static semantic rules, Contains is written as an infix
 operator in the ECMAScript specification – “… Contains …” – for historical
 reasons. This proposal will instead use the planned future new syntax
-“….contains (…)”.)
+“….Contains (…)”.)
 
 **This proposal will use Contains to determine whether a pipeline’s body uses
 its `#` topic reference.** This is so that many [footguns may be statically
@@ -1832,7 +1839,7 @@ Resolving the topic reference is a [TO DO]
 #### Lexical Environments
 
 <details>
-<summary>The ECMAScript spec associates Identifiers with variables or functions
+<summary>The ECMAScript standard associates Identifiers with variables or functions
 using an abstract data structure called a Lexical Environment, which is
 essentially a linked list of Lexical Environments. A single piece of the chain
 of Lexical Environments is called an Environment Record. Syntactic structures
