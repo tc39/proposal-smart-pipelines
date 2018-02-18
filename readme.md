@@ -2228,38 +2228,114 @@ topic variable, which may affect code in surprising ways.
 
 However, JavaScript’s topic reference `#` is different than this prior art. It
 is lexically bound and statically analyzable. It is also cannot be accidentally
-bound; the developer must opt into binding it by using the pipe operator. It
-also cannot be accidentally used; it is a syntax error when `#` is used outside
-of a pipeline body. [TODO: Link to pertinent grammar sections.]
+bound; the developer must opt into binding it by using the pipe operator.
 
-Should this proposal be accepted, the door becomes opened to extending the topic
-concept to other syntax forms, potentially multiplying its benefits toward
-reading and writing, while perhaps preserving [static analyzability][] and… [TODO]
+The topic also cannot be accidentally used; it is a syntax error when `#` is used
+outside of a pipeline body. [TODO: Link to pertinent grammar sections.]
 
-[TODO: Note on forward compatibility with these possibilities.]
-
-[TODO: Add, to above, a version of second example with `do` blocks showcasing
-the `#|>` idiom.]
-
-[TODO: Can partial application be integrated with topics?]
-Yes! A topical arrow function `->` plus multiple topics `#` (aka `#0`), `#1`,
-`#2`, `#3`, `…#` could pithily express both functional composition and partial
-application.
+The topic is [conceptually general][conceptual generality] and could be extended
+to other forms. This proposal is [forward compatible][forward compatibility]
+with such extensions, which would increase its [expressive versatility][], and
+potentially multiplying its benefits toward [untangled flow][], [terse
+variables][], and [human writability][], while still preserving [simple
+scoping][] and [static analyzability][].
 
 <table>
 
 <tr>
-<th colspan=2>
+<th>
 
-[Functional composition](https://github.com/TheNavigateur/proposal-pipeline-operator-for-function-composition)
+Pipe function
+
+<td>
+
+A new type of function, the pipe function -> …, would act as if it were `$ => $
+|> …`, where `$` is a hygienically unique variable. A pipe function would
+also not need a parameter list (whether it could optionally take one is up for
+debate—see also [Brian Terlson’s proposal for headless arrows][ECMAScript
+headless-arrow proposal]).
+
+A pipe function would bind its first argument to the topic reference within its
+body. It would also parse its body using the same smart body syntax that the
+pipe operator uses.
+
+Just this one more operator seems to solve tacit unary-functional composition,
+tacit unary-functional partial application, and tacit method extraction, all
+with a single additional concept.
+
+<tr>
+<td>
+
+```js
+-> #
+```
+
+<td>
+
+```js
+$ => $ |> #
+```
+```js
+$ => $
+```
+
+<tr>
+<td>
+
+```js
+-> $ + 2
+```
+
+<td>
+
+```js
+$ => $ |> # + 2
+```
+```js
+$ => $ + 2
+```
+
+<tr>
+<td>
+
+```js
+-> f(2, #)
+```
+
+<td>
+
+```js
+$ => $ |> f(2, #)
+```
+```js
+$ => f(2, $)
+```
+
+<tr>
+<td>
+
+```js
+-> f |> g |> h(2, #) |> # + 2
+```
+
+<td>
+
+```js
+$ => $
+```
+```js
+$ => h(2, g(f($))) + 2
+```
 
 <tr>
 <td>
 
 ```js
 const doubleThenSquareThenHalfAsync =
-  -> double |> squareAsync |> half
+  -> double |> await squareAsync # |> half
 ```
+Unlike the other version, this syntax does not need to give implicit special
+treatment to async functions and generators.
 
 <td>
 
@@ -2267,11 +2343,12 @@ const doubleThenSquareThenHalfAsync =
 const doubleThenSquareThenHalfAsync =
   double +> squareAsync +> half
 ```
+From the proposal for [syntactic functional composition][]
+by [Gilbert “mindeavor”][mindeavor].
 
 <tr>
 <th colspan=2>
 
-[Functional partial application](https://github.com/tc39/proposal-partial-application)
 
 <tr>
 <td>
@@ -2279,40 +2356,148 @@ const doubleThenSquareThenHalfAsync =
 ```js
 const addOne = -> add(1, #)
 addOne(2) // 3
-
-const addTen = -> add(#, 10)
-addTen(2) // 12
-
-// with pipeline
-let newScore = player.score
-  |> add(7, #)
-  |> clamp(0, 100, #)
-
-const maxGreaterThanZero = Math.max(0, ...#)
-maxGreaterThanZero(1, 2) // 2
-maxGreaterThanZero(-1, -2) // 0
 ```
+**Partial application into a unary function** is equivalent to piping a tacit
+parameter into a function-call expression, within which the one parameter is
+resolvable.
 
 <td>
 
 ```js
 const addOne = add(1, ?)
 addOne(2) // 3
+```
+Pipe functions look similar to the proposal for [syntactic partial
+application][] by [Ron Buckton][], except that partial-application expressions
+are simply pipeline bodies that are prefixed by a topic arrow.
 
+<tr>
+<td>
+
+```js
+const addTen = -> add(#, 10)
+addTen(2) // 12
+```
+
+<td>
+
+```js
 const addTen = add(?, 10)
 addTen(2) // 12
+```
 
+<tr>
+<td>
+
+```js
+let newScore = player.score
+  |> add(7, #)
+  |> clamp(0, 100, #)
+```
+
+<td>
+
+```js
 let newScore = player.score
   |> add(7, ?)
   |> clamp(0, 100, ?)
+```
 
-const maxGreaterThanZero = Math.max(0, ...#)
-maxGreaterThanZero(1, 2) // 2
-maxGreaterThanZero(-1, -2) // 0
+<tr>
+<th>
 
+Multiple lexical topics
+
+<td>
+
+Lexical environments could extended to support multiple topics at once. Regular
+pipelines would still have only one topic at a time. But pipe functions could
+bind multiple parameters to multiple topic references. `#` (as an alias for
+`#0`) would already represent its first parameters. But then `#1`, `#2`, … would
+represent its second, third, fourth, etc. parameters. Parameters in positions
+after the maximum-number topic used in the lexical context could be put into an
+array, to which the rest-topic reference (`...` or perhaps `...#`) would be
+bound in turn.
+
+This would be somewhat akin to Clojure’s compact anonymous functions, which use
+`%` aka `%1`, then `%2`, `%3`, … for its parameters within the compact
+functions’ bodies.
+
+Developers may be expected not to use pipe functions for functions with many
+parameters. But an alternative to `#`, `##`, `###`, …, not shown here, would be
+to use `#` or `#0`, then `#1`, `#2`, … for topic references instead.
+
+<tr>
+<td>
+
+```js
+numbers.sort(-> # - ##)
+```
+
+<td>
+
+```js
+numbers.sort(function (a, b) {
+  return a - b
+})
+```
+
+<tr>
+<td>
+
+```js
+[ { x: 22 }, { x: 42 } ]
+  .map(el => el.x)
+  .reduce(-> Math.max(#, ##), -Infinity)
+```
+
+<td>
+
+```js
+[ { x: 22 }, { x: 42 } ]
+  .map(el => el.x)
+  .reduce((x0, x1) => Math.max(x0, x1), -Infinity)
+```
+
+<tr>
+<td>
+
+```js
+const f = (x, y, z) => [x, y, z]
+const g = f(#, 4, ##)
+g(1, 2) // [1, 4, 2]
+```
+When using pipe functions to perform partial application into a binary/trinary/…
+function, you would need multiple-topic environments.
+
+<td>
+
+```js
 const f = (x, y, z) => [x, y, z]
 const g = f(?, 4, ?)
 g(1, 2) // [1, 4, 2]
+```
+[R. Buckton’s current proposal][syntactic partial application] assumes that each
+use of its `?` placeholder token represents a different parameter: a fundamental
+difference in conceptual models.
+
+<tr>
+<td>
+
+```js
+const maxGreaterThanZero = Math.max(0, ...)
+maxGreaterThanZero(1, 2) // 2
+maxGreaterThanZero(-1, -2) // 0
+```
+Partial application into a variadic function requires a multi-topic environment
+and rest-topic references.
+
+<td>
+
+```js
+const maxGreaterThanZero = Math.max(0, ...)
+maxGreaterThanZero(1, 2) // 2
+maxGreaterThanZero(-1, -2) // 0
 ```
 
 </table>
@@ -3316,3 +3501,6 @@ do { do { do { do { 3 * 3 } } }
 [simple scoping]: #simple-scoping
 [“don’t shoot me in the foot”]: #dont-shoot-me-in-the-foot
 [other ECMAScript proposals]: #other-ecmascript-proposals
+[ECMAScript headless-arrow proposal]: https://bterlson.github.io/headless-arrows/
+[Ron Buckton]: https://github.com/rbuckton
+[syntactic functional composition]: https://github.com/TheNavigateur/proposal-pipeline-operator-for-function-composition
