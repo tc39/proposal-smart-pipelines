@@ -2245,15 +2245,17 @@ scoping][] and [static analyzability][].
 <tr>
 <th>
 
-Pipe function
+Pipe functions
 
 <td>
 
-A new type of function, the pipe function `->` …, would act as if it were
-`$ => $ |> …`, where `$` is a hygienically unique variable. A pipe function
-would also not need a parameter list (whether it could optionally take one is up
-for debate—see also [Brian Terlson’s proposal for headless arrows][ECMAScript
-headless-arrow proposal]).
+A new type of function, the pipe function `->` …, would act as if it were `$ =>
+$ |> …`, where `$` is a hygienically unique variable. A pipe function does not
+take a parameter list; it is essentially a unary operator on an expression.
+(Whether it could optionally take a parameter list is up for debate. It would be
+confusing if skinny arrows were allowed to include or omit parameters while fat
+arrows still always required parameters. See also [Brian Terlson’s proposal for
+headless fat-arrow functions][ECMAScript headless-arrow proposal]).
 
 A pipe function would bind its first argument to the topic reference within its
 body. It would also parse its body using the same smart body syntax that the
@@ -2287,7 +2289,7 @@ $ => $
 <td>
 
 ```js
--> $ + 2
+-> # + 2
 ```
 
 <td>
@@ -2298,6 +2300,32 @@ $ => $ |> # + 2
 ```js
 $ => $ + 2
 ```
+
+<tr>
+<td>
+
+```js
+-> x + 2 // 🚫
+```
+
+<td>
+
+This is a syntax error, because the topic is not used anywhere in the pipe
+function’s body – just like with `… |> x + 2`. [TO DO: Link to early error.]
+
+<tr>
+<td>
+
+```js
+=> # + 2 // 🚫
+```
+
+<td>
+
+If the skinny arrow `->` is typoed as a fat arrow `=>` instead, then this is
+a syntax error.
+This is a syntax error if not within a topic context.
+function’s body – just like with `… |> x + 2`. [TO DO: Link to early error.]
 
 <tr>
 <td>
@@ -2573,7 +2601,7 @@ the other proposal’s code.
 
 <th>
 
-Topic `for` loop
+Topic `for` loops
 
 <td>
 
@@ -2613,7 +2641,7 @@ for (const i of range(0, 50)) {
 <tr>
 <th>
 
-Topic `for`–`await` loop
+Topic `for`–`await` loops
 
 <td>
 
@@ -2657,7 +2685,7 @@ for await (const c of stream) {
 
 <th>
 
-Topic block parameter
+Topic block parameters
 
 <td>
 
@@ -2785,8 +2813,8 @@ syntax from above.
 <td>
 
 ```js
-function getLength {
-  match {
+… |> f
+  |> match {
     { x, y }:
       (x ** 2 + y ** 2)
         |> Math.sqrt
@@ -2801,8 +2829,8 @@ function getLength {
 <td>
 
 ```js
-function getLength (vector) {
-  match (vector) {
+… |> f
+  |> match (#) {
     { x, y }:
       (x ** 2 + y ** 2)
         |> Math.sqrt
@@ -2907,7 +2935,7 @@ try {
 <tr>
 <th>
 
-Topic metaprogramming reference
+Topic metaprogramming references
 
 <td>
 
