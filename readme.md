@@ -641,7 +641,7 @@ fetch('https://pk.example/berlin-calling',
 
 </details>
 
-### Goals
+## Goals
 
 <summary>
 There are seventeen ordered Goals that the smart body syntax tries to fulfill,
@@ -700,11 +700,11 @@ and other.
 
 </table>
 
-#### “Don’t break my code.”
+### “Don’t break my code.”
 The syntax should not break any existing code; it should also be forward
 compatible with future code.
 
-##### Backward compatibility
+#### Backward compatibility
 The syntax must avoid stepping on the toes of existing code, including but not
 limited to JavaScript libraries such as jQuery and Underscore.js. In particular,
 the topic reference should not be an existing identifier such as `$` or `_`,
@@ -723,7 +723,7 @@ This proposal uses `#` for its topic reference. This is compatible with all
 known previous JavaScript code. `?` and `@` could be chosen instead, which are
 each also backwards compatible.
 
-##### Zero runtime cost
+#### Zero runtime cost
 This could be considered a specific type of backward compatibility. When
 translating old code into the new syntax, doing so should not cause unexpected
 performance regression. For instance, the new syntax should not require memory
@@ -748,7 +748,7 @@ rewriting of any expression within the current environmental context, including
 `await` operations in async functions, without having to create unnecessary
 inner async functions, and without having to wrap values in unnecessary promises.
 
-##### Forward compatibility
+#### Forward compatibility
 The syntax should not preclude other proposals: both already-proposed features,
 such as [syntactic partial application][] and [private class fields][] – as well
 as [possible future extensions to the topic concept][], such as topic-binding
@@ -762,11 +762,11 @@ Forward compatibility is elaborated in the section on [relations to other
 work][]. See also Goal 9 below. See also [inner blocks in pipelines][inner
 blocks].
 
-#### “Don’t make me overthink.”
+### “Don’t make me overthink.”
 The syntax should not make a developer overthink about the syntax, rather than
 their product.
 
-##### Syntactic locality
+#### Syntactic locality
 The syntax should minimize the parsing lookahead that the compiler must check.
 If the grammar makes [garden-path syntax][] common, then this increases the
 dependency that pieces of code have on other code. This long lookahead in turn
@@ -784,7 +784,7 @@ possible—such as `… |> compose(f, g, h, i, j, k, #)`. Syntax becomes more
 locally readable. It becomes easier to reason about code without thinking about
 code elsewhere.
 
-##### Cyclomatic simplicity
+#### Cyclomatic simplicity
 Each edge case of the grammar increases the [cyclomatic complexity][] of parsing
 the new syntax, increasing cognitive burden on both machine compiler and human
 reader in writing and reading code without error. If edge cases and branching
@@ -797,7 +797,7 @@ must learn and remember in order to use the syntax. The more uniform and
 simple the syntax’s rules, the more the developer may focus on the actual
 meaning of their code.
 
-##### Expressive versatility
+#### Expressive versatility
 JavaScript is a language rich with [expressions of numerous kinds][MDN
 operator predecence], each of which may usefully transform data from one
 form to another. There is **no single type** of expression that forms a
@@ -905,11 +905,11 @@ to handle **all** expressions, in a **single** manner **uniformly**
 **universally** applicable to **all** expressions. It is the hope of this
 proposal’s authors that its [smart body syntax][] fulfills both criteria.
 
-#### “Don’t shoot me in the foot.”
+### “Don’t shoot me in the foot.”
 The syntax should not be a footgun: it should not easy for a developer to
 accidentally shoot themselves in the foot with it.
 
-##### Simple scoping
+#### Simple scoping
 It should not be easy to accidentally shadow a reference from an outer lexical
 scope. When the developer does so, any use of that reference could result in
 subtle, pernicious bugs.
@@ -923,7 +923,7 @@ The rules of topic scoping is simple: **Topic references are bound in the bodies
 of pipelines, and they cannot be used within any block other than arrow
 functions.** See the section on [inner blocks][].
 
-##### Static analyzability
+#### Static analyzability
 [Early errors][] help the editing JavaScript developer avoid common [footguns][]
 at compile time, such as preventing them from accidentally omitting a topic
 reference where they meant to put one. For instance, if `x |> 3` were not an
@@ -931,10 +931,10 @@ error, then it would be a useless operation and almost certainly not what the
 developer intended. Situations like these should be statically detectable and
 cause compile-time [early errors][].
 
-##### Arbitrary associativity
+#### Arbitrary associativity
 [TODO]
 
-#### “Make my code easier to read.”
+### “Make my code easier to read.”
 The new syntax should increase the human readability and writability of much
 common code. It should be simpler to read and comprehend. And it should be
 easier to compose and update. Otherwise, the new syntax would be useless.
@@ -944,7 +944,7 @@ purpose of this proposal. To a computer, the form of complex expressions –
 whether as deeply nested groups or as flat threads of postfix steps – should not
 matter. But to a human, it can make a significant difference.
 
-##### Untangled flow
+#### Untangled flow
 When a human reads deeply nested groups of expressions – which are very common
 in JavaScript code – their attention must switch between the start and end of
 each nested expression. And these expressions will dramatically differ in
@@ -986,7 +986,7 @@ The introduction to this [motivation][] section already explained much of
 the readability rationale, but it may also be useful to study the
 [examples][].
 
-##### Distinguishable punctuators
+#### Distinguishable punctuators
 Another important aspect of code readability is the visual distinguishability of
 its most important words or symbols. Visually similar punctuators can distract
 or even mislead the human reader, as they attempt to figure out the true meaning
@@ -1000,7 +1000,7 @@ anywhere near the visually similar [optional-chaining syntax proposal][], then
 the topic reference might be lost or unnoticed by the developer: for example,
 `?.??m(?)`.
 
-##### Terse parentheses
+#### Terse parentheses
 Terseness also aids distinguishability by obviating the need for boilerplate
 syntactic noise. Parentheses are a prominent example: as long as operator
 precedence is clear, then reducing parentheses always would JavaScript code more
@@ -1012,7 +1012,7 @@ would significantly increase, emphasizing the program’s essential information.
 The developer’s cognitive burden – of ignoring unimportant incidental symbols as
 they read – has hopefully lightened.
 
-##### Terse variables
+#### Terse variables
 Similarly, terseness of code may also be increased by removing variables where
 possible. This in turn would increase the data-to-ink visual ratio of the text
 and the distinguishability of important symbols. This style of programming is
@@ -1041,7 +1041,7 @@ with Goals 1, 4, and 5.
 but it also says, “Flat is better than nested,” and, “Sparse is better than
 dense.”
 
-##### Terse function calls
+#### Terse function calls
 Unary function / constructor calls are a particularly frequent type of
 expression and a good target for especial human optimization. However, such
 extra shortening might dramatically reduce the verbosity of unary function
@@ -1052,10 +1052,10 @@ a good balance between this Goal and Goals 4 and 5, in the same manner that
 [Huffman coding][] optimizes textual symbols’ length for their frequency of use:
 more commonly used symbols are shorter.
 
-#### Other Goals
+### Other Goals
 Although these have been prioritized last, they are still important.
 
-##### Conceptual generality
+#### Conceptual generality
 If a concept is uniformly generalizable to many other cases, then this
 multiplies its usefulness. The more versatile its concepts, the more it may be
 applied to other syntax, including existing syntax and future syntax (compare
@@ -1068,7 +1068,7 @@ are **out of scope** of this proposal, which is only for the smart pipe
 operator; they are **deferred** to [other, future proposals][possible future
 extensions to the topic concept].
 
-##### Human writability
+#### Human writability
 Writability of code is less important a priority than readability of code. Code
 is usually written a few days, perhaps by a few authors – but code will be read
 dozens or hundreds of times, perhaps by many more people. However, ease of
@@ -1088,7 +1088,7 @@ steps, a step may be added oredited in isolation on a single line, it may be
 rearranged up or down, it may be removed – all without affecting the pipeline’s
 other steps in the lines above or below it.
 
-##### Novice learnability
+#### Novice learnability
 Learnability of the syntax is a desirable Goal: the more intuitive the syntax
 is, the more rapidly it might be adopted by developers. However, learnability in
 of itself is not more desirable than the other Goals above. Most JavaScript
