@@ -235,13 +235,8 @@ of this “smart pipe operator”][smart body syntax].
 
 [TODO: Link to Goals.]
 
-### Basic concepts
-
 <details open>
-
-These examples are adapted from these other proposals:
-[original pipe-operator proposal][first pipe-operator proposal]
-([Gilbert “mindeavor”][mindeavor] &c. ECMA International. 2017–2018. BSD License.)\[TODO]
+<summary>Table of further motivating examples.</summary>
 
 <table>
 <thead>
@@ -251,7 +246,12 @@ These examples are adapted from these other proposals:
 
 <tbody>
 <tr>
+<th colspan=2>
 
+[Original pipe-operator proposal][first pipe-operator proposal].
+[Gilbert “mindeavor”][mindeavor] &c. ECMA International. 2017–2018. BSD License.
+
+<tr>
 <td>
 
 ```js
@@ -354,37 +354,72 @@ may prefer to inline, trading off self-documentation for localization of meaning
 
 <td>″″
 
-</table>
+<tr id=multiple-topic-references>
+<td colspan=2>
 
-</details>
+The topic reference may be used multiple times in a pipeline body. Each use
+refers to the same value (wherever the topic reference is not overridden by
+another, inner pipeline’s topic scope). Because it is bound to the result of the
+topic, the topic is still only ever evaluated once.
 
-#### Multiple topic references
-<details open>
-<summary>The topic reference may be used multiple times in a pipeline body. Each
-use refers to the same value (wherever the topic reference is not overridden by
-another, inner pipeline’s topic scope). Because it is bound to the result of
-the topic, the topic is still only ever evaluated once.</summary>
+<tr>
+<td>
 
-The lines in each of the following rows are equivalent.
+```js
+… \|> f(#, #)
+```
 
-| With smart pipes                 | Block                                             |
-| -------------------------------- | ------------------------------------------------- |
-|`… \|> f(#, #)`                   |`const $ = …; f($, $)`                             |
-|`… \|> [#, # * 2, # * 3]`         |`const $ = …; [$, $ * 2, $ * 3]`                   |
+<td>
 
-</details>
+```js
+const $ = …; f($, $)
+```
 
-### Inner blocks
-<details open>
-<summary>The body of a pipeline may contain an inner arrow function but no other
-type of block expression.</summary>
+<tr>
+<td>
 
-The lines in each of the following rows are equivalent.
+```js
+… \|> [#, # * 2, # * 3]
+```
 
-| With smart pipes                 | Block                                              |
-| -------------------------------- | -------------------------------------------------- |
-|`… \|> x => # + x`                |`const $ = …; x => # + x`                           |
-|`… \|> settimeout(() => # * 5)`   |`const $ = …; settimeout(() => $ * 5)`              |
+```js
+const $ = …; [$, $ * 2, $ * 3]
+```
+
+<tr>
+<td colspan=2>
+
+The body of a pipeline may contain an inner arrow function but no other
+type of block expression.
+
+<tr>
+<td>
+
+```js
+… |> x => # + x
+```
+
+<td>
+
+```js
+const $ = …; x => # + x
+```
+
+<tr>
+<td>
+
+```js
+… |> settimeout(() => # * 5)
+```
+
+<td>
+
+```js
+const $ = …; settimeout(() => $ * 5)
+```
+
+<tr>
+<td colspan=2>
 
 However, you cannot use use topic references inside of other types of blocks:
 function, async function, generator, async generator, or class.
@@ -393,41 +428,76 @@ More precisely, all block expressions (other than arrow functions) shadow any
 outer lexical context’s topic with its own *absence* of a topic. This behavior
 is in order to fulfill both [Goals 3 and 6][goals].
 
-| With smart pipes                  | Syntax error                                      |
-| --------------------------------- |-------------------------------------------------- |
-|`… \|> function () { return # }`   | 🚫 Topic never used by pipeline’s body.
-|`… \|> class { m: () { return # }}`| 🚫 Topic never used by pipeline’s body.
+<tr>
+<td>
 
-</details>
+```js
+… \|> function () { return # }
+```
+🚫 Topic never used by pipeline’s body.
 
-### Nested pipelines
-<details open>
-<summary>Both the head and the body of a pipeline may contain nested inner
-pipelines. Nested pipelines in the body is not encouraged, but it is still
-permitted.</summary>
+<td>
 
-The lines in each of the following rows are equivalent.
+<tr>
+<td>
 
-| With smart pipes                 | Block                                              |
-| -------------------------------- | -------------------------------------------------- |
-|`… \|> f(() => f(#) * 5)`         |`const $ = …; f(x => f($) * 5)`                     |
-|`… \|> f(() => f(#) \|> # * 5)`   |`const $ = …; f(x => f($) \|> # * 5)`               |
-|`… \|> f(() => # \|> f \|> # * 5)`|`const $ = …; f(x => $ \|> f \|> # * 5)`            |
+```js
+… \|> class { m: () { return # }}
+```
+ 🚫 Topic never used by pipeline’s body.
 
-[TODO]
+<td>
 
-</details>
+<tr>
+<td colspan=2>
 
-### Underscore.js
+Both the head and the body of a pipeline may contain nested inner pipelines.
+Nested pipelines in the body is not encouraged, but it is still permitted.
+
+<tr>
+<td>
+
+```js
+… \|> f(() => f(#) * 5)
+```
+
+<td>
+
+```js
+const $ = …; f(x => f($) * 5)
+```
+
+<tr>
+<td>
+
+```js
+… \|> f(() => f(#) \|> # * 5)
+```
+
+<td>
+
+```js
+const $ = …; f(x => f($) \|> # * 5)
+```
+
+<tr>
+<td>
+
+```js
+… \|> f(() => # \|> f \|> # * 5)
+```
+
+<td>
+
+```js
+const $ = …; f(x => $ \|> f \|> # * 5)
+```
+
+<tr>
+<th colspan=2>
+
 [Underscore.js][]. [Jeremy Ashkenas][jashkenas] &c. 2009–2018. MIT License.
 
-<table>
-<thead>
-<tr>
-<th>With smart pipes
-<th>Status quo
-
-<tbody>
 <tr>
 <td>
 
@@ -535,20 +605,12 @@ function (obj) {
 }
 ```
 
-</table>
+<tr>
+<th colspan=2>
 
-### Pify
 [Pify][]. [Sindre Sorhus][sindresorhus] &c. 2015–2018. MIT License.
 
-<table>
-<thead>
 <tr>
-<th>With smart pipes
-<th>Status quo
-
-<tbody>
-<tr>
-
 <td>
 
 ```js
@@ -567,19 +629,12 @@ pify(fs.readFile)('package.json', 'utf8')
   })
 ```
 
-</table>
+<tr>
+<th colspan=2>
 
-### Fetch Web Standard
 [Fetch Standard][]. [Anne van Kesteren][annevk] &c. 2011–2018. WHATWG. Creative
 Commons BY.
 
-<table>
-<thead>
-<tr>
-<th>With smart pipes
-<th>Status quo
-
-<tbody>
 <tr>
 <td>
 
