@@ -2572,109 +2572,13 @@ In this case, the topic function version looks once again nearly identical to
 the other proposal’s code.
 
 <tr>
+
 <th>
 
-Headless property access
+Topic `for` loop
 
 <td>
 
-A “headless property” syntax omits its the callee, assuming that no possible
-chainable expression immediately precedes it. The omitted, invisible, tacit
-callee value is the lexical context’s (first) topic. This would greatly increase
-the potential of tacit programming, especially when combined with the
-hypothetical syntaxes below.
-
-(It should be noted that headless properties would introduce a mild ASI hazard:
-if a possible callee precedes the headless property, even on another line of
-code, then the headless property would instead chain onto that preceding callee.
-A semicolon would required to separate the possible callee and the headless
-property. More exploration would be needed to assess how severe this hazard
-would be compared to the benefits it would bring.)
-
-<tr>
-<td>
-
-```js
-x |> f |> .property |> g
-```
-
-<td>
-
-```js
-x |> f |> #.property |> g
-```
-
-<tr>
-<td>
-
-```js
-array
-  .map(x => x.character())
-  .forEach(x => console.log(x));
-```
-
-<td>
-
-```js
-array
-  .map(-> .character())
-  .forEach(-> console.log);
-  // Smart function call ↑
-  // because console.log is simple identifier,
-  // just like # |> console.log
-```
-
-</table>
-
-#### Headless pipelining
-This example demonstrates a possible future “headless
-pipeline” syntax in which the head of a pipeline operation may be omitted,
-assuming that no possible expression immediately precedes it. The omitted,
-invisible, tacit pipeline head value is the outer lexical context’s topic.
-
-This also would greatly increase the potential of tacit programming when
-combined with the hypothetical syntaxes below, which define additional contexts
-in which the topic is lexically bound.
-
-(It should be noted that headless properties would also introduce a mild ASI
-hazard: if a possible callee precedes the headless pipeline, even on another
-line of code, then the headless pipeline would instead chain onto that preceding
-pipeline. A semicolon would required to separate the possible callee and the
-headless property. More exploration would be needed to assess how severe this
-hazard would be compared to the benefits it would bring.)
-
-[TODO: Add handling of `yield`/`await` statements versus expressions.
-Example: Is
-`function * () => yield |> 3` grouped as
-`function * () => (yield) |> 3` or is it
-`function * () => yield (|> 3)`?
-Answer: bare `yield` and `await` are forbidden from the heads of pipelines.
-This should be done in this pipeline proposal, throwing a syntax error,
-because it’d be unclear anyway even without headless pipelining.]
-
-<table>
-<thead>
-<tr>
-<th>With hypothetical proposal
-<th>With only this proposal
-
-<tbody>
-<tr>
-<td>
-
-```js
-|> f |> .property |> g
-```
-
-<td>
-
-```js
-# |> f |> #.property |> g
-```
-
-</table>
-
-#### Topic `for` loop
 With this smart-pipe proposal only, `for`–`of` statements would prohibit the use
 of `#` within their bodies, except where `#` is inside an inner pipeline inside
 the `for` loop.
@@ -2689,20 +2593,13 @@ antecedent, would also be added. This tacit form is what is used in this example
 [TODO: Link to section on deep nesting.] This example also uses the hypothetical
 headless pipelining syntax from above.
 
-<table>
-<thead>
-<tr>
-<th>With hypothetical proposal
-<th>With only this proposal
-
-<tbody>
 <tr>
 <td>
 
 ```js
 for (range(0, 50)) {
   log(# ** 2);
-  log(|> Math.sqrt);
+  log(#|> Math.sqrt);
 }
 ```
 
@@ -2715,9 +2612,13 @@ for (const i of range(0, 50)) {
 }
 ```
 
-</table>
+<tr>
+<th>
 
-#### Topic `for`–`await` loop
+Topic `for`–`await` loop
+
+<td>
+
 This is similar to the tacit topic synchronous `for` loop above. With this
 proposal only, `for`–`await`–`of` statements would prohibit the use of `#`
 within their bodies, except where `#` is inside an inner pipeline inside the
@@ -2733,19 +2634,12 @@ antecedent, would also be added. This tacit form is what is used in this
 example. [TODO: Link to section on deep nesting.] This example also uses the
 hypothetical headless pipelining syntax from above.
 
-<table>
-<thead>
-<tr>
-<th>With hypothetical proposal
-<th>With only this proposal
-
-<tbody>
 <tr>
 <td>
 
 ```js
 for await (stream) {
-  yield
+  yield #
     |> f
     |> # + 3
 }
@@ -2761,92 +2655,31 @@ for await (const c of stream) {
 }
 ```
 
-</table>
-
-#### Topic function / method definition
-With this smart-pipe proposal only, all function / method definitions would
-prohibit the use of `#` within their bodies, except where `#` is inside an inner
-pipeline inside the function / method. (However, arrow functions do not have
-this restriction; they may use `#`, which refers to their outer scope’s topic.)
-
-With another, future proposal, all function / method definitions would
-implicitly bind their first arguments to `#`. This implicit binding would be in
-addition to the explicit binding of a normal parameter variable `x` declared
-within the parenthesized antecedent of `function (x, …) { … }` or a `method { m
-(x, …) { … } }`. `#` here would be practically similar to `arguments`. But
-unlike `arguments`, `#` in function bodies would obey the same lexical static
-rules imposed upon `#` in pipeline bodies and elsewhere.
-
-As is already possible, a tacit `function` definition, completely lacking a
-parenthesized antecedent, could also be used. This tacit form is what is used in
-this example. [TODO: Link to section on deep nesting.] This example also uses
-the hypothetical headless property syntax from above.
-
-<table>
-<thead>
 <tr>
-<th>With hypothetical proposal
-<th>With only this proposal
 
-<tbody>
-<tr>
-<td>
+<th>
 
-```js
-function capitalize {
-  return
-    #[0].toUpperCase()
-    + .substring(1)
-}
-```
+Topic block parameter
 
 <td>
 
-```js
-function capitalize (str) {
-  return str[0].toUpperCase()
-    + str.substring(1)
-}
-```
-
-</table>
-
-#### Topic block parameter
 The proposed syntax of [ECMAScript block parameters][] may greatly benefit from
 using the topic concept. As with topic function definitions, making all block
 parameters topic would enable the use of the topic reference as an implicit
-first parameter. The block-parameter proposal itself has not yet settled on how
-to parameterize its block parameters. The topic reference may be the key to
-solving this problem, making other, special block parameters unnecessary. This
-example also uses the hypothetical headless property syntax and headless
-pipelining syntax from above.
+first parameter.
 
-<table>
-<thead>
-<tr>
-<th>With hypothetical proposal
-<th>With only this proposal
-
-<tbody>
 <tr>
 <td>
 
 ```js
-materials.map { |> f |> .length }
+materials.map { #|> f |> .length }
 ```
-```js
-server(app) {
-  .get('/') do (response) {
-    request()
-      |> .get('param1')
-      |> `hello world ${#}`
-      |> response.send
-  }
+(Here, `#|> f` is just a stylistic variant of `# |> f`, which is already valid
+in this proposal’s rules.)
 
-  .listen(3000) {
-    log('hello')
-  }
-}
+Note that this would be the same as:
+```js
+materials.map(-> f |> .length)
 ```
 
 <td>
@@ -2854,6 +2687,33 @@ server(app) {
 ```js
 materials.map { f(???).length }
 ```
+
+The block-parameter proposal itself has not yet settled on how to parameterize
+its block parameters. The topic reference may be the key to solving this
+problem, making other, special block parameters unnecessary. This example also
+uses the hypothetical headless property syntax and headless pipelining syntax
+from above.
+
+<tr>
+<td>
+
+```js
+server(app) {
+  #.get('/') do (response) {
+    request()
+      |> .get('param1')
+      |> `hello world ${#}`
+      |> response.send
+  }
+
+  #.listen(3000) {
+    log('hello')
+  }
+}
+```
+
+<td>
+
 ```js
 server(app) {
   ???.get('/') do (response) {
@@ -2869,49 +2729,17 @@ server(app) {
 }
 ```
 
-</table>
-
-#### Topic thin-arrow function
-This example uses a new token, the thin arrow, which is similar to the `=>` fat
-arrow in that it creates arrow functions. The only difference is that it also
-lexically binds `#` to its first argument, unlike the fat arrow. This example
-also uses the hypothetical headless pipelining syntax from above.
-
-<table>
-<thead>
 <tr>
-<th>With hypothetical proposal
-<th>With only this proposal
+<th>
 
-<tbody>
-<tr>
-<td>
-
-```js
-materials.map(-> |> f |> .length)
-```
+Topic pattern matching
 
 <td>
-
-```js
-materials.map(m => m |> f |> #.length)
-```
-
-</table>
-
-#### Topic pattern matching
 The proposed syntax of [ECMAScript pattern matching][] would bind the topic
 reference within the scope of a successful match clause’s scope. The topic value
 would be the truthy result of the successful `Symbol.matches` call. This example
 also uses the hypothetical headless property syntax from above.
 
-<table>
-<thead>
-<tr>
-<th>With hypothetical proposal
-<th>With only this proposal
-
-<tbody>
 <tr>
 <td>
 
@@ -2939,9 +2767,13 @@ match (x) {
 }
 ```
 
-</table>
+<tr>
+<th>
 
-#### Tacit pattern matching
+Tacit pattern matching
+
+<td>
+
 [ECMAScript pattern matching] could also have a completely tacit version, in
 which the parenthesized antecedent is completely omitted in favor of tacitly
 using the outer context’s topic. (This would have to somehow be distinguishable
@@ -2949,13 +2781,6 @@ from a call to a function named `match` with a [bare block argument][ECMAScript
 block parameters].) This example also uses the hypothetical headless pipelining
 syntax from above.
 
-<table>
-<thead>
-<tr>
-<th>With hypothetical proposal
-<th>With only this proposal
-
-<tbody>
 <tr>
 <td>
 
@@ -2989,9 +2814,13 @@ function getLength (vector) {
 }
 ```
 
-</table>
+<tr>
+<th>
 
-#### Tacit error capture
+Tacit error capture
+
+<td>
+
 With this smart-pipe proposal only, all `try` statements’ `catch` clauses would
 prohibit the use of `#` within their bodies, except where `#` is inside an inner
 pipeline inside the `catch` clause. [TODO: Link to sections explaining these
@@ -3009,13 +2838,6 @@ used in this example. [TODO: Link to section on deep nesting.] The bare form,
 along with the hypothetical headless property syntax from above, are
 demonstrated here.
 
-<table>
-<thead>
-<tr>
-<th>With hypothetical proposal
-<th>With only this proposal
-
-<tbody>
 <tr>
 <td>
 
@@ -3080,9 +2902,13 @@ try {
 }
 ```
 
-</table>
+<tr>
+<th>
 
-#### Topic metaprogramming reference
+Topic metaprogramming reference
+
+<td>
+
 In the event that TC39 seriously considers the topic function definitions
 shown above, a **`function.topic`** metaprogramming operator, in the style of
 the [`new.target`][] operator, could be useful in creating topic-aware functions.
@@ -3095,6 +2921,9 @@ to be called always within the third function (`select`)’s callback block.
 
 An alternate solution without metaprogramming topics is not yet specified by the
 current proposal for [ECMAScript block parameters][].
+
+<tr>
+<td colspan=2>
 
 ```js
 class CompletionRecord { [[TODO]] }
@@ -3113,7 +2942,7 @@ function when (testValue, callback) {
     [TODO]:
       |> applyWhen(#, testValue, callback)
     else:
-      throw new Error('when used outside select block')
+      throw new Error('when clause was used outside select block')
   }
 }
 
@@ -3145,7 +2974,7 @@ select ('world') {
     log(`Hello ${#}`)
   }
   otherwise {
-    throw new Error(`Error: ${# |> format}`)
+    throw new Error(`Error: ${#|> format}`)
   }
 }
 ```
