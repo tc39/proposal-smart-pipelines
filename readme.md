@@ -708,8 +708,6 @@ fetch('https://pk.example/berlin-calling',
 }).then(processJSON)
 ```
 
-<td>
-
 </table>
 
 </details>
