@@ -2974,6 +2974,8 @@ select ('world') {
 }
 ```
 
+</table>
+
 </details>
 
 ### Alternative solutions explored
