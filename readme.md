@@ -2509,7 +2509,8 @@ numbers.sort(function (a, b) {
 ```js
 [ { x: 22 }, { x: 42 } ]
   .map(-> #.x)
-  .reduce(-> Math.max(#, ##), -Infinity)
+  .reduce(-> Math.max(#, ##),
+    -Infinity)
 ```
 
 <td>
@@ -2517,7 +2518,8 @@ numbers.sort(function (a, b) {
 ```js
 [ { x: 22 }, { x: 42 } ]
   .map(el => el.x)
-  .reduce((x0, x1) => Math.max(x0, x1), -Infinity)
+  .reduce((x0, x1) => Math.max(x0, x1),
+    -Infinity)
 ```
 
 <tr>
@@ -2548,7 +2550,8 @@ difference in conceptual models.
 <td>
 
 ```js
-const maxGreaterThanZero = -> Math.max(0, ...)
+const maxGreaterThanZero =
+  -> Math.max(0, ...)
 maxGreaterThanZero(1, 2) // 2
 maxGreaterThanZero(-1, -2) // 0
 ```
@@ -2558,7 +2561,8 @@ and a rest-topic reference `...`.
 <td>
 
 ```js
-const maxGreaterThanZero = Math.max(0, ...)
+const maxGreaterThanZero =
+  Math.max(0, ...)
 maxGreaterThanZero(1, 2) // 2
 maxGreaterThanZero(-1, -2) // 0
 ```
