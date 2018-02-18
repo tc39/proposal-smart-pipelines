@@ -64,7 +64,6 @@
       - [Bare constructor call • Evaluation](#bare-constructor-call-%E2%80%A2-evaluation)
     - [Pipeline-level expressions](#pipeline-level-expressions)
   - [Relations to other work](#relations-to-other-work)
-    - [Other ECMAScript proposals](#other-ecmascript-proposals)
     - [Possible future extensions to the topic concept](#possible-future-extensions-to-the-topic-concept)
       - [Headless property access](#headless-property-access)
       - [Headless pipelining](#headless-pipelining)
@@ -2777,8 +2776,7 @@ match (x) {
   Array:
     .length
   /(\d)(\d)(\d)/:
-    #.groups |>
-      #[0] + #[1] + #[2]
+    #.groups |> #[0] + #[1] + #[2]
 }
 ```
 
@@ -2790,8 +2788,7 @@ match (x) {
   Array:
     x.length
   /(\d)(\d)(\d)/ -> m:
-    m.groups |>
-      #[0] + #[1] + #[2]
+    m.groups |> #[0] + #[1] + #[2]
 }
 ```
 
@@ -2819,7 +2816,7 @@ syntax from above.
       (x ** 2 + y ** 2)
         |> Math.sqrt
     [...]:
-      .length
+      #.length
     else:
       throw new Error(#)
   }
