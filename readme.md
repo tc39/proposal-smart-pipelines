@@ -2406,19 +2406,6 @@ let newScore = player.score
 ```
 
 <tr>
-
-<th>
-
-<td>
-
-[zenparsing’s syntactic binding proposal][syntactic binding proposal] proposed a
-polymorphic `::` operator that would variously perform three behaviors – tacit
-method extraction, terse method binding, and terse method calling – depending on
-its configuration.
-
-Pipe functions alone can perform one these three behaviors.
-
-<tr>
 <td>
 
 ```js
@@ -2471,6 +2458,8 @@ x::hasOwnProperty('key')
 ```
 But the `::` would only need to handle method calls. No operator overloading of
 `::` for method extraction would be needed.
+
+<tr>
 
 <tr>
 <th>
@@ -2730,6 +2719,8 @@ server(app) {
 ```
 
 <tr>
+
+<tr>
 <th>
 
 Topic pattern matching
@@ -2901,6 +2892,8 @@ try {
   }
 }
 ```
+
+<tr>
 
 <tr>
 <th>
