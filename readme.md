@@ -248,8 +248,7 @@ of this “smart pipe operator”][smart body syntax].
 <tr>
 <th colspan=2>
 
-[Original pipe-operator proposal][first pipe-operator proposal].
-[Gilbert “mindeavor”][mindeavor] &c. ECMA International. 2017–2018. BSD License.
+[Original pipe-operator proposal][first pipe-operator proposal]
 
 <tr>
 <td>
@@ -382,6 +381,7 @@ const $ = …; f($, $)
 … \|> [#, # * 2, # * 3]
 ```
 
+<td>
 ```js
 const $ = …; [$, $ * 2, $ * 3]
 ```
@@ -433,8 +433,8 @@ is in order to fulfill both [Goals 3 and 6][goals].
 
 ```js
 … \|> function () { return # }
+// 🚫 Topic never used by pipeline’s body.
 ```
-🚫 Topic never used by pipeline’s body.
 
 <td>
 
@@ -443,8 +443,8 @@ is in order to fulfill both [Goals 3 and 6][goals].
 
 ```js
 … \|> class { m: () { return # }}
+// 🚫 Topic never used by pipeline’s body.
 ```
- 🚫 Topic never used by pipeline’s body.
 
 <td>
 
@@ -496,7 +496,7 @@ const $ = …; f(x => $ \|> f \|> # * 5)
 <tr>
 <th colspan=2>
 
-[Underscore.js][]. [Jeremy Ashkenas][jashkenas] &c. 2009–2018. MIT License.
+[Underscore.js][]
 
 <tr>
 <td>
@@ -608,7 +608,7 @@ function (obj) {
 <tr>
 <th colspan=2>
 
-[Pify][]. [Sindre Sorhus][sindresorhus] &c. 2015–2018. MIT License.
+[Pify][]
 
 <tr>
 <td>
@@ -632,8 +632,7 @@ pify(fs.readFile)('package.json', 'utf8')
 <tr>
 <th colspan=2>
 
-[Fetch Standard][]. [Anne van Kesteren][annevk] &c. 2011–2018. WHATWG. Creative
-Commons BY.
+[Fetch Standard][]
 
 <tr>
 <td>
