@@ -897,7 +897,7 @@ very long expression.
 
 By restricting the space of valid bare-style pipeline bodies (that is, without
 topic references), the rule minimizes garden-path syntax that would otherwise be
-possible—such as `… |> compose(f, g, h, i, j, k, #)`. Syntax becomes more
+possible – such as `… |> compose(f, g, h, i, j, k, #)`. Syntax becomes more
 locally readable. It becomes easier to reason about code without thinking about
 code elsewhere.
 
