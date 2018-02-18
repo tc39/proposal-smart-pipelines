@@ -1415,12 +1415,13 @@ As a binary operation forming compound expressions, the [operator precedence and
 associativity][MDN operator precedence] of pipelining must be determined, relative
 to other operations.
 
-Precedence is tighter than assignment (`=`, `+=`, …), generator `yield` and
-`yield *`, and sequence `,`; and it is looser than every other type of
-expression. If the pipe operation were any tighter than this level, its body
-would have to be parenthesized for many frequent types of expressions. However,
-the result of a pipeline is also expected to often serve as the body of a
-variable assignment `=`, so it is tighter than assignment operators.
+Precedence is tighter than arrow functions (`=>`), assignment (`=`, `+=`, …),
+generator `yield` and `yield *`, and sequence `,`; and it is looser than every
+other type of expression. If the pipe operation were any tighter than this
+level, its body would have to be parenthesized for many frequent types of
+expressions. However, the result of a pipeline is also expected to often serve
+as the body of an arrow function or a variable assignment, so it is tighter than
+both types of expressions.
 
 The pipe operator actually has [arbitrary associativity][]. However, for the
 purposes of this grammar, it will have left associativity.
