@@ -1427,7 +1427,8 @@ having to use the topic reference as an explicit argument.
 
 <details open>
 
-[TO DO: Note no parameters in bare style.]
+The two bare-style productions require no parameters, because they can only
+be made up of identifiers, `.`, and `new`.
 
 * **_Pipeline Body_** [_In_, _Yield_, _Await_] :
   * _Pipeline Bare Function Call_
