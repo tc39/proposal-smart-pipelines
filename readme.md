@@ -1163,7 +1163,7 @@ rules in this proposal.</summary>
 
 </details>
 
-### Syntax and static semantics
+### Syntactic grammar
 The syntactic grammar of JavaScript can transform token sequences (defined by
 the [lexical grammar][]) into **parse trees**: rooted tree data structures made
 of **Parse Nodes**. This is described further in [ECMAScript Lexical Grammar][].
@@ -1191,176 +1191,9 @@ of **Parse Nodes**. This is described further in [ECMAScript Lexical Grammar][].
 
 </details>
 
-***
-
-The syntactic grammar of JavaScript further relies upon several functions that
-analyze its syntactic structures. These functions are polymorphic on the types
-of their input syntactic structures, and their definitions are often also
-recursive. The ECMAScript specification goes into more detail on these **static
-semantic rules** in [ECMAScript Static Semantic Rules][].
-
-<details open>
-
-> Context-free grammars are not sufficiently powerful to express all the rules
-> that define whether a stream of input elements form a valid ECMAScript Script
-> or Module that may be evaluated. In some situations additional rules are
-> needed that may be expressed using either ECMAScript algorithm conventions or
-> prose requirements. Such rules are always associated with a production of a
-> grammar and are called the static semantics of the production.
->
-> Static semantic rules have names and typically are defined using an algorithm.
-> Named static semantic rules are associated with grammar productions and a
-> production that has multiple alternative definitions will typically have for
-> each alternative a distinct algorithm for each applicable named static
-> semantic rule.
-
-</details>
-
-***
-
-This specification defines additions for the following static semantic rules:
-
-| Form                              | Notes                                             |
-| --------------------------------- | ------------------------------------------------- |
-| [Contains][]                      | Already defined in ES for nearly all nodes        |
-| Is Function Definition            | Already defined in ES: all expressions            |
-| Is Identifier Reference           | Already defined: primary- & LHS-level expressions |
-| Is Valid Simple Assignment Target | Already defined: primary- & LHS-level expressions |
-| [Early Errors][]                  | Already defined in ES for nearly all nodes        |
-
-It should be noted that, in the ECMAScript standard, the Contains rule is
-currently written as an infix operator: “… Contains …” for historical reasons.
-This is unlike any other static semantic rule, which would be written as prefix
-operators “_Rule Name_ of … with arguments …”. There are plans to change all
-static semantic rules to instead have a consistent infix syntax resembling
-method calls: “…._Rule Name_(…)”. For self-consistency, this proposal will use
-that planned method-like syntax.
-
-#### Static Contains
-<details open>
-<summary>The ECMAScript spec implicitly defines the Contains rule for nearly all
-nodes. Conceptually, a node Contains another node if the latter is somewhere in
-the former.</summary>
-
-[This quotation from the ECMAScript spec][ECMAScript static semantic rules] is
-modified to use the new method-like syntax.
-
->    b. If _child_ is an instance of a nonterminal, then
->
->       i.  Let _contained_ be the result of _child_.Contains (_symbol_).
->       ii. If _contained_ is true, return true.
->
-> 2. Return false.
->
-> The above definition is explicitly over-ridden for specific productions.
-
-</details>
-
-***
-
-In the ECMAScript standard, the Contains rule is used by many other Static
-Semantic Rules, such as [object initializers’ Computed Property Contains
-rule][]. The rule is also generally overridden by methods definitions and other
-function definitions, such that they hide their substructure from the rule.
-
-(Uniquely among the static semantic rules, Contains is written as an infix
-operator in the ECMAScript specification – “… Contains …” – for historical
-reasons. This proposal will instead use the planned future new syntax
-“….contains (…)”.)
-
-**This proposal will use Contains to determine whether a pipeline’s body uses
-its `#` topic reference.** This is so that many [footguns may be statically
-detected as an early error][static analyzability] – for instance, using a
-pipeline in topical style without ever using its topic in its body [TO DO: Link].
-
-Contains does not penetrate into the bodies of function and method definitions,
-hiding them from the rules in outside contexts. All definitions for functions,
-generators, methods, and so forth override Contains to always return false, with
-this note:
-
-> Static semantic rules that depend upon substructure generally do not look into
-> function definitions.
-
-There is one exception: arrow functions expose the use of `new.target`, `this`,
-and `super`, because, unlike other functions, they do no rebind those three
-forms; they use the outer context to evaluate them. (See [ECMAScript arrow
-functions, § SS: Contains][]).
-
-This proposal further extends that exception so that arrow functions also reveal
-any use of `#` within their bodies. This is because arrow functions, alone among
-functions, also do not rebind or shadow the outer context’s topic. (`#` cannot
-be used within arrow-function parameter lists or any function’s parameter list.)
-See [TO DO: Topics and inner functions].
-
-<details>
-
-[ECMAScript arrow functions, § SS: Contains][] is amended.
-
-* **Contains**\
-  With parameter _symbol_.
-
-  * **_ArrowFunction_** : _ArrowParameters_ `=>` _ConciseBody_
-
-    1. If _symbol_ is not one of _NewTarget_, _SuperProperty_, _SuperCall_,
-      `super`, `this` or `#`, return false.
-    2. If _ArrowParameters_.Contains (_symbol_) is true, return true.
-    3. Return _ConciseBody_.Contains (_symbol_).
-
-  * **_ArrowParameters_** : _Cover Parenthesized Expression and Arrow Parameter List_\
-    [Unchanged.]
-
-</details>
-
-#### Static Early Errors
-Certain syntax errors cannot be detected by the context-free grammar alone yet
-must still be detected at compile time. Early Error Rules are Static Semantic
-Rules that define when such extra syntax errors occur.
-
-<details open>
-
-> A special kind of static semantic rule is an Early Error Rule. Early error
-> rules define early error conditions (see clause 16) that are associated with
-> specific grammar productions. Evaluation of most early error rules are not
-> explicitly invoked within the algorithms of this specification. A conforming
-> implementation must, prior to the first evaluation of a Script or Module,
-> validate all of the early error rules of the productions used to parse that
-> Script or Module. If any of the early error rules are violated the Script or
-> Module is invalid and cannot be evaluated.
-
-</details>
-
-***
-
-The two static early errors in this proposal are designed to prevent some ambiguity
-from shooting the developer in the foot – by forcing the developer to clarify
-their intent.
-
-* Pipelines that are in topical style but that do not ever use their topics
-  anywhere in their bodies, such as `x |> 3`, are an early error. Such expressions
-  would be always useless and almost certainly not what the author had intended.
-  [TO DO: Link.]
-
-  One such footgun has already been mentioned in both the section on the Goal
-  [static analyzability][] and the section on the [Contains][] rule.
-
-* Just as with pipeline heads, pipeline bodies that start with `yield` must be
-  parenthesized. Otherwise they are early errors. This is because the `yield`
-  operator has such a loose precedence that `x |> yield # |> f` is an
-  ambiguous footgun.
-
-  It is very likely that the developer meant `(x |> (yield #)) |> f` here, but
-  because `yield` has such loose precedence, without parentheses, the pipeline
-  will be parsed instead as `x |> (yield (# |> f))`, which has a very different
-  meaning.
-
-  With this early error, the developer is forced to clarify their `yield`:
-  either `x |> (yield #) |> f` or `x |> (yield # |> f)`. [TO DO: Link.]
-
-[TO DO: Add bidirectional associativity to Goals]
-
 ### Operator precedence
 As a binary operation forming compound expressions, the [operator precedence and
-associativity][operator precedence] of pipelining must be determined, relative
+associativity][MDN operator precedence] of pipelining must be determined, relative
 to other operations.
 
 Precedence is tighter than assignment (`=`, `+=`, …), generator `yield` and
@@ -1509,29 +1342,6 @@ The new version:
 
 </details>
 
-### Topic reference • Static semantics
-
-<details open>
-<summary>The topic reference is neither a function definition nor an identifier
-reference. This is the same as almost every other primary expression, except
-for identifiers, parenthesized expressions, and arrow parameter lists.</summary>
-
-* **Is Identifier Ref**
-  * **_Primary Expression_** : _Identifier Reference_\
-    Return true.
-
-  * **_Primary Expression_** : `this` | `#` | _Literal_ | …\
-    Return false.
-
-* **Is Valid Simple Assignment Target**
-  * **_Primary Expression_** : `this` | `#` | _Literal_ | …\
-    Return false.
-
-  * **_Primary Expression_** : _Cover Parenthesized Expression and Arrow Parameter List_\
-    [Unchanged from original specification.]
-
-</details>
-
 ### Pipeline-level expressions • Syntactic grammar
 The production rule for [ECMAScript Assignment-level Expressions][] needs to be
 modified so that pipe expressions slip in between it and conditional-level
@@ -1591,44 +1401,6 @@ parameters][]) only if:
   * _Conditional Expression_ [? _In_, ? _Yield_, ? _Await_]
   * _Pipeline Expression_ [? _In_, ? _Yield_, ? _Await_] `|>`\
     _Pipeline Body_ [? _In_, ? _Yield_, ? _Await_]
-
-</details>
-
-### Pipeline-level expressions • Static semantics
-
-<details open>
-<summary>The pipeline-level expression is neither a function definition nor an
-identifier reference.</summary>
-
-* **Is Identifier Ref**
-  * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_\
-    Return false.
-
-* **Is Valid Simple Assignment Target**
-  * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_\
-    Return false.
-
-</details>
-
-<details open>A pipeline expression contains its outer lexical context’s topic
-only if the pipeline’s head uses the outer context’s topic. The pipeline’s body
-cannot use the outer context’s topic, because the body is evaluated within a
-second, inner lexical context, within which the topic reference is rebound to
-another value. If there is a topic reference defined in the outer context, then
-it is shadowed within the body.</summary>
-
-* **Contains**\
-  With parameter _symbol_.
-
-  [TO DO]
-<!--
-  * **_Arrow Function_** : _Arrow Parameters_ `=>` _Concise Body_
-
-    1. If _symbol_ is not one of _New Target_, _Super Property_, _Super Call_,
-      `super`, `this` or `#`, return false.
-    2. If _Arrow Parameters_.contains (_symbol_) is true, return true.
-    3. Return _Concise Body_.contains (_symbol_).
--->
 
 </details>
 
@@ -1717,23 +1489,6 @@ in imitation of how [ECMAScript _Member Expression_][] handles method chains.
 
 </details>
 
-***
-
-<details open>
-<summary>Simple references’ runtime semantics are exactly the same as the
-member expressions they resemble.</summary>
-
-This section is adapted from [ECMAScript Property Accessors, § RS: Evaluation][].
-
-* **Evaluation**
-  * _Simple Reference_ : _Simple Reference_ `.` _Identifier Name_
-    * Is evaluated in exactly the same manner as [_Member Expression_ `:`
-      _Member Expression_ `.` _Identifier Name_][ECMAScript Property Accessors,
-      § RS: Evaluation] except that the contained _Simple Reference_ is evaluated
-      in step 1.
-
-</details>
-
 ##### Bare function call • Syntactic grammar
 If the body is a merely a simple reference, then that identifier is interpreted
 to be a **bare function call**. The pipeline’s value will be the result of
@@ -1788,35 +1543,20 @@ variable**, then **use that variable as a bare body**.
 The JavaScript developer is encouraged to use topic references and avoid bare
 style, where bare style may be visually confusing to the reader.
 
-#### Topical style
+#### Topical style • Syntactic grammar
 **If a pipeline** of the form _topic_ |> _body_ is ***not* match the [bare style
 • syntactic grammar][]** (that is, it is *not* a bare function call or bare
 constructor call), then it **must be in topical style**.
 
+A topical pipeline body is an expression at the [precedence level once tighter
+than pipeline-level expressions][operator precedence] – that is, it is a
+conditional-level expression.
+
 <details open>
-<summary>The pipeline’s value is whatever the body expression evaluates into,
-assuming that the topic value is first bound to the topic reference within the
-body scope.</summary>
+<summary>Syntactic grammar</summary>
 
-But more precisely, it binds the topic to the pipeline’s head value then
-evaluates the RHS [TO DO]
-
-* **Evaluation**
-  * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_
-    1. Let _head Value_ be the result of evaluating _Pipeline Expression_.
-    2. [TO DO: Create topic environment]
-    3. [TO DO: Evaluate body in new environment]
-
-Topical style behaves like **`do { const ` _topic Identifier_ `=` _topic_`;
-`_substituted Body_` }`**, where:
-
-* _topic Variable_ is any [identifier that is *not* already used by any
-  variable][lexically hygienic], in the outer lexical context or the body’s
-  inner topical context,
-* And _substituted Body_ is _body_ but with every instance of outside of
-  the topic reference replaced by _topic Variable_.
-
-[TO DO: Add link to term-rewriting appendix.]
+* **_Pipeline Topical Body_** [_In_, _Yield_, _Await_] :
+  * _Conditional Expression_ [? _In_, ? _Yield_, ? _Await_]
 
 </details>
 
@@ -1883,6 +1623,205 @@ The lines in each of the following rows are equivalent.
 
 </details>
 
+## Static semantics
+The syntactic grammar of JavaScript further relies upon several functions that
+analyze its syntactic structures. These functions are polymorphic on the types
+of their input syntactic structures, and their definitions are often also
+recursive. The ECMAScript specification goes into more detail on these **static
+semantic rules** in [ECMAScript Static Semantic Rules][].
+
+<details open>
+
+> Context-free grammars are not sufficiently powerful to express all the rules
+> that define whether a stream of input elements form a valid ECMAScript Script
+> or Module that may be evaluated. In some situations additional rules are
+> needed that may be expressed using either ECMAScript algorithm conventions or
+> prose requirements. Such rules are always associated with a production of a
+> grammar and are called the static semantics of the production.
+>
+> Static semantic rules have names and typically are defined using an algorithm.
+> Named static semantic rules are associated with grammar productions and a
+> production that has multiple alternative definitions will typically have for
+> each alternative a distinct algorithm for each applicable named static
+> semantic rule.
+
+</details>
+
+***
+
+This specification defines additions for the following static semantic rules:
+
+| Form                              | Notes                                             |
+| --------------------------------- | ------------------------------------------------- |
+| [Contains][]                      | Already defined in ES for nearly all nodes        |
+| Is Function Definition            | Already defined in ES: all expressions            |
+| Is Identifier Reference           | Already defined: primary- & LHS-level expressions |
+| Is Valid Simple Assignment Target | Already defined: primary- & LHS-level expressions |
+| [Early Errors][]                  | Already defined in ES for nearly all nodes        |
+
+It should be noted that, in the ECMAScript standard, the Contains rule is
+currently written as an infix operator: “… Contains …” for historical reasons.
+This is unlike any other static semantic rule, which would be written as prefix
+operators “_Rule Name_ of … with arguments …”. There are plans to change all
+static semantic rules to instead have a consistent infix syntax resembling
+method calls: “…._Rule Name_(…)”. For self-consistency, this proposal will use
+that planned method-like syntax.
+
+### Static Contains
+<details open>
+<summary>The ECMAScript spec implicitly defines the Contains rule for nearly all
+nodes. Conceptually, a node Contains another node if the latter is somewhere in
+the former.</summary>
+
+[This quotation from the ECMAScript spec][ECMAScript static semantic rules] is
+modified to use the new method-like syntax.
+
+>    b. If _child_ is an instance of a nonterminal, then
+>
+>       i.  Let _contained_ be the result of _child_.Contains (_symbol_).
+>       ii. If _contained_ is true, return true.
+>
+> 2. Return false.
+>
+> The above definition is explicitly over-ridden for specific productions.
+
+</details>
+
+***
+
+In the ECMAScript standard, the Contains rule is used by many other Static
+Semantic Rules, such as [object initializers’ Computed Property Contains
+rule][]. The rule is also generally overridden by methods definitions and other
+function definitions, such that they hide their substructure from the rule.
+
+(Uniquely among the static semantic rules, Contains is written as an infix
+operator in the ECMAScript specification – “… Contains …” – for historical
+reasons. This proposal will instead use the planned future new syntax
+“….contains (…)”.)
+
+**This proposal will use Contains to determine whether a pipeline’s body uses
+its `#` topic reference.** This is so that many [footguns may be statically
+detected as an early error][static analyzability] – for instance, using a
+pipeline in topical style without ever using its topic in its body [TO DO: Link].
+
+Contains does not penetrate into the bodies of function and method definitions,
+hiding them from the rules in outside contexts. All definitions for functions,
+generators, methods, and so forth override Contains to always return false, with
+this note:
+
+> Static semantic rules that depend upon substructure generally do not look into
+> function definitions.
+
+There is one exception: arrow functions expose the use of `new.target`, `this`,
+and `super`, because, unlike other functions, they do no rebind those three
+forms; they use the outer context to evaluate them. (See [ECMAScript arrow
+functions, § SS: Contains][]).
+
+This proposal further extends that exception so that arrow functions also reveal
+any use of `#` within their bodies. This is because arrow functions, alone among
+functions, also do not rebind or shadow the outer context’s topic. (`#` cannot
+be used within arrow-function parameter lists or any function’s parameter list.)
+See [TO DO: Topics and inner functions].
+
+<details>
+
+[ECMAScript arrow functions, § SS: Contains][] is amended.
+
+* **Contains**\
+  With parameter _symbol_.
+
+  * **_Arrow Function_** : _Arrow Parameters_ `=>` _Concise Body_
+
+    1. If _symbol_ is not one of _New Target_, _Super Property_, _Super Call_,
+      `super`, `this` or `#`, return false.
+    2. If _Arrow Parameters_.Contains (_symbol_) is true, return true.
+    3. Return _Concise Body_.Contains (_symbol_).
+
+  * **_Arrow Parameters_** : _Cover Parenthesized Expression and Arrow Parameter List_\
+    [Unchanged.]
+
+</details>
+
+### Static Early Errors
+Certain syntax errors cannot be detected by the context-free grammar alone yet
+must still be detected at compile time. Early Error Rules are Static Semantic
+Rules that define when such extra syntax errors occur.
+
+<details open>
+
+> A special kind of static semantic rule is an Early Error Rule. Early error
+> rules define early error conditions (see clause 16) that are associated with
+> specific grammar productions. Evaluation of most early error rules are not
+> explicitly invoked within the algorithms of this specification. A conforming
+> implementation must, prior to the first evaluation of a Script or Module,
+> validate all of the early error rules of the productions used to parse that
+> Script or Module. If any of the early error rules are violated the Script or
+> Module is invalid and cannot be evaluated.
+
+</details>
+
+***
+
+The two static early errors in this proposal are designed to prevent some ambiguity
+from shooting the developer in the foot – by forcing the developer to clarify
+their intent.
+
+* Pipelines that are in topical style but that do not ever use their topics
+  anywhere in their bodies, such as `x |> 3`, are an early error. Such expressions
+  would be always useless and almost certainly not what the author had intended.
+  [TO DO: Link.]
+
+  One such footgun has already been mentioned in both the section on the Goal
+  [static analyzability][] and the section on the [Contains][] rule.
+
+* Just as with pipeline heads, pipeline bodies that start with `yield` must be
+  parenthesized. Otherwise they are early errors. This is because the `yield`
+  operator has such a loose precedence that `x |> yield # |> f` is an
+  ambiguous footgun.
+
+  It is very likely that the developer meant `(x |> (yield #)) |> f` here, but
+  because `yield` has such loose precedence, without parentheses, the pipeline
+  will be parsed instead as `x |> (yield (# |> f))`, which has a very different
+  meaning.
+
+  With this early error, the developer is forced to clarify their `yield`:
+  either `x |> (yield #) |> f` or `x |> (yield # |> f)`. [TO DO: Link.]
+
+[TO DO: Add bidirectional associativity to Goals]
+
+### Other static semantic rules
+
+<details open>
+<summary>All productions defined in this proposal are neither function
+definitions nor identifier references. This is the same as almost every other
+expression. In particular, the `#` topic reference is not an identifier
+reference; it is a topic reference, its own thing.</summary>
+
+* **Is Identifier Ref**
+  * **_Primary Expression_** : `#`\
+    Return false.
+
+  * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_\
+    Return false.
+
+* **Is Valid Simple Assignment Target**
+  * **_Primary Expression_** : `#`\
+    Return false.
+
+  * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_\
+    Return false.
+
+  * **_Simple Reference_** : _Simple Reference_ `.` _Identifier Name_ \
+    Return false.
+
+  * **_Pipeline Bare Constructor Call_** : `new` _Simple Reference_\
+    Return false.
+
+  * **_Pipeline Body_** : _Pipeline Topical Body_\
+    Return false.
+
+</details>
+
 ## Runtime semantics
 [TO DO]
 
@@ -1925,7 +1864,7 @@ whenever such code is evaluated at runtime. </summary>
 > >
 > A global environment is a Lexical Environment which does not have an outer
 > environment. The global environment's outer environment reference is null. A
-> global environment's _EnvironmentRecord_ may be prepopulated with identifier
+> global environment's _Environment Record_ may be prepopulated with identifier
 > bindings and includes an associated global object whose properties provide
 > some of the global environment's identifier bindings. As ECMAScript code is
 > executed, additional properties may be added to the global object and the
@@ -1965,7 +1904,7 @@ is “topical” in the usual adjectival sense.]
 
 [TO DO]
 
-### Topic reference • Runtime semantics
+### Topic reference • Runtime Evaluation
 When evaluated during runtime, the topic reference uses the Resolve Topic
 abstract operation on the running execution context’s lexical environment.
 
@@ -1979,7 +1918,7 @@ abstract operation on the running execution context’s lexical environment.
 
 [TO DO: Define Resolve Topic abstract operation]
 
-### Pipeline-level expressions • Runtime semantics
+### Pipeline-level expressions • Runtime Evaluation
 During runtime, [TO DO]
 
 <details open>
@@ -1994,7 +1933,7 @@ During runtime, [TO DO]
 
 </details>
 
-#### Bare function call • Runtime semantics
+#### Bare function call • Runtime Evaluation
 If the body is a merely a simple reference, then that identifier is interpreted
 to be a **bare function call**. The pipeline’s value will be the result of
 calling the body with the current topic as its argument.
@@ -2020,7 +1959,7 @@ Evaluation][].
 
 </details>
 
-#### Bare constructor call • Runtime semantics
+#### Bare constructor call • Runtime Evaluation
 <details open>
 <summary>Runtime semantics</summary>
 
@@ -2039,7 +1978,23 @@ This algorithm was adapted from [ECMAScript `new` operator, § RS: Evaluation][
 
 </details>
 
-#### Topical style • Runtime semantics
+#### Simple Reference • Runtime Evaluation
+<details open>
+<summary>Simple references’ runtime semantics are exactly the same as the
+member expressions they resemble.</summary>
+
+This section is adapted from [ECMAScript Property Accessors, § RS: Evaluation][].
+
+* **Evaluation**
+  * _Simple Reference_ : _Simple Reference_ `.` _Identifier Name_
+    * Is evaluated in exactly the same manner as [_Member Expression_ `:`
+      _Member Expression_ `.` _Identifier Name_][ECMAScript Property Accessors,
+      § RS: Evaluation] except that the contained _Simple Reference_ is evaluated
+      in step 1.
+
+</details>
+
+#### Topical style • Runtime Evaluation
 **If a pipeline** of the form _topic_ |> _body_ is ***not* match the [bare style
 • syntactic grammar][]** (that is, it is *not* a bare function call or bare
 constructor call), then it **must be in topical style**.
@@ -3012,7 +2967,8 @@ do { do { do { do { 3 * 3 } } }
 [nomenclature]: #nomenclature
 [object initializers’ Computed Property Contains rule]: https://tc39.github.io/ecma262/#sec-object-initializer-static-semantics-computedpropertycontains
 [OCaml pipe]: http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html
-[operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
+[MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
+[operator precedence]: #operator-precedence
 [optional-chaining syntax proposal]: https://github.com/tc39/proposal-optional-chaining
 [PEP 20]: https://www.python.org/dev/peps/pep-0020/
 [Perl 6 pipe]: https://docs.perl6.org/language/operators#infix_==&gt;
