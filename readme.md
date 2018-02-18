@@ -1,5 +1,5 @@
-<details>
-<summary>Table of Contents</summary>
+<nav><details>
+<summary><strong>Table of Contents</strong></summary>
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -94,7 +94,7 @@
     - [Term rewriting • Arbitrary associativity](#term-rewriting-%E2%80%A2%C2%A0arbitrary-associativity)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-</details>
+</details></nav>
 
 # Smart pipelines
 ECMAScript Stage-(−1) Proposal by J. S. Choi, 2018-02.
