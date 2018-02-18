@@ -345,32 +345,32 @@ may prefer to inline, trading off self-documentation for localization of meaning
 
 <td>″″
 
-<tr id=multiple-topic-references>
-<td colspan=2>
+<tr>
+<td>
 
+```js
+… |> f(#, #)
+```
 The topic reference may be used multiple times in a pipeline body. Each use
 refers to the same value (wherever the topic reference is not overridden by
 another, inner pipeline’s topic scope). Because it is bound to the result of the
 topic, the topic is still only ever evaluated once.
 
+<td>
+
+```js
+const $ = …;
+f($, $)
+```
+This is equivalent to storing the topic value in a unique variable, then using
+that variable multiple times in an expression. But the variable declaration is
+unnecessary.
+
 <tr>
 <td>
 
 ```js
-… \|> f(#, #)
-```
-
-<td>
-
-```js
-const $ = …; f($, $)
-```
-
-<tr>
-<td>
-
-```js
-… \|> [#, # * 2, # * 3]
+… |> [#, # * 2, # * 3]
 ```
 
 <td>
@@ -380,23 +380,22 @@ const $ = …; [$, $ * 2, $ * 3]
 ```
 
 <tr>
-<td colspan=2>
-
-The body of a pipeline may contain an inner arrow function but no other
-type of block expression.
-
-<tr>
 <td>
 
 ```js
 … |> x => # + x
 ```
+The body of a pipeline may contain an inner arrow function but no other
+type of block expression. Both versions of this code return an arrow function.
 
 <td>
 
 ```js
-const $ = …; x => # + x
+const $ = …;
+x => $ + x
 ```
+The arrow function lexically closes over the topic value, takes one parameter,
+and returns the sum of the topic value and the parameter.
 
 <tr>
 <td>
@@ -404,54 +403,81 @@ const $ = …; x => # + x
 ```js
 … |> settimeout(() => # * 5)
 ```
+This ability to create arrow functions, which do not lexically shadow the topic,
+can be useful for using callbacks in a pipeline.
 
 <td>
 
 ```js
 const $ = …; settimeout(() => $ * 5)
 ```
+The topic value (here represented by a normal variable `$`) is still lexically
+accessible within the arrow function’s body in both examples.
 
 <tr>
-<td colspan=2>
+<td>
 
+```js
+… |> (() => # * 5) |> settimeout
+```
+The arrow function can also be created on a separate pipeline step.
+
+<td>
+
+```js
+const $ = …; settimeout(() => $ * 5)
+```
+The result is the same.
+
+<tr>
+<td>
+
+```js
+… |> (() => # * 5) |> settimeout
+// 🚫 SyntaxError:
+// Unexpected token '=>'.
+// Cannot parse base expression.
+```
+Note, however, that arrow functions have looser precedence than the pipe
+operator. This means that if a pipeline creates an arrow function alone in one
+of its steps’ bodies, then the arrow-function expression must be parenthesized.
+(The same applies to assignment and yield operators, which are also looser than
+the pipe operator.)
+
+<td>
+
+<tr>
+<td>
+
+```js
+… |> function () { return # }
+// 🚫 SyntaxError:
+// Pipeline body binds but never uses topic.
+```
 However, you cannot use use topic references inside of other types of blocks:
 function, async function, generator, async generator, or class.
 
+<td>
+
+<tr>
+<td>
+
+```js
+… |> class { m: () { return # }}
+// 🚫 SyntaxError:
+// Pipeline body binds but never uses topic.
+```
 More precisely, all block expressions (other than arrow functions) shadow any
 outer lexical context’s topic with its own *absence* of a topic. This behavior
 is in order to fulfill both [Goals 3 and 6][goals].
 
-<tr>
-<td>
-
-```js
-… \|> function () { return # }
-// 🚫 Topic never used by pipeline’s body.
-```
-
 <td>
 
 <tr>
 <td>
 
 ```js
-… \|> class { m: () { return # }}
-// 🚫 Topic never used by pipeline’s body.
-```
-
-<td>
-
-<tr>
-<td colspan=2>
-
-Both the head and the body of a pipeline may contain nested inner pipelines.
-Nested pipelines in the body is not encouraged, but it is still permitted.
-
-<tr>
-<td>
-
-```js
-… \|> f(() => f(#) * 5)
+… |> f(() => f(#) * 5)
 ```
 
 <td>
@@ -464,27 +490,47 @@ const $ = …; f(x => f($) * 5)
 <td>
 
 ```js
-… \|> f(() => f(#) \|> # * 5)
+… |> (x => # + x |> g |> # * 2)
+  |> f
+  |> #.toString()
 ```
+Both the head and the body of a pipeline may contain nested inner pipelines.
+Nested pipelines in the body is not encouraged, but it is still permitted.
 
 <td>
 
 ```js
-const $ = …; f(x => f($) \|> # * 5)
+const $ = …;
+
+f(x => g($ + x) * 2).toString()
 ```
+A nested pipeline works consistently. It merely shadows the topic
+reference within its own body.
 
 <tr>
 <td>
 
 ```js
-… \|> f(() => # \|> f \|> # * 5)
+… |> # ** 2
+  |> (x => #
+      |> g(#, x)
+      |> [# * 3, # * 5])
+  |> f
 ```
+Again, this code style is not encouraged. It is almost certainly better
+to isolate the expression in the callback into its own function.
 
 <td>
 
 ```js
-const $ = …; f(x => $ \|> f \|> # * 5)
+const $ = … ** 2;
+
+f(x => {
+  const _$ = g($, x);
+  return [_$ * 3, _$ * 5]
+})
 ```
+But the code still behaves consistently.
 
 <tr>
 <th colspan=2>
