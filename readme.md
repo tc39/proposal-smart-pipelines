@@ -8,6 +8,14 @@
 - [Smart pipelines](#smart-pipelines)
   - [Background](#background)
   - [Motivation](#motivation)
+  - [Examples](#examples)
+    - [Basic concepts](#basic-concepts)
+      - [Multiple topic references](#multiple-topic-references)
+    - [Inner blocks](#inner-blocks)
+    - [Nested pipelines](#nested-pipelines)
+    - [Underscore.js](#underscorejs)
+    - [Pify](#pify)
+    - [Fetch Web Standard](#fetch-web-standard)
     - [Goals](#goals)
       - [“Don’t break my code.”](#dont-break-my-code)
         - [Backward compatibility](#backward-compatibility)
@@ -31,16 +39,6 @@
         - [Conceptual generality](#conceptual-generality)
         - [Human writability](#human-writability)
         - [Novice learnability](#novice-learnability)
-  - [Examples](#examples)
-    - [Basic concepts](#basic-concepts)
-      - [Multiple topic references](#multiple-topic-references)
-      - [Inner blocks](#inner-blocks)
-      - [Nested pipelines](#nested-pipelines)
-      - [First pipe-operator proposal](#first-pipe-operator-proposal)
-    - [Real-world cases](#real-world-cases)
-      - [Underscore.js](#underscorejs)
-      - [Pify](#pify)
-      - [Fetch Web Standard](#fetch-web-standard)
   - [Nomenclature](#nomenclature)
     - [Pipe operator, pipeline, pipeline-level expression](#pipe-operator-pipeline-pipeline-level-expression)
     - [Head, head value, body, pipeline value, topical style, bare style](#head-head-value-body-pipeline-value-topical-style-bare-style)
@@ -236,21 +234,25 @@ equivalent to:
 Being able to automatically detect this **“bare style”** is the [**smart** part
 of this “smart pipe operator”][smart body syntax].
 
-## Examples
+[TODO: Link to Goals.]
 
-<details open>
+## Examples
 
 ### Basic concepts
 
-<details>
+<details open>
 
 | With smart pipes                     | Status quo                                    |
 | ------------------------------------ | --------------------------------------------- |
 |`x \|> f |> # + 2 |> # * 3 |> -# |> g`|`g(-(f(x) + 2) * 3)`                           |
 
+</details>
+
 This next example is adapted from the [original pipe-operator proposal][first
 pipe-operator proposal].\
 ([Gilbert “mindeavor”][mindeavor] &c. ECMA International. 2017–2018. BSD License.)
+
+<details open>
 
 <table>
 <thead>
@@ -396,7 +398,7 @@ The lines in each of the following rows are equivalent.
 |`… \|> f(() => f(#) \|> # * 5)`   |`const $ = …; f(x => f($) \|> # * 5)`               |
 |`… \|> f(() => # \|> f \|> # * 5)`|`const $ = …; f(x => $ \|> f \|> # * 5)`            |
 
-[TO DO]
+[TODO]
 
 </details>
 
@@ -930,7 +932,7 @@ developer intended. Situations like these should be statically detectable and
 cause compile-time [early errors][].
 
 ##### Arbitrary associativity
-[TO DO]
+[TODO]
 
 #### “Make my code easier to read.”
 The new syntax should increase the human readability and writability of much
@@ -982,7 +984,7 @@ stringPromise
 
 The introduction to this [motivation][] section already explained much of
 the readability rationale, but it may also be useful to study the
-[examples][] below.
+[examples][].
 
 ##### Distinguishable punctuators
 Another important aspect of code readability is the visual distinguishability of
@@ -1748,7 +1750,7 @@ reasons. This proposal will instead use the planned future new syntax
 **This proposal will use Contains to determine whether a pipeline’s body uses
 its `#` topic reference.** This is so that many [footguns may be statically
 detected as an early error][static analyzability] – for instance, using a
-pipeline in topical style without ever using its topic in its body [TO DO: Link].
+pipeline in topical style without ever using its topic in its body [TODO: Link].
 
 Contains does not penetrate into the bodies of function and method definitions,
 hiding them from the rules in outside contexts. All definitions for functions,
@@ -1767,7 +1769,7 @@ This proposal further extends that exception so that arrow functions also reveal
 any use of `#` within their bodies. This is because arrow functions, alone among
 functions, also do not rebind or shadow the outer context’s topic. (`#` cannot
 be used within arrow-function parameter lists or any function’s parameter list.)
-See [TO DO: Topics and inner functions].
+See [TODO: Topics and inner functions].
 
 <details>
 
@@ -1815,7 +1817,7 @@ their intent.
 * Pipelines that are in topical style but that do not ever use their topics
   anywhere in their bodies, such as `x |> 3`, are an early error. Such expressions
   would be always useless and almost certainly not what the author had intended.
-  [TO DO: Link.]
+  [TODO: Link.]
 
   One such footgun has already been mentioned in both the section on the Goal
   [static analyzability][] and the section on the [Contains][] rule.
@@ -1831,7 +1833,7 @@ their intent.
   meaning.
 
   With this early error, the developer is forced to clarify their `yield`:
-  either `x |> (yield #) |> f` or `x |> (yield # |> f)`. [TO DO: Link.]
+  either `x |> (yield #) |> f` or `x |> (yield # |> f)`. [TODO: Link.]
 
 ### Other static semantic rules
 
@@ -1867,10 +1869,10 @@ reference; it is a topic reference, its own thing.</summary>
 </details>
 
 ## Runtime semantics
-[TO DO]
+[TODO]
 
 ### Topic resolution
-Resolving the topic reference is a [TO DO]
+Resolving the topic reference is a [TODO]
 
 #### Lexical Environments
 
@@ -1933,20 +1935,20 @@ whenever such code is evaluated at runtime. </summary>
 
 ***
 
-Any topic-binding syntactic [TO DO]
+Any topic-binding syntactic [TODO]
 
 A topic environment is a Lexical Environment that corresponds
 
-[TO DO: Change “topical style” to “topic style”, to be consistent with “topic
+[TODO: Change “topical style” to “topic style”, to be consistent with “topic
 environment”. After all, this is a style of topics, not a style that itself
 is “topical” in the usual adjectival sense.]
 
-[TO DO]
+[TODO]
 
 #### Abstract operations
 **Resolve Topic** is a new abstract operation that acts upon a Lexical Environment.
 
-[TO DO]
+[TODO]
 
 ### Topic reference • Evaluation
 When evaluated during runtime, the topic reference uses the Resolve Topic
@@ -1956,11 +1958,11 @@ abstract operation on the running execution context’s lexical environment.
 
 * **Evaluation**
   * **_Primary Expression_ : `#`**
-    * Return ? Resolve Topic([TO DO])
+    * Return ? Resolve Topic([TODO])
 
 </details>
 
-[TO DO: Define Resolve Topic abstract operation]
+[TODO: Define Resolve Topic abstract operation]
 
 #### Topical style • Evaluation
 **If a pipeline** of the form _topic_ |> _body_ is ***not* match the [bare style
@@ -1973,13 +1975,13 @@ assuming that the topic value is first bound to the topic reference within the
 body scope.</summary>
 
 But more precisely, it binds the topic to the pipeline’s head value then
-evaluates the RHS [TO DO]
+evaluates the RHS [TODO]
 
 * **Evaluation**
   * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_
     1. Let _head Value_ be the result of evaluating _Pipeline Expression_.
-    2. [TO DO: Create topic environment]
-    3. [TO DO: Evaluate body in new environment]
+    2. [TODO: Create topic environment]
+    3. [TODO: Evaluate body in new environment]
 
 Topical style behaves like **`do { const ` _topic Identifier_ `=` _topic_`;
 `_substituted Body_` }`**, where:
@@ -1990,7 +1992,7 @@ Topical style behaves like **`do { const ` _topic Identifier_ `=` _topic_`;
 * And _substituted Body_ is _body_ but with every instance of outside of
   the topic reference replaced by _topic Variable_.
 
-[TO DO: Add link to term-rewriting appendix.]
+[TODO: Add link to term-rewriting appendix.]
 
 </details>
 
@@ -2047,14 +2049,14 @@ This algorithm was adapted from [ECMAScript `new` operator, § RS: Evaluation][
   _Pipeline Expression_, defined previously.
 
   * **_Pipeline Bare Constructor Call_** : `new` _Simple Reference_
-    * [TO DO: Can we use Evaluate New if _Simple Reference_ is technically not the
+    * [TODO: Can we use Evaluate New if _Simple Reference_ is technically not the
       same as Member Expression? Should we just use Member Expression with some
       limitations?]
 
 </details>
 
 ### Pipeline-level expressions
-During runtime, [TO DO]
+During runtime, [TODO]
 
 <details open>
 
@@ -2069,24 +2071,24 @@ During runtime, [TO DO]
 </details>
 
 ## Relations to other work
-[TO DO: https://github.com/gajus/babel-plugin-transform-function-composition]
+[TODO: https://github.com/gajus/babel-plugin-transform-function-composition]
 
-[TO DO: refer to #background list of programming languages]
+[TODO: refer to #background list of programming languages]
 
 ### Other ECMAScript proposals
-[TO DO: `do` expressions]
+[TODO: `do` expressions]
 
-[TO DO: Partial application: “topic reference” vs. “placeholder”.]
+[TODO: Partial application: “topic reference” vs. “placeholder”.]
 
-[TO DO: Private class fields and `#`.]
+[TODO: Private class fields and `#`.]
 
-[TO DO: Class decorators and `@`.]
+[TODO: Class decorators and `@`.]
 
-[TO DO: Block params: https://github.com/samuelgoto/proposal-block-params]
+[TODO: Block params: https://github.com/samuelgoto/proposal-block-params]
 
-[TO DO: Function bind: https://github.com/zenparsing/es-function-bind]
+[TODO: Function bind: https://github.com/zenparsing/es-function-bind]
 
-[TO DO: pattern matching https://github.com/tc39/proposal-pattern-matching]
+[TODO: pattern matching https://github.com/tc39/proposal-pattern-matching]
 
 ### Possible future extensions to the topic concept
 <details open>
@@ -2099,7 +2101,7 @@ extensive, unified example][Perl 6 topicalization]. Integration of topic with
 syntax enables especially pithy, terse [tacit programming][].
 
 In addition, many JavaScript console [REPLs][], such as those of the WebKit Web
-Inspector and the Node.js interactive console… [TO DO]
+Inspector and the Node.js interactive console… [TODO]
 
 Several disadvantages to these prior approaches may increase the probability of
 developer surprise, in which “surprise” refers to behavior difficult to predict
@@ -2119,18 +2121,18 @@ However, JavaScript’s topic reference `#` is different than this prior art. It
 is lexically bound and statically analyzable. It is also cannot be accidentally
 bound; the developer must opt into binding it by using the pipe operator. It
 also cannot be accidentally used; it is a syntax error when `#` is used outside
-of a pipeline body. [TO DO: Link to pertinent grammar sections.]
+of a pipeline body. [TODO: Link to pertinent grammar sections.]
 
 Should this proposal be accepted, the door becomes opened to extending the topic
 concept to other syntax forms, potentially multiplying its benefits toward
-reading and writing, while perhaps preserving [static analyzability][] and… [TO DO]
+reading and writing, while perhaps preserving [static analyzability][] and… [TODO]
 
-[TO DO: Note on forward compatibility with these possibilities.]
+[TODO: Note on forward compatibility with these possibilities.]
 
-[TO DO: Add, to above, a version of second example with `do` blocks showcasing
+[TODO: Add, to above, a version of second example with `do` blocks showcasing
 the `#|>` idiom.]
 
-[TO DO: Can partial application be integrated with topics?]
+[TODO: Can partial application be integrated with topics?]
 
 #### Headless property access
 This example demonstrates a possible future “headless property” syntax in which
@@ -2186,7 +2188,7 @@ pipeline. A semicolon would required to separate the possible callee and the
 headless property. More exploration would be needed to assess how severe this
 hazard would be compared to the benefits it would bring.)
 
-[TO DO: Add handling of `yield`/`await` statements versus expressions.
+[TODO: Add handling of `yield`/`await` statements versus expressions.
 Example: Is
 `function * () => yield |> 3` grouped as
 `function * () => (yield) |> 3` or is it
@@ -2229,7 +2231,7 @@ antecedent `for (const i of … { … })`.
 
 An additional tacit `for` loop form, completely lacking a parenthesized
 antecedent, would also be added. This tacit form is what is used in this example.
-[TO DO: Link to section on deep nesting.] This example also uses the hypothetical
+[TODO: Link to section on deep nesting.] This example also uses the hypothetical
 headless pipelining syntax from above.
 
 <table>
@@ -2273,7 +2275,7 @@ antecedent `for await (const i of …) { … }`.
 
 An additional tacit `for await` loop form, completely lacking a parenthesized
 antecedent, would also be added. This tacit form is what is used in this
-example. [TO DO: Link to section on deep nesting.] This example also uses the
+example. [TODO: Link to section on deep nesting.] This example also uses the
 hypothetical headless pipelining syntax from above.
 
 <table>
@@ -2322,7 +2324,7 @@ rules imposed upon `#` in pipeline bodies and elsewhere.
 
 As is already possible, a tacit `function` definition, completely lacking a
 parenthesized antecedent, could also be used. This tacit form is what is used in
-this example. [TO DO: Link to section on deep nesting.] This example also uses
+this example. [TODO: Link to section on deep nesting.] This example also uses
 the hypothetical headless property syntax from above.
 
 <table>
@@ -2537,7 +2539,7 @@ function getLength (vector) {
 #### Tacit error capture
 With this smart-pipe proposal only, all `try` statements’ `catch` clauses would
 prohibit the use of `#` within their bodies, except where `#` is inside an inner
-pipeline inside the `catch` clause. [TO DO: Link to sections explaining these
+pipeline inside the `catch` clause. [TODO: Link to sections explaining these
 inner block rules.]
 
 With another, future proposal, all `catch` causes would implicitly bind
@@ -2548,7 +2550,7 @@ antecedent `try { … } catch (error) { … }`.
 An additional bare `catch` form, completely lacking a parenthesized antecedent,
 has already been proposed as [ECMAScript optional catch binding][]. This bare
 form would also support implicit `#` binding, serving as the fully tacit form
-used in this example. [TO DO: Link to section on deep nesting.] The bare form,
+used in this example. [TODO: Link to section on deep nesting.] The bare form,
 along with the hypothetical headless property syntax from above, are
 demonstrated here.
 
@@ -2640,20 +2642,20 @@ An alternate solution without metaprogramming topics is not yet specified by the
 current proposal for [ECMAScript block parameters][].
 
 ```js
-class CompletionRecord { [[TO DO]] }
+class CompletionRecord { [[TODO]] }
 
 function select (value, callback) {
   const contextTopic =
-    [[TO DO: create completion record]]
+    [[TODO: create completion record]]
   return callback(topic) // TO DO
 }
 
-function otherwise (callback) { [[TO DO]] }
+function otherwise (callback) { [[TODO]] }
 
 function when (testValue, callback) {
   const contextTopic = function.topic
   return match (contextTopic) {
-    [TO DO]:
+    [TODO]:
       |> applyWhen(#, testValue, callback)
     else:
       throw new Error('when used outside select block')
@@ -2674,8 +2676,8 @@ function applyWhenArray (contextTopic, testArray) {
 
 function applyWhenValue (contextTopic, testArray) {
   return #[Symbol.matches](contextValue)
-    ? contextTopic |> callback |> [[TO DO]]
-    : [[TO DO: Pass to next when]]
+    ? contextTopic |> callback |> [[TODO]]
+    : [[TODO: Pass to next when]]
 }
 ```
 ***
@@ -2698,7 +2700,7 @@ select ('world') {
 ### Alternative solutions explored
 There are a number of other ways of potentially accomplishing the above use
 cases. However, the authors of this proposal believe that the smart pipe
-operator may be the best choice. [TO DO]
+operator may be the best choice. [TODO]
 
 ## Appendix • Explanation of nomenclature
 <details open>
