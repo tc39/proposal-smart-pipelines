@@ -2353,6 +2353,7 @@ const doubleThenSquareThenHalfAsync =
 From the proposal for [syntactic functional composition][]
 by [Gilbert “mindeavor”][mindeavor].
 
+<tr>
 <td>
 
 ```js
@@ -2404,6 +2405,8 @@ let newScore = player.score
   |> add(7, ?)
   |> clamp(0, 100, ?)
 ```
+
+<tr>
 
 <tr>
 <td>
