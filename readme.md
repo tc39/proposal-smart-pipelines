@@ -233,7 +233,7 @@ equivalent to:
   |> new User.Message
 ```
 
-Being able to automatically detect this [bare style][] is the [**smart** part
+Being able to automatically detect this **“bare style”** is the [**smart** part
 of this “smart pipe operator”][smart body syntax].
 
 <details open>
@@ -396,35 +396,82 @@ meaning of their code.
 
 ##### Expressive versatility
 JavaScript is a language rich with [expressions of numerous kinds][MDN
-expressions and operators], each of which may usefully transform data from one
+operator predecence], each of which may usefully transform data from one
 form to another. There is **no single type** of expression that forms a
 **majority of used expressions**.
 
-* Arithmetic operations.
-* Array literals.
-* Arrow functions.
-* Assignment operations.
-* `await` expressions.
-* Class definitions.
-* Conditional operations.
-* Constructor calls one argument.
-* Constructor calls with many n-ary arguments.
-* Equality operations.
-* Function calls with one unary argument.
-* Function calls with many n-ary arguments.
-* Function and async-function definitions.
-* [Functional partial application (eventually)][Syntactic partial application].
-* Generator and async-generator definitions.
-* `instanceof` and `in` operations.
-* Object literals.
-* Property accessors and method calls.
-* References to variables, `this`, and `new.target`.
-* Regular-expression literals.
-* `super` calls.
-* Template literals.
-* `typeof` operations.
-* Unary function composition (eventually?).
-* `yield` expressions.
+<table>
+<tr>
+<td>
+
+ 1. `undefined` and `null`.
+ 2. Boolean literals.
+ 3. String literals.
+ 4. Regular-expression literals.
+
+<td>
+
+ 5. Template literals.
+ 6. Array literals.
+ 7. Object literals.
+
+<tr>
+<td>
+
+ 8. Variable references.
+ 9. Property accessors.
+10. `this`.
+11. `new.target`.
+
+<td>
+
+13. Arithmetic operations.
+14. Bitwise operations.
+15. Logical operations.
+
+<tr>
+<td>
+
+16. Equality operations.
+17. `instanceof` and `in` operations.
+18. Conditional operations.
+
+<td>
+
+19. Unary function calls.
+20. Unary constructor calls.
+21. N-ary function calls.
+22. N-ary constructor calls.
+23. `super` calls.
+
+<tr>
+<td>
+
+23. Arrow functions.
+24. Function definitions.
+25. Generator definitions.
+
+<td>
+
+26. Async-function definitions.
+27. Async-generator definitions.
+28. Class definitions.
+
+<tr>
+<td>
+
+29. `typeof` operations.
+30. `void` expressions.
+31. `await` expressions.
+32. `yield` expressions.
+
+<td>
+
+33. Functional partial application?
+34. Unary-function composition?
+35. Function binding?
+
+</table>
 
 The goal of the pipe operator is to untangle deeply nested expressions into flat
 threads of postfix expressions. To limit it to only one type of expression, even
