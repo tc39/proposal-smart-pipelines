@@ -236,7 +236,408 @@ equivalent to:
 Being able to automatically detect this **“bare style”** is the [**smart** part
 of this “smart pipe operator”][smart body syntax].
 
+## Examples
+
 <details open>
+
+### Basic concepts
+
+<details>
+
+| With smart pipes                     | Status quo                                    |
+| ------------------------------------ | --------------------------------------------- |
+|`x \|> f |> # + 2 |> # * 3 |> -# |> g`|`g(-(f(x) + 2) * 3)`                           |
+
+This next example is adapted from the [original pipe-operator proposal][first
+pipe-operator proposal].\
+([Gilbert “mindeavor”][mindeavor] &c. ECMA International. 2017–2018. BSD License.)
+
+<table>
+<thead>
+<tr>
+<th>With smart pipes
+<th>Status quo
+
+<tbody>
+<tr>
+
+<td>
+
+```js
+function doubleSay (str, separator) {
+  return `${str}${separator}${string}`
+}
+
+function capitalize (str) {
+  return str[0].toUpperCase()
+    + str.substring(1)
+}
+
+stringPromise
+  |> await #
+  |> # ?? throw new TypeError()
+  |> doubleSay(#, ', ')
+  |> capitalize |> # + '!'
+  |> new User.Message
+```
+Note that `|> capitalize` is a bare unary function call. The `#` is tacitly,
+invisibly implied. `|> capitalize(#)` would work but the `#` is unnecessary.
+
+Ditto for `|> new User.Message`, which is a bare unary constructor call,
+abbreviated from `|> new User.Message(#)`.
+
+This is the [smart part of the pipe operator][smart body syntax], which can
+distinguish between two syntax styles (bare vs. topical) by using a simple rule:
+bare uses only identifiers, dots, and `new`, and never parentheses, brackets,
+braces, or other operators.
+
+<td>
+
+```js
+function doubleSay (str, separator) {
+  return `${str}${separator}${str}`
+}
+
+function capitalize (str) {
+  return str[0].toUpperCase()
+    + str.substring(1)
+}
+
+new User.Message(
+  capitalizedString(
+    doubledSay(
+      (await stringPromise)
+        ?? throw new TypeError()
+    )
+  ) + '!'
+)
+```
+In contrast to the version with pipes, this code is deeply nested, not flat. The
+expression has four levels of indentation instead of two. Reading its data flow
+requires checking both the beginning and end of each expression, and each step
+expression gradually increases in size. Inserting or removing any step of the
+data flow also requires changes to the indentation of any previous steps’ lines.
+
+<tr>
+<td>
+
+```js
+stringPromise
+  |> await #
+  |> # ?? throw new TypeError()
+  |> `${#}, ${#}`
+  |> #[0].toUpperCase() + #.substring(1)
+  |> # + '!'
+  |> new User.Message
+```
+When tiny functions are only used once, and their bodies would be obvious and
+self-documenting in meaning, they might be ritual boilerplate that a developer
+may prefer to inline.
+
+<td>″″
+
+</table>
+
+</details>
+
+#### Multiple topic references
+<details open>
+<summary>The topic reference may be used multiple times in a pipeline body. Each
+use refers to the same value (wherever the topic reference is not overridden by
+another, inner pipeline’s topical scope). Because it is bound to the result of
+the topic, the topic is still only ever evaluated once.</summary>
+
+The lines in each of the following rows are equivalent.
+
+| With smart pipes                 | Block                                             |
+| -------------------------------- | ------------------------------------------------- |
+|`… \|> f(#, #)`                   |`const $ = …; f($, $)`                             |
+|`… \|> [#, # * 2, # * 3]`         |`const $ = …; [$, $ * 2, $ * 3]`                   |
+
+</details>
+
+### Inner blocks
+<details open>
+<summary>The body of a pipeline may contain an inner arrow function but no other
+type of block expression.</summary>
+
+The lines in each of the following rows are equivalent.
+
+| With smart pipes                 | Block                                              |
+| -------------------------------- | -------------------------------------------------- |
+|`… \|> x => # + x`                |`const $ = …; x => # + x`                           |
+|`… \|> settimeout(() => # * 5)`   |`const $ = …; settimeout(() => $ * 5)`              |
+
+However, you cannot use use topic references inside of other types of blocks:
+function, async function, generator, async generator, or class.
+
+More precisely, all block expressions (other than arrow functions) shadow any
+outer lexical context’s topic with its own *absence* of a topic. This behavior
+is in order to fulfill both [Goals 3 and 6][goals].
+
+| With smart pipes                  | Syntax error                                      |
+| --------------------------------- |-------------------------------------------------- |
+|`… \|> function () { return # }`   | 🚫 Topic never used by pipeline’s body.
+|`… \|> class { m: () { return # }}`| 🚫 Topic never used by pipeline’s body.
+
+</details>
+
+### Nested pipelines
+<details open>
+<summary>Both the head and the body of a pipeline may contain nested inner
+pipelines. Nested pipelines in the body is not encouraged, but it is still
+permitted.</summary>
+
+The lines in each of the following rows are equivalent.
+
+| With smart pipes                 | Block                                              |
+| -------------------------------- | -------------------------------------------------- |
+|`… \|> f(() => f(#) * 5)`         |`const $ = …; f(x => f($) * 5)`                     |
+|`… \|> f(() => f(#) \|> # * 5)`   |`const $ = …; f(x => f($) \|> # * 5)`               |
+|`… \|> f(() => # \|> f \|> # * 5)`|`const $ = …; f(x => $ \|> f \|> # * 5)`            |
+
+[TO DO]
+
+</details>
+
+### Underscore.js
+[Underscore.js][]. [Jeremy Ashkenas][jashkenas] &c. 2009–2018. MIT License.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipes
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+function (obj, pred, context) {
+  return obj
+    |> isArrayLike(#) ? _.findIndex : _.findKey
+    |> #(obj, pred, context)
+    |> (# !== void 0 && # !== -1)
+      ? obj[#] : undefined;
+}
+```
+
+<td>
+
+```js
+function (obj, pred, context) {
+  var key;
+  if (isArrayLike(obj)) {
+    key = _.findIndex(obj, pred, context);
+  } else {
+    key = _.findKey(obj, pred, context);
+  }
+  if (key !== void 0 && key !== -1)
+    return obj[key];
+}
+```
+
+<tr>
+<td>
+
+```js
+function (obj, pred, context) {
+  return pred
+    |> cb
+    |> _.negate
+    |> _.filter(obj, #, context)
+}
+```
+
+<td>
+
+```js
+function (obj, pred, context) {
+  return _.filter(obj,
+    _.negate(cb(pred)),
+    context
+  )
+}
+```
+
+<tr>
+<td>
+
+```js
+function (
+  srcFn, boundFn, ctxt, callingCtxt, args
+) {
+  if (!(callingCtxt instanceof boundFn))
+    return srcFn.apply(ctxt, args);
+  var self = srcFn
+    |> #.prototype |> baseCreate;
+  return self
+    |> srcFn.apply(#, args)
+    |> _.isObject(#) ? # : self;
+}
+```
+
+<td>
+
+```js
+function (
+  srcFn, boundFn,
+  ctxt, callingCtxt, args
+) {
+  if (!(callingCtxt instanceof boundFn))
+    return srcFn.apply(ctxt, args);
+  var self = baseCreate(srcFn.prototype);
+  var result = srcFn.apply(self, args);
+  if (_.isObject(result)) return result;
+  return self
+}
+```
+
+<tr>
+<td>
+
+```js
+function (obj) {
+  if (obj == null) return 0;
+  return obj |> isArrayLike
+    ? obj.length
+    : obj |> _.keys |> #.length;
+}
+```
+
+<td>
+
+```js
+function (obj) {
+  if (obj == null) return 0;
+  return isArrayLike(obj)
+    ? obj.length
+    : _.keys(obj).length;
+}
+```
+
+</table>
+
+### Pify
+[Pify][]. [Sindre Sorhus][sindresorhus] &c. 2015–2018. MIT License.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipes
+<th>Status quo
+
+<tbody>
+<tr>
+
+<td>
+
+```js
+'package.json'
+  |> await pify(fs.readFile)(#, 'utf8')
+  |> JSON.parse |> #.name
+  |> console.log
+```
+
+<td>
+
+```js
+pify(fs.readFile)('package.json', 'utf8')
+  .then(data => {
+    console.log(JSON.parse(data).name)
+  })
+```
+
+</table>
+
+### Fetch Web Standard
+[Fetch Standard][]. [Anne van Kesteren][annevk] &c. 2011–2018. WHATWG. Creative
+Commons BY.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipes
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+'/music/pk/altes-kamuffel'
+  |> await fetch(#)
+  |> await #.blob()
+  |> playBlob
+```
+
+<td>
+
+```js
+fetch('/music/pk/altes-kamuffel')
+  .then(res => res.blob())
+  .then(playBlob)
+```
+
+<tr>
+<td>
+
+```js
+'https://example.com/'
+  |> await fetch(#, { method: 'HEAD' })
+  |> #.headers.get('content-type')
+  |> log
+```
+
+<td>
+
+```js
+fetch('https://example.com/',
+  { method: 'HEAD' }
+).then(res =>
+  log(res.headers.get('content-type'))
+)
+```
+
+<tr>
+<td>
+
+```js
+'https://pk.example/berlin-calling'
+  |> await fetch(#, { mode: 'cors' });
+response
+  |> #.headers.get('content-type')
+  |> #??.toLowerCase()
+  |> #.indexOf('application/json')
+  |> # >= 0
+  |> # ? response : throw new TypeError()
+  |> await #.json()
+  |> processJSON
+```
+
+<td>
+
+```js
+fetch('https://pk.example/berlin-calling',
+  { mode: 'cors' }
+).then(response => {
+  if (response.headers.get('content-type')
+    ??.toLowerCase()
+    .indexOf('application/json') >= 0
+  ) {
+    return response.json()
+  } else {
+    throw new TypeError()
+  }
+}).then(processJSON)
+```
+
+<td>
+
+</table>
+
+</details>
 
 ### Goals
 
@@ -700,405 +1101,6 @@ with learnability itself. However, a syntax that is simple but expressive – an
 most of all, readable – could well be easier to learn. Its up-front cost in
 learning could be small, particularly in comparison to the large gains in
 readability and comprehensibility that it might bring to code in general.
-
-</details>
-
-## Examples
-
-### Basic concepts
-
-#### Multiple topic references
-<details open>
-<summary>The topic reference may be used multiple times in a pipeline body. Each
-use refers to the same value (wherever the topic reference is not overridden by
-another, inner pipeline’s topical scope). Because it is bound to the result of
-the topic, the topic is still only ever evaluated once.</summary>
-
-The lines in each of the following rows are equivalent.
-
-| With smart pipes                 | Block                                             |
-| -------------------------------- | ------------------------------------------------- |
-|`… \|> f(#, #)`                   |`const $ = …; f($, $)`                             |
-|`… \|> [#, # * 2, # * 3]`         |`const $ = …; [$, $ * 2, $ * 3]`                   |
-
-</details>
-
-#### Inner blocks
-<details open>
-<summary>The body of a pipeline may contain an inner arrow function but no other
-type of block expression.</summary>
-
-The lines in each of the following rows are equivalent.
-
-| With smart pipes                 | Block                                              |
-| -------------------------------- | -------------------------------------------------- |
-|`… \|> x => # + x`                |`const $ = …; x => # + x`                           |
-|`… \|> settimeout(() => # * 5)`   |`const $ = …; settimeout(() => $ * 5)`              |
-
-However, you cannot use use topic references inside of other types of blocks:
-function, async function, generator, async generator, or class.
-
-More precisely, all block expressions (other than arrow functions) shadow any
-outer lexical context’s topic with its own *absence* of a topic. This behavior
-is in order to fulfill both [Goals 3 and 6][goals].
-
-| With smart pipes                  | Syntax error                                      |
-| --------------------------------- |-------------------------------------------------- |
-|`… \|> function () { return # }`   | 🚫 Topic never used by pipeline’s body.
-|`… \|> class { m: () { return # }}`| 🚫 Topic never used by pipeline’s body.
-
-</details>
-
-#### Nested pipelines
-<details open>
-<summary>Both the head and the body of a pipeline may contain nested inner
-pipelines. Nested pipelines in the body is not encouraged, but it is still
-permitted.</summary>
-
-The lines in each of the following rows are equivalent.
-
-| With smart pipes                 | Block                                              |
-| -------------------------------- | -------------------------------------------------- |
-|`… \|> f(() => f(#) * 5)`         |`const $ = …; f(x => f($) * 5)`                     |
-|`… \|> f(() => f(#) \|> # * 5)`   |`const $ = …; f(x => f($) \|> # * 5)`               |
-|`… \|> f(() => # \|> f \|> # * 5)`|`const $ = …; f(x => $ \|> f \|> # * 5)`            |
-
-[TO DO]
-
-</details>
-
-#### First pipe-operator proposal
-[tc39/pipeline-operator-proposal][first pipe-operator proposal]. [Gilbert
-“mindeavor”][mindeavor] &c. ECMA International. 2017–2018. BSD License.
-
-<table>
-<thead>
-<tr>
-<th>With smart pipes
-<th>Status quo
-
-<tbody>
-<tr>
-
-<td>
-
-```js
-function doubleSay (str, separator) {
-  return `${str}${separator}${string}`
-}
-
-function capitalize (str) {
-  return str[0].toUpperCase()
-    + str.substring(1)
-}
-
-stringPromise
-  |> await #
-  |> # ?? throw new TypeError()
-  |> doubleSay(#, ', ')
-  |> capitalize |> # + '!'
-  |> new User.Message
-```
-Note that `|> capitalize` is a bare unary function call. The `#` is tacitly,
-invisibly implied. `|> capitalize(#)` would work but the `#` is unnecessary.
-
-Ditto for `|> new User.Message`, which is a bare unary constructor call,
-abbreviated from `|> new User.Message(#)`.
-
-This is the [smart part of the pipe operator][smart body syntax], which can
-distinguish between two syntax styles (bare vs. topical) by using a simple rule:
-bare uses only identifiers, dots, and `new`, and never parentheses, brackets,
-braces, or other operators.
-
-<td>
-
-```js
-function doubleSay (str, separator) {
-  return `${str}${separator}${str}`
-}
-
-function capitalize (str) {
-  return str[0].toUpperCase()
-    + str.substring(1)
-}
-
-new User.Message(
-  capitalizedString(
-    doubledSay(
-      (await stringPromise)
-        ?? throw new TypeError()
-    )
-  ) + '!'
-)
-```
-In contrast to the version with pipes, this code is deeply nested, not flat. The
-expression has four levels of indentation instead of two. Reading its data flow
-requires checking both the beginning and end of each expression, and each step
-expression gradually increases in size. Inserting or removing any step of the
-data flow also requires changes to the indentation of any previous steps’ lines.
-
-<tr>
-<td>
-
-```js
-stringPromise
-  |> await #
-  |> # ?? throw new TypeError()
-  |> `${#}, ${#}`
-  |> #[0].toUpperCase() + #.substring(1)
-  |> # + '!'
-  |> new User.Message
-```
-When tiny functions are only used once, and their bodies would be obvious and
-self-documenting in meaning, they might be ritual boilerplate that a developer
-may prefer to inline.
-
-<td>″″
-
-</table>
-
-### Real-world cases
-<details open>
-<summary>It is also useful to look at code from real-world libraries or
-standards and compare their readability with smart-pipelined versions. Numerous
-examples of code that may benefit from smart pipelines abound.</summary>
-
-#### Underscore.js
-[Underscore.js][]. [Jeremy Ashkenas][jashkenas] &c. 2009–2018. MIT License.
-
-<table>
-<thead>
-<tr>
-<th>With smart pipes
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-function (obj, pred, context) {
-  return obj
-    |> isArrayLike(#) ? _.findIndex : _.findKey
-    |> #(obj, pred, context)
-    |> (# !== void 0 && # !== -1)
-      ? obj[#] : undefined;
-}
-```
-
-<td>
-
-```js
-function (obj, pred, context) {
-  var key;
-  if (isArrayLike(obj)) {
-    key = _.findIndex(obj, pred, context);
-  } else {
-    key = _.findKey(obj, pred, context);
-  }
-  if (key !== void 0 && key !== -1)
-    return obj[key];
-}
-```
-
-<tr>
-<td>
-
-```js
-function (obj, pred, context) {
-  return pred
-    |> cb
-    |> _.negate
-    |> _.filter(obj, #, context)
-}
-```
-
-<td>
-
-```js
-function (obj, pred, context) {
-  return _.filter(obj,
-    _.negate(cb(pred)),
-    context
-  )
-}
-```
-
-<tr>
-<td>
-
-```js
-function (
-  srcFn, boundFn, ctxt, callingCtxt, args
-) {
-  if (!(callingCtxt instanceof boundFn))
-    return srcFn.apply(ctxt, args);
-  var self = srcFn
-    |> #.prototype |> baseCreate;
-  return self
-    |> srcFn.apply(#, args)
-    |> _.isObject(#) ? # : self;
-}
-```
-
-<td>
-
-```js
-function (
-  srcFn, boundFn,
-  ctxt, callingCtxt, args
-) {
-  if (!(callingCtxt instanceof boundFn))
-    return srcFn.apply(ctxt, args);
-  var self = baseCreate(srcFn.prototype);
-  var result = srcFn.apply(self, args);
-  if (_.isObject(result)) return result;
-  return self
-}
-```
-
-<tr>
-<td>
-
-```js
-function (obj) {
-  if (obj == null) return 0;
-  return obj |> isArrayLike
-    ? obj.length
-    : obj |> _.keys |> #.length;
-}
-```
-
-<td>
-
-```js
-function (obj) {
-  if (obj == null) return 0;
-  return isArrayLike(obj)
-    ? obj.length
-    : _.keys(obj).length;
-}
-```
-
-</table>
-
-#### Pify
-[Pify][]. [Sindre Sorhus][sindresorhus] &c. 2015–2018. MIT License.
-
-<table>
-<thead>
-<tr>
-<th>With smart pipes
-<th>Status quo
-
-<tbody>
-<tr>
-
-<td>
-
-```js
-'package.json'
-  |> await pify(fs.readFile)(#, 'utf8')
-  |> JSON.parse |> #.name
-  |> console.log
-```
-
-<td>
-
-```js
-pify(fs.readFile)('package.json', 'utf8')
-  .then(data => {
-    console.log(JSON.parse(data).name)
-  })
-```
-
-</table>
-
-#### Fetch Web Standard
-[Fetch Standard][]. [Anne van Kesteren][annevk] &c. 2011–2018. WHATWG. Creative
-Commons BY.
-
-<table>
-<thead>
-<tr>
-<th>With smart pipes
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-'/music/pk/altes-kamuffel'
-  |> await fetch(#)
-  |> await #.blob()
-  |> playBlob
-```
-
-<td>
-
-```js
-fetch('/music/pk/altes-kamuffel')
-  .then(res => res.blob())
-  .then(playBlob)
-```
-
-<tr>
-<td>
-
-```js
-'https://example.com/'
-  |> await fetch(#, { method: 'HEAD' })
-  |> #.headers.get('content-type')
-  |> log
-```
-
-<td>
-
-```js
-fetch('https://example.com/',
-  { method: 'HEAD' }
-).then(res =>
-  log(res.headers.get('content-type'))
-)
-```
-
-<tr>
-<td>
-
-```js
-'https://pk.example/berlin-calling'
-  |> await fetch(#, { mode: 'cors' });
-response
-  |> #.headers.get('content-type')
-  |> #??.toLowerCase()
-  |> #.indexOf('application/json')
-  |> # >= 0
-  |> # ? response : throw new TypeError()
-  |> await #.json()
-  |> processJSON
-```
-
-<td>
-
-```js
-fetch('https://pk.example/berlin-calling',
-  { mode: 'cors' }
-).then(response => {
-  if (response.headers.get('content-type')
-    ??.toLowerCase()
-    .indexOf('application/json') >= 0
-  ) {
-    return response.json()
-  } else {
-    throw new TypeError()
-  }
-}).then(processJSON)
-```
-
-<td>
-
-</table>
 
 </details>
 
