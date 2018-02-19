@@ -1992,26 +1992,48 @@ of Lexical Environments is called an **Environment Record**. Syntactic
 structures such as functions and blocks each have their own Lexical
 Environments, created whenever such code is evaluated at runtime.
 
-Certain Lexical Environments establish new **topic bindings**; these are called
-**topic environments**. Topic environments are created by topic pipeline
-bodies, as well as function blocks, method blocks, and all other sorts of
-blocks. [TODO: Link to future proposals.]
+The only environments that **bind** their topic are those created by **topic
+pipeline bodies**. Almost every other Lexical Environment **voids** outer topic
+bindings from their scope. Voiding does not affect the visibility of outer
+bindings in any environments other than the topic-voiding environment and those
+that inside it.
 
-This proposal adds one new abstract method to all Environment Records.
+Whether a Lexical Environment binds or voids their topic can be queried by
+a new abstract method for all Environment Records: Get Topic Binding Status.
 
 Method                        | Purpose
 ----------------------------- | --------------------------------------------
-Has Topic Binding ()          | Does the record establish a topic binding?
+Get Topic Binding Status ()   | Returns “bound”, “void”, or null.
 
-[TODO]
+The only Lexical Environments that neither establish nor hide topic bindings are
+those created by **arrow functions** and by **`try` statements**. For these
+environments, their Records’ Get Topic Binding Status returns null.
 
+#### Declarative Environment Records
 [ECMAScript declarative Environment Records][] are the usual lexical environment
-records that are declared by syntax blocks `{`…`}`. [ECMAScript function
-Environment Records][] are a special type of declarative Environment Record.
+records that are declared by syntax blocks `{`…`}`.
+
+Declarative Environment Records has a concrete version of the Get Topic Binding
+Status method. In general, that version returns “void”, because regular declarative
+Environment Records **void** any topic binding from their outside.
+
+<details>
+
+* **Get Topic Binding Status** ()\
+  Return “void”.
+
+</details>
+
+Declarative Environment Records also implement an additional method: Get Topic
+Binding.
 
 Method                        | Purpose
 ----------------------------- | --------------------------------------------
 Get Topic Binding ()          | What is the value of the topic binding?
+
+#### Function Environment Records
+[ECMAScript function Environment Records][] are a special type of declarative
+Environment Record.
 
 ### Abstract Get-Topic-Environment
 
@@ -2027,23 +2049,18 @@ the current lexical context’s ancestors
     3. If _exists_ is true, return _env Rec_.
     4. Let _outer_ be the value of _lex_’s outer environment reference.
     5. If _outer_ is null, return null.
-    6. Set lex to outer.
+    6. Set _lex_ to _outer_.
 
+The loop in step 2 will always terminate because the list of environments always
+ends with the global environment, which has a null outer environment reference.
 
-### Abstract Resolve-Topic
-**Resolve Topic** is a new abstract operation that acts upon a Lexical Environment.
+### Abstract Resolve-Topic-Binding
+**Resolve Topic Binding** is a new abstract operation. It determines the binding
+of the topic `#` using the LexicalEnvironment of the running execution context.
+ResolveThisBinding performs the following steps:
 
-The Resolve Topic abstract operation is used to determine the binding of name
-passed as a String value. The optional argument env can be used to explicitly
-provide the Lexical Environment that is to be searched for the binding. During
-execution of ECMAScript code, ResolveBinding is performed using the following
-algorithm:
-
-If env is not present or if env is undefined, then
-Set env to the running execution context's LexicalEnvironment.
-Assert: env is a Lexical Environment.
-If the code matching the syntactic production that is being evaluated is contained in strict mode code, let strict be true, else let strict be false.
-Return ? GetIdentifierReference(env, name, strict).
+1. Let _envRec_ be Get Topic Environment ().
+2. Return ? _envRec_ . Get Topic Binding ().
 
 ### Topic reference • Evaluation
 When evaluated during runtime, the topic reference uses the Resolve Topic
@@ -2053,7 +2070,7 @@ abstract operation on the running execution context’s lexical environment.
 
 * **Evaluation**
   * **_Primary Expression_ : `#`**
-    * Return ? Resolve Topic ([TODO])
+    * Return ? Resolve Topic ()
 
 </details>
 
@@ -2103,7 +2120,7 @@ This section is adapted from [ECMAScript Property Accessors, § RS: Evaluation]
 
 </details>
 
-#### Bare function call
+#### Bare function call • Evaluation
 If the body is a merely a simple reference, then that identifier is interpreted
 to be a **bare function call**. The pipeline’s value will be the result of
 calling the body with the current topic as its argument.
