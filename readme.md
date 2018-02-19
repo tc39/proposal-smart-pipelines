@@ -2058,19 +2058,7 @@ However, Declarative Environments and [TODO]
 #### Method • Bind Topic Value
 [TO DO]
 
-#### Operation • New Declarative Environment
-[TO DO]
-
-#### Operation • New Object Environment
-[TO DO]
-
-#### Operation • New Function Environment
-[TO DO]
-
-#### Operation • New Global Environment
-[TO DO]
-
-#### Operation • New Module Environment
+#### New-Environment Operations
 [TO DO]
 
 ### Abstract • Get Topic Environment
