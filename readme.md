@@ -279,9 +279,6 @@ of this “smart pipe operator”][smart body syntax].
 
 [TODO: Link to Goals.]
 
-<details open>
-<summary>Table of further motivating examples.</summary>
-
 <table>
 <thead>
 <tr>
@@ -807,12 +804,8 @@ fetch('https://pk.example/berlin-calling',
 
 </table>
 
-</details>
-
 ## Goals
 
-<details open>
-<summary>
 There are seventeen ordered Goals that the smart body syntax tries to fulfill,
 which may be summarized,<br>
 “Don’t break my code,”<br>
@@ -820,7 +813,6 @@ which may be summarized,<br>
 “Don’t shoot me in the foot,”<br>
 “Make my code easier to read,”<br>
 and a few other Goals.
-</summary>
 
 <table>
 <tr>
@@ -1272,12 +1264,9 @@ most of all, readable – could well be easier to learn. Its up-front cost in
 learning could be small, particularly in comparison to the large gains in
 readability and comprehensibility that it might bring to code in general.
 
-</details>
-
 ## Nomenclature
-<details open>
-<summary>Because this proposal introduces several new concepts, it is important
-to use a consistent set of terminology.</summary>
+Because this proposal introduces several new concepts, it is important
+to use a consistent set of terminology.
 
 ### Pipe operator, pipeline, pipeline-level expression
 The binary operator itself `|>` may be referred to as a **pipe**, a **pipe
@@ -1340,26 +1329,17 @@ cannot be manually declared (`const #` is a syntax error), nor can it be
 assigned with a value (`# = 3` is a syntax error). Instead, the topic reference
 is implicitly, lexically bound only within pipeline bodies.
 
-</details>
-
 ## Grammar
 This grammar of the pipeline operator juxtaposes brief rules written for the
 JavaScript developer with formally written changes to the ECMAScript standard.
 The grammar itself is a [context-free grammar supplemented with static
-semantics][syntax and static semantics].
-
-<details>
-<summary>The ECMAScript specification explains further.</summary>
+semantics][syntax and static semantics]. The ECMAScript specification explains:
 
 > A context-free grammar consists of a number of **productions**. Each
 > production has an abstract symbol called a **nonterminal** as its left-hand
 > side, and a sequence of zero or more nonterminal and **terminal** symbols as
 > its right-hand side. For each grammar, the terminal symbols are drawn from a
 > specified alphabet.
-
-</details>
-
-***
 
 This proposal uses the [grammatical notation as that from the ECMAScript
 standard][ECMAScript Notational Conventions, § Grammars] to denote its lexical
@@ -1378,28 +1358,10 @@ and syntactic grammars, with three modifications for human readability:
 
 ### Lexical grammar
 The smart pipe operator adds two new tokens to JavaScript: `|>` the binary pipe,
-and `#` the topic reference.
+and `#` the topic reference. [TODO: Link to spec lexical grammar.]
 
-<details open>
-<summary>The lexical rule for punctuator tokens would be modified so that
-these two tokens are added.</summary>
-
-The specification explains in [ECMAScript Notational Conventions, § Lexical
-Grammar][]:
-
-> A lexical grammar for ECMAScript is given in [ECMAScript Lexical Grammar][].
-> This grammar has as its terminal symbols Unicode code points…It defines a set
-> of productions…that describe how sequences of such code points are translated
-> into a sequence of input elements.
->
-> Input elements other than white space and comments form the terminal symbols
-> for the syntactic grammar for ECMAScript and are called ECMAScript tokens.
-> These tokens are the reserved words, identifiers, literals, and
-> **punctuators** of the ECMAScript language. Moreover, line terminators,
-> although not considered to be tokens, also become part of the stream of input
-> elements and guide the process of automatic semicolon insertion…Simple white
-> space and…comments are discarded and do not appear in the stream of input
-> elements for the syntactic grammar.
+The lexical rule for punctuator tokens would be modified so that these two
+tokens are added.
 
 The _Punctuators_ production is defined in [ECMAScript Punctuators][]. This
 production would be changed from this:
@@ -1422,14 +1384,11 @@ production would be changed from this:
   `=` `+=` `-=` `*=` `%=` `**=`\
   `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
 
-</details>
-
 ### Grammar parameters
-<details open>
-<summary>In the ECMAScript standard, the rules that produce expressions are
-often parameterized with three flags, which are then recursively passed into
-their constituent rules. These parameters thus must also be used by the new
-rules in this proposal.</summary>
+In the ECMAScript standard, the rules that produce expressions are often
+parameterized with three flags, which are then recursively passed into their
+constituent rules. These parameters thus must also be used by the new rules in
+this proposal.
 
 * **_In_**: Whether the current context allows the [`in` relational operator][],
   which is false only in the headers of [`for` iteration statements][].
@@ -1439,35 +1398,11 @@ rules in this proposal.</summary>
   expression/statement (that is, is the current function context an async
   function/generator?).
 
-</details>
-
 ### Syntactic grammar
 The syntactic grammar of JavaScript can transform token sequences (defined by
 the [lexical grammar][]) into **parse trees**: rooted tree data structures made
 of **Parse Nodes**. This is described further in [ECMAScript Lexical Grammar][].
-
-<details open>
-
-> When a stream of code points is to be parsed as an ECMAScript Script or
-> Module, it is first converted to a stream of input elements by repeated
-> application of the lexical grammar; this stream of input elements is then
-> parsed by a single application of the syntactic grammar. The input stream is
-> syntactically in error if the tokens in the stream of input elements cannot be
-> parsed as a single instance of the goal nonterminal (Script or Module), with
-> no tokens left over.
->
-> When a parse is successful, it constructs a parse tree, a rooted tree
-> structure in which each node is a **Parse Node**. Each Parse Node is an
-> instance of a symbol in the grammar; it represents a span of the source text
-> that can be derived from that symbol. The root node of the parse tree,
-> representing the whole of the source text, is an instance of the parse's goal
-> symbol. When a Parse Node is an instance of a nonterminal, it is also an
-> instance of some production that has that nonterminal as its left-hand side.
-> Moreover, it has zero or more children, one for each symbol on the
-> production's right-hand side: each child is a Parse Node that is an instance
-> of the corresponding symbol.
-
-</details>
+[TODO: Correct link to syntactic grammar?]
 
 ### Operator precedence
 As a binary operation forming compound expressions, the [operator precedence and
@@ -1580,13 +1515,12 @@ The topic reference integrates into the ECMAScript syntax as one of the
 needs to be modified so that the `#` appears as one of the types of primary
 expressions.
 
-<details open>
-<summary>An assignment-level expression currently may be a this reference,
-identifier reference, null / undefined / true / false literal, array / object /
+An assignment-level expression currently may be a this reference, identifier
+reference, null / undefined / true / false literal, array / object /
 regular-expression / template literal, function / async-function / generator /
 class expression. These possibilities are given the same parameters that the
-assignment-level expression happens to have also gotten, except where they
-would be unnecessary, such as for the this token.</summary>
+assignment-level expression happens to have also gotten, except where they would
+be unnecessary, such as for the this token.
 
 The old version:
 
@@ -1604,12 +1538,7 @@ The old version:
   * _Template Literal_ [? _Yield_, ? _Await_, ~ _Tagged_]
   * _Cover Parenthesized Expression and Arrow Parameter List_ [? _Yield_, ? _Await_]
 
-</details>
-
-***
-
-<details open>
-<summary>Added to this list would be the topic token.</summary>
+Added to this list would be the topic token.
 
 The new version:
 
@@ -1619,8 +1548,6 @@ The new version:
   * _Identifier Reference_ [? _Yield_, ? _Await_]
   * …
 
-</details>
-
 ### Pipeline-level expressions • Grammar
 The production rule for [ECMAScript Assignment-level Expressions][] needs to be
 modified so that pipe expressions slip in between it and conditional-level
@@ -1628,11 +1555,10 @@ expressions in the hierarchy. Then the conditional-expression rule would be used
 in the production for pipeline-level expressions (also defined soon), preserving
 the unbroken recursive hierarchy of expression types.
 
-<details open>
-<summary>An assignment-level expression currently may be a conditional
-expression, yield expression, arrow function, async arrow function, or
-assignment. These possibilities are given the same parameters that the
-assignment-level expression happens to have also gotten.</summary>
+An assignment-level expression currently may be a conditional expression, yield
+expression, arrow function, async arrow function, or assignment. These
+possibilities are given the same parameters with which the assignment-level
+expression happens to have been also called.
 
 The old version:
 
@@ -1646,12 +1572,8 @@ The old version:
   * _Left Hand Side Expression_ [? _Yield_, ? _Await_]\
     · _Assignment Operator_ · _Assignment Expression_ [? _In_, ? _Yield_, ? _Await_]
 
-</details>
-
-<details open>
-<summary>In this proposal, the conditional-expression production rule would be
-replaced with one for pipeline-level expressions, which will be defined
-next.</summary>
+In this proposal, the conditional-expression production rule would be replaced
+with one for pipeline-level expressions, which will be defined next.
 
 The new version:
 
@@ -1661,10 +1583,6 @@ The new version:
   * _Arrow Function_ [? _In_, ? _Yield_, ? _Await_]
   * …
 
-</details>
-
-***
-
 An expression is a pipeline-level expression (given the usual three [grammar
 parameters][]) only if:
 
@@ -1673,15 +1591,12 @@ parameters][]) only if:
 * Or it is another pipeline-level expression, followed by a `|>` token, then a
   pipeline body (defined next), with the same parameters as above.
 
-<details open>
-<summary>This would be defined in a new production rule.</summary>
+This would be defined in a new production rule.
 
 * **_Pipeline Expression_** [_In_, _Yield_, _Await_] :
   * _Conditional Expression_ [? _In_, ? _Yield_, ? _Await_]
   * _Pipeline Expression_ [? _In_, ? _Yield_, ? _Await_] `|>`\
     _Pipeline Body_ [? _In_, ? _Yield_, ? _Await_]
-
-</details>
 
 ### Smart body syntax
 Most pipelines will use the topic reference `#` in their bodies. As already
@@ -1698,8 +1613,6 @@ constructor, such as with `… |> capitalize` and `… |> new User.Message`. The
 body’s value would then be called as a unary function or constructor, without
 having to use the topic reference as an explicit argument.
 
-<details open>
-
 The two bare-style productions require no parameters, because they can only
 be made up of identifiers, `.`, and `new`.
 
@@ -1708,16 +1621,7 @@ be made up of identifiers, `.`, and `new`.
   * _Pipeline Bare Constructor Call_
   * _Pipeline Topic Body_ [? _In_, ? _Yield_, ? _Await_]
 
-</details>
-
-***
-
-<details open>
-
-<summary>The rules of the two respective styles will be explained in more
-detail, but an overview is given in a table.</summary>
-
-| Valid topic style     | Valid bare style                  | Invalid bare style
+| Valid topic style       | Valid bare style                  | Invalid bare style
 | ----------------------- | --------------------------------- | --------------------
 |`… \|> o(#)`             |`… \|> o`                          |  `… \|> o()` 🚫
 | ″″                      | ″″                                | `… \|> (o)` 🚫
@@ -1738,8 +1642,6 @@ detail, but an overview is given in a table.</summary>
 |`… \|> o.makeFn()(#)`    |`const m = o.makeFn(); … \|> m`    | `… \|> o.makeFn()` 🚫
 |`… \|> new o.makeFn()(#)`|`const m = new o.makeFn(); … \|> m`| `… \|> new o.makeFn()` 🚫
 
-</details>
-
 #### Bare style • Grammar
 The **bare style** supports using simple identifiers, possibly with chains of
 simple property identifiers. If there are any operators, parentheses (including
@@ -1757,12 +1659,8 @@ or _topic_ `|>` _identifier0_`.`_identifier1_`.`_identifier2_\
 or …,\
 then the pipeline is a **bare function call**.
 
-<details open>
-
 * **_Pipeline Bare Function Call_** :
   * _Simple Reference_
-
-</details>
 
 ##### Bare constructor call • Grammar
 If the body starts with `new`, followed by mere identifier, optionally with a
@@ -1775,12 +1673,8 @@ or _topic_ `|> new` _identifier0_`.`_identifier1_`.`_identifier2_\
 or …,\
 then the pipeline is a **bare constructor call**.
 
-<details open>
-
 * **_Pipeline Bare Constructor Call_** :
   * `new` _Simple Reference_
-
-</details>
 
 ##### Simple reference • Grammar
 A **simple reference** is an identifier reference, optionally with a chain of
@@ -1791,8 +1685,6 @@ or _topic_ `|>` _identifier0_`.`_identifier1_\
 or _topic_ `|>` _identifier0_`.`_identifier1_`.`_identifier2_\
 or …), then the pipeline is a **simple reference**.
 
-<details open>
-
 This is achieved by defining the _Simple Reference_ production using [ECMAScript
 _Identifier Reference_][], [ECMAScript _Identifier Name_][], and left recursion,
 in imitation of how [ECMAScript _Member Expression_][] handles method chains.
@@ -1800,8 +1692,6 @@ in imitation of how [ECMAScript _Member Expression_][] handles method chains.
 * **_Simple Reference_** :
   * _Identifier Reference_
   * _Simple Reference_ `.` _Identifier Name_
-
-</details>
 
 ##### Practical consequences
 Therefore, a pipeline in **bare style *never* ** has **parentheses `(…)` or
@@ -1826,12 +1716,8 @@ A topic pipeline body is an expression at the [precedence level once tighter
 than pipeline-level expressions][operator precedence] – that is, it is a
 conditional-level expression.
 
-<details open>
-
 * **_Pipeline Topic Body_** [_In_, _Yield_, _Await_] :
   * _Conditional Expression_ [? _In_, ? _Yield_, ? _Await_]
-
-</details>
 
 ## Static semantics
 The syntactic grammar of JavaScript further relies upon several functions that
@@ -1839,8 +1725,6 @@ analyze its syntactic structures. These functions are polymorphic on the types
 of their input syntactic structures, and their definitions are often also
 recursive. The ECMAScript specification goes into more detail on these **static
 semantic rules** in [ECMAScript Static Semantic Rules][].
-
-<details open>
 
 > Context-free grammars are not sufficiently powerful to express all the rules
 > that define whether a stream of input elements form a valid ECMAScript Script
@@ -1854,10 +1738,6 @@ semantic rules** in [ECMAScript Static Semantic Rules][].
 > production that has multiple alternative definitions will typically have for
 > each alternative a distinct algorithm for each applicable named static
 > semantic rule.
-
-</details>
-
-***
 
 This specification defines additions for the following static semantic rules:
 
@@ -1878,10 +1758,9 @@ method calls: “…._Rule Name_(…)”. For self-consistency, this proposal wi
 that planned method-like syntax.
 
 ### Static Contains
-<details>
-<summary>The ECMAScript standard implicitly defines the Contains rule for all parse
-nodes except where explicitly overridden. Conceptually, a node Contains another node if the latter is somewhere in
-the former.</summary>
+The ECMAScript standard implicitly defines the Contains rule for all parse nodes
+except where explicitly overridden. Conceptually, a node Contains another node
+if the latter is somewhere in the former.
 
 [This quotation from the ECMAScript standard][ECMAScript static semantic rules] is
 modified to use the new method-like syntax.
@@ -1901,10 +1780,6 @@ modified to use the new method-like syntax.
 > 2. Return false.
 >
 > The above definition is explicitly over-ridden for specific productions.
-
-</details>
-
-***
 
 In the ECMAScript standard, the Contains rule is used by many other Static
 Semantic Rules, such as [object initializers’ Computed Property Contains
@@ -1940,8 +1815,6 @@ functions, also do not rebind or shadow the outer context’s topic. (`#` cannot
 be used within arrow-function parameter lists or any function’s parameter list.)
 See [TODO: Topics and inner functions].
 
-<details>
-
 [ECMAScript arrow functions, § SS: Contains][] is amended.
 
 * **Contains**\
@@ -1956,8 +1829,6 @@ See [TODO: Topics and inner functions].
 
   * **_Arrow Parameters_** : _Cover Parenthesized Expression and Arrow Parameter List_\
     [Unchanged.]
-
-</details>
 
 ### Static Early Errors
 Certain syntax errors cannot be detected by the context-free grammar alone yet
@@ -1997,11 +1868,10 @@ With this early error, the developer is forced to clarify their `yield`: either
 
 ### Other static semantic rules
 
-<details open>
-<summary>All productions defined in this proposal are neither function
-definitions nor identifier references. This is the same as almost every other
-expression. In particular, the `#` topic reference is not an identifier
-reference; it is a topic reference, its own thing.</summary>
+All new productions defined in this proposal are neither function definitions
+nor identifier references. This is the same as almost every other expression. In
+particular, the `#` topic reference is not an identifier reference; it is a
+topic reference, its own thing.
 
 * **Is Identifier Ref**
   * **_Primary Expression_** : `#`\
@@ -2025,8 +1895,6 @@ reference; it is a topic reference, its own thing.</summary>
 
   * **_Pipeline Body_** : _Pipeline Topic Body_\
     Return false.
-
-</details>
 
 ## Runtime semantics
 [ECMAScript Notational Conventions, § Algorithm Conventions][] and [ECMAScript
@@ -2100,8 +1968,6 @@ field [[Topic Binding Status]], which is **“void”** by default. It may also 
 the Bind Topic Value method was called). An Environment Record with a **void**
 topic binding may **change** to “clear” or “bound” but **never vice versa**.
 
-<details open>
-
 * **Get Topic Binding Status** ()
   * **Declarative Environment Record**
     1. Let _env Rec_ be the function Environment Record for which the method was
@@ -2118,11 +1984,7 @@ topic binding may **change** to “clear” or “bound” but **never vice vers
   * **Lexical Environment Record**\
     Return “void”.
 
-</details>
-
 #### Method • Get Topic Binding
-<details open>
-
 * **Get Topic Binding** ()
   * **Declarative Environment Record**\
     1. Let _env Rec_ be the declarative Environment Record for which the method
@@ -2132,11 +1994,7 @@ topic binding may **change** to “clear” or “bound” but **never vice vers
   * **Function Environment Record**\
     Inherited from Declarative Environment Record . Get Topic Binding ().
 
-</details>
-
 #### Method • Clear Topic Value
-<details open>
-
 * **Clear Topic Value**
   * **Declarative Environment Record**\
     1. Let _env Rec_ be the declarative Environment Record for which the method
@@ -2148,8 +2006,6 @@ topic binding may **change** to “clear” or “bound” but **never vice vers
     Inherited from Declarative Environment Record . Clear Topic Value ().
 
 #### Method • Bind Topic Value
-<details open>
-
 * **Bind Topic Value** (_V_)
   * **Declarative Environment Record**\
     1. Let _env Rec_ be the declarative Environment Record for which the method
@@ -2160,8 +2016,6 @@ topic binding may **change** to “clear” or “bound” but **never vice vers
     5. Return _V_.
   * **Function Environment Record**\
     Inherited from Declarative Environment Record . Bind Topic Value (_V_).
-
-</details>
 
 ### Abstract • Get Topic Environment
 The new abstract operation Get Topic Environment finds the Environment Record
@@ -2196,17 +2050,11 @@ by definition, never has a topic binding status of “clear”.)
 When evaluated during runtime, the topic reference uses the Resolve Topic
 abstract operation on the running execution context’s lexical environment.
 
-<details open>
-
 * **Evaluation**
   * **_Primary Expression_ : `#`**
     * Return ? Resolve Topic ()
 
-</details>
-
 ### Topic style • Topic Pipeline Body Instantiation
-<details open>
-
 This algorithm was adapted from [ECMAScript Blocks, § RS: Block Declaration
 Instantiation][].
 
@@ -2222,11 +2070,7 @@ _topic_ is the value that will be bound to _env_’s topic.
 4. Assert: _env Rec_ . Get Topic () is undefined.
 5. Perform ! _env Rec_ . Bind Topic Value (_topic_).
 
-</details>
-
 ### Topic style • Evaluation
-<details open>
-
 This algorithm was adapted from [ECMAScript Blocks, § RS: Evaluation][].
 
 * **Evaluation**
@@ -2242,8 +2086,6 @@ This algorithm was adapted from [ECMAScript Blocks, § RS: Evaluation][].
 No matter how control leaves the _Pipeline Topic Body_ the Lexical Environment
 is always restored to its former state.
 
-</details>
-
 Topic style behaves like **`do { const ` _topic Identifier_ `=` _topic_`;
 `_substituted Body_` }`**, where:
 
@@ -2255,12 +2097,9 @@ Topic style behaves like **`do { const ` _topic Identifier_ `=` _topic_`;
 
 [TODO: Add link to term-rewriting appendix.]
 
-</details>
-
 ### Simple reference • Evaluation
-<details open>
-<summary>Simple references’ runtime semantics are exactly the same as the
-member expressions they resemble.</summary>
+Simple references’ runtime semantics are exactly the same as the member
+expressions they resemble.
 
 This section is adapted from [ECMAScript Property Accessors, § RS: Evaluation][].
 
@@ -2271,17 +2110,12 @@ This section is adapted from [ECMAScript Property Accessors, § RS: Evaluation]
       § RS: Evaluation] except that the contained _Simple Reference_ is evaluated
       in step 1.
 
-</details>
-
 ### Bare function call • Evaluation
 If the body is a merely a simple reference, then that identifier is interpreted
 to be a **bare function call**. The pipeline’s value will be the result of
 calling the body with the current topic as its argument.
 
-<details open>
-
-This algorithm was adapted from [ECMAScript Function Calls, § RS:
-Evaluation][].
+This algorithm was adapted from [ECMAScript Function Calls, § RS: Evaluation][].
 
 * **Pipeline Body Evaluation**\
   With parameter _head Value_.
@@ -2296,11 +2130,7 @@ Evaluation][].
        the one element which is _head Value_.
     6. Return ? Evaluate Call(_func_, _ref_, Arguments, _tail Call_).
 
-</details>
-
 ### Bare constructor call • Evaluation
-<details open>
-
 This algorithm was adapted from [ECMAScript `new` operator, § RS: Evaluation][].
 
 * **_Pipeline Body Evaluation_**\
@@ -2314,12 +2144,8 @@ This algorithm was adapted from [ECMAScript `new` operator, § RS: Evaluation][
       same as Member Expression? Should we just use Member Expression with some
       limitations?]
 
-</details>
-
 ### Pipeline-level expressions
 During runtime, [TODO]
-
-<details open>
 
 * **Evaluation**
   * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_
@@ -2328,8 +2154,6 @@ During runtime, [TODO]
     3. Let _body Ref_ be Pipeline Body Evaluation of _Pipeline Body_ with argument
        _head Value_.
     4. Return ? Get Value(_body Ref_).
-
-</details>
 
 ## Relations to other work
 
@@ -2358,8 +2182,6 @@ During runtime, [TODO]
  -->
 
 ### Possible future extensions to the topic concept
-<details open>
-
 The [concept of the “topic variable” already exists in many other programming
 languages][topic variables in other languages], commonly named with an
 underscore `_` or `$_`. These languages often integrate their topic variables
@@ -3167,16 +2989,12 @@ select ('world') {
 
 </table>
 
-</details>
-
 ### Alternative solutions explored
 There are a number of other ways of potentially accomplishing the above use
 cases. However, the authors of this proposal believe that the smart pipe
 operator may be the best choice. [TODO]
 
 ## Appendix • Explanation of nomenclature
-<details open>
-
 The term [“**topic**” comes from linguistics][topic and comment] and have
 precedent in prior programming languages’ use of “topic variables”.
 
@@ -3211,11 +3029,7 @@ preferred to the latter. Eventually, certain [possible future extensions to the
 topic concept][] may enable [tacit programming][] even without using bare-style
 pipelines.
 
-</details>
-
 ## Appendix • Term rewriting
-<details open>
-
 ### Term rewriting topic style
 Pipe bodies in topic style can be rewritten into a nested `do` expression.
 There are two ways to illustrate this equivalency. The first way is to [replace
@@ -3447,10 +3261,6 @@ do { do { do { do { const # = 3; # * 3 } } }
 do { do { do { do { 3 * 3 } } }
 9
 ```
-
-</details>
-
-***
 
 [“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 [`for` iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
