@@ -2041,9 +2041,9 @@ abstract method for all Environment Records: Get Topic Binding Status. Any
 Environment whose Record has a topic binding status that is **bound or void**
 and **not clear** is called a **topic environment**.
 
-Method                        |
------------------------------ | --------------------------------------------
-Get Topic Binding Status ()   | Returns “bound”, “void”, or “clear”.
+| Method                        |
+| ----------------------------- | --------------------------------------------
+| Get Topic Binding Status ()   | Returns “bound”, “void”, or “clear”.
 
 The **topic environment of** another environment is the latter’s **nearest
 ancestral** topic environment: that is, the environment that supplies the latter
@@ -2059,13 +2059,13 @@ proposal.
 Declarative Environment Records have one additional new field and implement
 three additional new concrete methods.
 
-Name                      | Description
-------------------------- | -------------------------------------------------------
-[[Topic Binding Status]]  | “bound” or “void” or “clear”. Default value is “void”.
-[[Topic Value]]           | Default value is undefined.
-Get Topic Value ()        | “What is the value of the topic binding?” See below.
-Clear Topic Binding ()    | Sets the topic binding status to “clear”.
-Bind Topic Value (_V_)    | Sets the topic value to _V_; also sets the status to “bound”.
+| Name                     | Description
+| ------------------------ | -------------------------------------------------------------
+| [[Topic Binding Status]] | “bound” or “void” or “clear”. Default value is “void”.
+| [[Topic Value]]          | Default value is undefined.
+| Get Topic Value ()       | “What is the value of the topic binding?” See below.
+| Clear Topic Binding ()   | Sets the topic binding status to “clear”.
+| Bind Topic Value (_V_)   | Sets the topic value to _V_; also sets the status to “bound”.
 
 #### Method • Get Topic Binding Status
 In general, this version returns “void”, because most Environment Records
