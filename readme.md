@@ -2478,7 +2478,7 @@ $ => $ + 2
 <td>
 
 This is a syntax error, because the topic is not used anywhere in the pipe
-function’s body – just like with `… |> x + 2`. [TO DO: Link to early error.]
+function’s body – just like with `… |> x + 2`. [TODO: Link to early error.]
 
 <tr>
 <td>
@@ -2492,7 +2492,7 @@ function’s body – just like with `… |> x + 2`. [TO DO: Link to early error
 If the skinny arrow `->` is typoed as a fat arrow `=>` instead, then this is
 a syntax error.
 This is a syntax error if not within a topic context.
-function’s body – just like with `… |> x + 2`. [TO DO: Link to early error.]
+function’s body – just like with `… |> x + 2`. [TODO: Link to early error.]
 
 <tr>
 <td>
