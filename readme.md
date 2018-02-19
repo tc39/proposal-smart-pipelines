@@ -2010,13 +2010,22 @@ those created by **arrow functions** and by **`try` statements**. For these
 environments, their Records’ Get Topic Binding Status returns null.
 
 [ECMAScript declarative Environment Records][] are the usual lexical environment
-records that are declared by syntax blocks `{`…`}`.
+records that are declared by syntax blocks `{`…`}`. [ECMAScript function
+Environment Records][] are a special type of declarative Environment Record. The
+rest of the types of Environment Records don’t matter in this proposal.
 
-#### Method Get-Topic-Binding-Status
+Declarative Environment Records implement two additional methods.
+
+Method                        | Purpose
+----------------------------- | --------------------------------------------
+Get Topic Binding ()          | What is the value of the topic binding?
+Bind Topic Value (V)          | This can only be used once at most.
+
+#### Method • Get Topic Binding Status
 In general, this version returns “void”, because most Environment Records
 **void** any topic binding from their outside.
 
-However, Declarative Environments and
+However, Declarative Environments and [TODO]
 
 <details>
 
@@ -2034,16 +2043,11 @@ However, Declarative Environments and
 
 </details>
 
-Declarative Environment Records also implement an additional method: Get Topic
-Binding.
+#### Method • Get Topic Binding
+[TO DO]
 
-Method                        | Purpose
------------------------------ | --------------------------------------------
-Get Topic Binding ()          | What is the value of the topic binding?
-
-#### Function Environment Records
-[ECMAScript function Environment Records][] are a special type of declarative
-Environment Record.
+#### Method • Bind Topic Value
+[TO DO]
 
 ### Abstract • Get Topic Environment
 The new abstract operation Get Topic Environment finds the Environment Record
@@ -2083,15 +2087,13 @@ abstract operation on the running execution context’s lexical environment.
 
 </details>
 
-[TODO: Define Resolve Topic abstract operation]
-
 #### Topic style • Topic Pipeline Body Instantiation
 <details open>
 
 This algorithm was adapted from [ECMAScript Blocks, § RS: Block Declaration
 Instantiation][].
 
-Topic Pipeline Instantiation is performed as follows using arguments _code_,
+**Topic Pipeline Instantiation** is performed as follows using arguments _code_,
 _env_, and _topic_.\
 _code_ is the Parse Node corresponding to the body of the pipeline.\
 _env_ is the Lexical Environment in which the topic binding is to be created.\
