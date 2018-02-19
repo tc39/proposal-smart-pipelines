@@ -2041,7 +2041,7 @@ abstract method for all Environment Records: Get Topic Binding Status. Any
 Environment whose Record has a topic binding status that is **bound or void**
 and **not clear** is called a **topic environment**.
 
-| Method                        |
+| Method                        | Description
 | ----------------------------- | --------------------------------------------
 | Get Topic Binding Status ()   | Returns “bound”, “void”, or “clear”.
 
