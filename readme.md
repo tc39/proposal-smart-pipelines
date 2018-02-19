@@ -2032,23 +2032,25 @@ that inside it.
 
 The only Lexical Environments that neither establish nor hide topic bindings are
 those created by **arrow functions** and by **`try` statements**. For these
-environments, their Records’ Get Topic Binding Status returns “clear”. The word
-“clear” refers to how these Lexical Environments are **transparent to** their
-outer environment’s topic binding.
+environments, called **topic-clear environments**, their Records’ topic binding
+status is “clear”. The word “clear” refers to how these Lexical Environments are
+**transparent to** their outer environment’s topic binding.
 
 Whether a Lexical Environment binds or voids their topic can be queried by a new
 abstract method for all Environment Records: Get Topic Binding Status. Any
 Environment whose Record has a topic binding status that is **bound or void**
-and **not clear** is called a **topic environment**.
+and **not clear** is called a **topic-opaque environment**: no expression within
+its scope can use the outside’s topic.
 
 | Method                        | Description
 | ----------------------------- | --------------------------------------------
 | Get Topic Binding Status ()   | Returns “bound”, “void”, or “clear”.
 
 The **topic environment of** another environment is the latter’s **nearest
-ancestral** topic environment: that is, the environment that supplies the latter
-environment’s topic binding. This is formally defined below in the [abstract
-operation Get Topic Environment][Abstract • Get Topic Environment].
+ancestral topic-opaque environment**: that is, the environment that either
+supplies the latter environment’s topic binding or voids its topic binding. This
+concept is formally defined below in the [abstract operation Get Topic
+Environment][Abstract • Get Topic Environment].
 
 [ECMAScript **declarative Environment Records**][] are the Records of the usual
 Lexical Environments that are declared by syntax blocks `{`…`}`. [ECMAScript
@@ -2056,7 +2058,7 @@ function Environment Records][] are a special type of declarative Environment
 Record. The rest of the types of Environment Records don’t matter in this
 proposal.
 
-Declarative Environment Records have one additional new field and implement
+Declarative Environment Records have two additional new fields and implement
 three additional new concrete methods.
 
 | Name                     | Description
@@ -2075,7 +2077,8 @@ However, declarative and function Environment Records return the value of their
 field [[Topic Binding Status]], which is **“void”** by default. It may also be
 **“clear”** (if the Clear Topic Binding method was called) or **“bound”** (if
 the Bind Topic Value method was called). An Environment Record with a **void**
-topic binding may **change** to “clear” or “bound” but **never vice versa**.
+topic binding may **change** its status to “clear” or “bound” but **never vice
+versa**.
 
 * **Get Topic Binding Status** ()
   * **Declarative Environment Record**
@@ -2128,9 +2131,10 @@ topic binding may **change** to “clear” or “bound” but **never vice vers
 
 ### Abstract • Get Topic Environment
 The new abstract operation Get Topic Environment finds the Environment Record
-that currently supplies the topic binding: that is, the nearest ancestral
-environment that does **not** have a topic binding status of **clear**. Its
-definition has been adapted from [ECMAScript Get This Environment][].
+that currently supplies the topic binding or that voids the topic binding: that
+is, the **nearest [topic-opaque][TODO]** ancestral environment, which would **not** have
+a topic binding status of **clear**. Its definition has been adapted from
+[ECMAScript Get This Environment][].
 
 1. Let _lex_ be the running execution context’s Lexical Environment.
 2. Repeat,
