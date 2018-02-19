@@ -1858,95 +1858,58 @@ the outside.
 <table>
 <thead>
 <tr>
-<th>
+Does use outer topic
 
-_node_
+<tr>
+Does **not** use outer topic
 
+<tbody>
+<tr>
 <th>
 
 _node_ . Contains (`#`)
 
-<tbody>
-<tr>
-<td>
-
-```js
-a
-```
-
+<td>True
 <td>False
 
 <tr>
+<th>Examples
+
 <td>
 
 ```js
 #
 ```
-
-<td>True
-
-<tr>
-<td>
-
 ```js
 # + 2
 ```
-
-<td>True
-
-<tr>
-<td>
-
-```js
-{ # + 2 }
-```
-
-<td>False
-
-<tr>
-<td>
-
-```js
-if (true) { # }
-```
-
-<td>False
-
-<tr>
-<td>
-
-```js
-function () { # + 2 }
-```
-
-<td>False
-
-<tr>
-<td>
-
 ```js
 () => # + 2
 ```
-
-<td>True
-
-<tr>
-<td>
-
 ```js
 # |> a + 2
 ```
+```js
+# |> # + 2
+```
 
-<td>True
-
-<tr>
 <td>
 
 ```js
+a
+```
+```js
+{ # + 2 }
+```
+```js
+if (true) { # }
+```
+```js
+function () { # + 2 }
+```
+```js
 a |> # + 2
 ```
-
-<td>False
 
 </table>
 
