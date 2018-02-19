@@ -1874,8 +1874,13 @@ Does **not** use outer topic
 
 _node_ . Contains (`#`)
 
-<td>True
-<td>False
+<td>
+
+True
+
+<td>
+
+False
 
 <tr>
 <th>Examples
