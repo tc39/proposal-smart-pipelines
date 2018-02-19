@@ -1399,8 +1399,7 @@ this proposal.
 ### Syntactic grammar
 The syntactic grammar of JavaScript can transform token sequences (defined by
 the [lexical grammar][]) into **parse trees**: rooted tree data structures made
-of **Parse Nodes**. This is described further in [ECMAScript Lexical Grammar][].
-[TODO: Correct link to syntactic grammar?]
+of **Parse Nodes**. This is described further in [ECMAScript § The Syntactic Grammar][].
 
 ### Operator precedence
 As a binary operation forming compound expressions, the [operator precedence and
