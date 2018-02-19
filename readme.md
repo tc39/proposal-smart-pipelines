@@ -93,24 +93,81 @@ operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC3
 process][TC39 process] but it may eventually be presented to TC39.
 
 ## Background
-<details open>
-<summary>The concept of a pipe operator appears in numerous other languages,
-variously called “pipeline”, “threading”, and “feed” operators. This is because
-developers find the concept useful.</summary>
+The concept of a pipe operator appears in numerous other languages, variously
+called “pipeline”, “threading”, and “feed” operators. This is because developers
+find the concept useful.
 
-* [Clojure’s `->` and `as->`][Clojure pipe]
-* [Forth’s and Joy’s, then Factor’s, Onyx’s, PostScript’s, and RPL’s term
-  concatenation][concatenative programming]
-* [Elixir / Erlang’s `|>`][Elixir pipe]
-* [Elm’s `|>`][Elm pipe]
-* [F#’s `|>`][F# pipe]
-* [Hack’s `|>` and `$$`][Hack pipe]
-* [Julia’s `|>`][Julia pipe]
-* [LiveScript’s `|>`][LiveScript pipe]
-* [OCaml’s `|>`][OCaml pipe]
-* [Perl 6’s `==>`][Perl 6 pipe]
-* [R / magrittr’s `%>%`][R pipe]
-* [Unix shells’ and PowerShell’s `|` ][Unix pipe]
+<details>
+<summary>Table of languages</summary>
+<table>
+<tr>
+<th>
+
+`|`
+
+<td>
+
+[Unix shells, PowerShell][Unix pipe]
+
+<tr>
+<th>
+
+`|>`
+
+<td>
+
+[Elixir and Erlang][Elixir pipe], [Elm][Elm pipe], [F# / F-sharp][F# pipe],
+[Hack][Hack pipe], [Julia][Julia pipe], [LiveScript][LiveScript pipe], [OCaml][OCaml pipe],
+
+<tr>
+<th>
+
+`|>` with `$$`
+
+<td>
+
+[Hack][Hack pipe]
+
+<tr>
+<th>
+
+`%>%`
+
+<td>
+
+[R with magrittr][R pipe]
+
+<tr>
+<th>
+
+`==>`
+
+<td>
+
+[Perl 6][Perl 6 pipe]
+
+<tr>
+<th>
+
+`->` `->>`\
+`as->` `as->>`\
+`some->` `some->>`\
+`cond->` `cond->>`
+
+<td>
+
+[Clojure][Clojure pipe]
+
+<tr>
+<th>
+
+[Term concatenation][concatenative programming]
+
+<td>
+
+Factor, Forth, Joy, Onyx, PostScript, RPL
+
+</table>
 
 Pipe operators are also conceptually similar to [WHATWG-stream piping][] and
 [Node-stream piping][].
