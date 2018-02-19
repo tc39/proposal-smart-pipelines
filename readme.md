@@ -1327,6 +1327,9 @@ cannot be manually declared (`const #` is a syntax error), nor can it be
 assigned with a value (`# = 3` is a syntax error). Instead, the topic reference
 is implicitly, lexically bound only within pipeline bodies.
 
+### Topic-opaque and topic-clear environments
+[TODO]
+
 ## Grammar
 This grammar of the pipeline operator juxtaposes brief rules written for the
 JavaScript developer with formally written changes to the ECMAScript standard.
