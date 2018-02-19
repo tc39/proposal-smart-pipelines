@@ -1843,9 +1843,7 @@ Pipelines that are in topic style but that do not ever use their topics anywhere
 in their bodies, such as `x |> 3`, are an early error. Such expressions would be
 always useless and almost certainly not what the author had intended.
 
-* **Early Errors**\
-  With parameter _symbol_.
-
+* **Early Errors**
   * **_Pipeline Topic Body_** : _Conditional Expression_
     * It is a Syntax Error if _Conditional Expression_ does not contain `#`.
 
@@ -1856,17 +1854,23 @@ Just as with pipeline heads, pipeline bodies that start with `yield` must be
 parenthesized. Otherwise they are early errors.
 
 The `yield` operator is the only unary operator with a looser precedence than
-`|>`. Its precedence is so loose that `x |> yield # |> f` is a footgun.
+`|>`. Its precedence is so loose that `x |> yield # |> f` is a footgun. It is
+very likely that the developer meant `(x |> (yield #)) |> f` here, but because
+`yield` has such loose precedence, without parentheses, the pipeline will be
+parsed instead as `x |> (yield (# |> f))`, which has a very different meaning.
 
-It is very likely that the developer meant `(x |> (yield #)) |> f` here, but
-because `yield` has such loose precedence, without parentheses, the pipeline
-will be parsed instead as `x |> (yield (# |> f))`, which has a very different
-meaning.
+With this early error, the developer is forced to clarify their pipeline as
+either `x |> (yield #) |> f` or `x |> (yield # |> f)`.
 
-With this early error, the developer is forced to clarify their `yield`: either
-`x |> (yield #) |> f` or `x |> (yield # |> f)`.
+* **Early Errors**
+  * **_Pipeline Topic Body_** : _Conditional Expression_
+    * It is a Syntax Error if _Conditional Expression_ is covering a _Yield Expression_.
 
-[TODO: Write algorithm.]
+The concept of **covering** refers to when an expression’s parse node would also
+completely fulfill another production. “Is covering” is formally defined in
+[ECMAScript § The Syntactic Grammar][].\
+_Yield Expression_ is formally defined in [ECMAScript Functions and Classes
+§ Generator Function Definitions][].
 
 ### Other static semantic rules
 
@@ -3386,6 +3390,8 @@ do { do { do { do { 3 * 3 } } }
 [ECMAScript Blocks, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-block-runtime-semantics-evaluation
 [ECMAScript Blocks, § RS: Block Declaration Instantiation]: https://tc39.github.io/ecma262/#sec-blockdeclarationinstantiation
 [Abstract • Get Topic Environment]: #abstract-get-topic-environment
+[ECMAScript Functions and Classes § Generator Function Definitions]: https://tc39.github.io/ecma262/#sec-generator-function-definitions
+[ECMAScript § The Syntactic Grammar]: https://tc39.github.io/ecma262/#sec-syntactic-grammar
 
 * [TODO: Change goals to definition list]
 * [TODO: Close specification-blockquote widgets by default]
