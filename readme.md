@@ -397,7 +397,8 @@ may prefer to inline, trading off self-documentation for localization of meaning
 <td>
 
 ```js
-… |> f(#, #)
+value
+  |> f(#, #)
 ```
 The topic reference may be used multiple times in a pipeline body. Each use
 refers to the same value (wherever the topic reference is not overridden by
@@ -418,20 +419,23 @@ unnecessary.
 <td>
 
 ```js
-… |> [#, # * 2, # * 3]
+value
+  |> [#, # * 2, # * 3]
 ```
 
 <td>
 
 ```js
-const $ = …; [$, $ * 2, $ * 3]
+const $ = value;
+[$, $ * 2, $ * 3]
 ```
 
 <tr>
 <td>
 
 ```js
-… |> x => # + x
+value
+  |> x => # + x
 ```
 The body of a pipeline may contain an inner arrow function but no other
 type of block expression. Both versions of this code return an arrow function.
@@ -439,7 +443,7 @@ type of block expression. Both versions of this code return an arrow function.
 <td>
 
 ```js
-const $ = …;
+const $ = value;
 x => $ + x
 ```
 The arrow function lexically closes over the topic value, takes one parameter,
@@ -449,7 +453,8 @@ and returns the sum of the topic value and the parameter.
 <td>
 
 ```js
-… |> settimeout(() => # * 5)
+value
+  |> settimeout(() => # * 5)
 ```
 This ability to create arrow functions, which do not lexically shadow the topic,
 can be useful for using callbacks in a pipeline.
@@ -457,7 +462,8 @@ can be useful for using callbacks in a pipeline.
 <td>
 
 ```js
-const $ = …; settimeout(() => $ * 5)
+const $ = value;
+settimeout(() => $ * 5)
 ```
 The topic value (here represented by a normal variable `$`) is still lexically
 accessible within the arrow function’s body in both examples.
@@ -466,22 +472,27 @@ accessible within the arrow function’s body in both examples.
 <td>
 
 ```js
-… |> (() => # * 5) |> settimeout
+value
+  |> (() => # * 5)
+  |> settimeout
 ```
 The arrow function can also be created on a separate pipeline step.
 
 <td>
 
 ```js
-const $ = …; settimeout(() => $ * 5)
+const $ = value;
+settimeout(() => $ * 5)
 ```
 The result is the same.
 
 <tr>
-<td>
+<td colspan=2>
 
 ```js
-… |> () => # * 5 |> settimeout
+value
+  |> () => # * 5
+  |> settimeout
 // 🚫 SyntaxError:
 // Unexpected token '=>'.
 // Cannot parse base expression.
@@ -490,30 +501,33 @@ Note, however, that arrow functions have looser precedence than the pipe
 operator. This means that if a pipeline creates an arrow function alone in one
 of its steps’ bodies, then the arrow-function expression must be parenthesized.
 (The same applies to assignment and yield operators, which are also looser than
-the pipe operator.)
-
-<td>
-
-<tr>
-<td>
-
+the pipe operator.) The example above is being parsed as if it were:
 ```js
-… |> f(() => f(#) * 5)
-```
-
-<td>
-
-```js
-const $ = …; f(x => f($) * 5)
+(value |> ()) => (# * 5 |> settimeout)
 ```
 
 <tr>
 <td>
 
 ```js
-… |> (x => # + x |> g |> # * 2)
-  |> f
-  |> #.toString()
+value
+  |> f(() => f(#) * 5)
+```
+
+<td>
+
+```js
+const $ = value;
+f(x => f($) * 5)
+```
+
+<tr>
+<td>
+
+```js
+value
+  |> (x => # + x |> g |> # * 2)
+  |> f |> #.toString()
 ```
 Both the head and the body of a pipeline may contain nested inner pipelines.
 Nested pipelines in the body is not encouraged, but it is still permitted.
@@ -521,9 +535,9 @@ Nested pipelines in the body is not encouraged, but it is still permitted.
 <td>
 
 ```js
-const $ = …;
-
-f(x => g($ + x) * 2).toString()
+const $ = value;
+f(x => g($ + x) * 2)
+  .toString()
 ```
 A nested pipeline works consistently. It merely shadows the topic
 reference within its own body.
@@ -532,7 +546,8 @@ reference within its own body.
 <td>
 
 ```js
-… |> # ** 2
+value
+  |> # ** 2
   |> (x => #
       |> g(#, x)
       |> [# * 3, # * 5])
@@ -544,7 +559,7 @@ to isolate the expression in the callback into its own function.
 <td>
 
 ```js
-const $ = … ** 2;
+const $ = value ** 2;
 
 f(x => {
   const _$ = g($, x);
@@ -557,7 +572,7 @@ But the code still behaves consistently.
 <td>
 
 ```js
-… |> function () { return # }
+value |> function () { return # }
 // 🚫 SyntaxError:
 // Pipeline body binds but never uses topic.
 ```
@@ -572,7 +587,7 @@ generator, async generator, or class.
 <td>
 
 ```js
-… |> class { m: () { return # }}
+value |> class { m: () { return # }}
 // 🚫 SyntaxError:
 // Pipeline body binds but never uses topic.
 ```
@@ -939,7 +954,7 @@ very long expression.
 
 By restricting the space of valid bare-style pipeline bodies (that is, without
 topic references), the rule minimizes garden-path syntax that would otherwise be
-possible – such as `… |> compose(f, g, h, i, j, k, #)`. Syntax becomes more
+possible – such as `value |> compose(f, g, h, i, j, k, #)`. Syntax becomes more
 locally readable. It becomes easier to reason about code without thinking about
 code elsewhere.
 
