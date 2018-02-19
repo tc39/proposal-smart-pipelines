@@ -186,10 +186,10 @@ created, within which `#` is bound to the topic, and within which the pipeline�
 body (the expression at its righthand side) is evaluated using that topic
 binding.
 
-whatever the pipeline head evaluated into. For instance, `5 |> # - 3 |> # * 2`
-is precisely the same as `((5 - 3)) * 2`. The syntax statically is [term
-rewritable into already valid code][term rewriting] with theoretically zero
-runtime cost.
+The pipeline’s value is whatever the pipeline body evaluated into. For instance,
+`5 |> # - 3 |> # * 2` is precisely the same as `((5 - 3)) * 2`. The syntax
+statically is [term rewritable into already valid code][term rewriting] with
+theoretically zero runtime cost.
 
 The resulting code’s terseness and flatness may be both easier for the
 JavaScript developer to read and to edit. The reader may follow the flow of data
