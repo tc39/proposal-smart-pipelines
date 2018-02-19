@@ -2085,6 +2085,26 @@ abstract operation on the running execution context’s lexical environment.
 
 [TODO: Define Resolve Topic abstract operation]
 
+#### Topic style • Topic Pipeline Body Instantiation
+<details open>
+
+This algorithm was adapted from [ECMAScript Blocks, § RS: Block Declaration
+Instantiation][].
+
+Topic Pipeline Instantiation is performed as follows using arguments _code_,
+_env_, and _topic_.\
+_code_ is the Parse Node corresponding to the body of the pipeline.\
+_env_ is the Lexical Environment in which the topic binding is to be created.\
+_topic_ is the value that will be bound to _env_’s topic.
+
+1. Let _env Rec_ be _env_’s Environment Record.
+2. Assert: _env Rec_ is a declarative Environment Record.
+3. Assert: _env Rec_ . Get Topic Binding Status () is “void”.
+4. Assert: _env Rec_ . Get Topic () is undefined.
+5. Perform ! _env Rec_ . Bind Topic Value (_topic_).
+
+</details>
+
 #### Topic style • Evaluation
 <details open>
 
