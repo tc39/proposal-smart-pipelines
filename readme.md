@@ -1769,14 +1769,14 @@ modified to use the new method-like syntax.
 > default definition of Contains is:
 >
 > 1. For each child node _child_ of this Parse Node, do
->    1. If child is an instance of _symbol_, return true.
+>    1. If _child_ is an instance of _symbol_, return true.
 >    2. If _child_ is an instance of a nonterminal, then
 >       1. Let _contained_ be the result of _child_ . Contains (_symbol_).
 >       2. If _contained_ is true, return true.
 >
 > 2. Return false.
 >
-> The above definition is explicitly over-ridden for specific productions.
+> The above definition is explicitly overridden for specific productions.
 
 In the ECMAScript standard, the Contains rule is used by many other Static
 Semantic Rules, such as [object initializers’ Computed Property Contains
@@ -1788,31 +1788,42 @@ operator in the ECMAScript specification – “… Contains …” – for hist
 reasons. This proposal will instead use the planned future new syntax
 “… . Contains (…)”.)
 
-**This proposal will use Contains to determine whether a pipeline’s body uses
-its `#` topic reference.** This is so that many [footguns may be statically
-detected as an early error][static analyzability] – for instance, using a
-pipeline in topic style without ever using its topic in its body [TODO: Link].
+**This proposal will use Contains to determine whether an expression uses its
+lexical environment’s topic.** This will be important to [statically
+ensure][static analyzability] that [topical pipelines always use their topic
+references][TODO].
 
-Contains does not penetrate into the bodies of function and method definitions,
-hiding them from the rules in outside contexts. All definitions for functions,
-generators, methods, and so forth override Contains to always return false, with
-this note:
+Contains does **not** penetrate the bodies of function and method definitions
+for any symbol, hiding them from the rules in outside contexts. All definitions
+for functions, generators, methods, and so forth override Contains to always
+return false, with this note:
 
 > Static semantic rules that depend upon substructure generally do not look into
 > function definitions.
 
-There is one exception: arrow functions expose the use of `new.target`, `this`,
+There is **one exception**: arrow functions expose the use of `new.target`, `this`,
 and `super`, because, unlike other functions, they do no rebind those three
 forms; they use the outer context to evaluate them. (See [ECMAScript arrow
 functions, § SS: Contains][]).
 
-This proposal further extends that exception so that arrow functions also reveal
-any use of `#` within their bodies. This is because arrow functions, alone among
-functions, also do not rebind or shadow the outer context’s topic. (`#` cannot
-be used within arrow-function parameter lists or any function’s parameter list.)
-See [TODO: Topics and inner functions].
+Likewise, Contains does **not** penetrate into syntax structures establishing
+**[topic-opaque lexical scopes][TODO]**. Topic-opaque lexical scopes are those
+that shadow the outer context’s topic, either by [rebinding the topic to a new
+value][TODO] (as topical pipeline bodies do) or by [voiding (that is, hiding)
+the outer topic][TODO] (like as [almost all blocks do][TODO]).
 
-[ECMAScript arrow functions, § SS: Contains][] is amended.
+The logic of this is that, because topic-opaque lexical scopes establish their
+own topic binding, structures that create topic-opaque scopes would never use
+the topic references of their outer context.
+
+Therefore, this proposal leaves alone the definition of Contains for function
+and method blocks. But it further extends the **arrow-function exceptions**, so
+that arrow functions also reveal any use of `#` within their bodies. This is
+because arrow functions, alone among functions, also do not rebind or clear the
+outer context’s topic. (`#` cannot be used within arrow-function parameter lists
+or any function’s parameter list.) See [TODO: Topics and inner functions].
+
+[ECMAScript arrow functions, § SS: Contains][] is amended thus:
 
 * **Contains**\
   With parameter _symbol_.
@@ -2207,7 +2218,7 @@ developer surprise, in which “surprise” refers to behavior difficult to pred
 by the developer.
 
 One disadvantage arises from their frequent dynamic binding rather than lexical
-binding, as the former is not statically analyzable and is more stateful than
+binding, as the former is not [statically analyzable][static analyzability] and is more stateful than
 the latter. It may also cause surprising results when coupled with bare/tacit
 calls: it becomes more difficult to tell whether a bare identifier `print` is
 meant to be a simple variable reference or a bare function call on the topic
