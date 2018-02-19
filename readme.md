@@ -2045,8 +2045,7 @@ Get Topic Binding ()          | What is the value of the topic binding?
 [ECMAScript function Environment Records][] are a special type of declarative
 Environment Record.
 
-### Abstract Get-Topic-Environment
-
+### Abstract • Get Topic Environment
 The new abstract operation Get Topic Environment finds the Environment Record
 that currently supplies the topic binding. Its definition has been adapted from
 [ECMAScript Get This Environment][]. It may return null if not a single one of
@@ -2064,7 +2063,7 @@ the current lexical context’s ancestors
 The loop in step 2 will always terminate because the list of environments always
 ends with the global environment, which has a null outer environment reference.
 
-### Abstract Resolve-Topic-Binding
+### Abstract • Resolve Topic Binding
 **Resolve Topic Binding** is a new abstract operation. It determines the binding
 of the topic `#` using the LexicalEnvironment of the running execution context.
 ResolveThisBinding performs the following steps:
