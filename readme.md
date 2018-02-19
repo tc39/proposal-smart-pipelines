@@ -3394,37 +3394,58 @@ do { do { do { do { 3 * 3 } } }
 ```
 
 [“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
+[“don’t break my code”]: #dont-break-my-code
+[“don’t make me overthink”]: #dont-make-me-overthink
+[“don’t shoot me in the foot”]: #dont-shoot-me-in-the-foot
+[“make my code easier to read”]: #make-my-code-easier-to-read
 [`for` iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
 [`in` relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
 [`new.target`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target
+[Abstract • Get Topic Environment]: #abstract-get-topic-environment
 [annevk]: https://github.com/annevk
 [antecedent]: https://en.wikipedia.org/wiki/Antecedent_(grammar)
-[associative property]: https://en.wikipedia.org/wiki/Associative_property
-[bare style • Grammar]: #bare-style-syntactic-grammar
-[term rewriting • arbitrary associativity]: #term-rewriting-arbitrary-associativity
 [arbitrary associativity]: #arbitrary-associativity
+[associative property]: https://en.wikipedia.org/wiki/Associative_property
+[background]: #background
+[backward compatibility]: #backward-compatibility
+[bare style • Grammar]: #bare-style-syntactic-grammar
 [binding]: https://en.wikipedia.org/wiki/Binding_(linguistics)
 [Clojure pipe]: https://clojuredocs.org/clojure.core/as-%3E
+[completion records]: https://timothygu.me/es-howto/#completion-records-and-shorthands
 [concatenative programming]: https://en.wikipedia.org/wiki/Concatenative_programming_language
+[conceptual generality]: #conceptual-generality
 [Contains]: #static-contains
 [cyclomatic complexity]: https://en.wikipedia.org/wiki/Cyclomatic_complexity#Applications
+[cyclomatic simplicity]: #cyclomatic-simplicity
 [Daniel “littledan” Ehrenberg of Igalia]: https://github.com/littledan
 [dataflow programming]: https://en.wikipedia.org/wiki/Dataflow_programming
+[distinguishable punctuators]: #distinguishable-punctuators
 [DSLs]: https://en.wikipedia.org/wiki/Domain-specific_language
 [early errors]: #static-early-errors
 [ECMAScript _Identifier Name_]: https://tc39.github.io/ecma262/#prod-IdentifierName
 [ECMAScript _Identifier Reference_]: https://tc39.github.io/ecma262/#prod-IdentifierReference
 [ECMAScript _Member Expression_]: https://tc39.github.io/ecma262/#prod-MemberExpression
+[ECMAScript § The Syntactic Grammar]: https://tc39.github.io/ecma262/#sec-syntactic-grammar
 [ECMAScript `new` operator, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-new-operator-runtime-semantics-evaluation
 [ECMAScript arrow functions, § SS: Contains]: https://tc39.github.io/ecma262/#sec-arrow-function-definitions-static-semantics-contains
 [ECMAScript Assignment-level Expressions]: https://tc39.github.io/ecma262/#sec-assignment-operators
 [ECMAScript block parameters]: https://github.com/samuelgoto/proposal-block-params
+[ECMAScript Blocks, § RS: Block Declaration Instantiation]: https://tc39.github.io/ecma262/#sec-blockdeclarationinstantiation
+[ECMAScript Blocks, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-block-runtime-semantics-evaluation
+[ECMAScript Declarative Environment Records]: https://tc39.github.io/ecma262/#sec-declarative-environment-records
 [ECMAScript Function Calls, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-function-calls-runtime-semantics-evaluation
+[ECMAScript Function Environment Records]: https://tc39.github.io/ecma262/#sec-function-environment-records
+[ECMAScript Functions and Classes § Generator Function Definitions]: https://tc39.github.io/ecma262/#sec-generator-function-definitions
+[ECMAScript Get This Environment]: https://tc39.github.io/ecma262/#sec-getthisenvironment
+[ECMAScript headless-arrow proposal]: https://bterlson.github.io/headless-arrows/
+[ECMAScript Lexical Environments]: https://tc39.github.io/ecma262/#sec-lexical-environments
 [ECMAScript Lexical Grammar]: https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar
 [ECMAScript LHS expressions]: https://tc39.github.io/ecma262/#sec-left-hand-side-expressions
 [ECMAScript Lists and Records]: https://tc39.github.io/ecma262/#sec-list-and-record-specification-type
+[ECMAScript Notational Conventions, § Algorithm Conventions]: https://tc39.github.io/ecma262/#sec-algorithm-conventions-abstract-operations
 [ECMAScript Notational Conventions, § Grammars]: https://tc39.github.io/ecma262/#sec-syntactic-and-lexical-grammars
 [ECMAScript Notational Conventions, § Lexical Grammar]: https://tc39.github.io/ecma262/#sec-lexical-and-regexp-grammars
+[ECMAScript Notational Conventions, § Runtime Semantics]: https://tc39.github.io/ecma262/#sec-runtime-semantics
 [ECMAScript optional catch binding]: https://github.com/tc39/proposal-optional-catch-binding
 [ECMAScript pattern matching]: https://github.com/tc39/proposal-pattern-matching
 [ECMAScript Primary Expressions]: https://tc39.github.io/ecma262/#prod-PrimaryExpression
@@ -3436,11 +3457,13 @@ do { do { do { do { 3 * 3 } } }
 [essential complexity]: https://en.wikipedia.org/wiki/Essential_complexity
 [examples]: #examples
 [expressions and operators (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
+[expressive versatility]: #expressive-versatility
 [F# pipe]: https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining
 [Fetch Standard]: https://fetch.spec.whatwg.org
 [first pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
 [footguns]: https://en.wiktionary.org/wiki/footgun
 [formal grammar]: #grammar
+[forward compatibility]: #forward-compatibility
 [functional programming]: https://en.wikipedia.org/wiki/Functional_programming
 [garden-path syntax]: https://en.wikipedia.org/wiki/Garden_path_sentence
 [GitHub issue tracker]: https://github.com/tc39/proposal-pipeline-operator/issues
@@ -3448,6 +3471,7 @@ do { do { do { do { 3 * 3 } } }
 [grammar parameters]: #grammar-parameters
 [Hack pipe]: https://docs.hhvm.com/hack/operators/pipe-operator
 [Huffman coding]: https://en.wikipedia.org/wiki/Huffman_coding
+[human writability]: #human-writability
 [IIFEs]: https://en.wikipedia.org/wiki/Immediately-invoked_function_expression
 [incidental complexity]: https://en.wikipedia.org/wiki/Incidental_complexity
 [inner blocks]: #inner-blocks
@@ -3457,15 +3481,18 @@ do { do { do { do { 3 * 3 } } }
 [lexically hygienic]: https://en.wikipedia.org/wiki/Hygienic_macro
 [littledan invitation]: https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394
 [LiveScript pipe]: http://livescript.net/#operators-piping
+[MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
 [mindeavor]: https://github.com/gilbert
 [motivation]: #motivation
 [Node-stream piping]: https://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
 [nomenclature]: #nomenclature
+[novice learnability]: #novice-learnability
 [object initializers’ Computed Property Contains rule]: https://tc39.github.io/ecma262/#sec-object-initializer-static-semantics-computedpropertycontains
 [OCaml pipe]: http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html
-[MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
 [operator precedence]: #operator-precedence
 [optional-chaining syntax proposal]: https://github.com/tc39/proposal-optional-chaining
+[other ECMAScript proposals]: #other-ecmascript-proposals
+[other goals]: #other-goals
 [PEP 20]: https://www.python.org/dev/peps/pep-0020/
 [Perl 6 pipe]: https://docs.perl6.org/language/operators#infix_==&gt;
 [Perl 6 topicization]: https://www.perl.com/pub/2002/10/30/topic.html/
@@ -3480,43 +3507,32 @@ do { do { do { do { 3 * 3 } } }
 [REPLs]: https://en.wikipedia.org/wiki/Read–eval–print_loop
 [resolving topics]: #resolve-topic
 [reverse Polish notation]: https://en.wikipedia.org/wiki/Reverse_Polish_notation
+[Ron Buckton]: https://github.com/rbuckton
 [runtime semantics]: #runtime-semantics
+[simple scoping]: #simple-scoping
 [sindresorhus]: https://github.com/sindresorhus
 [smart body syntax]: #smart-body-syntax
+[smart pipelines]: #smart-pipelines
+[static analyzability]: #static-analyzability
+[syntactic functional composition]: https://github.com/TheNavigateur/proposal-pipeline-operator-for-function-composition
+[syntactic locality]: #syntactic-locality
 [syntactic partial application]: https://github.com/tc39/proposal-partial-application
 [tacit programming]: https://en.wikipedia.org/wiki/Tacit_programming
 [TC39 process]: https://tc39.github.io/process-document/
 [Tennent correspondence principle]: http://gafter.blogspot.com/2006/08/tennents-correspondence-principle-and.html
+[term rewriting • arbitrary associativity]: #term-rewriting-arbitrary-associativity
 [term rewriting topic style]: #term-rewriting-topic-style
-[term rewriting with autogenerated variables]: #term-rewriting-with-single-dummy-variable
 [term rewriting with autogenerated variables]: #term-rewriting-with-single-dummy-variable
 [term rewriting with single dummy variable]: #term-rewriting-with-single-dummy-variable
 [term rewriting]: https://en.wikipedia.org/wiki/Term_rewriting
+[terse function calls]: #terse-function-calls
+[terse parentheses]: #terse-parentheses
+[terse variables]: #terse-variables
 [topic and comment]: https://en.wikipedia.org/wiki/Topic_and_comment
 [topic variables in other languages]: https://rosettacode.org/wiki/Topic_variable
 [topic-token bikeshedding]: https://github.com/tc39/proposal-pipeline-operator/issues/91
 [Underscore.js]: http://underscorejs.org
 [Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
+[untangled flow]: #untangled-flow
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
-[static analyzability]: #static-analyzability
-[ECMAScript Notational Conventions, § Runtime Semantics]: https://tc39.github.io/ecma262/#sec-runtime-semantics
-[completion records]: https://timothygu.me/es-howto/#completion-records-and-shorthands
-[ECMAScript Notational Conventions, § Algorithm Conventions]: https://tc39.github.io/ecma262/#sec-algorithm-conventions-abstract-operations
-[ECMAScript Lexical Environments]: https://tc39.github.io/ecma262/#sec-lexical-environments
-[ECMAScript Declarative Environment Records]: https://tc39.github.io/ecma262/#sec-declarative-environment-records
-[ECMAScript Function Environment Records]: https://tc39.github.io/ecma262/#sec-function-environment-records
-[ECMAScript Get This Environment]: https://tc39.github.io/ecma262/#sec-getthisenvironment
-[simple scoping]: #simple-scoping
-[“don’t shoot me in the foot”]: #dont-shoot-me-in-the-foot
-[other ECMAScript proposals]: #other-ecmascript-proposals
-[ECMAScript headless-arrow proposal]: https://bterlson.github.io/headless-arrows/
-[Ron Buckton]: https://github.com/rbuckton
-[syntactic functional composition]: https://github.com/TheNavigateur/proposal-pipeline-operator-for-function-composition
-[ECMAScript Blocks, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-block-runtime-semantics-evaluation
-[ECMAScript Blocks, § RS: Block Declaration Instantiation]: https://tc39.github.io/ecma262/#sec-blockdeclarationinstantiation
-[Abstract • Get Topic Environment]: #abstract-get-topic-environment
-[ECMAScript Functions and Classes § Generator Function Definitions]: https://tc39.github.io/ecma262/#sec-generator-function-definitions
-[ECMAScript § The Syntactic Grammar]: https://tc39.github.io/ecma262/#sec-syntactic-grammar
-
-* [TODO: Change goals to definition list]
-* [TODO: Close specification-blockquote widgets by default]
+[zero runtime cost]: #zero-runtime-cost
