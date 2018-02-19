@@ -481,7 +481,7 @@ The result is the same.
 <td>
 
 ```js
-… |> (() => # * 5) |> settimeout
+… |> () => # * 5 |> settimeout
 // 🚫 SyntaxError:
 // Unexpected token '=>'.
 // Cannot parse base expression.
