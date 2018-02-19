@@ -3427,6 +3427,8 @@ do { do { do { do { 3 * 3 } } }
 [ECMAScript headless-arrow proposal]: https://bterlson.github.io/headless-arrows/
 [Ron Buckton]: https://github.com/rbuckton
 [syntactic functional composition]: https://github.com/TheNavigateur/proposal-pipeline-operator-for-function-composition
+[ECMAScript Blocks, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-block-runtime-semantics-evaluation
+[ECMAScript Blocks, § RS: Block Declaration Instantiation]: https://tc39.github.io/ecma262/#sec-blockdeclarationinstantiation
 
 
 
