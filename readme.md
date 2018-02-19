@@ -3431,6 +3431,5 @@ do { do { do { do { 3 * 3 } } }
 [ECMAScript Blocks, § RS: Block Declaration Instantiation]: https://tc39.github.io/ecma262/#sec-blockdeclarationinstantiation
 
 
-
-* [TO DO: Change goals to definition list]
-* [TO DO: Close specification-blockquote widgets by default]
+* [TODO: Change goals to definition list]
+* [TODO: Close specification-blockquote widgets by default]
