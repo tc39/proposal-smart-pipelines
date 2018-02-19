@@ -1835,8 +1835,125 @@ or any function’s parameter list.) See [TODO: Topics and inner functions].
     2. If _Arrow Parameters_ . Contains (_symbol_) is true, return true.
     3. Return _Concise Body_ . Contains (_symbol_).
 
-  * **_Arrow Parameters_** : _Cover Parenthesized Expression and Arrow Parameter List_\
-    [Unchanged.]
+***
+
+In addition, Contains for _Pipeline Body_ is also overridden. This is important:
+**Topical pipeline bodies’ hide any of their use of `#` from the outside**. The
+`#` that pipeline bodies contain is rebound to the pipeline bodies’ lexical
+scopes, and it is not the same `#` as any `#` that might be within scope from
+the outside.
+
+* **Contains**\
+  With parameter _symbol_.
+
+  * **_Pipeline Body_** : _Pipeline Topic Body_
+
+    1. If _symbol_ is `#`, return false.
+    2. For each child node _child_ of this Parse Node, do
+       1. If _child_ is an instance of _symbol_, return true.
+       2. If _child_ is an instance of a nonterminal, then
+          1. Let _contained_ be the result of _child_ . Contains (_symbol_).
+          2. If _contained_ is true, return true.
+
+<table>
+<thead>
+<tr>
+<th>
+
+_node_
+
+<th>
+
+_node_ . Contains (`#`)
+
+<tbody>
+<tr>
+<td>
+
+```js
+a
+```
+
+<td>False
+
+<tr>
+<td>
+
+```js
+#
+```
+
+<td>True
+
+<tr>
+<td>
+
+```js
+# + 2
+```
+
+<td>True
+
+<tr>
+<td>
+
+```js
+{ # + 2 }
+```
+
+<td>False
+
+<tr>
+<td>
+
+```js
+if (true) { # }
+```
+
+<td>True
+
+<tr>
+<td>
+
+```js
+function () { # + 2 }
+```
+
+<td>False
+
+<tr>
+<td>
+
+```js
+() => # + 2
+```
+
+<td>True
+
+<tr>
+<td>
+
+```js
+# |> a + 2
+```
+
+<td>True
+
+<tr>
+<td>
+
+```js
+a |> # + 2
+```
+
+<td>False
+
+</table>
+
+***
+
+All other new productions that are introduced in this proposal use the unchanged
+implicit Contains algorithm defined above for productions in general.
 
 ### Static Early Errors
 Certain syntax errors cannot be detected by the context-free grammar alone yet
@@ -1883,8 +2000,6 @@ _Yield Expression_ is formally defined in [ECMAScript Functions and Classes
 § Generator Function Definitions][].
 
 #### Only pipeline bodies may contain topic references
-[TODO: Make pipeline bodies hide `#` from Contains rule.]
-
 [TODO: Write error algorithm.]
 
 ### Other static semantic rules
