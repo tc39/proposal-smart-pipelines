@@ -2009,18 +2009,28 @@ The only Lexical Environments that neither establish nor hide topic bindings are
 those created by **arrow functions** and by **`try` statements**. For these
 environments, their Records’ Get Topic Binding Status returns null.
 
-#### Declarative Environment Records
 [ECMAScript declarative Environment Records][] are the usual lexical environment
 records that are declared by syntax blocks `{`…`}`.
 
-Declarative Environment Records has a concrete version of the Get Topic Binding
-Status method. In general, that version returns “void”, because regular declarative
-Environment Records **void** any topic binding from their outside.
+#### Method Get-Topic-Binding-Status
+In general, this version returns “void”, because most Environment Records
+**void** any topic binding from their outside.
+
+However, Declarative Environments and
 
 <details>
 
-* **Get Topic Binding Status** ()\
-  Return “void”.
+* **Get Topic Binding Status** ()
+  * **Declarative Environment**\
+    Return “void”.
+  * **Object Environment**\
+    Return “void”.
+  * **Global Environment**\
+    Return “void”.
+  * **Module Environment**\
+    Return “void”.
+  * **Lexical Environment**\
+    Return “void”.
 
 </details>
 
