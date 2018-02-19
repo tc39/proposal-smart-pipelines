@@ -1871,6 +1871,11 @@ completely fulfill another production. “Is covering” is formally defined in
 _Yield Expression_ is formally defined in [ECMAScript Functions and Classes
 § Generator Function Definitions][].
 
+#### Only pipeline bodies may contain topic references
+[TODO: Make pipeline bodies hide `#` from Contains rule.]
+
+[TODO: Write error algorithm.]
+
 ### Other static semantic rules
 
 All new productions defined in this proposal are neither function definitions
