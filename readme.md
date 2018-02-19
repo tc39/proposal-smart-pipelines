@@ -1691,7 +1691,7 @@ in imitation of how [ECMAScript _Member Expression_][] handles method chains.
   * _Simple Reference_ `.` _Identifier Name_
 
 ##### Practical consequences
-Therefore, a pipeline in **bare style *never* ** has **parentheses `(…)` or
+Therefore, a pipeline in **bare style *never*** has **parentheses `(…)` or
 brackets `[…]`** in its body. Neither `… |> object.method()` nor `… |>
 object.method(arg)` nor `… |> object[symbol]` nor `… |> object.createFunction()`
 are in bare style (in fact, they all have invalid syntax, due to their being in
