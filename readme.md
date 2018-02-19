@@ -2102,7 +2102,7 @@ abstract operation on the running execution context’s lexical environment.
 
 </details>
 
-#### Topic style • Topic Pipeline Body Instantiation
+### Topic style • Topic Pipeline Body Instantiation
 <details open>
 
 This algorithm was adapted from [ECMAScript Blocks, § RS: Block Declaration
@@ -2122,7 +2122,7 @@ _topic_ is the value that will be bound to _env_’s topic.
 
 </details>
 
-#### Topic style • Evaluation
+### Topic style • Evaluation
 <details open>
 
 This algorithm was adapted from [ECMAScript Blocks, § RS: Evaluation][].
@@ -2155,7 +2155,7 @@ Topic style behaves like **`do { const ` _topic Identifier_ `=` _topic_`;
 
 </details>
 
-#### Simple reference • Evaluation
+### Simple reference • Evaluation
 <details open>
 <summary>Simple references’ runtime semantics are exactly the same as the
 member expressions they resemble.</summary>
@@ -2171,7 +2171,7 @@ This section is adapted from [ECMAScript Property Accessors, § RS: Evaluation]
 
 </details>
 
-#### Bare function call • Evaluation
+### Bare function call • Evaluation
 If the body is a merely a simple reference, then that identifier is interpreted
 to be a **bare function call**. The pipeline’s value will be the result of
 calling the body with the current topic as its argument.
@@ -2196,7 +2196,7 @@ Evaluation][].
 
 </details>
 
-#### Bare constructor call • Evaluation
+### Bare constructor call • Evaluation
 <details open>
 
 This algorithm was adapted from [ECMAScript `new` operator, § RS: Evaluation][].
