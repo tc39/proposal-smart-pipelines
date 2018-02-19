@@ -1858,9 +1858,14 @@ the outside.
 <table>
 <thead>
 <tr>
+<td>
+
+<th>
+
 Does use outer topic
 
-<tr>
+<th>
+
 Does **not** use outer topic
 
 <tbody>
