@@ -174,8 +174,6 @@ Pipe operators are also conceptually similar to [WHATWG-stream piping][] and
 
 </details>
 
-****
-
 The binary smart pipe operator proposed here would provide a backwards- and
 forwards-compatible style of chaining nested expressions into a readable,
 left-to-right manner. Nested transformations become untangled into short steps
