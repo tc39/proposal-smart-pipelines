@@ -3309,7 +3309,7 @@ the steps of the computation would be:
 4. The pipe’s body is evaluated within this inner lexical context.
 5. The pipe’s result is the result of the body.
 
-### Term rewriting • Arbitrary associativity
+### Term rewriting • Arbitrary associativity
 The pipe operator is presented above as a left-associative operator. However, it
 is theoretically [arbitrarily associative][associative property]: how a
 pipeline’s expressions are particularly grouped is functionally arbitrary. One
