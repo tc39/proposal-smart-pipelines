@@ -2087,18 +2087,23 @@ abstract operation on the running execution context’s lexical environment.
 
 #### Topic style • Evaluation
 <details open>
-<summary>The pipeline’s value is whatever the body expression evaluates into,
-assuming that the topic value is first bound to the topic reference within the
-body scope.</summary>
 
-But more precisely, it binds the topic to the pipeline’s head value then
-evaluates the RHS [TODO]
+This algorithm was adapted from [ECMAScript Blocks, § RS: Evaluation][].
 
 * **Evaluation**
-  * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_
-    1. Let _head Value_ be the result of evaluating _Pipeline Expression_.
-    2. [TODO: Create topic environment]
-    3. [TODO: Evaluate body in new environment]
+  * **_Pipeline Topic Body_** : _Conditional Expression_
+    1. Let _old Env_ be the running execution context’s Lexical Environment.
+    2. Let _pipeline Body Env_ be New Declarative Environment (_old Env_).
+    3. Perform Topic Pipeline Body Instantiation (_Statement List_, _pipeline Body Env_).
+    4. Set the running execution context’s Lexical Environment to _pipeline Body Env_.
+    5. Let _pipeline Value_ be the result of evaluating _Conditional Expression_.
+    6. Set the running execution context’s Lexical Environment to _old Env_.
+    7. Return blockValue.
+
+No matter how control leaves the _Block_ the Lexical Environment is always
+restored to its former state.
+
+</details>
 
 Topic style behaves like **`do { const ` _topic Identifier_ `=` _topic_`;
 `_substituted Body_` }`**, where:
