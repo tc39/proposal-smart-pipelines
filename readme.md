@@ -1962,47 +1962,38 @@ See [TODO: Topics and inner functions].
 ### Static Early Errors
 Certain syntax errors cannot be detected by the context-free grammar alone yet
 must still be detected at compile time. Early Error Rules are Static Semantic
-Rules that define when such extra syntax errors occur.
+Rules that define when such extra syntax errors occur. [TODO: Spec link.]
 
-<details open>
+The two static early errors in this proposal are designed to prevent ambiguity
+of the developer’s intention from shooting the developer in the foot. They force
+the developer to clarify their intent. Together they fulfill the goals of [don’t
+shoot me in the foot][] and [static analyzability][].
 
-> A special kind of static semantic rule is an Early Error Rule. Early error
-> rules define early error conditions (see clause 16) that are associated with
-> specific grammar productions. Evaluation of most early error rules are not
-> explicitly invoked within the algorithms of this specification. A conforming
-> implementation must, prior to the first evaluation of a Script or Module,
-> validate all of the early error rules of the productions used to parse that
-> Script or Module. If any of the early error rules are violated the Script or
-> Module is invalid and cannot be evaluated.
+#### Topical pipelines must use the topic
+Pipelines that are in topic style but that do not ever use their topics anywhere
+in their bodies, such as `x |> 3`, are an early error. Such expressions would be
+always useless and almost certainly not what the author had intended.
 
-</details>
+[TODO: Write algorithm.]
 
-***
+[TODO: Link to here in static analyzability.]
 
-The two static early errors in this proposal are designed to prevent some ambiguity
-from shooting the developer in the foot – by forcing the developer to clarify
-their intent.
+#### Topical pipelines that are yield expressions must be parenthesized
+Just as with pipeline heads, pipeline bodies that start with `yield` must be
+parenthesized. Otherwise they are early errors.
 
-* Pipelines that are in topic style but that do not ever use their topics
-  anywhere in their bodies, such as `x |> 3`, are an early error. Such expressions
-  would be always useless and almost certainly not what the author had intended.
-  [TODO: Link.]
+The `yield` operator is the only unary operator with a looser precedence than
+`|>`. Its precedence is so loose that `x |> yield # |> f` is a footgun.
 
-  One such footgun has already been mentioned in both the section on the Goal
-  [static analyzability][] and the section on the [Contains][] rule.
+It is very likely that the developer meant `(x |> (yield #)) |> f` here, but
+because `yield` has such loose precedence, without parentheses, the pipeline
+will be parsed instead as `x |> (yield (# |> f))`, which has a very different
+meaning.
 
-* Just as with pipeline heads, pipeline bodies that start with `yield` must be
-  parenthesized. Otherwise they are early errors. This is because the `yield`
-  operator has such a loose precedence that `x |> yield # |> f` is an
-  ambiguous footgun.
+With this early error, the developer is forced to clarify their `yield`: either
+`x |> (yield #) |> f` or `x |> (yield # |> f)`.
 
-  It is very likely that the developer meant `(x |> (yield #)) |> f` here, but
-  because `yield` has such loose precedence, without parentheses, the pipeline
-  will be parsed instead as `x |> (yield (# |> f))`, which has a very different
-  meaning.
-
-  With this early error, the developer is forced to clarify their `yield`:
-  either `x |> (yield #) |> f` or `x |> (yield # |> f)`. [TODO: Link.]
+[TODO: Write algorithm.]
 
 ### Other static semantic rules
 
