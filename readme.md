@@ -1843,7 +1843,11 @@ Pipelines that are in topic style but that do not ever use their topics anywhere
 in their bodies, such as `x |> 3`, are an early error. Such expressions would be
 always useless and almost certainly not what the author had intended.
 
-[TODO: Write algorithm.]
+* **Early Errors**\
+  With parameter _symbol_.
+
+  * **_Pipeline Topic Body_** : _Conditional Expression_
+    * It is a Syntax Error if _Conditional Expression_ does not contain `#`.
 
 [TODO: Link to here in static analyzability.]
 
