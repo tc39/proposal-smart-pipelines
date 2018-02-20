@@ -2143,7 +2143,7 @@ versa**.
   * **Function Environment Record**\
     Inherited from Declarative Environment Record . Get Topic Binding ().
 
-#### Method • Clear Topic Value
+#### Method • Clear Topic Binding
 * **Clear Topic Value**
   * **Declarative Environment Record**\
     1. Let _env Rec_ be the declarative Environment Record for which the method
