@@ -1997,6 +1997,18 @@ _Yield Expression_ is formally defined in [ECMAScript Functions and Classes
 #### Only pipeline bodies may contain topic references
 [TODO: Write error algorithm.]
 
+#### Bare style cannot be right-associatively nested
+The [topic style][TODO] has [arbitrary associativity][TODO]. It can be left or
+right associative, and it would be equivalent. But the bare style does not; it
+is left associative only.
+
+In other words, `x |> (f(#) |> g(#))` is equivalent to `(x |> f(#)) |> g(#)`.
+But `x |> (f |> g)` is not equivalent to `(x |> f) |> g`. This is another
+footgun for developers who expect bare style to share the same arbitrary
+associativity that topic style has.
+
+[TODO]
+
 ### Other static semantic rules
 
 All new productions defined in this proposal are neither function definitions
