@@ -1894,7 +1894,7 @@ Does **not** use outer topic
 <tr>
 <th>
 
-_node_ . Contains (`#`)
+_Pipeline Expression_ . Contains (`#`)
 
 <td>
 
