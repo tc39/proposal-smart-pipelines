@@ -1651,7 +1651,7 @@ be made up of identifiers, `.`, and `new`.
 | ″″                      |`const m = o::m; … \|> m`                 | `… \|> o.m()` 🚫
 |`… \|> new o.m(#)`       |`… \|> new o.m`                           | `… \|> o.m()` 🚫
 | ″″                      |`const m = o::m; … \|> m`                 | `… \|> o.m()` 🚫
-|`… \|> o.m(arg, #)`      |`const m = o::m(arg); … \|> m`            | `… \|> o.m(arg)` 🚫
+|`… \|> o.m(arg, #)`      |`const m = $ => o::m(arg, $); … \|> m`    | `… \|> o.m(arg)` 🚫
 |`… \|> new o.m(arg, #)`  |`const m = $ => new o::m(arg, $); … \|> m`| `… \|> new o.m(arg)` 🚫
 |`… \|> o[symbol](#)`     |`const m = o[symbol]; … \|> m`            | `… \|> o[symbol]` 🚫
 |`… \|> new o[symbol](#)` |`const m = new o[symbol]; … \|> m`        | `… \|> new o[symbol]` 🚫
