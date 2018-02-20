@@ -343,7 +343,7 @@ Establish the topic binding (that is, the `#` binding) of an Environment Record 
 <ins class=block>
 <emu-clause id="sec-declarative-environment-records-gettopicbindingstatus">
 <h1>GetTopicBindingStatus ( )</h1>
-<p>The concrete Environment Record method GetTopicBindingStatus for declarative Environment Records Declarative Environment Records returns the value of their field [[TopicBindingStatus]], which is *"void"* by default. The value may also be *"clear"* (if the declarative Environment Record's ClearTopicBinding method has been called) or *"bound"* (if its BindTopicValue method has been called). An Environment Record with a void topic binding may change its status to *"clear"* or *"bound"* but never vice versa.</p>
+<p>The concrete Environment Record method GetTopicBindingStatus for declarative Environment Records returns the value of their field [[TopicBindingStatus]], which is *"void"* by default. The value may also be *"clear"* (if the declarative Environment Record's ClearTopicBinding method has been called) or *"bound"* (if its BindTopicValue method has been called). An Environment Record with a void topic binding may change its status to *"clear"* or *"bound"* but never vice versa.</p>
 <emu-alg>
 1. Let _envRec_ be the function Environment Record for which the method was invoked.
 2. Return _envRec_.[[TopicBindingStatus]].
@@ -352,7 +352,7 @@ Establish the topic binding (that is, the `#` binding) of an Environment Record 
 
 <emu-clause id="sec-declarative-environment-records-gettopicbindingvalue">
 <h1>GetTopicBindingValue ( )</h1>
-<p>The concrete Environment Record method GetTopicBindingValue for declarative Environment Records Declarative Environment Records returns the value of their field [[TopicBindingStatus]], which is *"void"* by default. The value may also be *"clear"* (if the declarative Environment Record's ClearTopicBinding method has been called) or *"bound"* (if its BindTopicValue method has been called). An Environment Record with a void topic binding may change its status to *"clear"* or *"bound"* but never vice versa.</p>
+<p>The method GetTopicBindingValue for declarative Environment Records is guaranteed to be called only when their topic bindings have already been established.</p>
 <emu-alg>
 1. Let _envRec_ be the declarative Environment Record for which the method was invoked.
 2. Assert: _envRec_.[[TopicBindingStatus]] is *"bound"*.
