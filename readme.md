@@ -1531,8 +1531,8 @@ The topic reference integrates into the ECMAScript syntax as one of the
 needs to be modified so that the `#` appears as one of the types of primary
 expressions.
 
-An assignment-level expression currently may be a this reference, identifier
-reference, null / undefined / true / false literal, array / object /
+An assignment-level expression currently may be a `this` reference, identifier
+reference, `null` / `undefined` / `true` / `false` literal, array / object /
 regular-expression / template literal, function / async-function / generator /
 class expression. These possibilities are given the same parameters that the
 assignment-level expression happens to have also gotten, except where they would
