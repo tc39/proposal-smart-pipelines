@@ -275,7 +275,8 @@ In othe words, the preceding example is equivalent to:
 Being able to automatically detect this **“bare style”** is the [**smart** part
 of this “smart pipe operator”][smart body syntax].
 
-[TODO: Link to Goals.]
+[TODO: Link to Goals.]\
+[TODO: Add Lodash, jQuery, vanilla DOM, and search NPM top packages for more examples.]
 
 <table>
 <thead>
