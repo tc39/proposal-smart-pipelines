@@ -1809,7 +1809,7 @@ reasons. This proposal will instead use the planned future new syntax
 
 **This proposal will use Contains to determine whether an expression uses its
 lexical environment’s topic.** This will be important to [statically
-ensure][static analyzability] that [topical pipelines always use their topic
+ensure][static analyzability] that [topic-style pipelines always use their topic
 references][TODO].
 
 Contains does **not** penetrate the bodies of function and method definitions
@@ -1828,8 +1828,8 @@ functions, § SS: Contains][]).
 Likewise, Contains does **not** penetrate into syntax structures establishing
 **[topic-opaque lexical scopes][TODO]**. Topic-opaque lexical scopes are those
 that shadow the outer context’s topic, either by [rebinding the topic to a new
-value][TODO] (as topical pipeline bodies do) or by [voiding (that is, hiding)
-the outer topic][TODO] (like as [almost all blocks do][TODO]).
+value][TODO] (as topic-style pipeline bodies do) or by [voiding (that is,
+hiding) the outer topic][TODO] (like as [almost all blocks do][TODO]).
 
 The logic of this is that, because topic-opaque lexical scopes establish their
 own topic binding, structures that create topic-opaque scopes would never use
@@ -1857,7 +1857,7 @@ or any function’s parameter list.) See [TODO: Topics and inner functions].
 ***
 
 In addition, Contains for _Pipeline Body_ is also overridden. This is important:
-**Topical pipeline bodies’ hide any of their use of `#` from the outside**. The
+**Topic-style pipeline bodies’ hide any of their use of `#` from the outside**. The
 `#` that pipeline bodies contain is rebound to the pipeline bodies’ lexical
 scopes, and it is not the same `#` as any `#` that might be within scope from
 the outside.
@@ -1960,7 +1960,7 @@ of the developer’s intention from shooting the developer in the foot. They for
 the developer to clarify their intent. Together they fulfill the goals of [don’t
 shoot me in the foot][] and [static analyzability][].
 
-#### Topical pipelines must use the topic
+#### Topic-style pipelines must use the topic
 Pipelines that are in topic style but that do not ever use their topics anywhere
 in their bodies, such as `x |> 3`, are an early error. Such expressions would be
 always useless and almost certainly not what the author had intended.
@@ -1971,7 +1971,7 @@ always useless and almost certainly not what the author had intended.
 
 [TODO: Link to here in static analyzability.]
 
-#### Topical pipelines that are yield expressions must be parenthesized
+#### Topic-style pipelines that are yield expressions must be parenthesized
 Just as with pipeline heads, pipeline bodies that start with `yield` must be
 parenthesized. Otherwise they are early errors.
 
