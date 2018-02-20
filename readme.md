@@ -2098,13 +2098,13 @@ proposal.
 Declarative Environment Records have two additional new fields and implement
 three additional new concrete methods.
 
-| Name                     | Description
-| ------------------------ | -------------------------------------------------------------
-| [[Topic Binding Status]] | “bound” or “void” or “clear”. Default value is “void”.
-| [[Topic Value]]          | Default value is undefined.
-| Get Topic Value ()       | “What is the value of the topic binding?” See below.
-| Clear Topic Binding ()   | Sets the topic binding status to “clear”.
-| Bind Topic Value (_V_)   | Sets the topic value to _V_; also sets the status to “bound”.
+| Name                        | Description
+| --------------------------- | -------------------------------------------------------------
+| [[Topic Binding Status]]    | “bound” or “void” or “clear”. Default value is “void”.
+| [[Topic Value]]             | Default value is undefined.
+| Get Topic Binding Value ()  | “What is the value of the topic binding?” See below.
+| Clear Topic Binding ()      | Sets the topic binding status to “clear”.
+| Bind Topic Value (_V_)      | Sets the topic value to _V_; also sets the status to “bound”.
 
 #### Method • Get Topic Binding Status
 In general, this version returns “void”, because most Environment Records
@@ -2133,15 +2133,15 @@ versa**.
   * **Lexical Environment Record**\
     Return “void”.
 
-#### Method • Get Topic Binding
-* **Get Topic Binding** ()
+#### Method • Get Topic Binding Value
+* **Get Topic Binding Value** ()
   * **Declarative Environment Record**\
     1. Let _env Rec_ be the declarative Environment Record for which the method
        was invoked.
     2. Assert: _env Rec_ . [[Topic Binding Status]] is “bound”.
     3. Return _env Rec_ . [[Topic Value]].
   * **Function Environment Record**\
-    Inherited from Declarative Environment Record . Get Topic Binding ().
+    Inherited from Declarative Environment Record . Get Topic Binding Value ().
 
 #### Method • Clear Topic Binding
 * **Clear Topic Value**
@@ -2194,7 +2194,7 @@ by definition, never has a topic binding status of “clear”.)
 
 1. Let _env Rec_ be Get Topic Environment ().
 2. Assert _env Rec_ . Get Topic Binding Status () is “bound”.
-3. Return ? _env Rec_ . Get Topic Binding ().
+3. Return ? _env Rec_ . Get Topic Binding Value ().
 
 ### Topic reference • Evaluation
 When evaluated during runtime, the topic reference uses the Resolve Topic
