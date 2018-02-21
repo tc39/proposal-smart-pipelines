@@ -339,7 +339,7 @@ Establish the topic binding (that is, the `#` binding) of an Environment Record 
 <ins class=block>
 <emu-grammar>
 Punctuator :: one of
-  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` <ins>`|>` `#`</ins> `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
+  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` <ins>`|&gt;` `#`</ins> `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
 </emu-grammar>
 </ins>
 
@@ -421,7 +421,7 @@ AssignmentExpression[In, Yield, Await] :
 <emu-grammar>
 PipelineExpression[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
-  PipelineExpression[?In, ?Yield, ?Await] `|>` PipelineBody[?In, ?Yield, ?Await]
+  PipelineExpression[?In, ?Yield, ?Await] `|&gt;` PipelineBody[?In, ?Yield, ?Await]
 
 PipelineBody[In, Yield, Await] :
   PipelineBareFunctionCall
