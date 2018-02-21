@@ -264,6 +264,21 @@ Establish the topic binding (that is, the `#` binding) of an Environment Record 
 3. Return _envRec_.[[TopicValue]].
 </emu-alg>
 </emu-clause>
+
+<emu-clause id="sec-declarative-environment-records-cleartopicbinding">
+<h1>ClearTopicBinding ( )</h1>
+<p>The method ClearTopicBinding for declarative Environment Records clears the record's topic binding. It must not be called when the record's topic binding has already been established or cleared.</p>
+<emu-note>
+<p>That is, ClearTopicBinding will never be called on an Environment Record after either the ClearTopicBinding nor BindTopicValue methods has already been called.</p>
+</emu-note>
+<emu-alg>
+1. Let _envRec_ be the declarative Environment Record for which the method was invoked.
+2. Assert: _envRec_.[[TopicBindingStatus]] is *"void"*.
+3. Set _envRec_.[[TopicBindingStatus]] to *"clear"*.
+4. Return NormalCompletion(~empty~).
+</emu-alg>
+</emu-clause>
+
 </ins>
 
 <!-- es6num="8.1.1.2" -->
