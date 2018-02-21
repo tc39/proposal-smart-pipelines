@@ -279,6 +279,20 @@ Establish the topic binding (that is, the `#` binding) of an Environment Record 
 </emu-alg>
 </emu-clause>
 
+<emu-clause id="sec-declarative-environment-records-bindtopicvalue">
+<h1>BindTopicValue ( )</h1>
+<p>The method GetTopicBindingValue for declarative Environment Records is guaranteed to be called only when the Environment Records still have void topic bindings.</p>
+<emu-note>
+<p>That is, GetTopicBindingValue will never be called on an Environment Record after either the ClearTopicBinding nor BindTopicValue methods has already been called. Therefore, topic bindings are immutable.</p>
+</emu-note>
+<emu-alg>
+1. Let _envRec_ be the declarative Environment Record for which the method was invoked.
+2. Assert: _envRec_.[[TopicBindingStatus]] is *"void"*.
+3. Set _envRec_.[[TopicValue]] to _V_.
+4. Set _envRec_.[[TopicBindingStatus]] to *"bound"*.
+4. Return NormalCompletion(~empty~).
+</emu-alg>
+</emu-clause>
 </ins>
 
 <!-- es6num="8.1.1.2" -->
