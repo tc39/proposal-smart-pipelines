@@ -1,3 +1,9 @@
+[TODO: Use ClearTopicBinding in arrow function instantiation.]\
+[TODO: Change Bind Topic Value ( V ) to (V), no spaces.]\
+[TODO: Copy overview of lexical-topic concept from spec into own section.]\
+[TODO: Remove extraneous backslashes in rendering]\
+[TODO: Search for unrendered links]
+
 <nav><details>
 <summary><strong>Table of Contents</strong></summary>
 
