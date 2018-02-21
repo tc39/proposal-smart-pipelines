@@ -342,6 +342,26 @@ PrimaryExpression[Yield, Await] :
   CoverParenthesizedExpressionAndArrowParameterList[?Yield, ?Await]
 </emu-grammar>
 
+<ins class=block>
+<emu-clause id="sec-gettopicenvironment" aoid="GetTopicEnvironment">
+<h1>Runtime Semantics: GetTopicEnvironment</h1>
+<emu-note>
+<p>Get Topic Environment finds the Environment Record that currently supplies the topic binding (the binding of `#`) or that voids the topic binding. That is, it finds the running execution topic's nearest-ancestral topic-opaque environment, which is the nearest-ancestral outer environment that does not have a topic binding status of *"clear"*.</p>
+</emu-note>
+<p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
+<emu-alg>
+1. Let _lex_ be the running execution context's Lexical Environment.
+2. Repeat,
+  1. Let _envRec_ be _lex_'s EnvironmentRecord.
+  2. Let _status_ be _envRec_.GetTopicBindingStatus().
+  3. If _status_ is not *"clear"*, return _envRec_.
+  4. Let _outer_ be the value of _lex_'s outer environment reference.
+  5. Set _lex_ to _outer_.
+3. Return _lex_.
+</emu-alg>
+</emu-clause>
+</ins>
+
 </emu-clause>
 
 <emu-clause id=sec-assignment-operators>
