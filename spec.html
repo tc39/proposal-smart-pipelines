@@ -34,7 +34,7 @@ contributors: J. S. Choi
 <p>A <dfn>topic-binding environment</dfn> is a Lexical Environment that establishes a <dfn>topic binding</dfn>, which in turn is a binding of the topic reference (`#`) to a topic (a value of any ECMAScript language type).</p>
 
 <emu-note>
-<p>The only Lexical Environments that are topic-binding environments are those that are associated with |PipelineTopicBody| and which were created with the TopicPipelineBodyInstantiation abstract operation.</p>
+<p>The only Lexical Environments that are topic-binding environments are those that are associated with |PipelineTopicBody| and which were created with the TopicPipelineBodyInstantiation abstract operation. Topic bindings are immutable; after its topic binding is established, the topic binding's value will never change.</p>
 </emu-note>
 
 <p>A <dfn>topic-clear environment</dfn> is a Lexical Environment that is [TODO]</p>
