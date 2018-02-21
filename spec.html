@@ -500,6 +500,29 @@ With parameter _headValue_.
 </emu-clause>
 </ins>
 
+<emu-clause id=sec-ecmascript-language-functions-and-classes>
+<h1>ECMAScript Language: Functions and Classes</h1>
+
+<emu-clause id=sec-function-definitions>
+<h1>Function Definitions</h1>
+<emu-clause id=sec-function-definitions-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+<emu-grammar>FunctionBody : FunctionStatementList</emu-grammar>
+<ul>
+<li>
+  <ins>If |FunctionStatementList| is not the |FunctionBody| of a |ConciseBody|, it is a Syntax Error if |FunctionStatementList| Contains `#` is *true*.</ins>
+</li>
+</ul>
+
+<ins>
+<emu-note>
+<p>|ConciseBody| is allowed to contain the topic reference `#`, as long as its outer syntactic context is also allowed to contain `#`. This is unlike |FunctionDeclaration|, |FunctionExpression|, and other production that uses |FunctionBody|.</p>
+</emu-note>
+</ins>
+
+</emu-clause>
+</emu-clause>
+
 <emu-clause id=sec-arrow-function-definitions>
 <h1>Arrow Function Definitions</h1>
 
@@ -511,13 +534,12 @@ With parameter _headValue_.
 1. If _symbol_ is not one of |NewTarget|, |SuperProperty|, |SuperCall|, <del>`super` or `this`</del> <ins>`super`, `this`, or `#`</ins>, return *false*.
 2. If _ArrowParameters_ Contains _symbol_ is *true*, return *true*.
 3. Return |ConciseBody| Contains _symbol_.
+</emu-alg>
 
 <emu-note>
 Normally, Contains does not look inside most function forms. However, Contains is used to detect `new.target`, <ins>`this`, `super`, and `#`</ins> usage within an ArrowFunction.
 </emu-note>
 
-</emu-alg>
 </emu-clause>
-
 </emu-clause>
-
+</emu-clause>
