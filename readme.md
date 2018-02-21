@@ -2155,8 +2155,8 @@ versa**.
     1. Let _env Rec_ be the declarative Environment Record for which the method
        was invoked.
     2. Assert: _env Rec_ . [[Topic Binding Status]] is “void”.
-    3. Set _env Rec_.[[Topic Binding Status]] to “clear”.
-    4. Return _V_.
+    3. Set _env Rec_ . [[Topic Binding Status]] to “clear”.
+    4. Return Normal Completion (empty).
   * **Function Environment Record**\
     Inherited from Declarative Environment Record . Clear Topic Value ().
 
@@ -2168,7 +2168,7 @@ versa**.
     2. Assert: _env Rec_ . [[Topic Binding Status]] is “void”.
     3. Set _env Rec_.[[Topic Value]] to _V_.
     4. Set _env Rec_.[[Topic Binding Status]] to “bound”.
-    5. Return _V_.
+    5. Return Normal Completion (empty).
   * **Function Environment Record**\
     Inherited from Declarative Environment Record . Bind Topic Value (_V_).
 
