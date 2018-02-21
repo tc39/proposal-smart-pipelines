@@ -2180,6 +2180,7 @@ a topic binding status of **clear**. Its definition has been adapted from
     3. If _status_ is not “clear”, return _env Rec_.
     4. Let _outer_ be the value of _lex_’s outer environment reference.
     5. Set _lex_ to _outer_.
+3. Return _lex_.
 
 The loop in step 2 will always terminate because the list of environments always
 ends with the global environment, which always has a void (that is, not-clear)
