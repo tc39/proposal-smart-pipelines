@@ -418,7 +418,7 @@ AssignmentExpression[In, Yield, Await] :
 <h1>Pipeline Operator</h1>
 <h2>Syntax</h2>
 
-<emu-grammar>
+<emu-grammar type=definition>
 PipelineExpression[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
   PipelineExpression[?In, ?Yield, ?Await] `|&gt;` PipelineBody[?In, ?Yield, ?Await]
