@@ -439,13 +439,9 @@ With parameter _symbol_.
 <emu-clause id=sec-pipeline-operator-runtime-semantics-evaluation>
 <h1>Runtime Semantics: Evaluation</h1>
 
-<emu-grammar>PipelineExpression : PipelineExpression</emu-grammar>
+<emu-grammar>PipelineExpression : PipelineExpression `|>` PipelineBody</emu-grammar>
 <emu-alg>
-1. Let _envRec_ be _env_'s Environment Record.
-2. Assert: _envRec_ is a declarative Environment Record.
-3. Assert: _envRec_.GetTopicBindingStatus() is *"void"*.
-4. Assert: _envRec_.GetTopic() is *undefined*.
-5. Perform ! _envRec_.BindTopicValue(_topic_).
+1. [TODO]
 </emu-alg>
 </emu-clause>
 
