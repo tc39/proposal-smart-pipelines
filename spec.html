@@ -451,11 +451,11 @@ With parameter _headValue_.
 
 <emu-grammar>PipelineBareFunctionCall : SimpleReference</emu-grammar>
 <emu-alg>
-1. Let_ref_ be the result of evaluating _SimpleReference_.
-2. Let_func_ be ? GetValue(_ref_).
-3. Let_thisCall_ be this |PipelineBareFunctionCall|.
-4. Let_tailCall_ be IsInTailPosition(_thisCall_).
-5. Let_Arguments_ be a List containing the one element which is _headValue_.
+1. Let _ref_ be the result of evaluating _SimpleReference_.
+2. Let _func_ be ? GetValue(_ref_).
+3. Let _thisCall_ be this |PipelineBareFunctionCall|.
+4. Let _tailCall_ be IsInTailPosition(_thisCall_).
+5. Let _Arguments_ be a List containing the one element which is _headValue_.
 6. Return ? EvaluateCall(_func_, _ref_, _Arguments_, _tailCall_).
 </emu-alg>
 
