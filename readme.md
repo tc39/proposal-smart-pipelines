@@ -230,7 +230,7 @@ With the smart pipe operator, the code above could be terser and, literally,
 straightforward. Prefix, infix, and postfix expressions would be less tangled
 together in threads of spaghetti. Instead, data values would be piped from left
 to right through a **single flat thread of postfix expressions**, essentially
-forming a [Reverse Polish notation][].
+forming a [reverse Polish notation][].
 ```js
 stringPromise
   |> await #
