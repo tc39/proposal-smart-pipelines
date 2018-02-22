@@ -7,9 +7,9 @@
   "repository": "js-choi/proposal-smart-pipelines",
   "scripts": {
     "prespec": "mkdir -p out/",
-    "spec": "ecmarkup spec.html out/index.html --assets inline --contributors \"J. S. Choi, Ecma International\" --copyright true",
+    "spec": "ecmarkup spec.html out/index.html --assets inline --contributors \"J. S. Choi, Ecma International\" --copyright true --title \"Smart Pipelines\" --status \"proposal\" --stage 0",
     "prewatch": "mkdir -p out/",
-    "watch": "ecmarkup --watch spec.html out/index.html --assets inline --contributors \"J. S. Choi, Ecma International\" --copyright true"
+    "watch": "npm run spec -- --watch"
   },
   "devDependencies": {
     "ecmarkup": "^3.5.1"
