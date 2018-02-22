@@ -21,8 +21,17 @@ contributors: J. S. Choi
 <h1>Lexical Environments</h1>
 
 <ins class=block>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-lexical-environments>original Lexical Environments clause</a>.</p>
+</emu-note>
+
 <emu-clause id="sec-lexical-topics">
 <h1>Lexical Topics</h1>
+
+<emu-note type=editor>
+<p>This is a new subsection of the <a href=https://tc39.github.io/ecma262/#sec-lexical-environments>original Lexical Environments clause</a>.</p>
+</emu-note>
 
 <p>The <dfn>topic binding</dfn> of a Lexical Environment immutably binds the topic reference `#` to one value of any ECMAScript language type (the <dfn>topic</dfn>), within that Lexical Environment, at the Lexical Environment's time of instantiation. The topic of a Lexical Environment conceptually serves as the value that the lexical context is “about”. Many Lexical Environments do not have topic bindings: in particular, object and global environments never have topic bindings.</p>
 
@@ -42,6 +51,10 @@ contributors: J. S. Choi
 <!-- es6num="8.1.1" -->
 <emu-clause id="sec-environment-records">
 <h1>Environment Records</h1>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-environment-records>original Environment Records clause</a>.</p>
+</emu-note>
 
 <emu-table id="table-15" caption="Abstract Methods of Environment Records">
 <table>
@@ -69,6 +82,11 @@ Purpose
 <!-- es6num="8.1.1.1" -->
 <emu-clause id="sec-declarative-environment-records">
 <h1>Declarative Environment Records</h1>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>.</p>
+</emu-note>
+
 <p>Each declarative Environment Record is associated with an ECMAScript program scope containing variable, constant, let, class, module, import, and/or function declarations. A declarative Environment Record binds the set of identifiers defined by the declarations contained within its scope.</p>
 
 <ins class=block>
@@ -191,6 +209,11 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 <h1>Object Environment Records</h1>
 
 <ins class=block>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-object-environment-records>original Object Environment Records clause</a>.</p>
+</emu-note>
+
 <emu-clause id="sec-object-environment-records-hastopic">
 <h1>HasTopic ( )</h1>
 <p>Regular object Environment Records never have topic bindings.</p>
@@ -207,6 +230,11 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 <h1>Global Environment Records</h1>
 
 <ins class=block>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-object-environment-records>original Global Environment Records clause</a>.</p>
+</emu-note>
+
 <emu-clause id="sec-global-environment-records-hastopic">
 <h1>HasTopic ( )</h1>
 <p>Global Environment Records never have topic bindings.</p>
@@ -225,10 +253,20 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 <emu-clause id=sec-ecmascript-language-lexical-grammar>
 <h1>ECMAScript Language: Lexical Grammar</h1>
 
+<ins class=block>
+<emu-note type=editor>
+<p>See also the <a href=https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar>original ECMAScript Language: Lexical Grammar clause</a>.</p>
+</emu-note>
+</ins>
+
 <emu-clause id=sec-punctuators>
 <h1>Punctuators</h1>
 
 <ins class=block>
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-punctuators>original Punctuators clause</a>.</p>
+</emu-note>
+
 <emu-grammar>
 Punctuator :: one of
   `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` <ins>`|&gt;` `#`</ins> `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
