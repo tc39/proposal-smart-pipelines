@@ -28,7 +28,7 @@ contributors: J. S. Choi
 
 <p>At the time of certain declarative environments' construction, those declarative environments' topic binding statuses may change from *"void"* to either *"bound"* or *"clear"*, but a reverse of this change cannot occur afterward.</p>
 
-<p>A <dfn>topic-void environment</dfn> is a Lexical Environment that establishes a topic-void binding. A <dfn>topic-void binding</dfn> prevents the topic reference `#` from being used within the environment at all. In particular, in a topic-void environment, the topic reference cannot be used to refer to the topic binding of its outer environment. All Lexical Environments are topic-void environments by default at the time of their construction.</p>
+<p>A <dfn>topic-void environment</dfn> is a Lexical Environment that establishes a void topic binding. A <dfn>void topic binding</dfn> prevents the topic reference `#` from being used within the environment at all. In particular, in a topic-void environment, the topic reference cannot be used to refer to the topic binding of its outer environment. All Lexical Environments are topic-void environments by default at the time of their construction.</p>
 
 <emu-note>
 <p>The concept of topic-void environments prevents accidental usage of outer environments' topics within an inner environment.</p>
@@ -138,7 +138,7 @@ Determine if an Environment Record establishes a `super` method binding. Return 
 <ins>GetTopicBindingStatus()</ins>
 </td>
 <td>
-<ins>Determine the status of an Environment Record's topic (`#`) binding. Return *"bound"* if it establishes a topic binding, return *"void"* if it establishes a topic-void binding, and return *"clear"* if it establishes no topic binding.</ins>
+<ins>Determine the status of an Environment Record's topic (`#`) binding. Return *"bound"* if it establishes a topic binding, return *"void"* if it establishes a void topic binding, and return *"clear"* if it establishes no topic binding.</ins>
 </td>
 </tr>
 <tr>
@@ -191,7 +191,7 @@ Purpose
 Any
 </td>
 <td>
-If the value is *"bound"*, the associated program scope binds the topic (that is, it binds `#`) to a value. If the value is *"void"*, the scope voids the topic, which hides its outer environment's topic. If the value is *"clear"*, the scope establishes neither a topic binding nor a topic-void binding.
+If the value is *"bound"*, the associated program scope binds the topic (that is, it binds `#`) to a value. If the value is *"void"*, the scope voids the topic, which hides its outer environment's topic. If the value is *"clear"*, the scope establishes neither a topic binding nor a void topic binding.
 </td>
 </tr>
 <tr>
