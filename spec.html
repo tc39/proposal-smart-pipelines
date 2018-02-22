@@ -409,23 +409,6 @@ PrimaryExpression[Yield, Await] :
 
 </emu-clause>
 
-<emu-clause id=sec-assignment-operators>
-<h1>Assignment Operators</h1>
-<h2>Syntax</h2>
-
-<emu-grammar>
-AssignmentExpression[In, Yield, Await] :
-  <del>ConditionalExpression[?In, ?Yield, ?Await]</del>
-  <ins>PipelineExpression[?In, ?Yield, ?Await]</ins>
-  [+Yield] YieldExpression[?In, ?Await]
-  ArrowFunction[?In, ?Yield, ?Await]
-  AsyncArrowFunction[?In, ?Yield, ?Await]
-  LeftHandSideExpression[?Yield, ?Await] `=` AssignmentExpression[?In, ?Yield, ?Await]
-  LeftHandSideExpression[?Yield, ?Await] AssignmentOperator AssignmentExpression[?In, ?Yield, ?Await]
-</emu-grammar>
-
-</emu-clause>
-
 <ins class=block>
 <emu-clause id=sec-pipeline-operator>
 <h1>Pipeline Operator</h1>
@@ -506,6 +489,32 @@ With parameter _headValue_.
 
 [TODO: More body evaluations]
 
+</emu-clause>
+</emu-clause>
+</ins>
+
+<emu-clause id=sec-assignment-operators>
+<h1>Assignment Operators</h1>
+<h2>Syntax</h2>
+
+<emu-grammar>
+AssignmentExpression[In, Yield, Await] :
+  <del>ConditionalExpression[?In, ?Yield, ?Await]</del>
+  <ins>PipelineExpression[?In, ?Yield, ?Await]</ins>
+  [+Yield] YieldExpression[?In, ?Await]
+  ArrowFunction[?In, ?Yield, ?Await]
+  AsyncArrowFunction[?In, ?Yield, ?Await]
+  LeftHandSideExpression[?Yield, ?Await] `=` AssignmentExpression[?In, ?Yield, ?Await]
+  LeftHandSideExpression[?Yield, ?Await] AssignmentOperator AssignmentExpression[?In, ?Yield, ?Await]
+</emu-grammar>
+
+<ins class=block>
+<emu-note type=editor>
+<p>A planned add-on proposal would add a pipeline-function operator |PipelineFunctionExpression| to |AssignmentExpression|, which would replace |PipelineExpression|.</p>
+</emu-note>
+</ins>
+
+</emu-clause>
 </emu-clause>
 </emu-clause>
 
