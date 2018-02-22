@@ -7,9 +7,9 @@
   "repository": "js-choi/proposal-smart-pipelines",
   "scripts": {
     "prespec": "mkdir -p out/",
-    "spec": "ecmarkup spec.html out/index.html --js out/ecmarkup.js --css out/ecmarkup.css",
+    "spec": "ecmarkup spec.html out/index.html --assets inline",
     "prewatch": "mkdir -p out/",
-    "watch": "ecmarkup --watch spec.html out/index.html --js out/ecmarkup.js --css out/ecmarkup.css"
+    "watch": "ecmarkup --watch spec.html out/index.html --assets inline"
   },
   "devDependencies": {
     "ecmarkup": "^3.5.1"
