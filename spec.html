@@ -33,7 +33,7 @@ contributors: J. S. Choi
 <p>This is a new subsection of the <a href=https://tc39.github.io/ecma262/#sec-lexical-environments>original Lexical Environments clause</a>.</p>
 </emu-note>
 
-<p>The <dfn>topic binding</dfn> of a Lexical Environment immutably binds the topic reference `#` to one value of any ECMAScript language type (the <dfn>topic</dfn>), within that Lexical Environment, at the Lexical Environment's time of instantiation. The topic of a Lexical Environment conceptually serves as the value that the lexical context is “about”. Many Lexical Environments do not have topic bindings: in particular, object and global environments never have topic bindings.</p>
+<p>The <dfn>topic binding</dfn> of a Lexical Environment immutably binds the topic reference `#` to one value of any ECMAScript language type (called the <dfn>topic value</dfn> or simply the <dfn>topic</dfn>), within that Lexical Environment, at the Lexical Environment's time of instantiation. The topic of a Lexical Environment conceptually serves as the value that the lexical context is “about”. Many Lexical Environments do not have topic bindings: in particular, object and global environments never have topic bindings.</p>
 
 <p>A <dfn>topic-binding environment</dfn> is a Lexical Environment that establishes a topic binding. The <dfn>topic environment</dfn> of the running execution context is its Lexical Environment's nearest outer environment that is a topic-binding environment, as defined by the abstract operator GetTopicEnvironment.</p>
 
