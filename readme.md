@@ -1,8 +1,10 @@
-[TODO: Use ClearTopicBinding in arrow function instantiation.]\
+[TODO: Remove ClearTopicBinding; simplify to HasBinding to match spec.]\
 [TODO: Change Bind Topic Value ( V ) to (V), no spaces.]\
 [TODO: Copy overview of lexical-topic concept from spec into own section.]\
-[TODO: Remove extraneous backslashes in rendering]\
-[TODO: Search for unrendered links]
+[TODO: Remove extraneous backslashes in rendering.]\
+[TODO: Search for unrendered links.]\
+[TODO: Add all new parts from spec.]\
+[TODO: Replace “lexical context” with “Lexical Environment”.]
 
 <nav><details>
 <summary><strong>Table of Contents</strong></summary>
@@ -2209,14 +2211,14 @@ abstract operation on the running execution context’s lexical environment.
 
 * **Evaluation**
   * **_Primary Expression_ : `#`**
-    * Return ? Resolve Topic ()
+    * Return ? Resolve Topic Binding ()
 
 ### Topic style • Topic Pipeline Body Instantiation
 This algorithm was adapted from [ECMAScript Blocks, § RS: Block Declaration
 Instantiation][].
 
-**Topic Pipeline Instantiation** is performed as follows using arguments _code_,
-_env_, and _topic_.\
+**Topic Pipeline Body Instantiation** is performed as follows using arguments
+_code_, _env_, and _topic_.\
 _code_ is the Parse Node corresponding to the body of the pipeline.\
 _env_ is the Lexical Environment in which the topic binding is to be created.\
 _topic_ is the value that will be bound to _env_’s topic.
@@ -2306,7 +2308,7 @@ During runtime, [TODO]
 
 * **Evaluation**
   * **_Pipeline Expression_** : _Pipeline Expression_ `|>` _Pipeline Body_
-    1. Let _head Ref_ be the result of evaluating ? _Pipeline Expression_.
+    1. Let _head Ref_ be the result of evaluating _Pipeline Expression_.
     2. Let _head Value_ be the result of ? Get Value (_head Ref_).
     3. Let _body Ref_ be Pipeline Body Evaluation of _Pipeline Body_ with argument
        _head Value_.
