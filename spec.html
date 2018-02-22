@@ -40,9 +40,9 @@ contributors: J. S. Choi
 <emu-note>
 <p>The only Lexical Environments that are topic-binding environments are those that are associated with |PipelineTopicBody| and which were created with the TopicPipelineBodyInstantiation abstract operation.</p>
 
-<p>In general, top-level syntax productions (such as |IfStatement|, |WithStatement|, |FunctionDeclaration|, |MethodDefinition|, |Script|, and |Module|) <strong>may not</strong> contain the topic reference `#`. Such productions create topic-binding environments that bind topic to *undefined* (the default value of the topic binding), but any use of the topic reference within them (as detected by the static semantic rule Contains) would trigger early errors defined for those productions.</p>
+<p>In general, syntax productions that define top-level or inner program scopes containing nested |Statement|s (such as |IfStatement|, |WithStatement|, |FunctionDeclaration|, |MethodDefinition|, |Script|, and |Module|) <strong>may not</strong> contain the topic reference `#`. Such productions create topic-binding environments that bind topic to *undefined* (the default value of the topic binding), but any use of the topic reference within them (as detected by the static semantic rule Contains) would trigger early errors defined for those productions.</p>
 
-<p>However syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within those scopes, such topic references would not trigger those early errors.</p>
+<p>However syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger those early errors.</p>
 </emu-note>
 
 </emu-clause>
@@ -114,7 +114,7 @@ Purpose
 *false* | *true*
 </td>
 <td>
-If the value is *false*, the associated program scope binds the topic (that is, it binds `#`) to a value. If the value is *false*, the scope has no topic binding. Its default value is *false*. The value may be changed from *false* to *true* but never vice versa.
+If [[TopicBindingStatus]]'s value is *false*, the Environment Record binds the topic (that is, it binds `#`) to a value. If the value is *false*, the Environment Record has no topic binding. [[TopicBindingStatus]]'s default value is *false*. Its value may be changed from *false* to *true* but never vice versa.
 </td>
 </tr>
 <tr>
@@ -125,7 +125,7 @@ If the value is *false*, the associated program scope binds the topic (that is, 
 Any
 </td>
 <td>
-If the value of [[TopicBindingStatus]] is *true*, this is the topic value (that is, the value of `#`). The default value for [[TopicValue]] is *undefined*.
+If the value of [[TopicBindingStatus]] is *true*, [[TopicValue]] is the topic value of the Environment Record (that is, the value of `#` within its program scope). The default value for [[TopicValue]] is *undefined*.
 </td>
 </tr>
 </tbody>
@@ -317,9 +317,9 @@ PrimaryExpression[Yield, Await] :
 <emu-note>
 <p>The only Lexical Environments that are topic-binding environments are those that are associated with |PipelineTopicBody| and which were created with the TopicPipelineBodyInstantiation abstract operation.</p>
 
-<p>In general, top-level syntax productions (such as |IfStatement|, |WithStatement|, |FunctionDeclaration|, |MethodDefinition|, |Script|, and |Module|) <strong>may not</strong> contain the topic reference `#`. Such productions create topic-binding environments that bind topic to *undefined* (the default value of the topic binding), but any use of the topic reference within them (as detected by the static semantic rule Contains) would trigger early errors defined for those productions.</p>
+<p>In general, syntax productions that define top-level or inner program scopes containing nested |Statement|s (such as |IfStatement|, |WithStatement|, |FunctionDeclaration|, |MethodDefinition|, |Script|, and |Module|) <strong>may not</strong> contain the topic reference `#`. Such productions create topic-binding environments that bind topic to *undefined* (the default value of the topic binding), but any use of the topic reference within them (as detected by the static semantic rule Contains) would trigger early errors defined for those productions.</p>
 
-<p>However syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within those scopes, such topic references would not trigger those early errors.</p>
+<p>However syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger those early errors.</p>
 </emu-note>
 
 <emu-clause id="sec-gettopicenvironment" aoid="GetTopicEnvironment">
@@ -342,7 +342,7 @@ PrimaryExpression[Yield, Await] :
 
 <emu-note>
 <p>The loop in step 2 will always terminate because the list of environments will always end before reaching the global environment. GetTopicEnvironment will never be called when there is no topic-binding environment in the list of environments.</p>
-<p>This is because how, in general, top-level syntax productions (such as |Script| and |Module|) are syntactically forbidden to contain the topic reference `#`. Any use of the topic reference within those productions (as detected by the static semantic rule Contains) would trigger early errors defined for those productions. It is only within productions that hide the topic reference from Contains (such as |PipelineTopicBody|) that the topic reference is syntactically permitted.</p>
+<p>This is because how, in general, syntax productions that define top-level scopes (such as |Script| and |Module|) are syntactically forbidden to contain the topic reference `#`. Any use of the topic reference within those productions (as detected by the static semantic rule Contains) would trigger early errors defined for those productions. It is only within productions that hide the topic reference from Contains (such as |PipelineTopicBody|) that the topic reference is syntactically permitted.</p>
 </emu-note>
 </emu-clause>
 
@@ -540,7 +540,7 @@ AssignmentExpression[In, Yield, Await] :
 
 <ins class=block>
 <emu-note>
-<p>In general, no parse of a statement-level production that contains an inner |Statement|, including |BlockStatement|, may contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; such topic references would not trigger the early error above.</p>
+<p>In general, syntax productions that define inner program scopes containing nested |Statement|s, including |BlockStatement|, may <strong>not</strong> contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; such topic references would not trigger the early error above.</p>
 <p>Although |BlockStatement| cannot contain topic reference `#`, |Block| itself can. Certain uses of |Block| in statement-level productions, such as |Block| in |TryStatement|, also allow the topic reference.</p>
 </emu-note>
 </ins>
@@ -566,7 +566,7 @@ IfStatement :
 
 <ins class=block>
 <emu-note>
-<p>In general, no parse of a statement-level production that contains an inner |Statement|, including |IfStatement|, may contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within those scopes, such topic references would not trigger the early error above.</p>
+<p>In general, syntax productions that define inner program scopes containing nested |Statement|s, including |IfStatement|, may <strong>not</strong> contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 
 <emu-note type=editor>
@@ -605,7 +605,7 @@ IterationStatement :
 
 <ins class=block>
 <emu-note>
-<p>In general, no parse of a statement-level production that contains an inner |Statement|, including iteration statements, may contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within those scopes, such topic references would not trigger the early error above.</p>
+<p>In general, syntax productions that define inner program scopes containing nested |Statement|s, including iteration statements, may <strong>not</strong> contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 
 <emu-note type=editor>
@@ -630,7 +630,7 @@ IterationStatement :
 
 <ins class=block>
 <emu-note>
-<p>In general, no parse of a statement-level production that contains an inner |Statement|, including |WithStatement|, may contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within those scopes, such topic references would not trigger the early error above.</p>
+<p>In general, syntax productions that define inner program scopes containing nested |Statement|s, including |WithStatement|, may <strong>not</strong> contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 
 <emu-note type=editor>
@@ -655,7 +655,7 @@ IterationStatement :
 
 <ins class=block>
 <emu-note>
-<p>In general, no parse of a statement-level production that contains an inner |Statement|, including |CaseBlock|, may contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within those scopes, such topic references would not trigger the early error above.</p>
+<p>In general, syntax productions that define inner program scopes containing nested |Statement|s, including |CaseBlock|, may <strong>not</strong> contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 
 <emu-note type=editor>
@@ -689,7 +689,7 @@ Finally : `finally` Block</emu-grammar>
 
 <ins class=block>
 <emu-note>
-<p>In general, no parse of a statement-level production that contains an inner |Statement|, including |Catch| and |Finally|, may contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within those scopes, such topic references would not trigger the early errors above.</p>
+<p>In general, syntax productions that define inner program scopes containing nested |Statement|s, including |Catch| and |Finally|, may <strong>not</strong> contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early errors above.</p>
 <p>Furthermore, the `try` block itself (|Block| in |TryStatement|) <strong>may</strong> contain topic references, assuming that |TryStatement| is contained within a parse that is also allowed to contain the topic reference. During runtime, such topic references would refer to the outer environment's topic binding. Along with arrow functions (that is, |FunctionBody| in |ConciseBody|), this behaviour is unlike that of any other syntax production containing |Statement|.</p>
 </emu-note>
 
@@ -721,7 +721,7 @@ Finally : `finally` Block</emu-grammar>
 <ins class=block>
 <emu-note>
 <p>Arrow functions' |ConciseBody| <strong>may</strong> contain the topic reference `#`, as long as |ConciseBody| is within a parse that is also allowed to contain the topic reference. During runtime, such topic references would refer to the outer environment's topic binding.</p>
-<p>Along with |Block| in |TryStatement|, this behaviour is unlike that of any other syntax production containing |Statement|. In general, no parse of a statement-level production that contains an inner |Statement|, including |FunctionBody|, may contain a topic reference `#`.</p>
+<p>Along with |Block| in |TryStatement|, this behaviour is <strong>unlike</strong> that of any other syntax production containing |Statement|. In general, syntax productions that define inner program scopes containing nested |Statement|s, including |FunctionBody|, may <strong>not</strong> contain a topic reference `#`.</p>
 </emu-note>
 </ins>
 
@@ -766,7 +766,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 
 <ins class=block>
 <emu-note>
-<p>In general, no parse of a top-level syntax production, including |Script|, may contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within those scopes, such topic references would not trigger the early error above.</p>
+<p>In general, top-level program scope, including |Script|, may <strong>not</strong> contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 
 <emu-note type=editor>
@@ -791,7 +791,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 
 <ins class=block>
 <emu-note>
-<p>In general, no parse of a top-level syntax production, including |Module|, may contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within those scopes, such topic references would not trigger the early error above.</p>
+<p>In general, a top-level program scope, including |Module|, may <strong>not</strong> contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 
 <emu-note type=editor>
