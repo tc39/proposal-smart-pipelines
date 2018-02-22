@@ -517,13 +517,157 @@ AssignmentExpression[In, Yield, Await] :
 
 </emu-clause>
 </emu-clause>
-</emu-clause>
 
+<emu-clause id=sec-ecmascript-language-statements-and-declarations>
+<h1>ECMAScript Language: Statements and Declarations</h1>
 
-[TODO: Other static semantics]
+<emu-clause id=sec-block>
+<h1>Block</h1>
 
-</emu-clause>
+<emu-clause id=sec-block-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+<emu-grammar>BlockStatement : Block</emu-grammar>
+<ul>
+<li>
+  <ins>It is a Syntax Error if |Block| Contains `#` is *true*.</ins>
+</li>
+</ul>
+
+<ins class=block>
+<emu-note>
+<p>In general, no parse of a statement-level production that contains an inner |Statement|, including |BlockStatement|, may contain a topic reference `#`. However, syntax productions associated with topic-bound environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; such topic references would not trigger the early error above.</p>
+<p>Although |BlockStatement| cannot contain topic reference `#`, |Block| itself can. Certain uses of |Block| in statement-level productions, such as |Block| in |TryStatement|, also allow the topic reference.</p>
+</emu-note>
 </ins>
+
+</emu-clause>
+
+<emu-clause id=sec-if-statement>
+<h1>The `if` statement</h1>
+
+<emu-clause id=sec-if-statement-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+<emu-grammar>
+IfStatement :
+  `if` `(` Expression `)` Statement `else` Statement
+  `if` `(` Expression `)` Statement
+</emu-grammar>
+<ul>
+<li>
+<ins>It is a Syntax Error if |StatementList| Contains `#` is *true*.</ins>
+</li>
+</ul>
+
+<ins class=block>
+<emu-note>
+<p>In general, no parse of a statement-level production that contains an inner |Statement|, including |IfStatement|, may contain a topic reference `#`. However, syntax productions associated with topic-bound environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within those scopes, such topic references would not trigger the early error above.</p>
+</emu-note>
+
+<emu-note type=editor>
+<p>This early error is forward compatible with a planned add-on proposal to make `if` statements bind the topic reference to the value of |Expression|.</p>
+</emu-note>
+</ins>
+
+</emu-clause>
+
+<emu-clause id=sec-iteration-statements>
+<h1>Iteration Statements</h1>
+
+<emu-clause id="sec-semantics-static-semantics-early-errors">
+<h1>Static Semantics: Early Errors</h1>
+<emu-grammar>
+IterationStatement :
+  `do` Statement `while` `(` Expression `)` `;`
+  `while` `(` Expression `)` Statement
+  `for` `(` Expression? `;` Expression? `;` Expression? `)` Statement
+  `for` `(` `var` VariableDeclarationList `;` Expression? `;` Expression? `)` Statement
+  `for` `(` LexicalDeclaration Expression? `;` Expression? `)` Statement
+  `for` `(` LeftHandSideExpression `in` Expression `)` Statement
+  `for` `(` `var` ForBinding `in` Expression `)` Statement
+  `for` `(` ForDeclaration `in` Expression `)` Statement
+  `for` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
+  `for` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
+  `for` `(` ForDeclaration `of` AssignmentExpression `)` Statement
+  `for` `await` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
+  `for` `await` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
+  `for` `await` `(` ForDeclaration `of` AssignmentExpression `)` Statement
+</emu-grammar>
+<ul>
+<li><ins>It is a Syntax Error if |Statement| Contains `#` is *true*.</ins></li>
+</ul>
+
+<ins class=block>
+<emu-note>
+<p>In general, no parse of a statement-level production that contains an inner |Statement|, including iteration statements, may contain a topic reference `#`. However, syntax productions associated with topic-bound environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within those scopes, such topic references would not trigger the early error above.</p>
+</emu-note>
+
+<emu-note type=editor>
+<p>This early error is forward compatible with a planned add-on proposal to make `for`-`of` and `for`-`in` statements bind the topic reference to the value of each iterator value or object property key.</p>
+</emu-note>
+</ins>
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id=sec-switch-statement>
+<h1>The `switch` statement</h1>
+
+<emu-clause id=sec-switch-statement-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+<emu-grammar>SwitchStatement : `switch` Expression StatementList</emu-grammar>
+<ul>
+<li>
+<ins>It is a Syntax Error if |StatementList| Contains `#` is *true*.</ins>
+</li>
+</ul>
+
+<ins class=block>
+<emu-note>
+<p>In general, no parse of a statement-level production that contains an inner |Statement|, including |CaseBlock|, may contain a topic reference `#`. However, syntax productions associated with topic-bound environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within those scopes, such topic references would not trigger the early error above.</p>
+</emu-note>
+
+<emu-note type=editor>
+<p>This early error is forward compatible with a planned add-on proposal to make `switch` statements bind the topic reference to the value of |Expression|.</p>
+</emu-note>
+</ins>
+
+</emu-clause>
+
+<emu-clause id=sec-try-statement>
+<h1>The `try` statement</h1>
+
+<emu-clause id=sec-try-statement-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+<emu-grammar>
+Catch : `catch` `(` CatchParameter `)` Block</emu-grammar>
+<ul>
+<li>
+<ins>It is a Syntax Error if |Block| Contains `#` is *true*.</ins>
+</li>
+</ul>
+
+<emu-grammar>
+Finally : `finally` Block</emu-grammar>
+<ul>
+<li>
+<ins>It is a Syntax Error if |Block| Contains `#` is *true*.</ins>
+</li>
+</ul>
+
+<ins class=block>
+<emu-note>
+<p>In general, no parse of a statement-level production that contains an inner |Statement|, including |Catch| and |Finally|, may contain a topic reference `#`. However, syntax productions associated with topic-bound environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within those scopes, such topic references would not trigger the early errors above.</p>
+<p>Furthermore, the `try` block itself (|Block| in |TryStatement|) <strong>may</strong> contain topic references, assuming that |TryStatement| is contained within a parse that is also allowed to contain the topic reference. During runtime, such topic references would refer to the outer environment's topic binding. Along with arrow functions (that is, |FunctionBody| in |ConciseBody|), this behaviour is unlike that of any other syntax production containing |Statement|.</p>
+</emu-note>
+
+<emu-note type=editor>
+<p>This early error is forward compatible with a planned add-on proposal to make `catch` statements bind the topic reference to the value of their caught errors.</p>
+</emu-note>
+</ins>
+
+</emu-clause>
+
+</emu-clause>
 </emu-clause>
 
 <emu-clause id=sec-ecmascript-language-functions-and-classes>
@@ -531,18 +675,20 @@ AssignmentExpression[In, Yield, Await] :
 
 <emu-clause id=sec-function-definitions>
 <h1>Function Definitions</h1>
+
 <emu-clause id=sec-function-definitions-static-semantics-early-errors>
 <h1>Static Semantics: Early Errors</h1>
 <emu-grammar>FunctionBody : FunctionStatementList</emu-grammar>
 <ul>
 <li>
-  <ins>If |FunctionStatementList| is not the |FunctionBody| of a |ConciseBody|, it is a Syntax Error if |FunctionStatementList| Contains `#` is *true*.</ins>
+<ins>If |FunctionStatementList| is not the |FunctionBody| of a |ConciseBody|, it is a Syntax Error if |FunctionStatementList| Contains `#` is *true*.</ins>
 </li>
 </ul>
 
-<ins>
+<ins class=block>
 <emu-note>
-<p>|ConciseBody| is allowed to contain the topic reference `#`, as long as its outer syntactic context is also allowed to contain `#`. This is unlike |FunctionDeclaration|, |FunctionExpression|, and other production that uses |FunctionBody|.</p>
+<p>Arrow functions' |ConciseBody| <strong>may</strong> contain the topic reference `#`, as long as |ConciseBody| is within a parse that is also allowed to contain the topic reference. During runtime, such topic references would refer to the outer environment's topic binding.</p>
+<p>Along with |Block| in |TryStatement|, this behaviour is unlike that of any other syntax production containing |Statement|. In general, no parse of a statement-level production that contains an inner |Statement|, including |FunctionBody|, may contain a topic reference `#`.</p>
 </emu-note>
 </ins>
 
@@ -568,4 +714,59 @@ Normally, Contains does not look inside most function forms. However, Contains i
 
 </emu-clause>
 </emu-clause>
+</emu-clause>
+
+<emu-clause id=sec-ecmascript-language-scripts-and-modules>
+<h1>ECMAScript Language: Scripts and Modules</h1>
+
+<emu-clause id=sec-scripts>
+<h1>Scripts</h1>
+
+<emu-clause id=sec-scripts-static-semantics-early-errors>
+<h1>Scripts: Early Errors</h1>
+<emu-grammar>ScriptBody : StatementList</emu-grammar>
+<ul>
+<li>
+<ins>It is a Syntax Error if |StatementList| Contains `#` is *true*.</ins>
+</li>
+</ul>
+
+<ins class=block>
+<emu-note>
+<p>In general, no parse of a top-level syntax production, including |Script|, may contain a topic reference `#`. However, syntax productions associated with topic-bound environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within those scopes, such topic references would not trigger the early error above.</p>
+</emu-note>
+
+<emu-note type=editor>
+<p>This early error not planned to be removed by an add-on proposal.</p>
+</emu-note>
+</ins>
+
+</emu-clause>
+</emu-clause>
+
+<emu-clause id=sec-modules>
+<h1>Modules</h1>
+
+<emu-clause id=sec-modules-static-semantics-early-errors>
+<h1>Scripts: Early Errors</h1>
+<emu-grammar>ModuleItem : StatementListItem</emu-grammar>
+<ul>
+<li>
+<ins>It is a Syntax Error if |StatementListItem| Contains `#` is *true*.</ins>
+</li>
+</ul>
+
+<ins class=block>
+<emu-note>
+<p>In general, no parse of a top-level syntax production, including |Module|, may contain a topic reference `#`. However, syntax productions associated with topic-bound environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within those scopes, such topic references would not trigger the early error above.</p>
+</emu-note>
+
+<emu-note type=editor>
+<p>This early error not planned to be removed by an add-on proposal.</p>
+</emu-note>
+</ins>
+
+</emu-clause>
+</emu-clause>
+
 </emu-clause>
