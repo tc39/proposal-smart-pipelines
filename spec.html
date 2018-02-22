@@ -453,15 +453,13 @@ With parameter _symbol_.
 
 <emu-grammar>PipelineBareFunctionCall : SimpleReference</emu-grammar>
 <p>This algorithm is an altered version of the algorithm of <emu-xref href="#sec-function-calls-runtime-semantics-evaluation">Function Calls, Runtime Semantics: Evaluation</emu-xref>, modified as follows:</p>
-<p>Steps 1 and 2 are removed.</p>
-<p>Step 3 is replaced by:</p>
-<emu-alg type="i">
-1. Let _arguments_ be a List containing the one element which is _headValue_.
-</emu-alg>
-<p>Step 4 is replaced by:</p>
-<emu-alg type="i">
-2. Let _functionExpr_ be the |MemberExpression| that is covered by |SimpleReference|.
-3. Let _ref_ be the result of evaluating _functionExpr_.
+<emu-alg>
+* Steps 1 and 2 are removed.
+* Step 3 is replaced by:
+  1. Let _arguments_ be a List containing the one element which is _headValue_.
+* Step 4 is replaced by:
+  2. Let _functionExpr_ be the |MemberExpression| that is covered by |SimpleReference|.
+  3. Let _ref_ be the result of evaluating _functionExpr_.
 </emu-alg>
 
 <emu-grammar>PipelineBareConstructorCall : `new` SimpleReference</emu-grammar>
