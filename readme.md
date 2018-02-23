@@ -11,7 +11,8 @@ process][TC39 process] but it may eventually be presented to TC39.
 [TODO: Remove extraneous backslashes in rendering.]\
 [TODO: Search for unrendered links.]\
 [TODO: Add all new parts from spec.]\
-[TODO: Replace “lexical context” with “Lexical Environment”.]
+[TODO: Replace “lexical context” with “Lexical Environment”.]\
+[TODO: Add ASI safety goal]
 
 <nav><details>
 <summary><strong>Table of Contents</strong></summary>
