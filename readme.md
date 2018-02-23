@@ -207,13 +207,14 @@ been occurring on GitHub at [tc39/proposal-pipeline-operator
 issue #91][topic-token bikeshedding].
 
 # Motivation
-Nested, deeply composed expressions occur often in JavaScript. They occur
-whenever any single value must be processed by a series of transformations,
-whether they be operations, functions, or constructors. Unfortunately, these
-deeply nested expressions often result in messy spaghetti code, due to their
-mixing of prefix, infix, and postfix expressions together. Writing such code
-requires many nested levels of indentation. Reading the such requires checking
-both the left and right of each subexpression to understand its data flow.
+**Nested, deeply composed** expressions occur often in JavaScript. They occur
+whenever any single value must be processed by a **series of data
+transformations**, whether they be **operations, functions, or constructors**.
+Unfortunately, these deeply nested expressions often result in **messy
+spaghetti** code, due to their mixing of **prefix, infix, and postfix**
+expressions together. Writing such code requires many nested **levels of
+indentation** and parentheses. Reading such code requires checking **both the
+left and right of each subexpression** to understand its data flow.
 
 ```js
 new User.Message(
@@ -226,11 +227,13 @@ new User.Message(
 )
 ```
 
-With the smart pipeline operator, the code above could be terser and, literally,
-straightforward. Prefix, infix, and postfix expressions would be less tangled
-together in threads of spaghetti. Instead, data values would be piped from left
-to right through a **single flat thread of postfix expressions**, essentially
-forming a [reverse Polish notation][].
+With smart pipelines, the code above could be **terser** and, literally,
+**straightforward**. Prefix, infix, and postfix expressions would be less
+tangled together in threads of spaghetti. Instead, data values would be **piped
+from left to right** through a **single flat thread of postfix expressions**,
+with a [**single** level of **indentation**][untangled flow] and [**four fewer**
+pairs of **parentheses**][terse parentheses]  – essentially forming a [reverse
+Polish notation][].
 ```js
 stringPromise
   |> await #
@@ -241,40 +244,51 @@ stringPromise
   |> new User.Message // a bare unary constructor call
 ```
 
-Each such postfix expression (called a **pipeline body**) is in its own inner
-lexical scope, within which a special token `#` is defined. This `#` is a
-reference to the **topic** of the pipeline (`#` itself is called the **topic
-reference**). When the pipeline’s head (the expression at its left-hand side) is
-evaluated, it then becomes the pipeline’s topic. A new lexical environment it
-created, within which `#` is bound to the topic, and within which the pipeline’s
-body (the expression at its righthand side) is evaluated using that topic
-binding.
+Each such postfix expression (called a **[pipeline body][]**) is in its own
+**inner lexical scope**, within which a special token `#` is defined. This `#`
+is a reference to the **[lexical topic][]** of the pipeline (`#` itself is a
+**topic reference**). When the [pipeline’s **head**][pipeline structure] (the
+expression at its left-hand side) is **evaluated**, it then becomes the
+pipeline’s lexical topic. A new **Lexical Environment** is created, within which
+`#` is immutably **bound to the topic**, and with which the pipeline’s body is
+then evaluated, using that **topic binding**.
 
-The pipeline’s value is whatever the pipeline body evaluated into. For instance,
-`5 |> # - 3 |> # * 2` is precisely the same as `((5 - 3)) * 2`. The syntax
-statically is [term rewritable into already valid code][term rewriting] with
-theoretically zero runtime cost.
+In the end, the whole pipeline expression’s value is the end result into which
+the pipeline body evaluated with the topic binding. For instance, the chained
+pipeline `5 |> # - 3 |> -# |> # * 2 |> Math.max(#, 0)` is precisely equivalent
+to the more-tangled expression `Math.max(-(5 - 3) * 2, 0)`. The syntax is
+[**statically term rewritable** into already valid code][term rewriting] with
+[theoretically **zero runtime cost**][zero runtime cost].
 
-The resulting code’s terseness and flatness may be both easier for the
-JavaScript developer to read and to edit. The reader may follow the flow of data
-more easily through this single flattened thread of postfix operations. And the
-developer may more easily add or remove operations at the beginning, end, or
-middle of the thread, without changing the indentation of many unrelated lines.
+The resulting code’s [**terseness** and **flatness**][make my code easier to
+read] may be both easier for the JavaScript developer to **read** and to
+**edit**. The reader may **follow the flow** of data more easily through this
+[single flattened thread of postfix operations][untangled flow]. And the
+developer may [more easily **add or remove operations**][human writability] at
+the beginning, end, or middle of the thread, **without changing** the
+**indentation** of unrelated lines.
 
-Similar use cases appear numerous times in JavaScript code, whenever any value
-is transformed by expressions of any type: function calls, property calls,
+Similar use cases appear **numerous times** in JavaScript code, whenever any value
+is transformed by **expressions of any type**: function calls, property calls,
 method calls, object constructions, arithmetic operations, logical operations,
 bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and
-`throw` expressions. In particular, the styles of [functional programming][],
-[dataflow programming][], and [tacit programming][] may benefit from pipelining.
-The smart pipeline operator can simply handle them all.
+`throw` expressions.
 
-Note also that it was not necessary to include parentheses for `capitalize` or
-`new User.Message`; they were implicitly included as a unary function call and a
-unary constructor call, respectively.
-In othe words, the preceding example is equivalent to:
 ```js
-'hello'
+stringPromise
+  |> await #
+  |> # ?? throw new TypeError()
+  |> doubleSay(#, ', ')
+  |> capitalize // a bare unary function call
+  |> # + '!'
+  |> new User.Message // a bare unary constructor call
+```
+Note that, in the example above, it was **not necessary** to include
+**parentheses** for `capitalize` or `new User.Message`; they were **tacitly
+implied**, respectively forming a **tacit unary function call** and a **tacit
+unary constructor call**. In other words, the example above is equivalent to:
+```js
+stringPromise
   |> await #
   |> # ?? throw new TypeError(`Expected string from ${#}`)
   |> doubleSay(#, ', ')
@@ -282,9 +296,15 @@ In othe words, the preceding example is equivalent to:
   |> # + '!'
   |> new User.Message
 ```
-
 Being able to automatically detect this **“bare style”** is the [**smart** part
-of this “smart pipeline operator”][smart body syntax].
+of the “smart pipeline operator”][smart body syntax]. The styles of
+[**functional** programming][functional programming], [**dataflow**
+programming][dataflow programming], and [**tacit** programming][tacit
+programming] may particularly benefit from bare pipelines and their [terse
+function calls][]:
+```js
+[TODO: Example of tacit functional programming]
+```
 
 [TODO: Link to Goals.]\
 [TODO: Add Lodash, jQuery, vanilla DOM, and search NPM top packages for more examples.]
