@@ -2,7 +2,7 @@
 ECMAScript Stage-0? Proposal by J. S. Choi, 2018-02.
 
 This readme is an **explainer for** the [**formal specification** of a proposed
-**smart pipeline operator `|>`**][formal pipe specification] in **JavaScript**. It is currently tentatively at
+**smart pipeline operator `|>`**][formal pipeline specification] in **JavaScript**. It is currently tentatively at
 **Stage 0** of the [TC39 process][TC39 process] but and is planned to be
 presented to TC39 by [Daniel “**littledan**” Ehrenberg of Igalia][littledan].
 
@@ -1374,35 +1374,150 @@ cannot be manually declared (`const #` is a syntax error), nor can it be
 assigned with a value (`# = 3` is a syntax error). Instead, the topic reference
 is implicitly, lexically bound only within pipeline bodies.
 
-## Topic-opaque and topic-clear environments
-[TODO]
-
 # Grammar
-This grammar of the pipeline operator juxtaposes brief rules written for the
-JavaScript developer with formally written changes to the ECMAScript standard.
-The grammar itself is a [context-free grammar supplemented with static
-semantics][syntax and static semantics]. The ECMAScript specification explains:
+The grammar of the new syntax is [formally given in a specification][formal pipe
+specification] that adds onto [Ecma262] in according to the same grammatical
+notation as that from the ECMAScript standard][ECMAScript Notational
+Conventions, § Grammars].
 
-> A context-free grammar consists of a number of **productions**. Each
-> production has an abstract symbol called a **nonterminal** as its left-hand
-> side, and a sequence of zero or more nonterminal and **terminal** symbols as
-> its right-hand side. For each grammar, the terminal symbols are drawn from a
-> specified alphabet.
+This section of the explainer explains the design of each part of the [formal
+pipeline specification][].
 
-This proposal uses the [grammatical notation as that from the ECMAScript
-standard][ECMAScript Notational Conventions, § Grammars] to denote its lexical
-and syntactic grammars, with three modifications for human readability:
+## Environment Records
+See [formal pipeline specification § Environment Records][].
 
-* “camelCase” is spaced out as “camel Case” for all variables, production
-  names, and rule names.
+[ECMAScript Lexical Environments][] defines an abstract data structure called a
+“**Lexical Environment**” that associates Identifiers with variables or
+functions for the context within a lexical scope. A Lexical Environment is
+actually a **linked list** of Lexical Environments. A single piece of the chain
+of Lexical Environments is called an **Environment Record**. Syntactic
+structures such as functions and blocks each have their own Lexical
+Environments, created whenever such code is evaluated at runtime.
 
-* Adjacent variables, production names, and rule names are separated by the
-  middle dot “·”. This prevents two adjacent identifiers from being confused as
-  the same identifier separated by spaces. (Middle dot is omitted between code
-  literals, which are obviously separate through their formatting.)
+The only environments that **bind** their topic are those created by **topic
+pipeline bodies**. Almost every other Lexical Environment **voids** outer topic
+bindings from their scope. Voiding does not affect the visibility of outer
+bindings in any environments other than the topic-voiding environment and those
+that inside it.
 
-* References to rules are written in a method style: “… . _Rule Name_ (…)”,
-  rather than “_Rule Name_ of … with arguments …” or “… Contains …”.
+The only Lexical Environments that neither establish nor hide topic bindings are
+those created by **arrow functions** and by **`try` statements**. For these
+environments, called **topic-clear environments**, their Records’ topic binding
+status is “clear”. The word “clear” refers to how these Lexical Environments are
+**transparent to** their outer environment’s topic binding.
+
+Whether a Lexical Environment binds or voids their topic can be queried by a new
+abstract method for all Environment Records: Get Topic Binding Status. Any
+Environment whose Record has a topic binding status that is **bound or void**
+and **not clear** is called a **topic-opaque environment**: no expression within
+its scope can use the outside’s topic.
+
+| Method                        | Description
+| ----------------------------- | --------------------------------------------
+| Get Topic Binding Status ()   | Returns “bound”, “void”, or “clear”.
+
+The **topic environment of** another environment is the latter’s **nearest
+ancestral topic-opaque environment**: that is, the environment that either
+supplies the latter environment’s topic binding or voids its topic binding. This
+concept is formally defined below in the [abstract operation Get Topic
+Environment][Abstract: Get Topic Environment].
+
+[ECMAScript **declarative Environment Records**][] are the Records of the usual
+Lexical Environments that are declared by syntax blocks `{`…`}`. [ECMAScript
+function Environment Records][] are a special type of declarative Environment
+Record. The rest of the types of Environment Records don’t matter in this
+proposal.
+
+Declarative Environment Records have two additional new fields and implement
+three additional new concrete methods.
+
+| Name                        | Description
+| --------------------------- | -------------------------------------------------------------
+| [[Topic Binding Status]]    | “bound” or “void” or “clear”. Default value is “void”.
+| [[Topic Value]]             | Default value is undefined.
+| Get Topic Binding Value ()  | “What is the value of the topic binding?” See below.
+| Clear Topic Binding ()      | Sets the topic binding status to “clear”.
+| Bind Topic Value (_V_)      | Sets the topic value to _V_; also sets the status to “bound”.
+
+### Method: Get Topic Binding Status
+In general, this version returns “void”, because most Environment Records
+**void** any topic binding from their outside.
+
+However, declarative and function Environment Records return the value of their
+field [[Topic Binding Status]], which is **“void”** by default. It may also be
+**“clear”** (if the Clear Topic Binding method was called) or **“bound”** (if
+the Bind Topic Value method was called). An Environment Record with a **void**
+topic binding may **change** its status to “clear” or “bound” but **never vice
+versa**.
+
+* **Get Topic Binding Status** ()
+  * **Declarative Environment Record**
+    1. Let _env Rec_ be the function Environment Record for which the method was
+    invoked.
+    3. Return _env Rec_ . [[Topic Binding Status]].
+  * **Object Environment Record**\
+    Return “void”.
+  * **Function Environment Record**\
+    Inherited from Declarative Environment Record . Get Topic Binding Status ().
+  * **Global Environment Record**\
+    Return “void”.
+  * **Module Environment Record**\
+    Return “void”.
+  * **Lexical Environment Record**\
+    Return “void”.
+
+### Method: Get Topic Binding Value
+* **Get Topic Binding Value** ()
+  * **Declarative Environment Record**\
+    1. Let _env Rec_ be the declarative Environment Record for which the method
+       was invoked.
+    2. Assert: _env Rec_ . [[Topic Binding Status]] is “bound”.
+    3. Return _env Rec_ . [[Topic Value]].
+  * **Function Environment Record**\
+    Inherited from Declarative Environment Record . Get Topic Binding Value ().
+
+### Method: Clear Topic Binding
+* **Clear Topic Value**
+  * **Declarative Environment Record**\
+    1. Let _env Rec_ be the declarative Environment Record for which the method
+       was invoked.
+    2. Assert: _env Rec_ . [[Topic Binding Status]] is “void”.
+    3. Set _env Rec_ . [[Topic Binding Status]] to “clear”.
+    4. Return Normal Completion (empty).
+  * **Function Environment Record**\
+    Inherited from Declarative Environment Record . Clear Topic Value ().
+
+### Method: Bind Topic Value
+* **Bind Topic Value** (_V_)
+  * **Declarative Environment Record**\
+    1. Let _env Rec_ be the declarative Environment Record for which the method
+       was invoked.
+    2. Assert: _env Rec_ . [[Topic Binding Status]] is “void”.
+    3. Set _env Rec_.[[Topic Value]] to _V_.
+    4. Set _env Rec_.[[Topic Binding Status]] to “bound”.
+    5. Return Normal Completion (empty).
+  * **Function Environment Record**\
+    Inherited from Declarative Environment Record . Bind Topic Value (_V_).
+
+## Abstract: Get Topic Environment
+The new abstract operation Get Topic Environment finds the Environment Record
+that currently supplies the topic binding or that voids the topic binding: that
+is, the **nearest [topic-opaque][TODO]** ancestral environment, which would **not** have
+a topic binding status of **clear**. Its definition has been adapted from
+[ECMAScript Get This Environment][].
+
+1. Let _lex_ be the running execution context’s Lexical Environment.
+2. Repeat,
+    1. Let _env Rec_ be _lex_’s Environment Record.
+    2. Let _status_ be _env Rec_ . Get Topic Binding Status ().
+    3. If _status_ is not “clear”, return _env Rec_.
+    4. Let _outer_ be the value of _lex_’s outer environment reference.
+    5. Set _lex_ to _outer_.
+3. Return _lex_.
+
+The loop in step 2 will always terminate because the list of environments always
+ends with the global environment, which always has a void (that is, not-clear)
+topic binding status.
 
 ## Lexical grammar
 The smart pipeline operator adds two new tokens to JavaScript: `|>` the binary pipe,
@@ -2079,140 +2194,6 @@ This section defines the algorithms for the syntax-directed operation
 **Evaluation** from the ECMAScript specification. It also defines an abstract
 operation that may be reused by other proposals: **Resolve Topic**.
 
-## Environment Records
-
-[ECMAScript Lexical Environments][] defines an abstract data structure called a
-“**Lexical Environment**” that associates Identifiers with variables or
-functions for the context within a lexical scope. A Lexical Environment is
-actually a **linked list** of Lexical Environments. A single piece of the chain
-of Lexical Environments is called an **Environment Record**. Syntactic
-structures such as functions and blocks each have their own Lexical
-Environments, created whenever such code is evaluated at runtime.
-
-The only environments that **bind** their topic are those created by **topic
-pipeline bodies**. Almost every other Lexical Environment **voids** outer topic
-bindings from their scope. Voiding does not affect the visibility of outer
-bindings in any environments other than the topic-voiding environment and those
-that inside it.
-
-The only Lexical Environments that neither establish nor hide topic bindings are
-those created by **arrow functions** and by **`try` statements**. For these
-environments, called **topic-clear environments**, their Records’ topic binding
-status is “clear”. The word “clear” refers to how these Lexical Environments are
-**transparent to** their outer environment’s topic binding.
-
-Whether a Lexical Environment binds or voids their topic can be queried by a new
-abstract method for all Environment Records: Get Topic Binding Status. Any
-Environment whose Record has a topic binding status that is **bound or void**
-and **not clear** is called a **topic-opaque environment**: no expression within
-its scope can use the outside’s topic.
-
-| Method                        | Description
-| ----------------------------- | --------------------------------------------
-| Get Topic Binding Status ()   | Returns “bound”, “void”, or “clear”.
-
-The **topic environment of** another environment is the latter’s **nearest
-ancestral topic-opaque environment**: that is, the environment that either
-supplies the latter environment’s topic binding or voids its topic binding. This
-concept is formally defined below in the [abstract operation Get Topic
-Environment][Abstract: Get Topic Environment].
-
-[ECMAScript **declarative Environment Records**][] are the Records of the usual
-Lexical Environments that are declared by syntax blocks `{`…`}`. [ECMAScript
-function Environment Records][] are a special type of declarative Environment
-Record. The rest of the types of Environment Records don’t matter in this
-proposal.
-
-Declarative Environment Records have two additional new fields and implement
-three additional new concrete methods.
-
-| Name                        | Description
-| --------------------------- | -------------------------------------------------------------
-| [[Topic Binding Status]]    | “bound” or “void” or “clear”. Default value is “void”.
-| [[Topic Value]]             | Default value is undefined.
-| Get Topic Binding Value ()  | “What is the value of the topic binding?” See below.
-| Clear Topic Binding ()      | Sets the topic binding status to “clear”.
-| Bind Topic Value (_V_)      | Sets the topic value to _V_; also sets the status to “bound”.
-
-### Method: Get Topic Binding Status
-In general, this version returns “void”, because most Environment Records
-**void** any topic binding from their outside.
-
-However, declarative and function Environment Records return the value of their
-field [[Topic Binding Status]], which is **“void”** by default. It may also be
-**“clear”** (if the Clear Topic Binding method was called) or **“bound”** (if
-the Bind Topic Value method was called). An Environment Record with a **void**
-topic binding may **change** its status to “clear” or “bound” but **never vice
-versa**.
-
-* **Get Topic Binding Status** ()
-  * **Declarative Environment Record**
-    1. Let _env Rec_ be the function Environment Record for which the method was
-    invoked.
-    3. Return _env Rec_ . [[Topic Binding Status]].
-  * **Object Environment Record**\
-    Return “void”.
-  * **Function Environment Record**\
-    Inherited from Declarative Environment Record . Get Topic Binding Status ().
-  * **Global Environment Record**\
-    Return “void”.
-  * **Module Environment Record**\
-    Return “void”.
-  * **Lexical Environment Record**\
-    Return “void”.
-
-### Method: Get Topic Binding Value
-* **Get Topic Binding Value** ()
-  * **Declarative Environment Record**\
-    1. Let _env Rec_ be the declarative Environment Record for which the method
-       was invoked.
-    2. Assert: _env Rec_ . [[Topic Binding Status]] is “bound”.
-    3. Return _env Rec_ . [[Topic Value]].
-  * **Function Environment Record**\
-    Inherited from Declarative Environment Record . Get Topic Binding Value ().
-
-### Method: Clear Topic Binding
-* **Clear Topic Value**
-  * **Declarative Environment Record**\
-    1. Let _env Rec_ be the declarative Environment Record for which the method
-       was invoked.
-    2. Assert: _env Rec_ . [[Topic Binding Status]] is “void”.
-    3. Set _env Rec_ . [[Topic Binding Status]] to “clear”.
-    4. Return Normal Completion (empty).
-  * **Function Environment Record**\
-    Inherited from Declarative Environment Record . Clear Topic Value ().
-
-### Method: Bind Topic Value
-* **Bind Topic Value** (_V_)
-  * **Declarative Environment Record**\
-    1. Let _env Rec_ be the declarative Environment Record for which the method
-       was invoked.
-    2. Assert: _env Rec_ . [[Topic Binding Status]] is “void”.
-    3. Set _env Rec_.[[Topic Value]] to _V_.
-    4. Set _env Rec_.[[Topic Binding Status]] to “bound”.
-    5. Return Normal Completion (empty).
-  * **Function Environment Record**\
-    Inherited from Declarative Environment Record . Bind Topic Value (_V_).
-
-## Abstract: Get Topic Environment
-The new abstract operation Get Topic Environment finds the Environment Record
-that currently supplies the topic binding or that voids the topic binding: that
-is, the **nearest [topic-opaque][TODO]** ancestral environment, which would **not** have
-a topic binding status of **clear**. Its definition has been adapted from
-[ECMAScript Get This Environment][].
-
-1. Let _lex_ be the running execution context’s Lexical Environment.
-2. Repeat,
-    1. Let _env Rec_ be _lex_’s Environment Record.
-    2. Let _status_ be _env Rec_ . Get Topic Binding Status ().
-    3. If _status_ is not “clear”, return _env Rec_.
-    4. Let _outer_ be the value of _lex_’s outer environment reference.
-    5. Set _lex_ to _outer_.
-3. Return _lex_.
-
-The loop in step 2 will always terminate because the list of environments always
-ends with the global environment, which always has a void (that is, not-clear)
-topic binding status.
 
 ## Abstract: Resolve Topic Binding
 **Resolve Topic Binding** is a new abstract operation. It determines the binding
@@ -3584,4 +3565,4 @@ do { do { do { do { 3 * 3 } } }
 [untangled flow]: #untangled-flow
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
 [zero runtime cost]: #zero-runtime-cost
-[formal pipe specification]: https://jschoi.org/18/es-smart-pipelines/spec
+[formal pipeline specification]: https://jschoi.org/18/es-smart-pipelines/spec
