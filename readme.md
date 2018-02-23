@@ -182,10 +182,11 @@ Factor, Forth, Joy, Onyx, PostScript, RPL
 Pipeline operators are also conceptually similar to [WHATWG-stream piping][] and
 [Node-stream piping][].
 
-The binary smart pipeline operator `|>` proposed here would provide a
-**backwards- and forwards-compatible** style of **chaining nested expressions**
-into a readable**, left-to-right** manner. **Nested** data transformations
-become **untangled** into **short steps**, by a **zero-cost abstraction**.
+The binary “smart” pipeline operator `|>` proposed here would provide a
+**[backwards- and forwards-compatible][don’t break my code]** style of
+**chaining nested expressions** into a readable**, left-to-right** manner.
+[**Nested** data transformations become **untangled** into **short
+steps**][untangled flow] by a **[zero-cost abstraction][zero runtime cost]**.
 
 The proposal is a **variant** of the [first pipe-operator proposal][] championed
 by [Daniel “littledan” Ehrenberg of Igalia][littledan]. This variant is listed
@@ -202,7 +203,7 @@ file an issue, please note in it that you are talking **specifically** about
 **This specification uses `#`** as its [“topic token”][nomenclature]. However,
 this is **not set** in stone. In particular, **`@` or `?`** could also be used.
 **Bikeshedding discussions** over what characters to use for the topic token has
-been occurring on GitHub at [tc39/proposal-pipeline-operator,
+been occurring on GitHub at [tc39/proposal-pipeline-operator
 issue #91][topic-token bikeshedding].
 
 # Motivation
