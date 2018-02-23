@@ -3529,7 +3529,7 @@ do { do { do { do { 3 * 3 } } }
 [possible future extensions to the topic concept]: #possible-future-extensions-to-topic-concept
 [previous pipeline-placeholder discussions]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
 [private class fields]: https://github.com/tc39/proposal-class-fields/
-[Pipe Proposal 4: Smart Mix]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
+[Pipeline Proposal 4]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
 [R pipe]: https://cran.r-project.org/web/packages/magrittr/index.html
 [relations to other work]: #relations-to-other-work
 [REPLs]: https://en.wikipedia.org/wiki/Read–eval–print_loop
