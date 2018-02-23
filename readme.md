@@ -1,9 +1,12 @@
 # Smart pipelines
-ECMAScript Stage-(−1) Proposal by J. S. Choi, 2018-02.
+ECMAScript Stage-0? Proposal by J. S. Choi, 2018-02.
 
-This repository contains the formal specification for a proposed “smart pipe
-operator” `|>` in JavaScript. It is currently not even in Stage 0 of the [TC39
-process][TC39 process] but it may eventually be presented to TC39.
+This readme is an **explainer for** the [**formal specification** of a proposed
+**smart pipe operator `|>`**][formal pipe specification] in **JavaScript**. It is currently tentatively at
+**Stage 0** of the [TC39 process][TC39 process] but and is planned to be
+presented to TC39 by [Daniel “**littledan**” Ehrenberg of Igalia][littledan].
+
+This readme is a living document and is currently under a rewrite.
 
 [TODO: Remove ClearTopicBinding; simplify to HasBinding to match spec.]\
 [TODO: Change Bind Topic Value ( V ) to (V), no spaces.]\
@@ -185,7 +188,7 @@ left-to-right manner. Nested transformations become untangled into short steps
 in a zero-cost abstraction.
 
 The proposal is a variant of the [first pipe-operator proposal][] championed by
-[Daniel “littledan” Ehrenberg of Igalia][]. This variant is listed as
+[Daniel “littledan” Ehrenberg of Igalia][littledan]. This variant is listed as
 [Proposal 4: Smart Mix on the pipe-proposal wiki][]. The variant resulted from
 [previous discussions about pipeline placeholders in the previous pipe-operator
 proposal][previous pipeline-placeholder discussions], which culminated in an
@@ -3441,7 +3444,7 @@ do { do { do { do { 3 * 3 } } }
 [Contains]: #static-contains
 [cyclomatic complexity]: https://en.wikipedia.org/wiki/Cyclomatic_complexity#Applications
 [cyclomatic simplicity]: #cyclomatic-simplicity
-[Daniel “littledan” Ehrenberg of Igalia]: https://github.com/littledan
+[littledan]: https://github.com/littledan
 [dataflow programming]: https://en.wikipedia.org/wiki/Dataflow_programming
 [distinguishable punctuators]: #distinguishable-punctuators
 [DSLs]: https://en.wikipedia.org/wiki/Domain-specific_language
@@ -3560,3 +3563,4 @@ do { do { do { do { 3 * 3 } } }
 [untangled flow]: #untangled-flow
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
 [zero runtime cost]: #zero-runtime-cost
+[formal pipe specification]: https://jschoi.org/18/es-smart-pipelines/spec
