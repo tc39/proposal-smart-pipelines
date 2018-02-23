@@ -6,7 +6,7 @@ This readme is an **explainer for** the [**formal specification** of a proposed
 **Stage 0** of the [TC39 process][TC39 process] but and is planned to be
 presented to TC39 by [Daniel “**littledan**” Ehrenberg of Igalia][littledan].
 
-This readme is a living document and is currently under a rewrite.
+This readme is a **living document** and is currently under a rewrite.
 
 [TODO: Remove ClearTopicBinding; simplify to HasBinding to match spec.]\
 [TODO: Change Bind Topic Value ( V ) to (V), no spaces.]\
