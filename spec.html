@@ -38,7 +38,7 @@ contributors: J. S. Choi
 
 <p>In general, syntax productions that define top-level or inner program scopes containing nested |Statement|s (such as |IfStatement|, |WithStatement|, |FunctionDeclaration|, |MethodDefinition|, |Script|, and |Module|) <strong>may not</strong> contain the topic reference `#`. Such productions create topic-binding environments that bind topic to *undefined* (the default value of the topic binding), but this topic binding will never be used. Any use of the topic reference within them (as detected by the static semantic rule Contains) would trigger early error rules associated with those productions: during program compilation, before runtime evaluation ever would begin.</p>
 
-<p>There is one syntax production that creates with topic-binding environments with a provided topic value. It is |PipelineTopicBody|. This production hides its own inner topic references from Contains. Within their scopes, such topic references would not trigger those early errors during program compilation; instead, they would be evaluated at runtime into the topic binding's value.</p>
+<p>There is one syntax production that creates with topic-binding environments with a provided topic value. It is |PipelineTopicBody|. This production hides its own inner topic references from Contains. Within their scopes, such topic references would not trigger those early error rules during program compilation; instead, they would be evaluated at runtime into the topic binding's value.</p>
 
 <p>There are two syntax productions that define inner program scopes containing nested |Statement|s yet <strong>may</strong> contain topic references. They are |ConciseBody| in |ArrowFunction| and |Block| in |TryStatement|. These productions do not create topic-binding environments of their own. Their inner topic references are visible to Contains and they are subject to the same early error rules of their outer scope.</p>
 </emu-note>
@@ -322,7 +322,7 @@ PrimaryExpression[Yield, Await] :
 <emu-note>
 <p>The only Lexical Environments that are topic-binding environments are those that are associated with |PipelineTopicBody| and which were created with the TopicPipelineBodyInstantiation abstract operation.</p>
 
-<p>In general, syntax productions that define top-level or inner program scopes containing nested |Statement|s (such as |IfStatement|, |WithStatement|, |FunctionDeclaration|, |MethodDefinition|, |Script|, and |Module|) <strong>may not</strong> contain the topic reference `#`. Such productions create topic-binding environments that bind topic to *undefined* (the default value of the topic binding), but any use of the topic reference within them (as detected by the static semantic rule Contains) would trigger early errors defined for those productions.</p>
+<p>In general, syntax productions that define top-level or inner program scopes containing nested |Statement|s (such as |IfStatement|, |WithStatement|, |FunctionDeclaration|, |MethodDefinition|, |Script|, and |Module|) <strong>may not</strong> contain the topic reference `#`. Such productions create topic-binding environments that bind topic to *undefined* (the default value of the topic binding), but any use of the topic reference within them (as detected by the static semantic rule Contains) would trigger early error rules associated with those productions.</p>
 
 <p>However syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger those early errors.</p>
 </emu-note>
@@ -347,7 +347,7 @@ PrimaryExpression[Yield, Await] :
 
 <emu-note>
 <p>The loop in step 2 will always terminate because the list of environments will always end before reaching the global environment. GetTopicEnvironment will never be called when there is no topic-binding environment in the list of environments.</p>
-<p>This is because how, in general, syntax productions that define top-level scopes (such as |Script| and |Module|) are syntactically forbidden to contain the topic reference `#`. Any use of the topic reference within those productions (as detected by the static semantic rule Contains) would trigger early errors defined for those productions. It is only within productions that hide the topic reference from Contains (such as |PipelineTopicBody|) that the topic reference is syntactically permitted.</p>
+<p>This is because how, in general, syntax productions that define top-level scopes (such as |Script| and |Module|) are syntactically forbidden to contain the topic reference `#`. Any use of the topic reference within those productions (as detected by the static semantic rule Contains) would trigger early error rules associated with those productions. It is only within productions that hide the topic reference from Contains (such as |PipelineTopicBody|) that the topic reference is syntactically permitted.</p>
 </emu-note>
 </emu-clause>
 
