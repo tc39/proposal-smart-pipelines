@@ -105,8 +105,6 @@ The concept of a pipe operator appears in numerous other languages, variously
 called “pipeline”, “threading”, and “feed” operators. This is because developers
 find the concept useful.
 
-<details>
-<summary>Table of languages</summary>
 <table>
 <tr>
 <th>
@@ -179,8 +177,6 @@ Factor, Forth, Joy, Onyx, PostScript, RPL
 
 Pipe operators are also conceptually similar to [WHATWG-stream piping][] and
 [Node-stream piping][].
-
-</details>
 
 The binary smart pipe operator proposed here would provide a backwards- and
 forwards-compatible style of chaining nested expressions into a readable,
