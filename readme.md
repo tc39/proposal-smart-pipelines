@@ -189,7 +189,7 @@ become **untangled** into **short steps**, by a **zero-cost abstraction**.
 
 The proposal is a **variant** of the [first pipe-operator proposal][] championed
 by [Daniel “littledan” Ehrenberg of Igalia][littledan]. This variant is listed
-as [**Proposal 4: Smart Mix** on the pipe-proposal wiki][Pipe Proposal 4]. The
+as [**Proposal 4: Smart Mix** on the pipe-proposal wiki][Pipeline Proposal 4]. The
 variant resulted from [previous discussions about pipeline placeholders in the
 previous pipe-operator proposal][previous pipeline-placeholder discussions],
 which culminated in an [invitation by Ehrenberg to try writing a specification
@@ -198,7 +198,7 @@ brewing.
 
 You can take part in the discussions on the **[GitHub issue tracker][]**. When you
 file an issue, please note in it that you are talking **specifically** about
-**“Proposal 4: Smart Mix”**.
+**[“Proposal 4: Smart Mix”][Pipeline Proposal 4]**.
 
 **This specification uses `#`** as its [“topic token”][nomenclature]. However,
 this is **not set** in stone. In particular, **`@` or `?`** could also be used.
