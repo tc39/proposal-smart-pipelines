@@ -2,7 +2,7 @@
 ECMAScript Stage-0? Proposal by J. S. Choi, 2018-02.
 
 This readme is an **explainer for** the [**formal specification** of a proposed
-**smart pipe operator `|>`**][formal pipe specification] in **JavaScript**. It is currently tentatively at
+**smart pipeline operator `|>`**][formal pipe specification] in **JavaScript**. It is currently tentatively at
 **Stage 0** of the [TC39 process][TC39 process] but and is planned to be
 presented to TC39 by [Daniel “**littledan**” Ehrenberg of Igalia][littledan].
 
@@ -50,7 +50,7 @@ This readme is a **living document** and is currently under a rewrite.
     - [Human writability](#human-writability)
     - [Novice learnability](#novice-learnability)
 - [Nomenclature](#nomenclature)
-  - [Pipe operator, pipeline, pipeline-level expression](#pipe-operator-pipeline-pipeline-level-expression)
+  - [Pipeline operator, pipeline, pipeline-level expression](#pipe-operator-pipeline-pipeline-level-expression)
   - [Head, head value, body, pipeline value, topic style, bare style](#head-head-value-body-pipeline-value-topic-style-bare-style)
   - [Topic, topic reference](#topic-topic-reference)
   - [Topic-opaque and topic-clear environments](#topic-opaque-and-topic-clear-environments)
@@ -105,7 +105,7 @@ This readme is a **living document** and is currently under a rewrite.
 </details></nav>
 
 # Background
-The concept of a pipe operator appears in numerous other languages, variously
+The concept of a pipeline operator appears in numerous other languages, variously
 called “pipeline”, “threading”, and “feed” operators. This is because developers
 find the concept useful.
 
@@ -179,17 +179,17 @@ Factor, Forth, Joy, Onyx, PostScript, RPL
 
 </table>
 
-Pipe operators are also conceptually similar to [WHATWG-stream piping][] and
+Pipeline operators are also conceptually similar to [WHATWG-stream piping][] and
 [Node-stream piping][].
 
-The binary smart pipe operator proposed here would provide a backwards- and
-forwards-compatible style of chaining nested expressions into a readable,
-left-to-right manner. Nested transformations become untangled into short steps
-in a zero-cost abstraction.
+The binary smart pipeline operator `|>` proposed here would provide a
+**backwards- and forwards-compatible** style of **chaining nested expressions**
+into a readable**, left-to-right** manner. **Nested** data transformations
+become **untangled** into **short steps**, by a **zero-cost abstraction**.
 
-The proposal is a variant of the [first pipe-operator proposal][] championed by
+The proposal is a **variant** of the [first pipe-operator proposal][] championed by
 [Daniel “littledan” Ehrenberg of Igalia][littledan]. This variant is listed as
-[Proposal 4: Smart Mix on the pipe-proposal wiki][]. The variant resulted from
+[**Proposal 4: Smart Mix** on the pipe-proposal wiki][Pipe Proposal 4]. The variant resulted from
 [previous discussions about pipeline placeholders in the previous pipe-operator
 proposal][previous pipeline-placeholder discussions], which culminated in an
 [invitation by Ehrenberg to try writing a specification draft][littledan
@@ -225,7 +225,7 @@ new User.Message(
 )
 ```
 
-With the smart pipe operator, the code above could be terser and, literally,
+With the smart pipeline operator, the code above could be terser and, literally,
 straightforward. Prefix, infix, and postfix expressions would be less tangled
 together in threads of spaghetti. Instead, data values would be piped from left
 to right through a **single flat thread of postfix expressions**, essentially
@@ -266,7 +266,7 @@ method calls, object constructions, arithmetic operations, logical operations,
 bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and
 `throw` expressions. In particular, the styles of [functional programming][],
 [dataflow programming][], and [tacit programming][] may benefit from pipelining.
-The smart pipe operator can simply handle them all.
+The smart pipeline operator can simply handle them all.
 
 Note also that it was not necessary to include parentheses for `capitalize` or
 `new User.Message`; they were implicitly included as a unary function call and a
@@ -283,7 +283,7 @@ In othe words, the preceding example is equivalent to:
 ```
 
 Being able to automatically detect this **“bare style”** is the [**smart** part
-of this “smart pipe operator”][smart body syntax].
+of this “smart pipeline operator”][smart body syntax].
 
 [TODO: Link to Goals.]\
 [TODO: Add Lodash, jQuery, vanilla DOM, and search NPM top packages for more examples.]
@@ -312,7 +312,7 @@ each transformation step on its own line.
 Note that `|> f` is a bare unary function call. This is the same as `|> f(#)`,
 but the `#` is unnecessary; it is invisibly, tacitly implied.
 
-This is the [smart part of the pipe operator][smart body syntax], which can
+This is the [smart part of the pipeline operator][smart body syntax], which can
 distinguish between two syntax styles (bare vs. topic) by using a simple rule:
 bare style uses only identifiers, dots, and `new`, and never parentheses,
 brackets, braces, or other operators.
@@ -512,7 +512,7 @@ Note, however, that arrow functions have looser precedence than the pipe
 operator. This means that if a pipeline creates an arrow function alone in one
 of its steps’ bodies, then the arrow-function expression must be parenthesized.
 (The same applies to assignment and yield operators, which are also looser than
-the pipe operator.) The example above is being parsed as if it were:
+the pipeline operator.) The example above is being parsed as if it were:
 ```js
 (value |> ()) => (# * 5 |> settimeout)
 ```
@@ -1061,7 +1061,7 @@ form to another. There is **no single type** of expression that forms a
 
 </table>
 
-The goal of the pipe operator is to untangle deeply nested expressions into flat
+The goal of the pipeline operator is to untangle deeply nested expressions into flat
 threads of postfix expressions. To limit it to only one type of expression, even
 a common type, truncates its benefits to that one type only and compromises its
 expressivity and versatility.
@@ -1292,17 +1292,17 @@ readability and comprehensibility that it might bring to code in general.
 Because this proposal introduces several new concepts, it is important
 to use a consistent set of terminology.
 
-## Pipe operator, pipeline, pipeline-level expression
+## Pipeline operator, pipeline, pipeline-level expression
 The binary operator itself `|>` may be referred to as a **pipe**, a **pipe
 operator**, or a **pipeline operator**; all these names are equivalent. This
-specification will prefer the term “pipe operator”.
+specification will prefer the term “pipeline operator”.
 
-A pipe operator between two expressions forms a **pipe expression**. One or more
+A pipeline operator between two expressions forms a **pipe expression**. One or more
 pipe expressions in a chain form a **pipeline**, and each pipe expression is
 a **step** of the pipeline.
 
 A **pipeline-level expression** is an expression at the same [precedence level
-of the pipe operator][operator precedence]. Although all pipelines are
+of the pipeline operator][operator precedence]. Although all pipelines are
 pipeline-level expressions, most pipeline-level expressions are not actually
 pipelines. Conditional operations, logical-or operations, or any other
 expressions that have tighter [operator precedence][] than the pipe operation –
@@ -1321,7 +1321,7 @@ also be called its **right-hand side (RHS)**, because it’s to the right of the
 pipe. When the body is evaluated according to its [runtime semantics][], that
 value may be referred to the **pipeline’s value**.
 
-Where “pipeline” is used as a verb, the pipe operator is said **to pipeline its
+Where “pipeline” is used as a verb, the pipeline operator is said **to pipeline its
 topic through its body**, resulting in the pipeline’s value.
 
 A pipeline’s body may be in one of two **styles**:\
@@ -1384,7 +1384,7 @@ and syntactic grammars, with three modifications for human readability:
   rather than “_Rule Name_ of … with arguments …” or “… Contains …”.
 
 ## Lexical grammar
-The smart pipe operator adds two new tokens to JavaScript: `|>` the binary pipe,
+The smart pipeline operator adds two new tokens to JavaScript: `|>` the binary pipe,
 and `#` the topic reference. [TODO: Link to spec lexical grammar.]
 
 The lexical rule for punctuator tokens would be modified so that these two
@@ -1443,11 +1443,11 @@ expressions. However, the result of a pipeline is also expected to often serve
 as the body of an arrow function or a variable assignment, so it is tighter than
 both types of expressions.
 
-The pipe operator actually has [arbitrary associativity][]. However, for the
+The pipeline operator actually has [arbitrary associativity][]. However, for the
 purposes of this grammar, it will have left associativity.
 
 <details open>
-<summary>A table shows how the topic reference and the pipe operator are
+<summary>A table shows how the topic reference and the pipeline operator are
 integrated into the hierarchy of operators.</summary>
 
 All expression levels in JavaScript are listed here, from **tightest to
@@ -2366,7 +2366,7 @@ topic variable, which may affect code in surprising ways.
 
 However, JavaScript’s topic reference `#` is different than this prior art. It
 is lexically bound and statically analyzable. It is also cannot be accidentally
-bound; the developer must opt into binding it by using the pipe operator.
+bound; the developer must opt into binding it by using the pipeline operator.
 
 The topic also cannot be accidentally used; it is a syntax error when `#` is used
 outside of a pipeline body. [TODO: Link to pertinent grammar sections.]
@@ -2397,7 +2397,7 @@ headless fat-arrow functions][ECMAScript headless-arrow proposal]).
 
 A pipe function would bind its first argument to the topic reference within its
 body. It would also parse its body using the same smart body syntax that the
-pipe operator uses.
+pipeline operator uses.
 
 **More than any other** possible extension in this table, pipe functions would
 dramatically increase the potential of tacit programming. Just this single
@@ -3337,7 +3337,7 @@ the steps of the computation would be:
 5. The pipe’s result is the result of the body.
 
 ## Term rewriting • Arbitrary associativity
-The pipe operator is presented above as a left-associative operator. However, it
+The pipeline operator is presented above as a left-associative operator. However, it
 is theoretically [arbitrarily associative][associative property]: how a
 pipeline’s expressions are particularly grouped is functionally arbitrary. One
 could force right associativity by parenthesizing a pipeline, such that it
@@ -3528,7 +3528,7 @@ do { do { do { do { 3 * 3 } } }
 [possible future extensions to the topic concept]: #possible-future-extensions-to-topic-concept
 [previous pipeline-placeholder discussions]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
 [private class fields]: https://github.com/tc39/proposal-class-fields/
-[Proposal 4: Smart Mix on the pipe-proposal wiki]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
+[Pipe Proposal 4: Smart Mix]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
 [R pipe]: https://cran.r-project.org/web/packages/magrittr/index.html
 [relations to other work]: #relations-to-other-work
 [REPLs]: https://en.wikipedia.org/wiki/Read–eval–print_loop
