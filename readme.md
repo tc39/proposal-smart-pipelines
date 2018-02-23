@@ -187,23 +187,24 @@ The binary smart pipeline operator `|>` proposed here would provide a
 into a readable**, left-to-right** manner. **Nested** data transformations
 become **untangled** into **short steps**, by a **zero-cost abstraction**.
 
-The proposal is a **variant** of the [first pipe-operator proposal][] championed by
-[Daniel “littledan” Ehrenberg of Igalia][littledan]. This variant is listed as
-[**Proposal 4: Smart Mix** on the pipe-proposal wiki][Pipe Proposal 4]. The variant resulted from
-[previous discussions about pipeline placeholders in the previous pipe-operator
-proposal][previous pipeline-placeholder discussions], which culminated in an
-[invitation by Ehrenberg to try writing a specification draft][littledan
-invitation]. A prototype Babel plugin is also privately brewing.
+The proposal is a **variant** of the [first pipe-operator proposal][] championed
+by [Daniel “littledan” Ehrenberg of Igalia][littledan]. This variant is listed
+as [**Proposal 4: Smart Mix** on the pipe-proposal wiki][Pipe Proposal 4]. The
+variant resulted from [previous discussions about pipeline placeholders in the
+previous pipe-operator proposal][previous pipeline-placeholder discussions],
+which culminated in an [invitation by Ehrenberg to try writing a specification
+draft][littledan invitation]. A **prototype Babel plugin** is also privately
+brewing.
 
-You can take part in the discussions on the [GitHub issue tracker][]. When you
-file an issue, please note in it that you are talking specifically about
-“Proposal 4: Smart Mix”.
+You can take part in the discussions on the **[GitHub issue tracker][]**. When you
+file an issue, please note in it that you are talking **specifically** about
+**“Proposal 4: Smart Mix”**.
 
 **This specification uses `#`** as its [“topic token”][nomenclature]. However,
-this is not set in stone. In particular, **`?` and `@` could also be used**.
-Either would be similarly terse and typeable.
-Bikeshedding over what characters to use for the topic token is occurring on
-GitHub at [tc39/proposal-pipeline-operator, issue #91][topic-token bikeshedding].
+this is **not set** in stone. In particular, **`@` or `?`** could also be used.
+**Bikeshedding discussions** over what characters to use for the topic token has
+been occurring on GitHub at [tc39/proposal-pipeline-operator,
+issue #91][topic-token bikeshedding].
 
 # Motivation
 Nested, deeply composed expressions occur often in JavaScript. They occur
