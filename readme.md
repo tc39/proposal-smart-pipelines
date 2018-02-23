@@ -2,11 +2,30 @@
 ECMAScript Stage-0? Proposal by J. S. Choi, 2018-02.
 
 This readme is an **explainer for** the [**formal specification** of a proposed
-**smart pipeline operator `|>`**][formal pipeline specification] in **JavaScript**. It is currently tentatively at
-**Stage 0** of the [TC39 process][TC39 process] but and is planned to be
-presented to TC39 by [Daniel “**littledan**” Ehrenberg of Igalia][littledan].
+**smart pipeline operator `|>`**][formal pipeline specification] in
+**JavaScript**. It is currently tentatively at **Stage 0** of the [TC39
+process][TC39 process] but and is planned to be presented to TC39 by [Daniel
+“**littledan**” Ehrenberg of Igalia][littledan].
+
+The proposal is a **variant** of the [first pipe-operator proposal][] championed
+by [Daniel “littledan” Ehrenberg of Igalia][littledan]. This variant is listed
+as [**Proposal 4: Smart Mix** on the pipe-proposal wiki][Pipeline Proposal 4]. The
+variant resulted from [previous discussions in the previous pipe-operator
+proposal][previous pipeline-placeholder discussions], which culminated in an
+[invitation by Ehrenberg to try writing a specification draft][littledan
+invitation]. A **prototype Babel plugin** is also privately brewing.
 
 This readme is a **living document** and is currently under a rewrite.
+
+You can take part in the discussions on the **[GitHub issue tracker][]**. When you
+file an issue, please note in it that you are talking **specifically** about
+**[“Proposal 4: Smart Mix”][Pipeline Proposal 4]**.
+
+**This specification uses `#`** as its [“topic token”][nomenclature]. However,
+this is **not set** in stone. In particular, **`@` or `?`** could also be used.
+**Bikeshedding discussions** over what characters to use for the topic token has
+been occurring on GitHub at [tc39/proposal-pipeline-operator
+issue #91][topic-token bikeshedding].
 
 [TODO: Remove ClearTopicBinding; simplify to HasBinding to match spec.]\
 [TODO: Change Bind Topic Value ( V ) to (V), no spaces.]\
@@ -24,7 +43,6 @@ This readme is a **living document** and is currently under a rewrite.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [Background](#background)
 - [Motivation](#motivation)
 - [Goals](#goals)
   - [“Don’t break my code.”](#dont-break-my-code)
@@ -104,7 +122,7 @@ This readme is a **living document** and is currently under a rewrite.
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 </details></nav>
 
-# Background
+# Motivation
 The concept of a pipeline operator appears in numerous other languages, variously
 called “pipeline”, “threading”, and “feed” operators. This is because developers
 find the concept useful.
@@ -188,25 +206,6 @@ The binary “smart” pipeline operator `|>` proposed here would provide a
 [**Nested** data transformations become **untangled** into **short
 steps**][untangled flow] by a **[zero-cost abstraction][zero runtime cost]**.
 
-The proposal is a **variant** of the [first pipe-operator proposal][] championed
-by [Daniel “littledan” Ehrenberg of Igalia][littledan]. This variant is listed
-as [**Proposal 4: Smart Mix** on the pipe-proposal wiki][Pipeline Proposal 4]. The
-variant resulted from [previous discussions in the previous pipe-operator
-proposal][previous pipeline-placeholder discussions], which culminated in an
-[invitation by Ehrenberg to try writing a specification draft][littledan
-invitation]. A **prototype Babel plugin** is also privately brewing.
-
-You can take part in the discussions on the **[GitHub issue tracker][]**. When you
-file an issue, please note in it that you are talking **specifically** about
-**[“Proposal 4: Smart Mix”][Pipeline Proposal 4]**.
-
-**This specification uses `#`** as its [“topic token”][nomenclature]. However,
-this is **not set** in stone. In particular, **`@` or `?`** could also be used.
-**Bikeshedding discussions** over what characters to use for the topic token has
-been occurring on GitHub at [tc39/proposal-pipeline-operator
-issue #91][topic-token bikeshedding].
-
-# Motivation
 **Nested, deeply composed** expressions occur often in JavaScript. They occur
 whenever any single value must be processed by a **series of data
 transformations**, whether they be **operations, functions, or constructors**.
