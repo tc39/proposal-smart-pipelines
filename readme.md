@@ -2660,14 +2660,43 @@ to use `#` or `#0`, then `#1`, `#2`, … for topic references instead.
 <td>
 
 ```js
-numbers.sort(-> # - ##)
+(4, 3)
+  |> # - ##
 ```
 
 <td>
 
 ```js
-numbers.sort(function (a, b) {
-  return a - b
+4 - 3
+```
+
+<tr>
+<td>
+
+```js
+(4, 3)
+  |> (f, # ** 2 + ##)
+  |> # - ##
+```
+
+<td>
+
+```js
+f(4) - (4 ** 2 + 3)
+```
+
+<tr>
+<td>
+
+```js
+array.sort(-> # - ##)
+```
+
+<td>
+
+```js
+array.sort(function (x0, x1) {
+  return x0 - x1
 })
 ```
 
@@ -2677,8 +2706,7 @@ numbers.sort(function (a, b) {
 ```js
 [ { x: 22 }, { x: 42 } ]
   .map(-> #.x)
-  .reduce(-> Math.max(#, ##),
-    -Infinity)
+  .reduce(-> # - ##, 0)
 ```
 
 <td>
@@ -2686,8 +2714,7 @@ numbers.sort(function (a, b) {
 ```js
 [ { x: 22 }, { x: 42 } ]
   .map(el => el.x)
-  .reduce((x0, x1) => Math.max(x0, x1),
-    -Infinity)
+  .reduce((x0, x1) => x0 - x1, 0)
 ```
 
 <tr>
@@ -2707,12 +2734,16 @@ multiple topics.
 
 ```js
 const f = (x, y, z) => [x, y, z]
-const g = f(?, 4, ?)
+const g = -> f(?, 4, ?)
 g(1, 2) // [1, 4, 2]
 ```
 [R. Buckton’s current proposal][syntactic partial application] assumes that each
-use of its `?` placeholder token represents a different parameter: a fundamental
-difference in conceptual models.
+use of the same `?` placeholder token represents a different parameter. In contrast,
+each use of `#` within the same scope always refers to the same value. This is
+why additional topic parameters are required. The resulting model is more
+flexible: `-> f(#, 4, ##)` is different from `-> f(#, 4, #)`. The latter sensibly
+refers to a *unary* function that passes the same *one* argument into both the
+first and third parameters of the original function `f`.
 
 <tr>
 <td>
