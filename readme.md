@@ -269,10 +269,10 @@ the beginning, end, or middle of the thread, **without changing** the
 **indentation** of unrelated lines.
 
 Similar use cases appear **numerous times** in JavaScript code, whenever any value
-is transformed by **expressions of any type**: function calls, property calls,
-method calls, object constructions, arithmetic operations, logical operations,
-bitwise operations, `typeof`, `instanceof`, `await`, `yield` and `yield *`, and
-`throw` expressions.
+is transformed by **[expressions of any type][expressive versatility]**:
+function calls, property calls, method calls, object constructions, arithmetic
+operations, logical operations, bitwise operations, `typeof`, `instanceof`,
+`await`, `yield` and `yield *`, and `throw` expressions.
 
 ```js
 stringPromise
@@ -301,7 +301,7 @@ of the “smart pipeline operator”][smart body syntax]. The styles of
 [**functional** programming][functional programming], [**dataflow**
 programming][dataflow programming], and [**tacit** programming][tacit
 programming] may particularly benefit from bare pipelines and their [terse
-function calls][]:
+function application][].
 ```js
 [TODO: Example of tacit functional programming]
 ```
