@@ -34,7 +34,8 @@ issue #91][topic-token bikeshedding].
 [TODO: Search for unrendered links.]\
 [TODO: Add all new parts from spec.]\
 [TODO: Replace “lexical context” with “Lexical Environment”.]\
-[TODO: Add ASI safety goal]
+[TODO: Add ASI safety goal]\
+[TODO: Change “terse function calls” to “terse function application”.]
 
 <nav><details>
 <summary><strong>Table of Contents</strong></summary>
