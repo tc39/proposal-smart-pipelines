@@ -385,7 +385,10 @@ PrimaryExpression[Yield, Await] :
 <emu-grammar type=definition>
 PipelineExpression[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
-  PipelineExpression[?In, ?Yield, ?Await] `|&gt;` PipelineBody[?In, ?Yield, ?Await]
+  PipelineHead[?In, ?Yield, ?Await] `|&gt;` PipelineBody[?In, ?Yield, ?Await]
+
+PipelineHead[?In, ?Yield, ?Await] :
+  ConditionalExpression[?In, ?Yield, ?Await]
 
 PipelineBody[In, Yield, Await] :
   PipelineBareFunctionCall
@@ -403,7 +406,17 @@ SimpleReference :
   SimpleReference `.` IdentifierName
 
 PipelineTopicBody[In, Yield, Await] :
-  ConditionalExpression[?In, ?Yield, ?Await]
+  PipelineExpression[?In, ?Yield, ?Await]
+</emu-grammar>
+
+<h2>Supplemental Syntax</h2>
+<emu-grammar type=definition>
+PipelineTopicListHead[In, Yield, Await] :
+  `(` PipelineTopicList[?In, ?Yield, ?Await] `)`
+
+PipelineTopicList[In, Yield, Await] :
+  PipelineTopicList[?In, ?Yield, ?Await] `,` AssignmentExpression[?In, ?Yield, ?Await]
+  AssignmentExpression[?In, ?Yield, ?Await]
 </emu-grammar>
 
 <emu-clause id=sec-pipeline-operator-static-semantics-early-errors>
@@ -413,7 +426,12 @@ PipelineTopicBody[In, Yield, Await] :
 <emu-alg>
 * It is a Syntax Error if _ConditionalExpression_ Contains `#` is *false*.
 * It is a Syntax Error if _ConditionalExpression_ is covering a _YieldExpression_.
+* It is a Syntax Error if _ConditionalExpression_ is covering a _PipelineTopicListHead_.
 </emu-alg>
+
+<emu-note type=editor>
+<p>The third early error ensures that the syntax is forward compatible with a planned add-on proposal to bind multiple values to multiple topics at once with comma-list expressions in pipeline heads.</p>
+</emu-note>
 </emu-clause>
 
 <emu-clause id=sec-pipeline-operator-static-semantics-contains>
