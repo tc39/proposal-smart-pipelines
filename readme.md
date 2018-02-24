@@ -203,7 +203,7 @@ Pipeline operators are also conceptually similar to [WHATWG-stream piping][] and
 
 The binary “smart” pipeline operator `|>` proposed here would provide a
 **[backwards- and forwards-compatible][don’t break my code]** style of
-**chaining nested expressions** into a readable**, left-to-right** manner.
+**chaining nested expressions** into a readable, **left-to-right** manner.
 [**Nested** data transformations become **untangled** into **short
 steps**][untangled flow] by a **[zero-cost abstraction][zero runtime cost]**.
 
