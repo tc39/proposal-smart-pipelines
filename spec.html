@@ -65,7 +65,7 @@ Purpose
 </tr>
 <tr>
 <td>
-<ins>HasTopic()</ins>
+<ins>HasTopicBinding()</ins>
 </td>
 <td>
 <ins>Determine the status of an Environment Record's topic binding (`#` binding). Return *true* if it establishes a topic binding and *false* if it does not.</ins>
@@ -153,7 +153,7 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 <ins>GetTopicBinding()</ins>
 </td>
 <td>
-<ins>Return the value of the topic binding (`#` binding) of this Environment Record. This method is never called when the HasTopic method would return *false*.</ins>
+<ins>Return the value of the topic binding (`#` binding) of this Environment Record. This method is never called when the HasTopicBinding method would return *false*.</ins>
 </td>
 </tr>
 </tbody>
@@ -163,13 +163,13 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 
 <p>The behaviour of the concrete <ins>and additional</ins> specification methods for declarative Environment Records is defined by the following algorithms.</p>
 
-<emu-clause id="sec-declarative-environment-records-hastopic">
-<h1><ins>HasTopic ( )</ins></h1>
+<emu-clause id="sec-declarative-environment-records-HasTopicBinding">
+<h1><ins>HasTopicBinding ( )</ins></h1>
 <emu-note type=editor>
 <p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>.</p>
 </emu-note>
 
-<p>The concrete Environment Record method HasTopic for declarative Environment Records returns the value of the record's field [[TopicBindingStatus]], which is *false* by default. The value may instead be *true* if its BindTopicValue method has been called.</p>
+<p>The concrete Environment Record method HasTopicBinding for declarative Environment Records returns the value of the record's field [[TopicBindingStatus]], which is *false* by default. The value may instead be *true* if its BindTopicValue method has been called.</p>
 <emu-alg>
 1. Let _envRec_ be the function Environment Record for which the method was invoked.
 2. Return _envRec_.[[TopicBindingStatus]].
@@ -211,8 +211,8 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 <emu-clause id="sec-object-environment-records">
 <h1>Object Environment Records</h1>
 
-<emu-clause id="sec-object-environment-records-hastopic">
-<h1><ins>HasTopic ( )</ins></h1>
+<emu-clause id="sec-object-environment-records-HasTopicBinding">
+<h1><ins>HasTopicBinding ( )</ins></h1>
 
 <emu-note type=editor>
 <p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-object-environment-records>original Object Environment Records clause</a>.</p>
@@ -229,8 +229,8 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 <emu-clause id="sec-global-environment-records">
 <h1>Global Environment Records</h1>
 
-<emu-clause id="sec-global-environment-records-hastopic">
-<h1><ins>HasTopic ( )</ins></h1>
+<emu-clause id="sec-global-environment-records-HasTopicBinding">
+<h1><ins>HasTopicBinding ( )</ins></h1>
 
 <emu-note type=editor>
 <p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-object-environment-records>original Global Environment Records clause</a>.</p>
@@ -328,7 +328,7 @@ PrimaryExpression[Yield, Await] :
 1. Let _lex_ be the running execution context's Lexical Environment.
 2. Repeat,
   1. Let _envRec_ be _lex_'s EnvironmentRecord.
-  2. Let _status_ be _envRec_.HasTopic().
+  2. Let _status_ be _envRec_.HasTopicBinding().
   3. If _status_ is *true*, return _envRec_.
   4. Assert: _lex_ is not a global environment.
   4. Let _outer_ be the value of _lex_'s outer environment reference.
@@ -350,7 +350,7 @@ PrimaryExpression[Yield, Await] :
 <p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
 <emu-alg>
 1. Let _envRec_ be GetTopicEnvironment().
-2. Assert: _envRec_.HasTopic() is true.
+2. Assert: _envRec_.HasTopicBinding() is true.
 3. Return ? _envRec_.GetTopicBinding().
 </emu-alg>
 </emu-clause>
@@ -458,8 +458,8 @@ PipelineTopicList[In, Yield, Await] :
 <emu-alg>
 1. Let _envRec_ be env's Environment Record.
 2. Assert: _envRec_ is a declarative Environment Record.
-3. Assert: _envRec_.HasTopic() is *false*.
 4. Assert: _envRec_.GetTopicBinding() is *undefined*.
+3. Assert: _envRec_.HasTopicBinding() is *false*.
 5. Perform ! _envRec_.BindTopicValue(_topic_).
 </emu-alg>
 </emu-clause>
