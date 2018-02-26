@@ -27,14 +27,14 @@ contributors: J. S. Choi
 <p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-lexical-environments>original Lexical Environments clause</a>.</p>
 </emu-note>
 
-<p>The <dfn>topic binding</dfn> of a Lexical Environment immutably binds the topic reference `#` to one value of any ECMAScript language type (called the <dfn>topic value</dfn> or simply the <dfn>topic</dfn>), within that Lexical Environment, at the Lexical Environment's time of instantiation. The topic of a Lexical Environment conceptually serves as the value that the lexical context is "about". Many Lexical Environments do not have topic bindings: in particular, object and global environments never have topic bindings.</p>
+<p>The <dfn>topic binding</dfn> of a Lexical Environment immutably binds the topic reference `#` to one value of any ECMAScript language type (called the <dfn>topic value</dfn> or simply the <dfn>topic</dfn>), within that Lexical Environment, at the time of the Lexical Environment's instantiation. The topic of a Lexical Environment conceptually serves as the value that the lexical context is "about".</p>
 
 <p>A <dfn>topic-binding environment</dfn> is a Lexical Environment that establishes a topic binding. The <dfn>topic environment</dfn> of the running execution context is its Lexical Environment's nearest outer environment that is a topic-binding environment, as defined by the abstract operator GetTopicEnvironment.</p>
 
 <emu-note>
-<p>The only Lexical Environments that are topic-binding environments are those that are associated with |PipelineTopicBody| and which were created with the TopicPipelineBodyInstantiation abstract operation.</p>
+<p>The only Lexical Environments that are topic-binding environments are declarative environments. Most Lexical Environments bind their topic references to *undefined*. The only environments that bind the topic reference to any value other than *undefined* are environments that are associated with |PipelineTopicBody| and which were created with the TopicPipelineBodyInstantiation abstract operation. All Lexical Environments that are not declarative environments do not have any topic bindings; in particular, object and global environments are never topic-binding environments.</p>
 
-<p>In general, syntax productions that define <strong>top-level or inner program scopes</strong> that contain <strong>nested |Statement|s</strong> (such as |IfStatement|, |WithStatement|, |FunctionDeclaration|, |MethodDefinition|, |Script|, and |Module|) <strong>may not</strong> contain the topic reference `#` in those |Statement|s. Such productions create topic-binding environments that bind topic to *undefined* (the default value of the topic binding), but this topic binding will <strong>never</strong> be used. Any use of the topic reference within them (as detected by the static semantic rule <strong>Contains</strong>) would trigger <strong>early error rules</strong> associated with those productions: during program compilation, <strong>before</strong> runtime evaluation ever would have begun.</p>
+<p>In general, syntax productions that define <strong>top-level or inner program scopes</strong> that contain <strong>nested |Statement|s</strong> (such as |IfStatement|, |WithStatement|, |FunctionDeclaration|, |MethodDefinition|, |Script|, and |Module|) <strong>may not</strong> contain the topic reference `#` in those |Statement|s. Such productions create topic-binding environments that bind the topic reference to *undefined* (the default value of the topic binding), but this topic binding will <strong>never</strong> be used. Any use of the topic reference within them (as detected by the static semantic rule <strong>Contains</strong>) would trigger <strong>early error rules</strong> associated with those productions: during program compilation, <strong>before</strong> runtime evaluation ever would have begun.</p>
 
 <p>There are two syntax productions that define inner program scopes that contain nested |Statement|s <strong>yet</strong> which also <strong>may</strong> contain topic references. They are |ConciseBody| in <strong>|ArrowFunction|</strong> and |Block| in <strong>|TryStatement|</strong>. These productions do <strong>not</strong> create topic-binding environments of their own; therefore, at runtime, topic references that are contained within their scopes would be <strong>evaluated</strong> to the value of their <strong>outer</strong> environments' topic bindings. In addition, their inner topic references are <strong>visible</strong> to Contains and they are subject to the same early error rules associated with their <strong>outer</strong> scope.</p>
 
@@ -308,7 +308,7 @@ PrimaryExpression[Yield, Await] :
 </emu-grammar>
 
 <emu-clause id="sec-topic-reference">
-<h1><ins>The Topic Reference `#`</h1>
+<h1><ins>The Topic Reference `#`</ins></h1>
 
 <emu-note type=editor>
 <p>This section is a wholly new sub-clause to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-this-keyword>original `this` Keyword clause</a> and the <a href=https://tc39.github.io/ecma262/#sec-identifier-reference>original Identifier Reference clause</a>.</p>
@@ -372,7 +372,6 @@ PrimaryExpression[Yield, Await] :
 </emu-clause>
 
 </emu-clause>
-</ins>
 </emu-clause>
 
 <emu-clause id=sec-pipeline-operator>
@@ -436,7 +435,8 @@ PipelineTopicList[In, Yield, Await] :
 
 <emu-clause id=sec-pipeline-operator-static-semantics-contains>
 <h1>Static Semantics: Contains</h1>
-With parameter _symbol_.
+<p>With parameter _symbol_.</p>
+<emu-see-also-para op="Contains"></emu-see-also-para>
 
 <emu-grammar>PipelineBareFunctionCall : SimpleReference</emu-grammar>
 <emu-alg>
@@ -518,8 +518,6 @@ With parameter _symbol_.
 </emu-clause>
 
 </emu-clause>
-</emu-clause>
-</ins>
 
 <emu-clause id=sec-assignment-operators>
 <h1>Assignment Operators</h1>
@@ -792,6 +790,8 @@ Finally : `finally` Block</emu-grammar>
 
 <emu-clause id=sec-arrow-function-definitions-static-semantics-contains>
 <h1>Static Semantics: Contains</h1>
+<p>With parameter _symbol_.</p>
+<emu-see-also-para op="Contains"></emu-see-also-para>
 
 <emu-note type=editor>
 <p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-arrow-function-definitions-static-semantics-contains>original Arrow Functions, Static Semantics: Contains clause</a>.</p>
