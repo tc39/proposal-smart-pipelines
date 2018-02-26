@@ -35,7 +35,8 @@ issue #91][topic-token bikeshedding].
 [TODO: Add all new parts from spec.]\
 [TODO: Replace “lexical context” with “Lexical Environment”.]\
 [TODO: Add ASI safety goal]\
-[TODO: Change “terse function calls” to “terse function application”.]
+[TODO: Change “terse function calls” to “terse function application”.]\
+[TODO: Remove all mentions of arbitrary associativity.]
 
 <nav><details>
 <summary><strong>Table of Contents</strong></summary>
@@ -1137,7 +1138,13 @@ error, then it would be a useless operation and almost certainly not what the
 developer intended. Situations like these should be statically detectable and
 cause compile-time [early errors][].
 
-### Arbitrary associativity
+The same preference for strict early errors is used by the class decorators
+proposal: see [tc39/proposal-decorators#30][], [tc39/proposal-decorators#42][],
+and [tc39/proposal-decorators#60][]. Early errors also assist with [forward
+compatibility][], as changing a behavior from “throws” to “does something” is
+generally web compatible, though the reverse is not true.
+
+### ASI safety
 [TODO]
 
 ## “Make my code easier to read.”
