@@ -32,14 +32,15 @@ contributors: J. S. Choi
 <p>A <dfn>topic-binding environment</dfn> is a Lexical Environment that establishes a topic binding. The <dfn>topic environment</dfn> of the running execution context is its Lexical Environment's nearest outer environment that is a topic-binding environment, as defined by the abstract operator GetTopicEnvironment.</p>
 
 <emu-note>
-<p>The only Lexical Environments that are topic-binding environments are declarative environments. Most Lexical Environments bind their topic references to *undefined*. The only environments that bind the topic reference to any value other than *undefined* are environments that are associated with |PipelineTopicBody| and which were created with the TopicPipelineBodyInstantiation abstract operation. All Lexical Environments that are not declarative environments do not have any topic bindings; in particular, object and global environments are never topic-binding environments.</p>
+<p>The <strong>only</strong> Lexical Environments that are topic-binding environments are declarative environments that are associated with <strong>|PipelineTopicBody|</strong> and which were created with the <strong>TopicPipelineBodyInstantiation</strong> abstract operation.</p>
 
-<p>In general, syntax productions that define <strong>top-level or inner program scopes</strong> that contain <strong>nested |Statement|s</strong> (such as |IfStatement|, |WithStatement|, |FunctionDeclaration|, |MethodDefinition|, |Script|, and |Module|) <strong>may not</strong> contain the topic reference `#` in those |Statement|s. Such productions create topic-binding environments that bind the topic reference to *undefined* (the default value of the topic binding), but this topic binding will <strong>never</strong> be used. Any use of the topic reference within them (as detected by the static semantic rule <strong>Contains</strong>) would trigger <strong>early error rules</strong> associated with those productions: during program compilation, <strong>before</strong> runtime evaluation ever would have begun.</p>
+<p>There is also one syntax production that <strong>instantiates</strong> topic-binding environments with <strong>provided topic values</strong> of any ECMAScript language type. This production is <strong>|PipelineTopicBody|</strong>, which uses the abstract operation <strong>TopicPipelineBodyInstantiation</strong>. In addition, |PipelineTopicBody| <strong>hides</strong> its own inner topic references from Contains. Within |PipelineTopicBody|'s scopes, such topic references would <strong>not</strong> trigger early error rules during program compilation. Instead, they would be evaluated at runtime into the values of the <strong>newly instantiated</strong> topic-binding environments' topic bindings.</p>
+
+<p>All other Lexical Environments do not establish any topic bindings; in particular, object and global environments are never topic-binding environments.</p>
+
+<p>In addition, syntax productions that define <strong>top-level or inner program scopes</strong> that contain <strong>nested |Statement|s</strong> (such as |IfStatement|, |WithStatement|, |FunctionDeclaration|, |MethodDefinition|, |Script|, and |Module|) <strong>generally may not</strong> contain the topic reference `#` in those |Statement|s. Any use of the topic reference within them (as detected by the static semantic rule <strong>Contains</strong>) would trigger <strong>early error rules</strong> associated with those productions: during program compilation, <strong>before</strong> runtime evaluation ever would have begun.</p>
 
 <p>There are two syntax productions that define inner program scopes that contain nested |Statement|s <strong>yet</strong> which also <strong>may</strong> contain topic references. They are |ConciseBody| in <strong>|ArrowFunction|</strong> and |Block| in <strong>|TryStatement|</strong>. These productions do <strong>not</strong> create topic-binding environments of their own; therefore, at runtime, topic references that are contained within their scopes would be <strong>evaluated</strong> to the value of their <strong>outer</strong> environments' topic bindings. In addition, their inner topic references are <strong>visible</strong> to Contains and they are subject to the same early error rules associated with their <strong>outer</strong> scope.</p>
-
-<p>There is also one syntax production that <strong>instantiates</strong> topic-binding environments with a <strong>provided topic value</strong> of <strong>any</strong> ECMAScript language type, rather than always binding the topic to *undefined*. This production is <strong>|PipelineTopicBody|</strong>, which uses the abstract operation <strong>TopicPipelineBodyInstantiation</strong>. In addition, |PipelineTopicBody| <strong>hides</strong> its own inner topic references from Contains. Within |PipelineTopicBody|'s scopes, such topic references would <strong>not</strong> trigger early error rules during program compilation. Instead, they would be evaluated at runtime into the value of the <strong>newly instantiated</strong> topic-binding environments' topic binding.</p>
-<p>There is also one syntax production that <strong>instantiates</strong> topic-binding environments with <strong>provided topic values</strong> of <strong>any</strong> ECMAScript language type, rather than always binding the topic reference to *undefined*. This production is <strong>|PipelineTopicBody|</strong>, which uses the abstract operation <strong>TopicPipelineBodyInstantiation</strong>. In addition, |PipelineTopicBody| <strong>hides</strong> its own inner topic references from Contains. Within |PipelineTopicBody|'s scopes, such topic references would <strong>not</strong> trigger early error rules during program compilation. Instead, they would be evaluated at runtime into the values of the <strong>newly instantiated</strong> topic-binding environments' topic bindings.</p>
 </emu-note>
 
 </emu-clause>
@@ -260,7 +261,7 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 <ins class=block>
 <emu-grammar>
 Punctuator :: one of
-  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` <ins>`|&gt;` `#`</ins> `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
+  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` `|&gt;` `#` `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
 </emu-grammar>
 </ins>
 
@@ -311,21 +312,16 @@ PrimaryExpression[Yield, Await] :
 <p>This section is a wholly new sub-clause to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-this-keyword>original `this` Keyword clause</a> and the <a href=https://tc39.github.io/ecma262/#sec-identifier-reference>original Identifier Reference clause</a>.</p>
 </emu-note>
 
-<p>The <dfn>topic reference</dfn>, which is the token `#`, is a nullary operator that evaluates to the value of the current Lexical Environment's topic. The topic reference acts as if it were a special variable: implicitly bound to the topic value, yet still lexically scoped. But `#` is not actually an |IdentifierName| and the topic reference is not a variable, and it cannot be bound by typical assignment; instead, it is immutably bound to a value during the instantiation of certain topic-binding environments.</p>
-<p>The concept of lexical topic binding is further discussed in <emu-xref href="#sec-lexical-topics">Lexical Topics</emu-xref> and in <emu-xref href="#sec-declarative-environment-records">Declarative Environment Records</emu-xref>.</p>
-
 <emu-note>
-<p>The only Lexical Environments that are topic-binding environments are those that are associated with |PipelineTopicBody| and which were created with the TopicPipelineBodyInstantiation abstract operation.</p>
+<p>The <dfn>topic reference</dfn>, which is the token `#`, is a nullary operator that evaluates to the value of the current Lexical Environment's topic. The topic reference acts as if it were a special variable: implicitly bound to the topic value, yet still lexically scoped. But `#` is not actually an |IdentifierName| and the topic reference is not a variable, and it cannot be bound by typical assignment; instead, it is immutably bound to a value during the instantiation of certain topic-binding environments.</p>
 
-<p>In general, syntax productions that define top-level or inner program scopes containing nested |Statement|s (such as |IfStatement|, |WithStatement|, |FunctionDeclaration|, |MethodDefinition|, |Script|, and |Module|) <strong>may not</strong> contain the topic reference `#`. Such productions create topic-binding environments that bind topic to *undefined* (the default value of the topic binding), but any use of the topic reference within them (as detected by the static semantic rule Contains) would trigger early error rules associated with those productions.</p>
-
-<p>However syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger those early errors.</p>
+<p>The concept of lexical topic binding is further discussed in <emu-xref href="#sec-lexical-topics">Lexical Topics</emu-xref> and in <emu-xref href="#sec-declarative-environment-records">Declarative Environment Records</emu-xref>.</p>
 </emu-note>
 
 <emu-clause id="sec-gettopicenvironment" aoid="GetTopicEnvironment">
 <h1>Runtime Semantics: GetTopicEnvironment</h1>
 <emu-note>
-<p>GetTopicEnvironment finds the Environment Record that currently supplies the topic binding (the binding of `#`) or that voids the topic binding. That is, it finds the running execution topic's nearest-ancestral topic-binding environment, which is the nearest-ancestral outer environment that has a topic binding status of *true*. It is <strong>never</strong> called when there is no topic environment.</p>
+<p>GetTopicEnvironment finds the Environment Record that currently supplies the topic binding (the binding of `#`). That is, it finds the running execution topic's nearest-ancestral topic-binding environment, which is the nearest-ancestral outer environment that has a topic binding status of *true*. It is <strong>never</strong> called when there is no topic environment.</p>
 </emu-note>
 <p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
 <emu-alg>
@@ -537,7 +533,7 @@ AssignmentExpression[In, Yield, Await] :
 </emu-grammar>
 
 <emu-note type=editor>
-<p>A planned add-on proposal would add a pipeline-function operator |PipelineFunctionExpression| to |AssignmentExpression|, which would replace |PipelineExpression|.</p>
+<p>A planned add-on proposal would add a pipeline-function operator |PipelineFunction| to |AssignmentExpression|, which would replace |PipelineExpression|.</p>
 </emu-note>
 
 </emu-clause>
