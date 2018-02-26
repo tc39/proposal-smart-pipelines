@@ -222,8 +222,8 @@ new User.Message(
   capitalize(
     doubledSay(
       (await stringPromise)
-        ?? throw new TypeError(`Expected string from ${stringPromise}`)
-    )
+        ??: throw new TypeError(`Expected string from ${stringPromise}`)
+    ), ', '
   ) + '!'
 )
 ```
@@ -238,7 +238,7 @@ Polish notation][].
 ```js
 stringPromise
   |> await #
-  |> # ?? throw new TypeError()
+  |> # ??: throw new TypeError()
   |> doubleSay(#, ', ')
   |> capitalize // a bare unary function call
   |> # + '!'
@@ -278,7 +278,7 @@ operations, logical operations, bitwise operations, `typeof`, `instanceof`,
 ```js
 stringPromise
   |> await #
-  |> # ?? throw new TypeError()
+  |> # ??: throw new TypeError()
   |> doubleSay(#, ', ')
   |> capitalize // a bare unary function call
   |> # + '!'
@@ -291,7 +291,7 @@ unary constructor call**. In other words, the example above is equivalent to:
 ```js
 stringPromise
   |> await #
-  |> # ?? throw new TypeError(`Expected string from ${#}`)
+  |> # ??: throw new TypeError(`Expected string from ${#}`)
   |> doubleSay(#, ', ')
   |> capitalize(#)
   |> # + '!'
@@ -372,7 +372,7 @@ function capitalize (str) {
 
 stringPromise
   |> await #
-  |> # ?? throw new TypeError()
+  |> # ??: throw new TypeError()
   |> doubleSay(#, ', ')
   |> capitalize |> # + '!'
   |> new User.Message
@@ -400,7 +400,7 @@ new User.Message(
   capitalizedString(
     doubledSay(
       (await stringPromise)
-        ?? throw new TypeError()
+        ??: throw new TypeError()
     )
   ) + '!'
 )
@@ -414,7 +414,7 @@ Reading its data flow requires checking both the beginning and end of each expre
 ```js
 stringPromise
   |> await #
-  |> # ?? throw new TypeError()
+  |> # ??: throw new TypeError()
   |> `${#}, ${#}`
   |> #[0].toUpperCase() + #.substring(1)
   |> # + '!'
@@ -1167,15 +1167,15 @@ new User.Message(
   capitalize(
     doubledSay(
       (await stringPromise)
-        ?? throw new TypeError(`Expected string from ${stringPromise}`)
+        ??: throw new TypeError(`Expected string from ${stringPromise}`)
     )
   ) + '!'
 )
 ```
 …the deep inner expression `await stringPromise` is relatively short. In
-contrast, the shallow outer expression `` capitalize(doubledSay((await
-stringPromise) ?? throw new TypeError(`Expected string from
-${stringPromise}`))) + '!'`) `` is very long. Yet both are
+contrast, the shallow outer expression
+`` capitalize(doubledSay((await stringPromise) ??: throw new TypeError(`Expected string from ${stringPromise}`))) + '!'`) ``
+is very long. Yet both are
 quite similar: they are transformations of a string into another. This
 insight is lost in the deeply nested noise.
 
@@ -1188,7 +1188,7 @@ along left to right, not back and forth.
 ```js
 stringPromise
   |> await #
-  |> # ?? throw new TypeError()
+  |> # ??: throw new TypeError()
   |> doubleSay(#, ', ')
   |> capitalize
   |> # + '!'
@@ -3273,7 +3273,7 @@ Consider also the motivating first example above:
 ```js
 stringPromise
   |> await #
-  |> # ?? throw new TypeError()
+  |> # ??: throw new TypeError()
   |> doubleSay // a bare unary function call
   |> capitalize // also a bare unary function call
   |> # + '!'
@@ -3287,7 +3287,7 @@ do {
     const #₂ = do {
       const #₁ = do {
         const #₀ = await stringPromise;
-        #₀ ?? throw new TypeError()
+        #₀ ??: throw new TypeError()
       };
       doubleSay(#₁)
     };
@@ -3343,7 +3343,7 @@ Consider also the motivating first example above:
 ```js
 stringPromise
   |> await #
-  |> # ?? throw new TypeError()
+  |> # ??: throw new TypeError()
   |> doubleSay // a bare unary function call
   |> capitalize // also a bare unary function call
   |> # + '!'
@@ -3356,7 +3356,7 @@ do {
     const • = do {
       const • = do {
         const • = await stringPromise;
-        do { const # = •; # ?? throw new TypeError() }
+        do { const # = •; # ??: throw new TypeError() }
       };
       do { const # = •; doubleSay(#) }
     };
