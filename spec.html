@@ -120,7 +120,7 @@ If [[TopicBindingStatus]]'s value is *false*, the Environment Record binds the t
 Any
 </td>
 <td>
-If the value of [[TopicBindingStatus]] is *true*, [[TopicValue]] is the topic value of the Environment Record (that is, the value of `#` within its program scope). The default value for [[TopicValue]] is *undefined*.
+If the value of [[TopicBindingStatus]] is *true*, [[TopicValue]] is the topic value of the Environment Record (that is, the value of `#` within its program scope). The default value for [[TopicValue]] is ~empty~.
 </td>
 </tr>
 </tbody>
@@ -458,8 +458,8 @@ PipelineTopicList[In, Yield, Await] :
 <emu-alg>
 1. Let _envRec_ be env's Environment Record.
 2. Assert: _envRec_ is a declarative Environment Record.
-4. Assert: _envRec_.GetTopicBinding() is *undefined*.
 3. Assert: _envRec_.HasTopicBinding() is *false*.
+4. Assert: _envRec_.GetTopicBinding() is ~empty~.
 5. Perform ! _envRec_.BindTopicValue(_topic_).
 </emu-alg>
 </emu-clause>
