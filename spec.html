@@ -17,14 +17,14 @@ contributors: J. S. Choi
 <emu-clause id=executable-code-and-execution-contexts>
 <h1>Executable Code and Execution Contexts</h1>
 
-<emu-clause id="sec-lexical-environments">
+<emu-clause id=sec-lexical-environments>
 <h1>Lexical Environments</h1>
 
-<emu-clause id="sec-lexical-topics">
+<emu-clause id=sec-lexical-topics>
 <h1><ins>Lexical Topics</ins></h1>
 
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-lexical-environments>original Lexical Environments clause</a>.</p>
+<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-lexical-environments>original Lexical Environments clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-lexical-environments>further modifications by Additional Feature MT</emu-xref>.</p>
 </emu-note>
 
 <p>The <dfn>topic binding</dfn> of a Lexical Environment immutably binds the topic reference `#` to one value of any ECMAScript language type (called the <dfn>topic value</dfn> or simply the <dfn>topic</dfn>), within that Lexical Environment, at the time of the Lexical Environment's instantiation. The topic of a Lexical Environment conceptually serves as the value that the lexical context is "about".</p>
@@ -45,14 +45,14 @@ contributors: J. S. Choi
 
 </emu-clause>
 
-<emu-clause id="sec-environment-records">
+<emu-clause id=sec-environment-records>
 <h1>Environment Records</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-environment-records>original Environment Records clause</a>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-environment-records>original Environment Records clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-environment-records>further modifications by Additional Feature MT</emu-xref>.</p>
 </emu-note>
 
-<emu-table id="table-15" caption="Abstract Methods of Environment Records">
+<emu-table id=table-15 caption="Abstract Methods of Environment Records">
 <table>
 <tbody>
 <tr>
@@ -75,11 +75,11 @@ Purpose
 </table>
 </emu-table>
 
-<emu-clause id="sec-declarative-environment-records">
+<emu-clause id=sec-declarative-environment-records>
 <h1>Declarative Environment Records</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-declarative-environment-records>further modifications by Additional Feature MT</emu-xref>.</p>
 </emu-note>
 
 <p>Each declarative Environment Record is associated with an ECMAScript program scope containing variable, constant, let, class, module, import, and/or function declarations. A declarative Environment Record binds the set of identifiers defined by the declarations contained within its scope.</p>
@@ -87,7 +87,7 @@ Purpose
 <ins class=block>
 <p>Declarative Environment Records have the additional state fields listed in <emu-xref href="#table-61"></emu-xref>.</p>
 
-<emu-table id="table-61" caption="Additional Fields of Declarative Environment Records">
+<emu-table id=table-61 caption="Additional Fields of Declarative Environment Records">
 <table>
 <tbody>
 <tr>
@@ -109,27 +109,31 @@ Purpose
 *false* | *true*
 </td>
 <td>
-If [[TopicBindingStatus]]'s value is *false*, the Environment Record binds the topic (that is, it binds `#`) to a value. If the value is *false*, the Environment Record has no topic binding. [[TopicBindingStatus]]'s default value is *false*. Its value may be changed from *false* to *true* but never vice versa.
+If [[TopicBindingStatus]]'s value is *true*, the Environment Record binds the Environment Record establishes its environment's topic binding (that is, it binds `#`) to a value. If the value is *false*, the Environment Record has no topic binding. [[TopicBindingStatus]]'s default value is *false*. Its value may be changed from *false* to *true* but never vice versa.
 </td>
 </tr>
 <tr>
 <td>
-[[TopicValue]]
+[[TopicValues]]
 </td>
 <td>
-Any
+Any | ~empty~
 </td>
 <td>
-If the value of [[TopicBindingStatus]] is *true*, [[TopicValue]] is the topic value of the Environment Record (that is, the value of `#` within its program scope). The default value for [[TopicValue]] is ~empty~.
+If the value of [[TopicBindingStatus]] is *true*, [[TopicValues]] is a list containing the one element which is the environment's topic value (that is, the value of `#` within its program scope). Otherwise, the value of [[TopicValues]] is ~empty~.
 </td>
 </tr>
 </tbody>
 </table>
 </emu-table>
 
+<emu-note type=editor>
+<p>[[TopicValues]] is a list in order to be <emu-xref href=#sec-additional-feature-mt-declarative-environment-records>forward compatible with Additional Feature MT</emu-xref>.</p>
+</emu-note>
+
 <p>Declarative Environment Records support all of the abstract methods of Environment Records listed in <emu-xref href="#table-15"></emu-xref>. In addition, declarative Environment Records support the methods listed in <emu-xref href="#table-62"></emu-xref>.</p>
 
-<emu-table id="table-62" caption="Additional Methods of Declarative Environment Records">
+<emu-table id=table-62 caption="Additional Methods of Declarative Environment Records">
 <table>
 <tbody>
 <tr>
@@ -142,15 +146,15 @@ Purpose
 </tr>
 <tr>
 <td>
-BindTopicValue(V)
+BindTopicValues(V)
 </td>
 <td>
-Establish the immutable topic binding (that is, the `#` binding) of this Environment Record and set the topic binding's value. _V_ is the value for the binding and is a value of any ECMAScript language type. Afterward, the value returned by the Environment Record's HasTopicBinding method is *true*. This method cannot be called more than once on any single Environment Record.
+Establish the immutable topic binding (that is, the `#` binding) of this Environment Record and set the topic binding's value. _V_ is a list containing the one element which is the topic value and is a value of any ECMAScript language type. Afterward, the value returned by the Environment Record's HasTopicBinding method is *true*. This method cannot be called more than once on any single Environment Record.
 </td>
 </tr>
 <tr>
 <td>
-<ins>GetTopicBinding()</ins>
+<ins>GetPrimaryTopicBinding()</ins>
 </td>
 <td>
 <ins>Return the value of the topic binding (`#` binding) of this Environment Record. This method is never called when the HasTopicBinding method would return *false*.</ins>
@@ -161,57 +165,62 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 </emu-table>
 </ins>
 
+<emu-note type=editor>
+<p>BindTopicValues() accepts a list argument rather than a single-value argument, and GetPrimaryTopicBinding is named as such instead of merely “GetTopicBinding”, in order to be <emu-xref href=#sec-additional-feature-mt-declarative-environment-records>forward compatible with Additional Feature MT</emu-xref>.</p>
+</emu-note>
+
 <p>The behaviour of the concrete <ins>and additional</ins> specification methods for declarative Environment Records is defined by the following algorithms.</p>
 
-<emu-clause id="sec-declarative-environment-records-HasTopicBinding">
+<emu-clause id=sec-declarative-environment-records-hastopicbinding>
 <h1><ins>HasTopicBinding ( )</ins></h1>
 <emu-note type=editor>
 <p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>.</p>
 </emu-note>
 
-<p>The concrete Environment Record method HasTopicBinding for declarative Environment Records returns the value of the record's field [[TopicBindingStatus]], which is *false* by default. The value may instead be *true* if its BindTopicValue method has been called.</p>
+<p>The concrete Environment Record method HasTopicBinding for declarative Environment Records returns the value of the record's field [[TopicBindingStatus]], which is *false* by default. The value may instead be *true* if its BindTopicValues method has been called.</p>
 <emu-alg>
 1. Let _envRec_ be the function Environment Record for which the method was invoked.
 2. Return _envRec_.[[TopicBindingStatus]].
 </emu-alg>
 </emu-clause>
 
-<emu-clause id="sec-declarative-environment-records-gettopicbinding">
-<h1><ins>GetTopicBinding ( )</ins></h1>
+<emu-clause id=sec-declarative-environment-records-bindtopicvalues>
+<h1><ins>BindTopicValues ( _V_ )</ins></h1>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>.</p>
+<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-declarative-environment-records-bindtopicvalues>further modifications by Additional Feature MT</emu-xref>.</p>
 </emu-note>
-<p>The method GetTopicBinding for declarative Environment Records returns the value of the record's topic binding. It must not be called when the record's topic binding has not already been established.</p>
+<p>The method BindTopicValues for declarative Environment Records is guaranteed to be called only when the Environment Records do not yet have established topic bindings.</p>
+<emu-alg>
+1. <ins>Assert: _V_ is a list.</ins>
+2. Let _envRec_ be the declarative Environment Record for which the method was invoked.
+3. Assert: _envRec_.[[TopicBindingStatus]] is *false*.
+4. Set _envRec_.[[TopicValues]] to _V_.
+5. Set _envRec_.[[TopicBindingStatus]] to *true*.
+6. Return NormalCompletion(~empty~).
+</emu-alg>
+</emu-clause>
+</emu-clause>
+
+<emu-clause id=sec-declarative-environment-records-getprimarytopicbinding>
+<h1><ins>GetPrimaryTopicBinding ( )</ins></h1>
+<emu-note type=editor>
+<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-declarative-environment-records-getprimarytopicbinding>further modifications by Additional Feature MT</emu-xref>.</p>
+</emu-note>
+<p>The method GetPrimaryTopicBinding for declarative Environment Records returns the value of the record's topic binding (`#` binding). It must not be called when the record's topic binding has not already been established.</p>
 <emu-note>
-<p>That is, Environment Records will never be called on an Environment Record before the BindTopicValue method has been called.</p>
+<p>That is, Environment Records will never be called on an Environment Record before the BindTopicValues method has been called.</p>
 </emu-note>
 <emu-alg>
 1. Let _envRec_ be the declarative Environment Record for which the method was invoked.
 2. Assert: _envRec_.[[TopicBindingStatus]] is *true*.
-3. Return _envRec_.[[TopicValue]].
+3. Return _envRec_.[[TopicValues]].
 </emu-alg>
 </emu-clause>
 
-<emu-clause id="sec-declarative-environment-records-bindtopicvalue">
-<h1><ins>BindTopicValue ( )</ins></h1>
-<emu-note type=editor>
-<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>.</p>
-</emu-note>
-<p>The method BindTopicValue for declarative Environment Records is guaranteed to be called only when the Environment Records still have void topic bindings.</p>
-<emu-alg>
-1. Let _envRec_ be the declarative Environment Record for which the method was invoked.
-2. Assert: _envRec_.[[TopicBindingStatus]] is *false*.
-3. Set _envRec_.[[TopicValue]] to _V_.
-4. Set _envRec_.[[TopicBindingStatus]] to *true*.
-4. Return NormalCompletion(~empty~).
-</emu-alg>
-</emu-clause>
-</emu-clause>
-
-<emu-clause id="sec-object-environment-records">
+<emu-clause id=sec-object-environment-records>
 <h1>Object Environment Records</h1>
 
-<emu-clause id="sec-object-environment-records-HasTopicBinding">
+<emu-clause id=sec-object-environment-records-hastopicbinding>
 <h1><ins>HasTopicBinding ( )</ins></h1>
 
 <emu-note type=editor>
@@ -226,10 +235,10 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 
 </emu-clause>
 
-<emu-clause id="sec-global-environment-records">
+<emu-clause id=sec-global-environment-records>
 <h1>Global Environment Records</h1>
 
-<emu-clause id="sec-global-environment-records-HasTopicBinding">
+<emu-clause id=sec-global-environment-records-hastopicbinding>
 <h1><ins>HasTopicBinding ( )</ins></h1>
 
 <emu-note type=editor>
@@ -255,7 +264,7 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 <h1>Punctuators</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-punctuators>original Punctuators clause</a>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-punctuators>original Punctuators clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-punctuators>further modifications by Additional Feature MT</emu-xref>.</p>
 </emu-note>
 
 <ins class=block>
@@ -282,7 +291,7 @@ Punctuator :: one of
 <h1>Primary Expression</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-primary-expression>original Primary Expression clause</a>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-primary-expression>original Primary Expression clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-primary-expression>further modifications by Additional Feature MT</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
@@ -305,11 +314,11 @@ PrimaryExpression[Yield, Await] :
   CoverParenthesizedExpressionAndArrowParameterList[?Yield, ?Await]
 </emu-grammar>
 
-<emu-clause id="sec-topic-reference">
+<emu-clause id=sec-topic-reference>
 <h1><ins>The Topic Reference `#`</ins></h1>
 
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-this-keyword>original `this` Keyword clause</a> and the <a href=https://tc39.github.io/ecma262/#sec-identifier-reference>original Identifier Reference clause</a>.</p>
+<p>This section is a wholly new sub-clause to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-this-keyword>original `this` Keyword clause</a> and the <a href=https://tc39.github.io/ecma262/#sec-identifier-reference>original Identifier Reference clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-topic-references>further modifications by Additional Feature MT</emu-xref>.</p>
 </emu-note>
 
 <emu-note>
@@ -318,7 +327,7 @@ PrimaryExpression[Yield, Await] :
 <p>The concept of lexical topic binding is further discussed in <emu-xref href="#sec-lexical-topics">Lexical Topics</emu-xref> and in <emu-xref href="#sec-declarative-environment-records">Declarative Environment Records</emu-xref>.</p>
 </emu-note>
 
-<emu-clause id="sec-gettopicenvironment" aoid="GetTopicEnvironment">
+<emu-clause id=sec-gettopicenvironment aoid=GetTopicEnvironment>
 <h1>Runtime Semantics: GetTopicEnvironment</h1>
 <emu-note>
 <p>GetTopicEnvironment finds the Environment Record that currently supplies the topic binding (the binding of `#`). That is, it finds the running execution topic's nearest-ancestral topic-binding environment, which is the nearest-ancestral outer environment that has a topic binding status of *true*. It is <strong>never</strong> called when there is no topic environment.</p>
@@ -342,16 +351,19 @@ PrimaryExpression[Yield, Await] :
 </emu-note>
 </emu-clause>
 
-<emu-clause id="sec-gettopicenvironment" aoid="GetTopicEnvironment">
-<h1>Runtime Semantics: ResolveTopicBinding</h1>
+<emu-clause id=sec-resolveprimarytopicbinding aoid=ResolvePrimaryTopicBinding>
+<h1>Runtime Semantics: ResolvePrimaryTopicBinding</h1>
+<emu-note type=editor>
+<p>This method is named as such instead of merely “ResolveTopicBinding” in order to be forward compatible with <emu-xref href=#sec-additional-feature-pf>Additional Feature MT</emu-xref>.</p>
+</emu-note>
 <emu-note>
-<p>ResolveTopicBinding returns the value to which the topic reference `#` is bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment.</p>
+<p>ResolvePrimaryTopicBinding returns the value to which the topic reference `#` is bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment.</p>
 </emu-note>
 <p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
 <emu-alg>
 1. Let _envRec_ be GetTopicEnvironment().
 2. Assert: _envRec_.HasTopicBinding() is true.
-3. Return ? _envRec_.GetTopicBinding().
+3. Return ? _envRec_.GetPrimaryTopicBinding().
 </emu-alg>
 </emu-clause>
 
@@ -360,7 +372,7 @@ PrimaryExpression[Yield, Await] :
 
 <emu-grammar>PrimaryExpression : `#`</emu-grammar>
 <emu-alg>
-1. Return ? ResolveTopicBinding().
+1. Return ? ResolvePrimaryTopicBinding().
 </emu-alg>
 </emu-clause>
 
@@ -370,7 +382,7 @@ PrimaryExpression[Yield, Await] :
 <emu-clause id=sec-pipeline-operator>
 <h1><ins>Pipeline Operator</ins></h1>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-conditional-operator>original Conditional Operator (`?` `:`) clause</a> and the <a href=https://tc39.github.io/ecma262/#sec-assignment-operators>original Assignment Operators clause</a>.</p>
+<p>This section is a wholly new sub-clause to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-conditional-operator>original Conditional Operator (`?` `:`) clause</a> and the <a href=https://tc39.github.io/ecma262/#sec-assignment-operators>original Assignment Operators clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-pipeline-operator>further modifications by Additional Feature MT</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
@@ -422,7 +434,7 @@ PipelineTopicList[In, Yield, Await] :
 </emu-alg>
 
 <emu-note type=editor>
-<p>The third early error ensures that the syntax is forward compatible with a planned add-on proposal to bind multiple values to multiple topics at once with comma-list expressions in pipeline heads.</p>
+<p>The third early error ensures forward compatibility with <emu-xref href=#sec-additional-feature-mt-pipeline-operator>further modifications by Additional Feature MT</emu-xref>.</p>
 </emu-note>
 </emu-clause>
 
@@ -443,14 +455,14 @@ PipelineTopicList[In, Yield, Await] :
 </emu-alg>
 </emu-clause>
 
-<emu-clause id=sec-pipeline-operator-runtime-semantics-evaluation>
+<emu-clause id=sec-pipeline-operator-runtime-semantics-topicpipelinebodyinstantiation>
 <h1>Runtime Semantics: TopicPipelineBodyInstantiation</h1>
 <emu-note>
-<p>This abstract operation constructs, instantiates, then returns a new declarative Lexical Environment for a topic pipeline body. It creates an immutable topic binding in that declarative environment using the given _topic_.</p>
+<p>This abstract operation constructs, instantiates, then returns a new declarative Lexical Environment for a topic pipeline body. It creates an immutable topic binding in that declarative environment using the given _topics_.</p>
 </emu-note>
-<p>Topic Pipeline Instantiation is performed as follows using arguments _code_, _env_, and _topic_.</p>
+<p>Topic Pipeline Instantiation is performed as follows using arguments _code_, _env_, and _topics_.</p>
 <ul>
-<li>_topic_ is the value to which _env_'s topic reference will be bound.</li>
+<li>_topics_ is a list of values: _env_'s primary topic reference will be bound to the first value.</li>
 <li>_env_ is the Lexical Environment in which the topic binding is to be created.</li>
 </ul>
 
@@ -459,8 +471,8 @@ PipelineTopicList[In, Yield, Await] :
 1. Let _envRec_ be env's Environment Record.
 2. Assert: _envRec_ is a declarative Environment Record.
 3. Assert: _envRec_.HasTopicBinding() is *false*.
-4. Assert: _envRec_.GetTopicBinding() is ~empty~.
-5. Perform ! _envRec_.BindTopicValue(_topic_).
+4. Assert: _envRec_.GetPrimaryTopicBinding() is ~empty~.
+5. Perform ! _envRec_.BindTopicValues(_topics_).
 </emu-alg>
 </emu-clause>
 
@@ -516,7 +528,7 @@ PipelineTopicList[In, Yield, Await] :
 <h1>Assignment Operators</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-assignment-operators>original Assignment Operators clause</a>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-assignment-operators>original Assignment Operators clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-pf-assignment-operators>further modifications by Additional Feature PF</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
@@ -532,10 +544,6 @@ AssignmentExpression[In, Yield, Await] :
   LeftHandSideExpression[?Yield, ?Await] AssignmentOperator AssignmentExpression[?In, ?Yield, ?Await]
 </emu-grammar>
 
-<emu-note type=editor>
-<p>A planned add-on proposal would add a pipeline-function operator |PipelineFunction| to |AssignmentExpression|, which would replace |PipelineExpression|.</p>
-</emu-note>
-
 </emu-clause>
 </emu-clause>
 
@@ -549,7 +557,7 @@ AssignmentExpression[In, Yield, Await] :
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-block-static-semantics-early-errors>original Block, Static Semantics: Early Errors clause</a>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-block-static-semantics-early-errors>original Block, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-block-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref>.</p>
 </emu-note>
 
 <ins class=block>
@@ -562,7 +570,7 @@ AssignmentExpression[In, Yield, Await] :
 
 <emu-note>
 <p>In general, syntax productions that define inner program scopes containing nested |Statement|s, including |BlockStatement|, may <strong>not</strong> contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; such topic references would not trigger the early error above.</p>
-<p>Although |BlockStatement| cannot contain topic reference `#`, |Block| itself can. Certain uses of |Block| in statement-level productions, such as |Block| in |TryStatement|, also allow the topic reference.</p>
+<p>Although |BlockStatement| cannot contain a topic reference `#`, |Block| itself can. Certain uses of |Block| in statement-level productions, such as |Block| in |TryStatement|, also allow the topic reference.</p>
 </emu-note>
 </ins>
 
@@ -576,7 +584,7 @@ AssignmentExpression[In, Yield, Await] :
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-if-statement-static-semantics-early-errors>original `if` Statement, Static Semantics: Early Errors clause</a>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-if-statement-static-semantics-early-errors>original `if` Statement, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-if-statement-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref> and further modifications by Additional Feature ST. [TODO: Add link to Additional Feature ST once it’s written.]</p>
 </emu-note>
 
 <emu-grammar>
@@ -586,7 +594,7 @@ IfStatement :
 </emu-grammar>
 <ul>
 <li>
-<ins>It is a Syntax Error if |StatementList| Contains `#` is *true*.</ins>
+<ins>It is a Syntax Error if |Statement| Contains `#` is *true*.</ins>
 </li>
 </ul>
 
@@ -596,10 +604,6 @@ IfStatement :
 </emu-note>
 </ins>
 
-<emu-note type=editor>
-<p>This early error is forward compatible with a planned add-on proposal to make `if` statements bind the topic reference to the value of |Expression|.</p>
-</emu-note>
-
 </emu-clause>
 </emu-clause>
 
@@ -607,10 +611,10 @@ IfStatement :
 <h1>Iteration Statements</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-iteration-statements>original Iteration Statements clause</a>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-iteration-statements>original Iteration Statements clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-iteration-statements-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref> and further modifications by Additional Feature ST. [TODO: Add link to Additional Feature ST once it’s written.]</p>
 </emu-note>
 
-<emu-clause id="sec-semantics-static-semantics-early-errors">
+<emu-clause id=sec-semantics-static-semantics-early-errors>
 <h1>Static Semantics: Early Errors</h1>
 <emu-grammar>
 IterationStatement :
@@ -638,10 +642,6 @@ IterationStatement :
 <p>In general, syntax productions that define inner program scopes containing nested |Statement|s, including iteration statements, may <strong>not</strong> contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 </ins>
-
-<emu-note type=editor>
-<p>This early error is forward compatible with a planned add-on proposal to make `for`-`of` and `for`-`in` statements bind the topic reference to the value of each iterator value or object property key.</p>
-</emu-note>
 </emu-clause>
 
 </emu-clause>
@@ -653,7 +653,7 @@ IterationStatement :
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-with-statement-static-semantics-early-errors>original `with` Statement, Static Semantics: Early Errors clause</a>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-with-statement-static-semantics-early-errors>original `with` Statement, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-function-definitions-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref>. It is not planned to be removed by other additional syntax.</p>
 </emu-note>
 
 <emu-grammar>WithStatement : `with` `(` Expression `)` Statement</emu-grammar>
@@ -669,10 +669,6 @@ IterationStatement :
 </emu-note>
 </ins>
 
-<emu-note type=editor>
-<p>This early error is not planned to be removed by an add-on proposal.</p>
-</emu-note>
-
 </emu-clause>
 </emu-clause>
 
@@ -683,7 +679,7 @@ IterationStatement :
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-switch-statement-static-semantics-early-errors>original `switch` Statement, Static Semantics: Early Errors clause</a>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-switch-statement-static-semantics-early-errors>original `switch` Statement, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-switch-statement-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref> and further modifications by Additional Feature ST. [TODO: Add link to Additional Feature ST once it’s written.]</p>
 </emu-note>
 
 <emu-grammar>SwitchStatement : `switch` Expression StatementList</emu-grammar>
@@ -699,10 +695,6 @@ IterationStatement :
 </emu-note>
 </ins>
 
-<emu-note type=editor>
-<p>This early error is forward compatible with a planned add-on proposal to make `switch` statements bind the topic reference to the value of |Expression|.</p>
-</emu-note>
-
 </emu-clause>
 </emu-clause>
 
@@ -713,7 +705,7 @@ IterationStatement :
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-try-statement-static-semantics-early-errors>original `try` Statement, Static Semantics: Early Errors clause</a>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-try-statement-static-semantics-early-errors>original `try` Statement, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-try-statement-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref> and further modifications by Additional Feature ST. [TODO: Add link to Additional Feature ST once it’s written.]</p>
 </emu-note>
 
 <emu-grammar>
@@ -739,10 +731,6 @@ Finally : `finally` Block</emu-grammar>
 </emu-note>
 </ins>
 
-<emu-note type=editor>
-<p>This early error is forward compatible with a planned add-on proposal to make `catch` statements bind the topic reference to the value of their caught errors.</p>
-</emu-note>
-
 </emu-clause>
 
 </emu-clause>
@@ -758,7 +746,7 @@ Finally : `finally` Block</emu-grammar>
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-function-definitions-static-semantics-early-errors>original Function Definitions, Static Semantics: Early Errors clause</a>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-function-definitions-static-semantics-early-errors>original Function Definitions, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-function-definitions-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>FunctionBody : FunctionStatementList</emu-grammar>
@@ -787,7 +775,7 @@ Finally : `finally` Block</emu-grammar>
 <emu-see-also-para op="Contains"></emu-see-also-para>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-arrow-function-definitions-static-semantics-contains>original Arrow Functions, Static Semantics: Contains clause</a>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-arrow-function-definitions-static-semantics-contains>original Arrow Functions, Static Semantics: Contains clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-arrow-functions-static-semantics-contains>further modifications by Additional Feature MT</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>ArrowFunction : ArrowParameters `=>` ConciseBody</emu-grammar>
@@ -815,7 +803,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-scripts-static-semantics-early-errors>original Scripts, Static Semantics: Early Errors clause</a>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-scripts-static-semantics-early-errors>original Scripts, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-function-definitions-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref>. It is not planned to be removed by other additional syntax.</p>
 </emu-note>
 
 <emu-grammar>ScriptBody : StatementList</emu-grammar>
@@ -831,10 +819,6 @@ Normally, Contains does not look inside most function forms. However, Contains i
 </emu-note>
 </ins>
 
-<emu-note type=editor>
-<p>This early error is not planned to be removed by an add-on proposal.</p>
-</emu-note>
-
 </emu-clause>
 </emu-clause>
 
@@ -845,7 +829,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-scripts-static-semantics-early-errors>original Modules, Static Semantics: Early Errors clause</a>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-scripts-static-semantics-early-errors>original Modules, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-function-definitions-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref>. It is not planned to be removed by other additional syntax.</p>
 </emu-note>
 
 <emu-grammar>ModuleItem : StatementListItem</emu-grammar>
@@ -861,11 +845,1206 @@ Normally, Contains does not look inside most function forms. However, Contains i
 </emu-note>
 </ins>
 
+</emu-clause>
+</emu-clause>
+
+</emu-clause>
+
+<emu-annex id=sec-additional-feature-pf>
+<h1>Additional Feature PF</h1>
+
+<p>This annex specifies additional ECMAScript language syntax and semantics for <strong>pipeline functions</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing an additional <strong>pipeline-function operator</strong> `•`. This new <strong>unary</strong> operator creates arrow functions with an implicit parameter pipelined into a pipeline body, such that `•` |PipelineBody| is equivalent to `$=>$|>` |PipelineBody|. The operator brings much power: it enables terse <strong>method extraction</strong>, terse <strong>partial application</strong> of functions/expressions (into unary functions), and terse <strong>composition</strong> of functions/expressions.</p>
+
+<emu-table id=table-additional-feature-pf-examples caption="Examples of Multiple Lexical Topics">
+<table>
+<tr>
+<td><pre><code language=javascript>• console.log</code></td>
+<td><pre><code language=javascript>$ => $ |> console.log
+$ => console.log($)
+console.log.bind(console)</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>• f(#, 5)</code></pre></td>
+<td><pre><code language=javascript>$ => $ |> f(#, 5)
+$ => f($, 5)</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>• # + 1</code></pre></td>
+<td><pre><code language=javascript>$ => $ |> # + 1
+$ => $ + 1</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>• f |> g</code></pre></td>
+<td><pre><code language=javascript>$ => $ |> f |> g
+$ => g(f($))</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>• f |> o.m</code></pre></td>
+<td><pre><code language=javascript>$ => $ |> f |> o.m
+$ => o.m(f($))</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>• f |> # + 1 |> o.m</code></pre></td>
+<td><pre><code language=javascript>$ => $ |> f |> # + 1 |> o.m
+$ => o.m(f($) + 1)</code></pre></td>
+</tr>
+</table>
+</emu-table>
+
+<p>This annex uses a new token `•`, but this token is merely an <strong>illustrative placeholder</strong> to avoid premature bikeshedding discussion. Example replacements include `->` |PipelineBody| and `=|` |PipelineBody|.</p>
+
+<emu-annex id=sec-additional-feature-pf-executable-code-and-execution-contexts>
+<h1>Executable Code and Execution Contexts</h1>
+
+<emu-annex id=sec-additional-feature-pf-lexical-environments>
+<h1>Lexical Environments</h1>
+
+<emu-annex id=sec-additional-feature-pf-lexical-topics>
+<h1>Lexical Topics</h1>
+
+<emu-note type=editor>
+<p>This section further revises the <emu-xref href=#sec-lexical-topics>corresponding new clause in the core proposal</emu-xref>.</p>
+</emu-note>
+
+<emu-note>
+<p>There is also one syntax production that <strong>instantiates</strong> topic-binding environments with <strong>provided topic values</strong> of any ECMAScript language type. This production is <strong>|PipelineTopicBody|</strong>, which uses the abstract operation <strong>TopicPipelineBodyInstantiation</strong><ins>, and which in turn is used by |PipelineExpression| and |PipelineFunction|</ins>. In addition, |PipelineTopicBody| <strong>hides</strong> its own inner topic references from Contains. Within |PipelineTopicBody|'s scopes, such topic references would <strong>not</strong> trigger early error rules during program compilation. Instead, they would be evaluated at runtime into the values of the <strong>newly instantiated</strong> topic-binding environments' topic bindings.</p>
+</emu-note>
+
+</emu-annex>
+
+</emu-annex>
+
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-ecmascript-language-expressions>
+<h1>ECMAScript Language: Expressions</h1>
+
+<emu-annex id=sec-additional-feature-pf-assignment-operators>
+<h1>Assignment Operators</h1>
+
+<emu-note type=editor>
+<p>This section further revises the <emu-xref href=#sec-assignment-operators>amendments in the core proposal to the original Ecma262 clause</emu-xref>.</p>
+</emu-note>
+
+<h2>Syntax</h2>
+
+<emu-grammar>
+AssignmentExpression[In, Yield, Await] :
+  PipelineExpression[?In, ?Yield, ?Await]
+  <ins>PipelineFunction[?In, ?Yield, ?Await]</ins>
+  [+Yield] YieldExpression[?In, ?Await]
+  ArrowFunction[?In, ?Yield, ?Await]
+  AsyncArrowFunction[?In, ?Yield, ?Await]
+  LeftHandSideExpression[?Yield, ?Await] `=` AssignmentExpression[?In, ?Yield, ?Await]
+  LeftHandSideExpression[?Yield, ?Await] AssignmentOperator AssignmentExpression[?In, ?Yield, ?Await]
+</emu-grammar>
+
+</emu-annex>
+
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-ecmascript-language-functions-and-classes>
+<h1>ECMAScript Language: Functions and Classes</h1>
+
+<emu-annex id=sec-additional-feature-pf-pipeline-function-definitions>
+<h1><ins>Pipeline Function Definitions</ins></h1>
+
+<emu-note type=editor>
+<p>This section would be a wholly new sub-clause to the <emu-xref href=#sec-ecmascript-language-functions-and-classes>ECMAScript Language: Functions and Classes clause</a>.</p>
+</emu-note>
+
+<h2>Syntax</h2>
+<emu-grammar type=definition>
+PipelineFunction[In, Yield, Await] :
+  `•` PipelineBody[?In, ?Yield, ?Await]
+</emu-grammar>
+
+<emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-boundnames>
+<h1>Static Semantics: BoundNames</h1>
+<emu-see-also-para op="BoundNames"></emu-see-also-para>
+<emu-grammar>
+PipelineBody :
+  PipelineBareFunctionCall
+  PipelineBareConstructorCall
+  PipelineTopicBody
+</emu-grammar>
+<emu-alg>
+1. Return a new empty List.
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-contains>
+<h1>Static Semantics: Contains</h1>
+<p>With parameter _symbol_.</p>
+<emu-see-also-para op="Contains"></emu-see-also-para>
+
+<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-alg>
+1. If _symbol_ is not one of |NewTarget|, |SuperProperty|, |SuperCall|, <del>`super` or `this`</del> <ins>`super`, `this`, or `#`</ins>, return *false*.
+2. Return |PipelineBody| Contains _symbol_.
+</emu-alg>
+
+<emu-note>
+Normally, Contains does not look inside most function forms. However, Contains is used to detect `new.target`, <ins>`this`, `super`, and `#`</ins> usage within a |PipelineFunction|.
+</emu-note>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-containsexpression>
+<h1>Static Semantics: ContainsExpression</h1>
+<emu-see-also-para op="ContainsExpression"></emu-see-also-para>
+<emu-grammar>
+PipelineBody :
+  PipelineBareFunctionCall
+  PipelineBareConstructorCall
+  PipelineTopicBody
+</emu-grammar>
+<emu-alg>
+1. Return *false*.
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-containsusestrict>
+<h1>Static Semantics: ContainsUseStrict</h1>
+<emu-see-also-para op="ContainsUseStrict"></emu-see-also-para>
+<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-alg>
+1. Return *false*.
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-expectedargumentcount>
+<h1>Static Semantics: ExpectedArgumentCount</h1>
+<emu-see-also-para op="ExpectedArgumentCount"></emu-see-also-para>
+<emu-grammar>
+PipelineBody :
+  PipelineBareFunctionCall
+  PipelineBareConstructorCall
+  PipelineTopicBody
+</emu-grammar>
+<emu-alg>
+1. Return 1.
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-hasname>
+<h1>Static Semantics: HasName</h1>
+<emu-see-also-para op="HasName"></emu-see-also-para>
+<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-alg>
+1. Return *false*.
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-issimpleparameterlist>
+<h1>Static Semantics: IsSimpleParameterList</h1>
+<emu-see-also-para op="IsSimpleParameterList"></emu-see-also-para>
+<emu-grammar>
+PipelineBody :
+  PipelineBareFunctionCall
+  PipelineBareConstructorCall
+  PipelineTopicBody
+</emu-grammar>
+<emu-alg>
+1. Return *true*.
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-runtime-semantics-iteratorbindinginitialization>
+<h1>Runtime Semantics: IteratorBindingInitialization</h1>
+<p>With parameters _iteratorRecord_ and _environment_.</p>
+<emu-see-also-para op="IteratorBindingInitialization"></emu-see-also-para>
+<emu-grammar>
+PipelineBody : PipelineTopicBody
+</emu-grammar>
+<emu-alg>
+1. Assert: _iteratorRecord_.[[Done]] is *false*.
+2. Assert: _environment_ is not *undefined*.
+3. Let _next_ be IteratorStep(_iteratorRecord_).
+4. If _next_ is an abrupt completion, set _iteratorRecord_.[[Done]] to *true*.
+5. ReturnIfAbrupt(_next_).
+6. If _next_ is *false*, set _iteratorRecord_.[[Done]] to *true*.
+7. Else,
+  1. Let _v_ be IteratorValue(_next_).
+  2. If _v_ is an abrupt completion, set _iteratorRecord_.[[Done]] to *true*.
+  3. ReturnIfAbrupt(_v_).
+8. If _iteratorRecord_.[[Done]] is *true*, let _v_ be *undefined*.
+9. Return ? _environment_.BindTopic(_v_).
+<!-- TODO: Why return NormalCompletion(empty) in last step of https://tc39.github.io/ecma262/#sec-initializeboundname instead of just returning the EnvironmentRecord’s method’s result ? -->
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-lexicallydeclarednames>
+<h1>Static Semantics: LexicallyDeclaredNames</h1>
+<emu-see-also-para op="LexicallyDeclaredNames"></emu-see-also-para>
+<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-alg>
+1. Return a new empty List.
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-lexicallyscopeddeclarations>
+<h1>Static Semantics: LexicallyScopedDeclarations</h1>
+<emu-see-also-para op="LexicallyScopedDeclarations"></emu-see-also-para>
+<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-alg>
+1. Return a new empty List.
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-vardeclarednames>
+<h1>Static Semantics: VarDeclaredNames</h1>
+<emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
+<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-alg>
+1. Return a new empty List.
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-varscopeddeclarations>
+<h1>Static Semantics: VarScopedDeclarations</h1>
+<emu-see-also-para op="VarScopedDeclarations"></emu-see-also-para>
+<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-alg>
+1. Return a new empty List.
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-runtime-semantics-evaluatebody>
+<h1>Runtime Semantics: EvaluateBody</h1>
+<p>With parameters _functionObject_ and List _argumentsList_.</p>
+<emu-see-also-para op="EvaluateBody"></emu-see-also-para>
+<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-alg>
+1. Perform ? FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
+2. If the length of _argumentsList_ is greater than 0, then let _headValue_ be _argumentsList_[0]. Otherwise, let _headValue_ be *undefined*.
+3. Let _exprRef_ be PipelineBodyEvaluation of |PipelineBody| with argument _headValue_.
+4. Let _exprValue_ be ? GetValue(_exprRef_).
+5. Return Completion{[[Type]]: ~return~, [[Value]]: _exprValue_, [[Target]]: ~empty~}.
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-runtime-semantics-evaluation>
+<h1>Runtime Semantics: Evaluation</h1>
+<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-alg>
+1. If the |PipelineFunction| is declared in strict mode code then let _strict_ be *true*. Otherwise let _strict_ be *false*. TODO: Make this more formal.
+2. Let _scope_ be the LexicalEnvironment of the running execution context.
+3. Let _closure_ be FunctionCreate(~Arrow~, |PipelineBody|, |PipelineBody|, _scope_, _strict_).
+4. Return _closure_.
+</emu-alg>
+<emu-note>
+<p>TODO</p>
+</emu-note>
+</emu-annex>
+
+</emu-annex>
+
+</emu-annex>
+
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt>
+<h1>Additional Feature MT</h1>
+<p>This annex specifies additional ECMAScript language syntax and semantics for <strong>multiple lexical topics</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing an additional secondary topic reference `##`, a tertiary topic reference `###`, a rest topic reference `...`, and a parenthesized pipeline-head syntax to bind the new references [TODO: xref]. When combined with the <emu-xref href=#sec-additional-feature-pf>additional feature PF</emu-xref>, the resulting additional feature PF+MT enables <strong>partial application</strong> of functions/expressions into n-ary functions. [TODO: xref with PF+MT]</p>
+<emu-table id=table-additional-feature-mt-examples caption="Examples of Multiple Lexical Topics">
+<table>
+<tr>
+<td><pre><code language=javascript>(a, b) |> f</code></pre></td>
+<td><pre><code language=javascript>f(a, b)</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>(a, b) |> # + ##</code></pre></td>
+<td><pre><code language=javascript>a + b</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>(a, b) |> f(#, 0, ##)</code></pre></td>
+<td><pre><code language=javascript>f(a, 0, b)</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>(a, b, c, d) |> f(#, 0, ...)</code></pre></td>
+<td><pre><code language=javascript>f(a, 0, b, c, d)</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>(a, b, c, d) |> f(##, 0, ...)</code></pre></td>
+<td><pre><code language=javascript>f(b, 0, c, d)</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>(a, b, c, d) |> f(##, 0, [...])</code></pre></td>
+<td><pre><code language=javascript>f(b, 0, [c, d])</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>(a, b) |> (# * b, f) |> f</code></pre></td>
+<td><pre><code language=javascript>g(a * b, f(b))</code></pre></td>
+</tr>
+</table>
+</emu-table>
+
+<emu-annex id=sec-additional-feature-mt-executable-code-and-execution-contexts
+>
+<h1>Executable Code and Execution Contexts</h1>
+
+<emu-annex id=sec-additional-feature-mt-lexical-environments>
+<h1>Lexical Environments</h1>
+
+<emu-annex id=sec-additional-feature-mt-lexical-topics>
+<h1>Lexical Topics</h1>
+
+<emu-note type=editor>
+<p>This section further revises the <emu-xref href=#sec-lexical-environments>corresponding new clause in the core proposal</emu-xref>.</p>
+</emu-note>
+
+<p>The <dfn>topic binding</dfn> of a Lexical Environment immutably binds the topic reference<ins>s</ins> `#`<ins>, `##`, `###`, and `...` to their respective <dfn>topic values</dfn>. The token `#` is termed the <dfn>primary topic reference</dfn>, `##` is termed the <dfn>secondary topic reference</dfn>, `###` is termed the <dfn>tertiary topic reference</dfn>, and `...` is called the <dfn>rest topic reference</dfn>. `#`, `##`, and `###` have</ins> to <del>one value of any ECMAScript language type (called the <dfn>topic value</dfn> or simply the <dfn>topic</dfn>)</del><ins>a topic value of any ECMAScript language type, and `...` may be bound to an Array of ECMAScript values. </ins><del>, within that Lexical Environment, at the time of the Lexical Environment's instantiation.</del><ins>A single topic binding will bind all of a Lexical Environment's topic references at once at the time of the Lexical Environment's instantiation, after which the binding cannot change.</ins> The topic<ins>s</ins> of a Lexical Environment conceptually serve<del>s</del> as the value<ins>s</ins> that the lexical context is "about".</p>
+
+<p>A <dfn>topic-binding environment</dfn> is a Lexical Environment that establishes a topic binding. The <dfn>topic environment</dfn> of the running execution context is its Lexical Environment's nearest outer environment that is a topic-binding environment, as defined by the abstract operator GetTopicEnvironment.</p>
+
+<emu-note>
+<p>In general, syntax productions that define <strong>top-level or inner program scopes</strong> that contain <strong>nested |Statement|s</strong> (such as |IfStatement|, |WithStatement|, |FunctionDeclaration|, |MethodDefinition|, |Script|, and |Module|) <strong>generally may not</strong> contain <del>the</del><ins>any</ins> topic reference<ins>s</ins> `#`<ins>, `##`, `###`, or `...`</ins> in those |Statement|s. Any use of the topic reference<ins>s</ins> within them (as detected by the static semantic rule <strong>Contains</strong>) would trigger <strong>early error rules</strong> associated with those productions: during program compilation, <strong>before</strong> runtime evaluation ever would have begun.</p>
+</emu-note>
+
+</emu-annex>
+
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-environment-records>
+<h1>Environment Records</h1>
+
+<emu-note type=editor>
+<p>This section further revises the <emu-xref href=#sec-lexical-environments>corresponding new clause in the core proposal</emu-xref>.</p>
+</emu-note>
+
+<emu-table id=table-additional-feature-mt-15 caption="Abstract Methods of Environment Records">
+<table>
+<tbody>
+<tr>
+<th>
+Method
+</th>
+<th>
+Purpose
+</th>
+</tr>
+<tr>
+<td>
+HasTopicBinding()
+</td>
+<td>
+Determine the status of an Environment Record's topic binding (<ins>that is, the bindings of `#`, `##`, `###`, and `...`</ins>). Return *true* if it establishes a topic binding and *false* if it does not.
+</td>
+</tr>
+</tbody>
+</table>
+</emu-table>
+
+<emu-annex id=sec-additional-feature-mt-declarative-environment-records>
+<h1>Declarative Environment Records</h1>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records annex</a>.</p>
+</emu-note>
+
+<emu-table id=table-additional-feature-mt-61 caption="Additional Fields of Declarative Environment Records">
+<table>
+<tbody>
+<tr>
+<th>
+Method
+</th>
+<th>
+Value
+</th>
+<th>
+Purpose
+</th>
+</tr>
+<tr>
+<td>
+[[TopicBindingStatus]]
+</td>
+<td>
+*false* | *true*
+</td>
+<td>
+If [[TopicBindingStatus]]'s value is *true*, the Environment Record establishes its environment's topic binding (that is, it binds `#`<ins>, `##`, `###`, and `...`</ins>) to a value. If the value is *false*, the Environment Record has no topic binding. [[TopicBindingStatus]]'s default value is *false*. Its value may be changed from *false* to *true* but never vice versa.
+</td>
+</tr>
+<tr>
+<td>
+[[TopicValues]]
+</td>
+<td>
+Any | ~empty~
+</td>
+<td>
+If the value of [[TopicBindingStatus]] is *true*, [[TopicValues]] is a list containing is the values of the Environment Record's topic binding (that is, the values of `#`, `##`, and `###` within its program scope). Otherwise, the value of [[TopicValues]] is ~empty~.
+</td>
+</tr>
+<tr>
+<td>
+<ins>[[RestTopicValues]]</ins>
+</td>
+<td>
+<ins>Array of any | ~empty~</ins>
+</td>
+<td>
+<ins>If the value of [[TopicBindingStatus]] is *true*, [[RestTopicValues]] is the value of the Environment Record's secondary topic binding (that is, the values of `...` within its program scope). Otherwise, the value of [[RestTopicValues]] is ~empty~.</ins>
+</td>
+</tr>
+</tbody>
+</table>
+</emu-table>
+
+<p>Declarative Environment Records support all of the abstract methods of Environment Records listed in <emu-xref href="#table-15"></emu-xref>. In addition, declarative Environment Records support the methods listed in <emu-xref href="#table-62"></emu-xref>.</p>
+
+<emu-table id=table-additional-feature-mt-62 caption="Additional Methods of Declarative Environment Records">
+<table>
+<tbody>
+<tr>
+<th>
+Method
+</th>
+<th>
+Purpose
+</th>
+</tr>
+<tr>
+<td>
+BindTopicValues(V<ins>, VRest</ins>)
+</td>
+<td>
+<ins>Establish the immutable topic binding<ins>s</ins> <del>(that is, the `#` binding) </del>of this Environment Record and set the topic binding<del>s'</del><ins>'s</ins> value<ins>s</ins>. <del>_V_ is the value for the binding and is a value of any ECMAScript language type.</del><ins>_V_ is a list with elements of any ECMAScript language type. _VRest_ is either ~empty~ or an Array whose elements are of any ECMAScript language type.</ins> Afterward, the value returned by the Environment Record's HasTopicBinding method is *true*. This method cannot be called more than once on any single Environment Record.
+</td>
+</tr>
+<tr>
+<td>
+GetPrimaryTopicBinding()
+</td>
+<td>
+Return the value of the <ins>primary </ins>topic binding (`#` binding) of this Environment Record. This method is never called when the HasTopicBinding method would return *false*.
+</td>
+</tr>
+<tr>
+<td>
+<ins>GetSecondaryTopicBinding()</ins>
+</td>
+<td>
+<ins>Return the value of the secondary topic binding (`##` binding) of this Environment Record. This method is never called when the HasTopicBinding method would return *false*.</ins>
+</td>
+</tr>
+<tr>
+<td>
+<ins>GetTertiaryTopicBinding()</ins>
+</td>
+<td>
+<ins>Return the value of the tertiary topic binding (`###` binding) of this Environment Record. This method is never called when the HasTopicBinding method would return *false*.</ins>
+</td>
+</tr>
+<tr>
+<td>
+<ins>GetRestTopicBinding()</ins>
+</td>
+<td>
+<ins>Return the value of the rest topic binding (`...` binding) of this Environment Record. This method is never called when the HasTopicBinding method would return *false*.</ins>
+</td>
+</tr>
+</tbody>
+</table>
+</emu-table>
+
+<p>The behaviour of the concrete and additional specification methods for declarative Environment Records is defined by the following algorithms.</p>
+
+<emu-annex id=sec-additional-feature-mt-declarative-environment-records-bindtopicvalues>
+<h1>BindTopicValues ( _V_<ins>, _VRest_</ins> )</h1>
+<emu-note type=editor>
+<p>This section is a wholly new sub-annex of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records annex</a>.</p>
+</emu-note>
+<p>The method BindTopicValues for declarative Environment Records is guaranteed to be called only when the Environment Records do not yet have established topic bindings.</p>
+<emu-alg>
+1. <ins>Assert: _V_ is a list.</ins>
+2. <ins>Assert: _VRest_ is either ~empty~ or an Array.</ins>
+3. Let _envRec_ be the declarative Environment Record for which the method was invoked.
+4. Assert: _envRec_.[[TopicBindingStatus]] is *false*.
+5. Set _envRec_.[[TopicValues]] to _V_.
+6. Set _envRec_.[[RestTopicValues]] to _VRest_.
+7. Set _envRec_.[[TopicBindingStatus]] to *true*.
+8. Return NormalCompletion(~empty~).
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-declarative-environment-records-getprimarytopicbinding>
+<h1>GetPrimaryTopicBinding ( )</h1>
+<emu-note type=editor>
+<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>.</p>
+</emu-note>
+<p>The method GetPrimaryTopicBinding for declarative Environment Records returns the value of the record's <ins>primary </ins>topic binding (`#` binding). It must not be called when the record's topic binding has not already been established.</p>
+<emu-note>
+<p>That is, Environment Records will never be called on an Environment Record before the BindTopicValues method has been called.</p>
+</emu-note>
+<emu-alg>
+1. Let _envRec_ be the declarative Environment Record for which the method was invoked.
+2. Assert: _envRec_.[[TopicBindingStatus]] is *true*.
+3. Let _topicValues_ be _envRec_.[[TopicValues]].
+4. Assert: The length of _topicValues_ is at least 1.
+5. Return _envRec_.[[TopicValues]][0].
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-declarative-environment-records-getsecondarytopicbinding>
+<h1><ins>GetSecondaryTopicBinding ( )</ins></h1>
+<emu-note type=editor>
+<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>.</p>
+</emu-note>
+<p>The method GetSecondaryTopicBinding for declarative Environment Records returns the value of the record's secondary topic binding (`##` binding). It must not be called when the record's topic binding has not already been established.</p>
+<emu-note>
+<p>That is, Environment Records will never be called on an Environment Record before the BindTopicValues method has been called.</p>
+</emu-note>
+<emu-alg>
+1. Let _envRec_ be the declarative Environment Record for which the method was invoked.
+2. Assert: _envRec_.[[TopicBindingStatus]] is *true*.
+3. Let _topicValues_ be _envRec_.[[TopicValues]].
+4. Assert: The length of _topicValues_ is at least 2.
+5. Return _envRec_.[[TopicValues]][1].
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-declarative-environment-records-gettertiarytopicbinding>
+<h1><ins>GetTertiaryTopicBinding ( )</ins></h1>
+<emu-note type=editor>
+<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>.</p>
+</emu-note>
+<p>The method GetTertiaryTopicBinding for declarative Environment Records returns the value of the record's tertiary topic binding (`###` binding). It must not be called when the record's topic binding has not already been established.</p>
+<emu-note>
+<p>That is, Environment Records will never be called on an Environment Record before the BindTopicValues method has been called.</p>
+</emu-note>
+<emu-alg>
+1. Let _envRec_ be the declarative Environment Record for which the method was invoked.
+2. Assert: _envRec_.[[TopicBindingStatus]] is *true*.
+3. Let _topicValues_ be _envRec_.[[TopicValues]].
+4. Assert: The length of _topicValues_ is at least 3.
+5. Return _envRec_.[[TopicValues]][2].
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-declarative-environment-records-getresttopicbinding>
+<h1><ins>GetRestTopicBinding ( )</ins></h1>
+<emu-note type=editor>
+<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>.</p>
+</emu-note>
+<p>The method GetRestTopicBinding for declarative Environment Records returns the value of the record's rest topic binding (`...` binding). It must not be called when the record's topic binding has not already been established.</p>
+<emu-note>
+<p>That is, Environment Records will never be called on an Environment Record before the BindTopicValues method has been called.</p>
+</emu-note>
+<emu-alg>
+1. Let _envRec_ be the declarative Environment Record for which the method was invoked.
+2. Assert: _envRec_.[[TopicBindingStatus]] is *true*.
+3. Let _restTopicValues_ be _envRec_.[[RestTopicValues]].
+4. Assert: _restTopicValues_ is an Array.
+5. Return _envRec_.[[RestTopicValues]].
+</emu-alg>
+</emu-annex>
+</emu-annex>
+</emu-annex>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-ecmascript-language-lexical-grammar>
+<h1>ECMAScript Language: Lexical Grammar</h1>
+
+<emu-annex id=sec-additional-feature-mt-punctuators>
+<h1>Punctuators</h1>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-punctuators>original Punctuators annex</a>.</p>
+</emu-note>
+
+<ins class=block>
+<emu-grammar>
+Punctuator :: one of
+  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` `|&gt;` `#` `##` `###` `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
+</emu-grammar>
+</ins>
+
+<del class=block>
+<emu-grammar>
+Punctuator :: one of
+  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` `|&gt;` `#` `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
+</emu-grammar>
+</del>
+
+</emu-annex>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-ecmascript-language-expressions>
+<h1>ECMAScript Language: Expressions</h1>
+
+<emu-annex id=sec-additional-feature-mt-primary-expression>
+<h1>Primary Expression</h1>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-primary-expression>original Primary Expression annex</a>.</p>
+</emu-note>
+
+<h2>Syntax</h2>
+<emu-grammar>
+PrimaryExpression[Yield, Await] :
+  `this`
+  <ins>TopicReference</ins>
+  <del>`#`</del>
+  IdentifierReference[?Yield, ?Await]
+  Literal
+  ArrayLiteral[?Yield, ?Await]
+  ObjectLiteral[?Yield, ?Await]
+  FunctionExpression
+  ClassExpression[?Yield, ?Await]
+  GeneratorExpression
+  AsyncFunctionExpression
+  AsyncGeneratorExpression
+  RegularExpressionLiteral
+  TemplateLiteral[?Yield, ?Await, ~Tagged]
+  CoverParenthesizedExpressionAndArrowParameterList[?Yield, ?Await]
+</emu-grammar>
+
+<emu-annex id=sec-additional-feature-mt-topic-references>
+<h1>The Topic Reference<ins>s</ins> `#`<ins>, `##`, `###`, and `...`</ins></h1>
+
+<emu-note type=editor>
+<p>This section is a wholly new sub-annex to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-this-keyword>original `this` Keyword annex</a> and the <a href=https://tc39.github.io/ecma262/#sec-identifier-reference>original Identifier Reference annex</a>.</p>
+</emu-note>
+
+<ins class=block>
+<h2>Syntax</h2>
+<emu-grammar>
+TopicReference :
+  `#`
+  `##`
+  `###`
+  `...`
+</emu-grammar>
+</ins>
+
+<emu-annex id=sec-additional-feature-mt-resolveprimarytopicbinding>
+<h1>Runtime Semantics: ResolvePrimaryTopicBinding</h1>
+<emu-note>
+<p>ResolvePrimaryTopicBinding returns the value to which the <ins>primary </ins>topic reference `#` is bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment.</p>
+</emu-note>
+<p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
+<emu-alg>
+1. Let _envRec_ be GetTopicEnvironment().
+2. Assert: _envRec_.HasTopicBinding() is true.
+3. Return ? _envRec_.GetPrimaryTopicBinding().
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-resolvesecondarytopicbinding aoid=ResolveSecondaryTopicBinding>
+<h1><ins>Runtime Semantics: ResolveSecondaryTopicBinding</ins></h1>
+<emu-note>
+<p>ResolveSecondaryTopicBinding returns the value to which the secondary topic reference `##` is bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment.</p>
+</emu-note>
+<p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
+<emu-alg>
+1. Let _envRec_ be GetTopicEnvironment().
+2. Assert: _envRec_.HasTopicBinding() is true.
+3. Return ? _envRec_.GetSecondaryTopicBinding().
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-resolvetertiarytopicbinding aoid=ResolveTertiaryTopicBinding>
+<h1><ins>Runtime Semantics: ResolveTertiaryTopicBinding</ins></h1>
+<emu-note>
+<p>ResolveTertiaryTopicBinding returns the value to which the tertiary topic reference `###` is bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment.</p>
+</emu-note>
+<p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
+<emu-alg>
+1. Let _envRec_ be GetTopicEnvironment().
+2. Assert: _envRec_.HasTopicBinding() is true.
+3. Return ? _envRec_.GetTertiaryTopicBinding().
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-resolveresttopicbinding aoid=ResolveRestTopicBinding>
+<h1><ins>Runtime Semantics: ResolveRestTopicBinding</ins></h1>
+<emu-note>
+<p>ResolveRestTopicBinding returns the value to which the rest topic reference `...` is bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment.</p>
+</emu-note>
+<p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
+<emu-alg>
+1. Let _envRec_ be GetTopicEnvironment().
+2. Assert: _envRec_.HasTopicBinding() is true.
+3. Return ? _envRec_.GetRestTopicBinding().
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-topic-reference-runtime-semantics-evaluation>
+<h1>Runtime Semantics: Evaluation</h1>
+
+<emu-grammar>PrimaryExpression : `#`</emu-grammar>
+<emu-alg>
+1. Return ? ResolvePrimaryTopicBinding().
+</emu-alg>
+
+<ins class=block>
+<emu-grammar>PrimaryExpression : `##`</emu-grammar>
+<emu-alg>
+1. Return ? ResolveSecondaryTopicBinding().
+</emu-alg>
+
+<emu-grammar>PrimaryExpression : `###`</emu-grammar>
+<emu-alg>
+1. Return ? ResolveTertiaryTopicBinding().
+</emu-alg>
+
+<emu-grammar>PrimaryExpression : `...`</emu-grammar>
+<emu-alg>
+1. Return ? ResolveRestTopicBinding().
+</emu-alg>
+</ins>
+</emu-annex>
+
+</emu-annex>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-pipeline-operator>
+<h1>Pipeline Operator</h1>
+<emu-note type=editor>
+<p>This section is a wholly new sub-annex to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-conditional-operator>original Conditional Operator (`?` `:`) annex</a> and the <a href=https://tc39.github.io/ecma262/#sec-assignment-operators>original Assignment Operators annex</a>.</p>
+</emu-note>
+
+<emu-annex id=sec-additional-feature-mt-pipeline-operator-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+
+<emu-grammar>PipelineTopicBody : ConditionalExpression</emu-grammar>
+<emu-alg>
+* It is a Syntax Error if <del>_ConditionalExpression_ Contains `#` is *false*.</del><ins>all of the following conditions are true:</ins>
+  * <ins>_ConditionalExpression_ Contains `#` is *false*.</ins>
+  * <ins>_ConditionalExpression_ Contains `##` is *false*.</ins>
+  * <ins>_ConditionalExpression_ Contains `###` is *false*.</ins>
+  * <ins>_ConditionalExpression_ Contains `...` is *false*.</ins>
+* It is a Syntax Error if _ConditionalExpression_ is covering a _YieldExpression_.
+* It is a Syntax Error if _ConditionalExpression_ is covering a _PipelineTopicListHead_.
+</emu-alg>
+
+<emu-note type=editor>
+<p>The third early error ensures that the syntax is forward compatible with a planned add-on proposal to bind multiple values to multiple topics at once with comma-list expressions in pipeline heads.</p>
+</emu-note>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-pipeline-operator-static-semantics-contains>
+<h1>Static Semantics: Contains</h1>
+<p>With parameter _symbol_.</p>
+<emu-see-also-para op="Contains"></emu-see-also-para>
+
+<emu-grammar>PipelineBareFunctionCall : SimpleReference</emu-grammar>
+<emu-alg>
+1. If symbol is `#`<ins>, `##`, `###`, or `...`</ins>, return *false*.
+2. For each child node _child_ of this Parse Node, do
+  1. If _child_ is an instance of _symbol_, return *true*.
+  2. If _child_ is an instance of a nonterminal, then
+    1. Let _contained_ be the result of _child_ Contains _symbol_.
+    2. If _contained_ is *true*, return *true*.
+2. Return *false*.
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-pipeline-operator-runtime-semantics-topicpipelinebodyinstantiation>
+<h1>Runtime Semantics: TopicPipelineBodyInstantiation</h1>
+<emu-note>
+<p>This abstract operation constructs, instantiates, then returns a new declarative Lexical Environment for a topic pipeline body. It creates an immutable topic binding in that declarative environment using the given _topics_.</p>
+</emu-note>
+<p>Topic Pipeline Instantiation is performed as follows using arguments _code_, _env_, and _topics_.</p>
+<ul>
+<li>_topics_ is a list of values: _env_'s primary topic reference will be bound to the first value.</li>
+<li>_env_ is the Lexical Environment in which the topic binding is to be created.</li>
+</ul>
+
+<emu-grammar>PipelineExpression : PipelineExpression `|&gt;` PipelineBody</emu-grammar>
+<emu-alg>
+1. Let _envRec_ be env's Environment Record.
+2. Assert: _envRec_ is a declarative Environment Record.
+3. Assert: _envRec_.HasTopicBinding() is *false*.
+4. Assert: _envRec_.GetPrimaryTopicBinding() is ~empty~.
+5. Perform ! _envRec_.BindTopicValues(_topics_, <ins>~empty~</ins>).
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-pipeline-operator-runtime-semantics-pipelinebodyevaluation>
+<h1>Runtime Semantics: PipelineBodyEvaluation</h1>
+<p>With parameter _headValue_.</p>
+
+<emu-grammar>PipelineBareFunctionCall : SimpleReference</emu-grammar>
+<p>This algorithm is an altered version of the algorithm of <emu-xref href="#sec-function-calls-runtime-semantics-evaluation">Function Calls, Runtime Semantics: Evaluation</emu-xref>, modified as follows:</p>
+<emu-alg>
+* Steps 1 and 2 are removed.
+* Step 3 is replaced by:
+  1. Let _arguments_ be a List containing the one element which is _headValue_.
+* Step 4 is replaced by:
+  2. Let _functionExpr_ be the |MemberExpression| that is covered by |SimpleReference|.
+  3. Let _ref_ be the result of evaluating _functionExpr_.
+</emu-alg>
+
+<emu-grammar>PipelineBareConstructorCall : `new` SimpleReference</emu-grammar>
+<emu-alg>
+1. Let _constructExpr_ be the |NewExpression| that is covered by |SimpleReference|.
+2. Return ? EvaluateNew(NewExpression, ~empty~).
+</emu-alg>
+
+<emu-grammar>PipelineTopicBody : ConditionalExpression</emu-grammar>
+<emu-alg>
+1. Let _oldEnv_ be the running execution context's Lexical Environment.
+2. Let _pipelineBodyEnv_ be New Declarative Environment(_oldEnv_).
+3. Perform TopicPipelineBodyInstantiation(_headValue_, _pipelineBodyEnv_).
+4. Set the running execution context's Lexical Environment to _pipelineBodyEnv_.
+5. Let _pipelineValue_ be the result of evaluating |ConditionalExpression|.
+6. Set the running execution context's Lexical Environment to _oldEnv_.
+7. Return _pipelineValue_.
+</emu-alg>
+
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-pipeline-operator-runtime-semantics-evaluation>
+<h1>Runtime Semantics: Evaluation</h1>
+
+<emu-grammar>PipelineExpression : PipelineExpression `|&gt;` PipelineBody</emu-grammar>
+<emu-alg>
+1. Let _headRef_ be the result of evaluating |PipelineExpression|.
+2. Let _headValue_ be the result of ? GetValue(_headRef_).
+3. Let _bodyRef_ be PipelineBodyEvaluation of |PipelineBody| with argument _headValue_.
+4. Return ? GetValue(_bodyRef_).
+</emu-alg>
+</emu-annex>
+
+</emu-annex>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-ecmascript-language-statements-and-declarations>
+<h1>ECMAScript Language: Statements and Declarations</h1>
+
+<emu-annex id=sec-additional-feature-mt-block>
+<h1>Block</h1>
+
+<emu-annex id=sec-additional-feature-mt-block-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-block-static-semantics-early-errors>original Block, Static Semantics: Early Errors annex</a>.</p>
+</emu-note>
+
+<emu-grammar>BlockStatement : Block</emu-grammar>
+<emu-alg>
+* It is a Syntax Error if <del>_Block_ Contains `#` is *true*.</del><ins>any of the following conditions are true:</ins>
+  * <ins>_Block_ Contains `#` is *true*.</ins>
+  * <ins>_Block_ Contains `##` is *true*.</ins>
+  * <ins>_Block_ Contains `###` is *true*.</ins>
+  * <ins>_Block_ Contains `...` is *true*.</ins>
+</emu-alg>
+
+<emu-note>
+<p>In general, syntax productions that define inner program scopes containing nested |Statement|s, including |BlockStatement|, may <strong>not</strong> contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; such topic references would not trigger the early error above.</p>
+<p>Although |BlockStatement| cannot contain a topic reference `#`<ins>, `##`, `###`, `...`</ins>, |Block| itself can. Certain uses of |Block| in statement-level productions, such as |Block| in |TryStatement|, also allow the topic reference.</p>
+</emu-note>
+
+</emu-annex>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-if-statement>
+<h1>The `if` statement</h1>
+
+<emu-annex id=sec-additional-feature-mt-if-statement-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-if-statement-static-semantics-early-errors>original `if` Statement, Static Semantics: Early Errors annex</a>.</p>
+</emu-note>
+
+<emu-grammar>
+IfStatement :
+  `if` `(` Expression `)` Statement `else` Statement
+  `if` `(` Expression `)` Statement
+</emu-grammar>
+<!-- TODO: Clarify, in actual Ecma262 spec, application to both |Statement|s for an if–else. -->
+<emu-alg>
+* It is a Syntax Error if <del>_Statement_ Contains `#` is *true*.</del><ins>any of the following conditions are true:</ins>
+  * <ins>_Statement_ Contains `#` is *true*.</ins>
+  * <ins>_Statement_ Contains `##` is *true*.</ins>
+  * <ins>_Statement_ Contains `###` is *true*.</ins>
+  * <ins>_Statement_ Contains `...` is *true*.</ins>
+</emu-alg>
+
+<emu-note>
+<p>In general, syntax productions that define inner program scopes containing nested |Statement|s, including |IfStatement|, may <strong>not</strong> contain a topic reference `#`<ins>, `##`, `###`, `...`</ins>. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+</emu-note>
+
+<emu-note type=editor>
+<p>This early error is forward compatible with a planned add-on proposal to make `if` statements bind the topic reference to the value of |Expression|.</p>
+</emu-note>
+
+</emu-annex>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-iteration-statements>
+<h1>Iteration Statements</h1>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-iteration-statements>original Iteration Statements annex</a>.</p>
+</emu-note>
+
+<emu-annex id=sec-additional-feature-mt-iteration-statements-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+<emu-grammar>
+IterationStatement :
+  `do` Statement `while` `(` Expression `)` `;`
+  `while` `(` Expression `)` Statement
+  `for` `(` Expression? `;` Expression? `;` Expression? `)` Statement
+  `for` `(` `var` VariableDeclarationList `;` Expression? `;` Expression? `)` Statement
+  `for` `(` LexicalDeclaration Expression? `;` Expression? `)` Statement
+  `for` `(` LeftHandSideExpression `in` Expression `)` Statement
+  `for` `(` `var` ForBinding `in` Expression `)` Statement
+  `for` `(` ForDeclaration `in` Expression `)` Statement
+  `for` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
+  `for` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
+  `for` `(` ForDeclaration `of` AssignmentExpression `)` Statement
+  `for` `await` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
+  `for` `await` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
+  `for` `await` `(` ForDeclaration `of` AssignmentExpression `)` Statement
+</emu-grammar>
+<emu-alg>
+* It is a Syntax Error if <del>_Statement_ Contains `#` is *true*.</del><ins>any of the following conditions are true:</ins>
+  * <ins>_Statement_ Contains `#` is *true*.</ins>
+  * <ins>_Statement_ Contains `##` is *true*.</ins>
+  * <ins>_Statement_ Contains `###` is *true*.</ins>
+  * <ins>_Statement_ Contains `...` is *true*.</ins>
+</emu-alg>
+
+<emu-note>
+<p>In general, syntax productions that define inner program scopes containing nested |Statement|s, including iteration statements, may <strong>not</strong> contain a topic reference `#`<ins>, `##`, `###`, `...`</ins>. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+</emu-note>
+
+<emu-note type=editor>
+<p>This early error is forward compatible with a planned add-on proposal to make `for`-`of` and `for`-`in` statements bind the topic reference to the value of each iterator value or object property key.</p>
+</emu-note>
+</emu-annex>
+
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-with-statement>
+<h1>The `with` statement</h1>
+
+<emu-annex id=sec-additional-feature-mt-with-statement-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-with-statement-static-semantics-early-errors>original `with` Statement, Static Semantics: Early Errors annex</a>.</p>
+</emu-note>
+
+<emu-grammar>WithStatement : `with` `(` Expression `)` Statement</emu-grammar>
+<emu-alg>
+* It is a Syntax Error if <del>_Statement_ Contains `#` is *true*.</del><ins>any of the following conditions are true:</ins>
+  * <ins>_Statement_ Contains `#` is *true*.</ins>
+  * <ins>_Statement_ Contains `##` is *true*.</ins>
+  * <ins>_Statement_ Contains `###` is *true*.</ins>
+  * <ins>_Statement_ Contains `...` is *true*.</ins>
+</emu-alg>
+
+<emu-note>
+<p>In general, syntax productions that define inner program scopes containing nested |Statement|s, including |WithStatement|, may <strong>not</strong> contain a topic reference `#`<ins>, `##`, `###`, `...`</ins>. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+</emu-note>
+
 <emu-note type=editor>
 <p>This early error is not planned to be removed by an add-on proposal.</p>
 </emu-note>
 
-</emu-clause>
-</emu-clause>
+</emu-annex>
+</emu-annex>
 
-</emu-clause>
+<emu-annex id=sec-additional-feature-mt-switch-statement>
+<h1>The `switch` statement</h1>
+
+<emu-annex id=sec-additional-feature-mt-switch-statement-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-switch-statement-static-semantics-early-errors>original `switch` Statement, Static Semantics: Early Errors annex</a>.</p>
+</emu-note>
+
+<emu-grammar>SwitchStatement : `switch` Expression StatementList</emu-grammar>
+<emu-alg>
+* It is a Syntax Error if <del>_StatementList_ Contains `#` is *true*.</del><ins>any of the following conditions are true:</ins>
+  * <ins>_StatementList_ Contains `#` is *true*.</ins>
+  * <ins>_StatementList_ Contains `##` is *true*.</ins>
+  * <ins>_StatementList_ Contains `###` is *true*.</ins>
+  * <ins>_StatementList_ Contains `...` is *true*.</ins>
+</emu-alg>
+
+<emu-note>
+<p>In general, syntax productions that define inner program scopes containing nested |Statement|s, including |CaseBlock|, may <strong>not</strong> contain a topic reference `#`<ins>, `##`, `###`, `...`</ins>. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+</emu-note>
+
+<emu-note type=editor>
+<p>This early error is forward compatible with a planned add-on proposal to make `switch` statements bind the topic reference to the value of |Expression|.</p>
+</emu-note>
+
+</emu-annex>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-try-statement>
+<h1>The `try` statement</h1>
+
+<emu-annex id=sec-additional-feature-mt-try-statement-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-try-statement-static-semantics-early-errors>original `try` Statement, Static Semantics: Early Errors annex</a>.</p>
+</emu-note>
+
+<emu-grammar>
+Catch : `catch` `(` CatchParameter `)` Block</emu-grammar>
+<emu-alg>
+* It is a Syntax Error if <del>_Block_ Contains `#` is *true*.</del><ins>any of the following conditions are true:</ins>
+  * <ins>_Block_ Contains `#` is *true*.</ins>
+  * <ins>_Block_ Contains `##` is *true*.</ins>
+  * <ins>_Block_ Contains `###` is *true*.</ins>
+  * <ins>_Block_ Contains `...` is *true*.</ins>
+</emu-alg>
+
+<emu-grammar>
+Finally : `finally` Block</emu-grammar>
+<emu-alg>
+* It is a Syntax Error if <del>_Block_ Contains `#` is *true*.</del><ins>any of the following conditions are true:</ins>
+  * <ins>_Block_ Contains `#` is *true*.</ins>
+  * <ins>_Block_ Contains `##` is *true*.</ins>
+  * <ins>_Block_ Contains `###` is *true*.</ins>
+  * <ins>_Block_ Contains `...` is *true*.</ins>
+</emu-alg>
+
+<emu-note>
+<p>In general, syntax productions that define inner program scopes containing nested |Statement|s, including |Catch| and |Finally|, may <strong>not</strong> contain a topic reference `#`<ins>, `##`, `###`, `...`</ins>. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early errors above.</p>
+<p>Furthermore, the `try` block itself (|Block| in |TryStatement|) <strong>may</strong> contain topic references, assuming that |TryStatement| is contained within a parse that is also allowed to contain the topic reference. During runtime, such topic references would refer to the outer environment's topic binding. Along with arrow functions (that is, |FunctionBody| in |ConciseBody|), this behaviour is unlike that of any other syntax production containing |Statement|.</p>
+</emu-note>
+
+<emu-note type=editor>
+<p>This early error is forward compatible with a planned add-on proposal to make `catch` statements bind the topic reference to the value of their caught errors.</p>
+</emu-note>
+
+</emu-annex>
+
+</emu-annex>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-ecmascript-language-functions-and-classes>
+<h1>ECMAScript Language: Functions and Classes</h1>
+
+<emu-annex id=sec-additional-feature-mt-function-definitions>
+<h1>Function Definitions</h1>
+
+<emu-annex id=sec-additional-feature-mt-function-definitions-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-function-definitions-static-semantics-early-errors>original Function Definitions, Static Semantics: Early Errors annex</a>.</p>
+</emu-note>
+
+<emu-grammar>FunctionBody : FunctionStatementList</emu-grammar>
+<ul>
+<li>
+If |FunctionStatementList| is not the |FunctionBody| of a |ConciseBody|, it is a Syntax Error if |FunctionStatementList| Contains `#` is *true*.
+</li>
+</ul>
+
+<emu-note>
+<p>Arrow functions' |ConciseBody| <strong>may</strong> contain the topic reference `#`, as long as |ConciseBody| is within a parse that is also allowed to contain the topic reference. During runtime, such topic references would refer to the outer environment's topic binding.</p>
+<p>Along with |Block| in |TryStatement|, this behaviour is <strong>unlike</strong> that of any other syntax production containing |Statement|. In general, syntax productions that define inner program scopes containing nested |Statement|s, including |FunctionBody|, may <strong>not</strong> contain a topic reference `#`<ins>, `##`, `###`, `...`</ins>.</p>
+</emu-note>
+
+</emu-annex>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-arrow-function-definitions>
+<h1>Arrow Function Definitions</h1>
+
+<emu-annex id=sec-additional-feature-mt-arrow-functions-static-semantics-contains>
+<h1>Static Semantics: Contains</h1>
+<p>With parameter _symbol_.</p>
+<emu-see-also-para op="Contains"></emu-see-also-para>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-arrow-function-definitions-static-semantics-contains>original Arrow Functions, Static Semantics: Contains annex</a>.</p>
+</emu-note>
+
+<emu-grammar>ArrowFunction : ArrowParameters `=>` ConciseBody</emu-grammar>
+<emu-alg>
+1. If _symbol_ is not one of |NewTarget|, |SuperProperty|, |SuperCall|, `super`, `this`, or `#`, return *false*.
+2. If _ArrowParameters_ Contains _symbol_ is *true*, return *true*.
+3. Return |ConciseBody| Contains _symbol_.
+</emu-alg>
+
+<emu-note>
+Normally, Contains does not look inside most function forms. However, Contains is used to detect `new.target`, `this`, `super`, <del>and `#`</del><ins>`#`, `##`, `###`, and `...`</ins> usage within an |ArrowFunction|.
+</emu-note>
+
+</emu-annex>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-ecmascript-language-scripts-and-modules>
+<h1>ECMAScript Language: Scripts and Modules</h1>
+
+<emu-annex id=sec-additional-feature-mt-scripts>
+<h1>Scripts</h1>
+
+<emu-annex id=sec-additional-feature-mt-scripts-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-scripts-static-semantics-early-errors>original Scripts, Static Semantics: Early Errors annex</a>.</p>
+</emu-note>
+
+<emu-grammar>ScriptBody : StatementList</emu-grammar>
+<emu-alg>
+* It is a Syntax Error if <del>_StatementList_ Contains `#` is *true*.</del><ins>any of the following conditions are true:</ins>
+  * <ins>_StatementList_ Contains `#` is *true*.</ins>
+  * <ins>_StatementList_ Contains `##` is *true*.</ins>
+  * <ins>_StatementList_ Contains `###` is *true*.</ins>
+  * <ins>_StatementList_ Contains `...` is *true*.</ins>
+</emu-alg>
+
+<emu-note>
+<p>In general, top-level program scope, including |Script|, may <strong>not</strong> contain a topic reference `#`<ins>, `##`, `###`, `...`</ins>. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+</emu-note>
+
+<emu-note type=editor>
+<p>This early error is not planned to be removed by an add-on proposal.</p>
+</emu-note>
+
+</emu-annex>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-mt-modules>
+<h1>Modules</h1>
+
+<emu-annex id=sec-additional-feature-mt-modules-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-scripts-static-semantics-early-errors>original Modules, Static Semantics: Early Errors annex</a>.</p>
+</emu-note>
+
+<emu-grammar>ModuleItem : StatementListItem</emu-grammar>
+<emu-alg>
+* It is a Syntax Error if <del>_StatementListItem_ Contains `#` is *true*.</del><ins>any of the following conditions are true:</ins>
+  * <ins>_StatementListItem_ Contains `#` is *true*.</ins>
+  * <ins>_StatementListItem_ Contains `##` is *true*.</ins>
+  * <ins>_StatementListItem_ Contains `###` is *true*.</ins>
+  * <ins>_StatementListItem_ Contains `...` is *true*.</ins>
+</emu-alg>
+
+<emu-note>
+<p>In general, a top-level program scope, including |Module|, may <strong>not</strong> contain a topic reference `#`. However, syntax productions associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+</emu-note>
+
+<emu-note type=editor>
+<p>This early error is not planned to be removed by an add-on proposal.</p>
+</emu-note>
+
+</emu-annex>
+</emu-annex>
+
+</emu-annex>
+
+</emu-annex>
+
