@@ -1316,6 +1316,8 @@ most of all, readable – could well be easier to learn. Its up-front cost in
 learning could be small, particularly in comparison to the large gains in
 readability and comprehensibility that it might bring to code in general.
 
+<!--
+
 # Nomenclature
 Because this proposal introduces several new concepts, it is important
 to use a consistent set of terminology.
@@ -2322,15 +2324,14 @@ During runtime, [TODO]
        _head Value_.
     4. Return ? Get Value(_body Ref_).
 
+-->
+
 # Relations to other work
 
-<!--
 [TODO: https://github.com/gajus/babel-plugin-transform-function-composition]
 
 [TODO: refer to #background list of programming languages]
- -->
 
-<!--
 ## Other ECMAScript proposals
 [TODO: `do` expressions]
 
@@ -2345,8 +2346,6 @@ During runtime, [TODO]
 [TODO: Function bind: https://github.com/zenparsing/es-function-bind]
 
 [TODO: pattern matching https://github.com/tc39/proposal-pattern-matching]
-
- -->
 
 ## Possible future extensions to the topic concept
 The [concept of the “topic variable” already exists in many other programming
