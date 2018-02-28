@@ -27,17 +27,6 @@ this is **not set** in stone. In particular, **`@` or `?`** could also be used.
 been occurring on GitHub at [tc39/proposal-pipeline-operator
 issue #91][topic-token bikeshedding].
 
-[TODO: Remove ClearTopicBinding; simplify to HasBinding to match spec.]\
-[TODO: Change Bind Topic Value ( V ) to (V), no spaces.]\
-[TODO: Copy overview of lexical-topic concept from spec into own section.]\
-[TODO: Remove extraneous backslashes in rendering.]\
-[TODO: Search for unrendered links.]\
-[TODO: Add all new parts from spec.]\
-[TODO: Replace “lexical context” with “Lexical Environment”.]\
-[TODO: Add ASI safety goal]\
-[TODO: Change “terse function calls” to “terse function application”.]\
-[TODO: Remove all mentions of arbitrary associativity.]
-
 <nav><details>
 <summary><strong>Table of Contents</strong></summary>
 
