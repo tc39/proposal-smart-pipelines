@@ -607,7 +607,7 @@ outer lexical context’s topic with its own *absence* of a topic. This behavior
 is in order to fulfill the [Goals][] of [simple scoping][] and of [“don’t shoot
 me in the foot”][]: it makes the origin of a topic easier to find.
 
-(If `do` expressions come in the future, they will be like arrow functions in
+(If [`do` expressions][] come in the future, they will be like arrow functions in
 that they will not shadow topics either. See [other ECMAScript proposals][].)
 
 <td>
@@ -716,8 +716,7 @@ match |> do {
     |> context[#] |> this.attr(match, #)
 }
 ```
-This example uses [`do` expressions][] and [Additional Syntax TS][]. The
-parallelism between the two clauses becomes clearer.
+The parallelism between the two clauses becomes clearer.
 <td>
 
 ```js
@@ -762,8 +761,7 @@ return context |> do {
     |> #.find(selector)
 }
 ```
-This example uses [`do` expressions][] and [Additional Syntax TS][]. The
-parallelism between the two clauses becomes clearer.
+The parallelism between the two clauses becomes clearer.
 
 <td>
 
@@ -921,8 +919,7 @@ function (obj) {
   }
 }
 ```
-This example uses [`do` expressions][] and [Additional Syntax TS][]. The
-parallelism between the two clauses becomes clearer.
+The parallelism between the two clauses becomes clearer.
 
 <td>
 
@@ -941,7 +938,259 @@ function (obj) {
 [TODO]
 
 ## Ramda
-[TODO]
+These examples were taken from the [Ramda wiki cookbook][].
+
+<table>
+<thead>
+<tr>
+<th>With smart pipes
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+const pickIndexes = -> R.values |> R.pickAll
+['a', 'b', 'c'] |> pickIndexes([0, 2], #)
+// -> ['a', 'c']
+```
+
+<td>
+
+```js
+const pickIndexes = R.compose(R.values, R.pickAll)
+pickIndexes([0, 2], ['a', 'b', 'c'])
+// -> ['a', 'c']
+```
+
+<tr>
+<td>
+
+```js
+const list = -> [...]
+list(1, 2, 3)
+// -> [1, 2, 3]
+```
+
+<td>
+
+```js
+const list = R.unapply(R.identity)
+list(1, 2, 3)
+// -> [1, 2, 3]
+```
+
+<tr>
+<td>
+
+```js
+const cssQuery = -> ##.querySelectorAll(#)
+const setStyle = -> { ##.style = # }
+document
+  |> cssQuery('a, p', #)
+  |> #.map(-> setStyle({ color: 'red' }))
+```
+
+<td>
+
+```js
+const cssQuery = R.invoker(1,
+  'querySelectorAll')
+const setStyle = R.assoc('style')
+R.pipe(
+  cssQuery('a, p'),
+  R.map(setStyle({ color: 'red' }))
+)(document)
+```
+
+<tr>
+<td>
+
+```js
+const disco = ->
+  |> R.zipWith(-> #(##),
+    [ red, green, blue ])
+  |> #.join(' ')
+[ 'foo', 'bar', 'xyz' ]
+  |> disco
+  |> console.log
+```
+
+<td>
+
+```js
+const disco = R.pipe(
+  R.zipWith(
+    R.call,
+    [ red, green, blue ]),
+  R.join(' ')
+)
+console.log(
+  disco([ 'foo', 'bar', 'xyz' ]))
+```
+
+<tr>
+<td>
+
+```js
+const dotPath = ->
+  |> (#.split('.'), ##)
+  |> R.path(#, ##)
+const propsDotPath = ->
+  |> (R.map(dotPath), [##])
+  |> R.ap
+const obj = {
+  a: { b: { c: 1 } },
+  x: 2
+}
+propsDotPath(['a.b.c', 'x'], obj)
+// -> [ 1, 2 ]
+```
+
+<td>
+
+```js
+const dotPath = R.useWith(
+  R.path,
+  [R.split('.')])
+const propsDotPath = R.useWith(
+  R.ap,
+  [R.map(dotPath), R.of])
+const obj = {
+  a: { b: { c: 1 } },
+  x: 2
+}
+propsDotPath(['a.b.c', 'x'], obj)
+// -> [ 1, 2 ]
+```
+
+<tr>
+<td>
+
+```js
+const getNewTitles = async ->
+  |> await fetch
+  |> parseJSON
+  |> #.flatten()
+  |> #.map(-> #.items)
+  |> #.map(-> #.filter(-> #))
+  |> #.map(-> #.title)
+
+try {
+  '/products.json'
+    |> getNewTitles
+    |> console.log
+} catch {
+  |> console.error
+}
+
+const fetchDependent = async ->
+  |> await fetch
+  |> parseJSON
+  |> #.flatten()
+  |> #.map(-> #.url)
+  |> #.map(fetch)
+  |> #.flatten()
+
+try {
+  'urls.json'
+    |> fetchDependent
+    |> console.log
+} catch {
+  |> console.error
+}
+```
+
+<td>
+
+```js
+const Future = require('ramda-fantasy').Future
+
+function fetchFuture (url) {
+  return new Future(function (rej, res) {
+    var oReq = fetch(url)
+      .then(res)
+      .catch(rej)
+  })
+}
+
+function parseJSON (str) {
+  return new Future(function(rej, res) {
+    try {
+      res(JSON.parse(str))
+    } catch (err) {
+      rej({ error: 'JSON parse error' })
+    }
+  })
+}
+
+const getNewTitles = R.compose(
+  R.map(R.pluck('title')),
+  R.map(R.filter(R.prop('new'))),
+  R.pluck('items'),
+  R.chain(parseJSON),
+  fetchFuture
+)
+
+getNewTitles('/products.json')
+  .fork(console.error, console.log);
+
+const fetchDependent = R.compose(
+  R.chain(fetch),
+  R.pluck('url'),
+  R.chain(parseJSON),
+  fetchFuture
+)
+
+fetchDependent('urls.json')
+  .fork(console.error, console.log)
+```
+
+<tr>
+<td>
+
+```js
+number
+  |> R.repeat(Math.random, #)
+  |> #.map(-> #())
+```
+
+<td>
+
+```js
+R.map(R.call,
+  R.repeat(Math.random, number))
+```
+
+<tr>
+<td>
+
+```js
+const renameBy = (fn, obj) =>
+  [...obj]
+    |> #.map(R.adjust(fn, 0)),
+    |> {...#}
+{ A: 1, B: 2, C: 3 }
+  |> renameBy(-> `a${#}`))
+// -> { aA: 1, aB: 2, aC: 3 }
+```
+
+<td>
+
+```js
+const renameBy = R.curry((fn, obj) =>
+  R.pipe(
+    R.toPairs,
+    R.map(R.adjust(fn, 0)),
+    R.fromPairs
+  )(obj)
+)
+renameBy(R.concat('a'), { A: 1, B: 2, C: 3 })
+// -> { aA: 1, aB: 2, aC: 3 }
+```
+
+</table>
 
 ## [Pify][]
 
@@ -958,7 +1207,8 @@ function (obj) {
 ```js
 'package.json'
   |> await pify(fs.readFile)(#, 'utf8')
-  |> JSON.parse |> #.name
+  |> JSON.parse
+  |> #.name
   |> console.log
 ```
 
