@@ -745,6 +745,209 @@ function (obj) {
 
 </table>
 
+## jQuery
+<table>
+<thead>
+<tr>
+<th>With smart pipes
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+return data
+  |> buildFragment([#], context, scripts)
+  |> #.childNodes
+  |> jQuery.merge([], #)
+```
+
+<td>
+
+```js
+parsed = buildFragment(
+  [ data ], context, scripts
+)
+return jQuery.merge(
+  [], parsed.childNodes
+)
+```
+From [jquery/src/core/parseHTML.js][].
+
+<tr>
+<td>
+
+```js
+(key |> toType) === 'object'
+key |> toType |> # === 'object'
+```
+
+<td>
+
+```js
+toType(key) === 'object'
+```
+From [jquery/src/core/access.js][].
+
+<tr>
+<td>
+
+```js
+context = context
+  |> # instanceof jQuery
+    ? #[0] : #
+```
+
+<td>
+
+```js
+context =
+  context instanceof jQuery
+    ? context[0] : context
+```
+From [jquery/src/core/access.js][].
+
+<tr>
+<td>
+
+```js
+context
+  |> #??.nodeType
+      ? #.ownerDocument || #
+      : document
+  |> jQuery.parseHTML(match[1], #, true)
+  |> jQuery.merge
+```
+
+<td>
+
+```js
+jQuery.merge(
+  this, jQuery.parseHTML(
+    match[1],
+    context??.nodeType
+      ? context.ownerDocument
+        || context
+      : document,
+    true
+  )
+)
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+match |> do {
+  if (this[match] |> isFunction)
+    |> context[#] |> this[match](#)
+  else
+    |> context[#] |> this.attr(match, #)
+}
+```
+This example uses [`do` expressions] and [Additional Syntax TS][]. The
+parallelism between the two clauses becomes clearer.
+<td>
+
+```js
+if (isFunction(this[match])) {
+  this[match](context[match])
+} else
+  this.attr(match, context[match])
+}
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+elem = match[2]
+  |> document.getElementById
+```
+
+<td>
+
+```js
+elem = document.getElementById( match[ 2 ] )
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+return context |> do {
+  // Handle HTML strings
+  if (…)
+    …
+  // Handle: $(expr, $(...))
+  else if (!# || #.jquery)
+    |> # || root
+    |> #.find(selector)
+  // Handle: $(expr, context)
+  else
+    |> this.constructor
+    |> #.find(selector)
+}
+```
+This example uses [`do` expressions] and [Additional Syntax TS][]. The
+parallelism between the two clauses becomes clearer.
+
+<td>
+
+```js
+// Handle HTML strings
+if (…) {
+  …
+// Handle: $(expr, $(...))
+} else if (!context || context.jquery) {
+  return (context || root).find(selector)
+// Handle: $(expr, context)
+} else {
+  return this.constructor(context).find(selector);
+}
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+selector |> do {
+  if (typeof # === 'string')
+    …
+  else if (|> isFunction)
+    root.ready !== undefined
+      ? root.ready(#)
+      : #(jQuery)
+  else
+    jQuery.makeArray(#, this)
+}
+```
+This example uses [`do` expressions] and [Additional Syntax TS][].
+
+<td>
+
+```js
+if (typeof selector === 'string') {
+  …
+} else if (isFunction(selector)) {
+  return root.ready !== undefined
+    ? root.ready(selector)
+    : selector(jQuery)
+}
+return jQuery.makeArray(selector, this)
+```
+From [jquery/src/core/access.js][].
+
+</table>
+
+## Ramda
+[TODO]
+
 ## [Pify][]
 
 <table>
@@ -856,6 +1059,9 @@ fetch('https://pk.example/berlin-calling',
 ```
 
 </table>
+
+## WHATWG Streams
+[TODO]
 
 # Goals
 
