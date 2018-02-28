@@ -509,7 +509,7 @@ settimeout(() => $ * 5)
 The result is the same.
 
 <tr>
-<td colspan=2>
+<td>
 
 ```js
 value
@@ -527,6 +527,8 @@ the pipeline operator.) The example above is being parsed as if it were:
 ```js
 (value |> ()) => (# * 5 |> settimeout)
 ```
+
+<td>
 
 <tr>
 <td>
@@ -841,9 +843,8 @@ From [jquery/src/core/access.js][].
 ```js
 function (obj, pred, context) {
   return obj
-    |> isArrayLike(#)
-      ? _.findIndex
-      : _.findKey
+    |> isArrayLike
+    |> # ? _.findIndex : _.findKey
     |> #(obj, pred, context)
     |> (# !== void 0 && # !== -1)
       ? obj[#] : undefined;
@@ -926,12 +927,15 @@ function (
 
 ```js
 function (obj) {
-  if (obj == null) return 0;
-  return (obj |> isArrayLike)
-    ? (obj |> #.length)
-    : (obj |> _.keys |> #.length);
+  return obj |> do {
+    if (# == null) 0
+    else if (|> isArrayLike) #.length
+    else |> _.keys |> #.length
+  }
 }
 ```
+This example uses [`do` expressions][] and [Additional Syntax TS][]. The
+parallelism between the two clauses becomes clearer.
 
 <td>
 
