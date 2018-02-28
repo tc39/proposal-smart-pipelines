@@ -623,11 +623,17 @@ that they will not shadow topics either. See [other ECMAScript proposals][].)
 
 <td>
 
+</table>
+
+## [Underscore.js][]
+
+<table>
+<thead>
 <tr>
-<th colspan=2>
+<th>With smart pipes
+<th>Status quo
 
-[Underscore.js][]
-
+<tbody>
 <tr>
 <td>
 
@@ -737,11 +743,17 @@ function (obj) {
 }
 ```
 
+</table>
+
+## [Pify][]
+
+<table>
+<thead>
 <tr>
-<th colspan=2>
+<th>With smart pipes
+<th>Status quo
 
-[Pify][]
-
+<tbody>
 <tr>
 <td>
 
@@ -761,11 +773,17 @@ pify(fs.readFile)('package.json', 'utf8')
   })
 ```
 
+</table>
+
+## [Fetch Standard][]
+
+<table>
+<thead>
 <tr>
-<th colspan=2>
+<th>With smart pipes
+<th>Status quo
 
-[Fetch Standard][]
-
+<tbody>
 <tr>
 <td>
 
