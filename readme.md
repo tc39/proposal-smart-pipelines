@@ -1,5 +1,5 @@
 # Smart pipelines
-ECMAScript Stage-0? Proposal by J. S. Choi, 2018-02.
+ECMAScript Stage-0 Proposal by J. S. Choi, 2018-02.
 
 This readme is an **explainer for** the [**formal specification** of a proposed
 **smart pipeline operator `|>`**][formal pipeline specification] in
