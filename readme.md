@@ -525,7 +525,11 @@ of its steps’ bodies, then the arrow-function expression must be parenthesized
 (The same applies to assignment and yield operators, which are also looser than
 the pipeline operator.) The example above is being parsed as if it were:
 ```js
-(value |> ()) => (# * 5 |> settimeout)
+(value |> ()) =>
+  (# * 5 |> settimeout)
+// 🚫 SyntaxError:
+// Unexpected token '=>'.
+// Cannot parse base expression.
 ```
 
 <td>
@@ -535,26 +539,12 @@ the pipeline operator.) The example above is being parsed as if it were:
 
 ```js
 value
-  |> f(() => f(#) * 5)
-```
-
-<td>
-
-```js
-const $ = value;
-f(x => f($) * 5)
-```
-
-<tr>
-<td>
-
-```js
-value
-  |> (x => # + x |> g |> # * 2)
-  |> f |> #.toString()
+  |> f(x =>
+    # + x |> g |> # * 2)
+  |> #.toString()
 ```
 Both the head and the body of a pipeline may contain nested inner pipelines.
-Nested pipelines in the body is not encouraged, but it is still permitted.
+Nested pipelines in the body are not encouraged, but they are still permitted.
 
 <td>
 
@@ -572,13 +562,10 @@ reference within its own body.
 ```js
 value
   |> # ** 2
-  |> (x => #
+  |> f(x => #
       |> g(#, x)
       |> [# * 3, # * 5])
-  |> f
 ```
-Again, this code style is not encouraged. It is almost certainly better
-to isolate the expression in the callback into its own function.
 
 <td>
 
@@ -590,7 +577,7 @@ f(x => {
   return [_$ * 3, _$ * 5]
 })
 ```
-But the code still behaves consistently.
+This code still behaves consistently.
 
 <tr>
 <td>
