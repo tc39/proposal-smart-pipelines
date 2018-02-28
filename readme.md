@@ -625,126 +625,6 @@ that they will not shadow topics either. See [other ECMAScript proposals][].)
 
 </table>
 
-## [Underscore.js][]
-
-<table>
-<thead>
-<tr>
-<th>With smart pipes
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-function (obj, pred, context) {
-  return obj
-    |> isArrayLike(#)
-      ? _.findIndex
-      : _.findKey
-    |> #(obj, pred, context)
-    |> (# !== void 0 && # !== -1)
-      ? obj[#] : undefined;
-}
-```
-
-<td>
-
-```js
-function (obj, pred, context) {
-  var key;
-  if (isArrayLike(obj)) {
-    key = _.findIndex(obj, pred, context);
-  } else {
-    key = _.findKey(obj, pred, context);
-  }
-  if (key !== void 0 && key !== -1)
-    return obj[key];
-}
-```
-
-<tr>
-<td>
-
-```js
-function (obj, pred, context) {
-  return pred
-    |> cb
-    |> _.negate
-    |> _.filter(obj, #, context)
-}
-```
-
-<td>
-
-```js
-function (obj, pred, context) {
-  return _.filter(obj,
-    _.negate(cb(pred)),
-    context
-  )
-}
-```
-
-<tr>
-<td>
-
-```js
-function (
-  srcFn, boundFn, ctxt, callingCtxt, args
-) {
-  if (!(callingCtxt instanceof boundFn))
-    return srcFn.apply(ctxt, args);
-  var self = srcFn
-    |> #.prototype |> baseCreate;
-  return self
-    |> srcFn.apply(#, args)
-    |> _.isObject(#) ? # : self;
-}
-```
-
-<td>
-
-```js
-function (
-  srcFn, boundFn,
-  ctxt, callingCtxt, args
-) {
-  if (!(callingCtxt instanceof boundFn))
-    return srcFn.apply(ctxt, args);
-  var self = baseCreate(srcFn.prototype);
-  var result = srcFn.apply(self, args);
-  if (_.isObject(result)) return result;
-  return self
-}
-```
-
-<tr>
-<td>
-
-```js
-function (obj) {
-  if (obj == null) return 0;
-  return (obj |> isArrayLike)
-    ? (obj |> #.length)
-    : (obj |> _.keys |> #.length);
-}
-```
-
-<td>
-
-```js
-function (obj) {
-  if (obj == null) return 0;
-  return isArrayLike(obj)
-    ? obj.length
-    : _.keys(obj).length;
-}
-```
-
-</table>
-
 ## jQuery
 <table>
 <thead>
@@ -907,7 +787,8 @@ if (…) {
   return (context || root).find(selector)
 // Handle: $(expr, context)
 } else {
-  return this.constructor(context).find(selector);
+  return this.constructor(context)
+    .find(selector);
 }
 ```
 From [jquery/src/core/init.js][].
@@ -916,7 +797,7 @@ From [jquery/src/core/init.js][].
 <td>
 
 ```js
-selector |> do {
+return selector |> do {
   if (typeof # === 'string')
     …
   else if (|> isFunction)
@@ -944,6 +825,129 @@ return jQuery.makeArray(selector, this)
 From [jquery/src/core/access.js][].
 
 </table>
+
+## [Underscore.js][]
+
+<table>
+<thead>
+<tr>
+<th>With smart pipes
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+function (obj, pred, context) {
+  return obj
+    |> isArrayLike(#)
+      ? _.findIndex
+      : _.findKey
+    |> #(obj, pred, context)
+    |> (# !== void 0 && # !== -1)
+      ? obj[#] : undefined;
+}
+```
+
+<td>
+
+```js
+function (obj, pred, context) {
+  var key;
+  if (isArrayLike(obj)) {
+    key = _.findIndex(obj, pred, context);
+  } else {
+    key = _.findKey(obj, pred, context);
+  }
+  if (key !== void 0 && key !== -1)
+    return obj[key];
+}
+```
+
+<tr>
+<td>
+
+```js
+function (obj, pred, context) {
+  return pred
+    |> cb
+    |> _.negate
+    |> _.filter(obj, #, context)
+}
+```
+
+<td>
+
+```js
+function (obj, pred, context) {
+  return _.filter(obj,
+    _.negate(cb(pred)),
+    context
+  )
+}
+```
+
+<tr>
+<td>
+
+```js
+function (
+  srcFn, boundFn, ctxt, callingCtxt, args
+) {
+  if (!(callingCtxt instanceof boundFn))
+    return srcFn.apply(ctxt, args);
+  var self = srcFn
+    |> #.prototype |> baseCreate;
+  return self
+    |> srcFn.apply(#, args)
+    |> _.isObject(#) ? # : self;
+}
+```
+
+<td>
+
+```js
+function (
+  srcFn, boundFn,
+  ctxt, callingCtxt, args
+) {
+  if (!(callingCtxt instanceof boundFn))
+    return srcFn.apply(ctxt, args);
+  var self = baseCreate(srcFn.prototype);
+  var result = srcFn.apply(self, args);
+  if (_.isObject(result)) return result;
+  return self
+}
+```
+
+<tr>
+<td>
+
+```js
+function (obj) {
+  if (obj == null) return 0;
+  return (obj |> isArrayLike)
+    ? (obj |> #.length)
+    : (obj |> _.keys |> #.length);
+}
+```
+
+<td>
+
+```js
+function (obj) {
+  if (obj == null) return 0;
+  return isArrayLike(obj)
+    ? obj.length
+    : _.keys(obj).length;
+}
+```
+
+</table>
+
+## Lodash
+[TODO]
 
 ## Ramda
 [TODO]
