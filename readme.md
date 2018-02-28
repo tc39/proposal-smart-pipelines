@@ -3226,6 +3226,7 @@ preferred to the latter. Eventually, certain [possible future extensions to the
 topic concept][] may enable [tacit programming][] even without using bare-style
 pipelines.
 
+<!--
 # Appendix: Term rewriting
 ## Term rewriting topic style
 Pipe bodies in topic style can be rewritten into a nested `do` expression.
@@ -3458,6 +3459,7 @@ do { do { do { do { const # = 3; # * 3 } } }
 do { do { do { do { 3 * 3 } } }
 9
 ```
+-->
 
 [“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 [“don’t break my code”]: #dont-break-my-code
