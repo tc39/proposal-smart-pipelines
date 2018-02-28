@@ -727,7 +727,7 @@ match |> do {
     |> context[#] |> this.attr(match, #)
 }
 ```
-This example uses [`do` expressions] and [Additional Syntax TS][]. The
+This example uses [`do` expressions][] and [Additional Syntax TS][]. The
 parallelism between the two clauses becomes clearer.
 <td>
 
@@ -763,17 +763,17 @@ return context |> do {
   // Handle HTML strings
   if (…)
     …
-  // Handle: $(expr, $(...))
+  // Handle $(expr, $(...))
   else if (!# || #.jquery)
     |> # || root
     |> #.find(selector)
-  // Handle: $(expr, context)
+  // Handle $(expr, context)
   else
     |> this.constructor
     |> #.find(selector)
 }
 ```
-This example uses [`do` expressions] and [Additional Syntax TS][]. The
+This example uses [`do` expressions][] and [Additional Syntax TS][]. The
 parallelism between the two clauses becomes clearer.
 
 <td>
@@ -782,10 +782,10 @@ parallelism between the two clauses becomes clearer.
 // Handle HTML strings
 if (…) {
   …
-// Handle: $(expr, $(...))
+// Handle $(expr, $(...))
 } else if (!context || context.jquery) {
   return (context || root).find(selector)
-// Handle: $(expr, context)
+// Handle $(expr, context)
 } else {
   return this.constructor(context)
     .find(selector);
@@ -808,7 +808,7 @@ return selector |> do {
     jQuery.makeArray(#, this)
 }
 ```
-This example uses [`do` expressions] and [Additional Syntax TS][].
+This example uses [`do` expressions][] and [Additional Syntax TS][].
 
 <td>
 
