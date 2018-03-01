@@ -1434,8 +1434,10 @@ class LipFuzzTransformer {
 
   flush(controller) {
     this.partialChunk
-      |> if (#.length > 0) {
-        |> controller.enqueue
+      |> do {
+        if (#.length > 0) {
+          |> controller.enqueue
+        }
       }
   }
 
@@ -1444,11 +1446,10 @@ class LipFuzzTransformer {
       |> #[p1]
       |> # === undefined ? '' : #
       |> do {
-        const replacement = #
-        this.lastIndex = #
+        this.lastIndex =
           |> #.length
           |> offset + #
-        replacement
+        #
       }
     }
   }
