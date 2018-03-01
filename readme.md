@@ -1067,12 +1067,10 @@ function createRound (methodName) {
         // Shift with exponential notation to avoid floating-point issues.
         // See [MDN](https://mdn.io/round#Examples) for more details.
         number
-          |> toString
           |> `${#}e`
           |> ...#.split('e')
           |> `${#}e${+## + precision}`
           |> func
-          |> toString
           |> `${#}e`
           |> ...#.split('e')
           |> `${#}e${+## - precision}`
