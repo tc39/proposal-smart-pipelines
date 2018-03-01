@@ -119,88 +119,6 @@ issue #91][topic-token bikeshedding].
 </details></nav>
 
 # Motivation
-The concept of a pipeline operator appears in numerous other languages, variously
-called “pipeline”, “threading”, and “feed” operators. This is because developers
-find the concept useful.
-
-<table>
-<tr>
-<th>
-
-`|`
-
-<td>
-
-[Unix shells, PowerShell][Unix pipe]
-
-<tr>
-<th>
-
-`|>`
-
-<td>
-
-[Elixir and Erlang][Elixir pipe], [Elm][Elm pipe], [F# / F-sharp][F# pipe],
-[Hack][Hack pipe], [Julia][Julia pipe], [LiveScript][LiveScript pipe], [OCaml][OCaml pipe],
-
-<tr>
-<th>
-
-`|>` with `$$`
-
-<td>
-
-[Hack][Hack pipe]
-
-<tr>
-<th>
-
-`%>%`
-
-<td>
-
-[R with magrittr][R pipe]
-
-<tr>
-<th>
-
-`==>`
-
-<td>
-
-[Perl 6][Perl 6 pipe]
-
-<tr>
-<th>
-
-`->` `->>`\
-`as->` `as->>`\
-`some->` `some->>`\
-`cond->` `cond->>`
-
-<td>
-
-[Clojure][Clojure pipe]
-
-<tr>
-<th>
-
-[Term concatenation][concatenative programming]
-
-<td>
-
-Factor, Forth, Joy, Onyx, PostScript, RPL
-
-</table>
-
-Pipeline operators are also conceptually similar to [WHATWG-stream piping][] and
-[Node-stream piping][].
-
-The binary “smart” pipeline operator `|>` proposed here would provide a
-**[backwards- and forwards-compatible][don’t break my code]** style of
-**chaining nested expressions** into a readable, **left-to-right** manner.
-[**Nested** data transformations become **untangled** into **short
-steps**][untangled flow] by a **[zero-cost abstraction][zero runtime cost]**.
 
 <table>
 <thead>
@@ -211,13 +129,21 @@ steps**][untangled flow] by a **[zero-cost abstraction][zero runtime cost]**.
 <tbody>
 <tr>
 <td>
+
+The binary “smart” pipeline operator `|>` proposed here would provide a
+**[backwards- and forwards-compatible][don’t break my code]** style of
+**chaining nested expressions** into a readable, **left-to-right** manner.
+
+Using a **[zero-cost abstraction][zero runtime cost]**, **nested** data
+transformations become [**untangled** into **short steps**][untangled flow].
+
 <td>
 
 ```js
 new User.Message(
   capitalize(
     doubledSay(
-      (await promise)
+      await promise
         ??: throw new TypeError(
           `Invalid value from ${promise}`)
     ), ', '
@@ -255,8 +181,14 @@ with a [**single** level of **indentation**][untangled flow] and [**four fewer**
 pairs of **parentheses**][terse parentheses]  – essentially forming a [reverse
 Polish notation][].
 
-This uniform postfix notation preserves locality between related code much
-more than the original code.
+The resulting code’s [**terseness** and **flatness**][make my code easier to
+read] may be both easier for the JavaScript developer to **read** and to
+**edit**. This uniform postfix notation preserves locality between related code;
+the reader may **follow the flow** of data more easily through this [single
+flattened thread of postfix operations][untangled flow]. And the developer may
+[more easily **add or remove operations**][human writability] at the beginning,
+end, or middle of the thread, **without changing** the **indentation** of
+unrelated lines.
 
 <td>
 
@@ -264,7 +196,7 @@ more than the original code.
 new User.Message(
   capitalize(
     doubledSay(
-      (await promise)
+      await promise
         ??: throw new TypeError(
           `Invalid value from ${promise}`)
     ), ', '
@@ -273,7 +205,7 @@ new User.Message(
 ```
 Compared with the pipeline version, the original code requires **additional
 indentation and grouping** on each step. This requires three more levels of
-indentation and four more pairs of parentheses.
+indentation and three more pairs of parentheses.
 
 In addition, much related code is here separated by unrelated code. Rather than
 a **uniform** postfix chain, operations appear **either before** the previous
@@ -283,7 +215,9 @@ An additional argument to function calls (such as `, ` in `doubledSay(…, ', ')
 is also separated from its function calls, forming another easy-to-miss
 “postfix” argument.
 
-</table>
+
+<tr>
+<td>
 
 Each postfix expression in a pipeline (called a **[pipeline body][]**) is in its
 own **inner lexical scope**, within which a special token `#` is defined. This
@@ -292,22 +226,39 @@ own **inner lexical scope**, within which a special token `#` is defined. This
 expression at its left-hand side) is **evaluated**, it then becomes the
 pipeline’s lexical topic. A new **Lexical Environment** is created, within which
 `#` is immutably **bound to the topic**, and with which the pipeline’s body is
-then evaluated, using that **topic binding**.
+then evaluated, using that **topic binding**. In the end, the whole pipeline
+expression’s value is the end result into which the pipeline body evaluated with
+the topic binding.
 
-In the end, the whole pipeline expression’s value is the end result into which
-the pipeline body evaluated with the topic binding. For instance, the chained
-pipeline `5 |> # - 3 |> -# |> # * 2 |> Math.max(#, 0)` is precisely equivalent
-to the more-tangled expression `Math.max(-(5 - 3) * 2, 0)`. The syntax is
-[**statically term rewritable** into already valid code][term rewriting] with
-[theoretically **zero runtime cost**][zero runtime cost].
+<td>
 
-The resulting code’s [**terseness** and **flatness**][make my code easier to
-read] may be both easier for the JavaScript developer to **read** and to
-**edit**. The reader may **follow the flow** of data more easily through this
-[single flattened thread of postfix operations][untangled flow]. And the
-developer may [more easily **add or remove operations**][human writability] at
-the beginning, end, or middle of the thread, **without changing** the
-**indentation** of unrelated lines.
+<tr>
+<td>
+
+For instance, the chained pipeline:
+```js
+5 |> # - 3
+  |> -#
+  |> # * 2
+  |> Math.max(#, 0)
+```
+
+<td>
+
+…is equivalent to the tangled nested expression:
+```js
+Math.max(
+  -(5 - 3) * 2,
+  0
+)
+```
+
+<tr>
+<td>
+
+The syntax is [**statically term rewritable** into already valid code][term
+rewriting] in this way, with [theoretically **zero runtime cost**][zero runtime
+cost].
 
 Similar use cases appear **numerous times** in JavaScript code, whenever any value
 is transformed by **[expressions of any type][expressive versatility]**:
@@ -315,13 +266,6 @@ function calls, property calls, method calls, object constructions, arithmetic
 operations, logical operations, bitwise operations, `typeof`, `instanceof`,
 `await`, `yield` and `yield *`, and `throw` expressions.
 
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
 <tr>
 <td>
 
@@ -346,7 +290,7 @@ the version below.
 new User.Message(
   capitalize(
     doubledSay(
-      (await promise)
+      await promise
         ??: throw new TypeError(
           `Invalid value from ${promise}`)
     ), ', '
@@ -377,14 +321,16 @@ the expressions slightly wordier than necessary.
 new User.Message(
   capitalize(
     doubledSay(
-      (await promise)
+      await promise
         ??: throw new TypeError(
           `Invalid value from ${promise}`)
     ), ', '
   ) + '!'
 )
 ```
-</table>
+
+<tr>
+<td>
 
 Being able to automatically detect this **“bare style”** is the [**smart** part
 of the “smart pipeline operator”][smart body syntax]. The styles of
@@ -392,20 +338,9 @@ of the “smart pipeline operator”][smart body syntax]. The styles of
 programming][dataflow programming], and [**tacit** programming][tacit
 programming] may particularly benefit from bare pipelines and their [terse
 function application][].
-```js
-[TODO: Example of tacit functional programming]
-```
 
-[TODO: Link to Goals.]\
-[TODO: Add Lodash, jQuery, vanilla DOM, and search NPM top packages for more examples.]
+<td>
 
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
 <tr>
 <td>
 
@@ -469,9 +404,9 @@ promise
 This pipeline is relatively flat, with only one level of indentation, and with
 each transformation step on its own line.
 
-`|> capitalize` is a bare unary function call, equivalent to `|> capitalize(#)`.
+(`|> capitalize` is a bare unary function call equivalent to `|> capitalize(#)`.
 Similarly, `|> new User.Message` is a bare unary constructor call, abbreviated
-from `|> new User.Message(#)`.
+from `|> new User.Message(#)`.)
 
 <td>
 
@@ -488,14 +423,43 @@ function capitalize (str) {
 new User.Message(
   capitalizedString(
     doubledSay(
-      (await promise)
+      await promise
         ??: throw new TypeError()
-    )
+    ), ', '
   ) + '!'
 )
 ```
 This deeply nested expression has four levels of indentation instead of two.
-Reading its data flow requires checking both the beginning and end of each expression.
+Reading its data flow requires checking both the beginning of each expression
+(`new User.Message`, `capitalizedString`, `doubledSay`, `await promise` and
+end of each expression (`??: throw new TypeError()`, `, ', '`, ` + '!'`)).
+
+<tr>
+<td>
+
+```js
+… |> f(#, #)
+… |> [#, # * 2, # * 3]
+```
+The topic reference may be used multiple times in a pipeline body. Each use
+refers to the same value (wherever the topic reference is not overridden by
+another, inner pipeline’s topic scope). Because it is bound to the result of the
+topic, the topic is still only ever evaluated once.
+
+<td>
+
+```js
+do {
+  const $ = …;
+  f($, $)
+}
+do {
+  const $ = …;
+  [$, $ * 2, $ * 3]
+}
+```
+This is equivalent to storing the topic value in a unique variable, then using
+that variable multiple times in an expression.
 
 <tr>
 <td>
@@ -511,46 +475,95 @@ promise
 ```
 When tiny functions are only used once, and their bodies would be obvious and
 self-documenting in meaning, they might be ritual boilerplate that a developer
-may prefer to inline, trading off self-documentation for localization of meaning.
+may prefer to inline, trading off self-documentation for localization of code.
 
-<td>″″
+<td>
+
+```js
+new User.Message(do {
+  const value = do {
+    const value = await promise
+      ??: throw new TypeError()
+    `${value}, ${value}`
+  }
+  value[0].toUpperCase()
+    + value.substring(1)
+} + '!')
+```
+Inlining these functions directly into expressions is less successful than
+doing so with the pipeline, both in writability and readability.
 
 <tr>
 <td>
 
 ```js
-value
-  |> f(#, #)
+promise
+  |> await #
+  |> # ??: throw new TypeError()
+  |> `${#}, ${#}`
+  |> #[0].toUpperCase() + #.substring(1)
+  |> # + '!'
+  |> new User.Message
 ```
-The topic reference may be used multiple times in a pipeline body. Each use
-refers to the same value (wherever the topic reference is not overridden by
-another, inner pipeline’s topic scope). Because it is bound to the result of the
-topic, the topic is still only ever evaluated once.
 
 <td>
 
 ```js
-const $ = …;
-f($, $)
+do {
+  const promiseValue = await promise
+    ??: throw new TypeError()
+  const doubledValue =
+    `${promiseValue}, ${promiseValue}`
+  const capitalizedValue
+    = doubledValue[0].toUpperCase()
+      + doubledValue.substring(1)
+  const exclaimedValue
+    = capitalizedValue + '!'
+  new User.Message(exclaimedValue)
+}
 ```
-This is equivalent to storing the topic value in a unique variable, then using
-that variable multiple times in an expression. But the variable declaration is
-unnecessary.
+Using a sequence of variables instead has both advantages and disadvantages. The
+variable names may be self-documenting. But they also are verbose. They visually
+distract from the crucial data transformations (overemphasizing the expressions’
+nouns over their verbs), and it is easy to typo their names.
 
 <tr>
 <td>
 
 ```js
-value
-  |> [#, # * 2, # * 3]
+promise
+  |> await #
+  |> # ??: throw new TypeError()
+  |> normalize
+  |> `${#}, ${#}`
+  |> #[0].toUpperCase() + #.substring(1)
+  |> # + '!'
+  |> new User.Message
 ```
+With a pipeline, there are no unnecessary variable identifiers. Inserting a new
+step in between two steps (or deleting a step) only touches one new line. Here,
+a call of a function `normalize` was inserted between the second and third steps.
 
 <td>
 
 ```js
-const $ = value;
-[$, $ * 2, $ * 3]
+do {
+  const promiseValue = await promise
+    ??: throw new TypeError()
+  const normalizedValue = normalize()
+  const doubledValue =
+    `${normalizedValue}, ${normalizedValue}`
+  const capitalizedValue
+    = doubledValue[0].toUpperCase()
+      + doubledValue.substring(1)
+  const exclaimedValue
+    = capitalizedValue + '!'
+  new User.Message(exclaimedValue)
+}
 ```
+This code underwent a similar insertion of `normalize`. With a series of
+variables, inserting a new step in between two other steps (or deleting a step)
+requires editing the variable names in the following step.
 
 <tr>
 <td>
@@ -3254,6 +3267,84 @@ During runtime, [TODO]
 [TODO: https://github.com/gajus/babel-plugin-transform-function-composition]
 
 [TODO: refer to #background list of programming languages]
+
+The concept of a pipeline operator appears in numerous other languages, variously
+called “pipeline”, “threading”, and “feed” operators. This is because developers
+find the concept useful.
+
+<table>
+<tr>
+<th>
+
+`|`
+
+<td>
+
+[Unix shells, PowerShell][Unix pipe]
+
+<tr>
+<th>
+
+`|>`
+
+<td>
+
+[Elixir and Erlang][Elixir pipe], [Elm][Elm pipe], [F# / F-sharp][F# pipe],
+[Hack][Hack pipe], [Julia][Julia pipe], [LiveScript][LiveScript pipe], [OCaml][OCaml pipe],
+
+<tr>
+<th>
+
+`|>` with `$$`
+
+<td>
+
+[Hack][Hack pipe]
+
+<tr>
+<th>
+
+`%>%`
+
+<td>
+
+[R with magrittr][R pipe]
+
+<tr>
+<th>
+
+`==>`
+
+<td>
+
+[Perl 6][Perl 6 pipe]
+
+<tr>
+<th>
+
+`->` `->>`\
+`as->` `as->>`\
+`some->` `some->>`\
+`cond->` `cond->>`
+
+<td>
+
+[Clojure][Clojure pipe]
+
+<tr>
+<th>
+
+[Term concatenation][concatenative programming]
+
+<td>
+
+Factor, Forth, Joy, Onyx, PostScript, RPL
+
+</table>
+
+Pipeline operators are also conceptually similar to [WHATWG-stream piping][] and
+[Node-stream piping][].
+
 
 ## Other ECMAScript proposals
 [TODO: `do` expressions]
