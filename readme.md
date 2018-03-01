@@ -1,21 +1,26 @@
 # Smart pipelines
-ECMAScript Stage-0 Proposal by J. S. Choi, 2018-02.
+ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 
 This readme is an **explainer for** the [**formal specification** of a proposed
 **smart pipeline operator `|>`**][formal pipeline specification] in
-**JavaScript**. It is currently tentatively at **Stage 0** of the [TC39
-process][TC39 process] but and is planned to be presented to TC39 by [Daniel
-“**littledan**” Ehrenberg of Igalia][littledan].
+**JavaScript**, along with several other additional features. It is currently
+tentatively at **Stage 0** of the [TC39 process][TC39 process] but and is
+planned to be presented to TC39 by [Daniel “**littledan**” Ehrenberg of
+Igalia][littledan]. The proposal is divided into **five sub-proposals**:
 
-The proposal is a **variant** of the [first pipe-operator proposal][] championed
-by [Daniel “littledan” Ehrenberg of Igalia][littledan]. This variant is listed
-as [**Proposal 4: Smart Mix** on the pipe-proposal wiki][Pipeline Proposal 4]. The
-variant resulted from [previous discussions in the previous pipe-operator
-proposal][previous pipeline-placeholder discussions], which culminated in an
-[invitation by Ehrenberg to try writing a specification draft][littledan
-invitation]. A **prototype Babel plugin** is also privately brewing.
+* **Core Proposal**: Smart pipeline `|>` and topic reference `#`
+* **Additional Feature UP**: Unary pipeline `|>`
+* **Additional Feature PF**: Pipeline functions `->`
+* **Additional Feature MT**: Multiple topic references `##`, `###`, and `...`
+* **Additional Feature CT**: `catch`-block topics
 
-This readme is a **living document** and is currently under a rewrite.
+The core proposal is a **variant** of the [first pipe-operator proposal][]
+championed by [Daniel “littledan” Ehrenberg of Igalia][littledan]. This variant
+is listed as [**Proposal 4: Smart Mix** on the pipe-proposal wiki][Pipeline
+Proposal 4]. The variant resulted from [previous discussions in the previous
+pipe-operator proposal][previous pipeline-placeholder discussions], discussions
+which culminated in an [invitation by Ehrenberg to try writing a specification
+draft][littledan invitation]. A **prototype Babel plugin** is also brewing.
 
 You can take part in the discussions on the **[GitHub issue tracker][]**. When you
 file an issue, please note in it that you are talking **specifically** about
