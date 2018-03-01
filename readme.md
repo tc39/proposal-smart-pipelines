@@ -614,7 +614,7 @@ that they will not shadow topics either. See [other ECMAScript proposals][].)
 
 </table>
 
-## jQuery
+## [jQuery][]
 <table>
 <thead>
 <tr>
@@ -934,10 +934,10 @@ function (obj) {
 
 </table>
 
-## Lodash
+## [Lodash][]
 [TODO]
 
-## Ramda
+## [Ramda][]
 These examples were taken from the [Ramda wiki cookbook][].
 
 <table>
@@ -1305,7 +1305,7 @@ fetch('https://pk.example/berlin-calling',
 
 </table>
 
-## WHATWG Streams
+## [WHATWG Streams Standard][]
 <table>
 <thead>
 <tr>
