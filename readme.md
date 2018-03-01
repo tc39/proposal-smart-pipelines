@@ -100,6 +100,11 @@ The binary “smart” pipeline operator `|>` proposed here would provide a
 Using a **[zero-cost abstraction][zero runtime cost]**, **nested** data
 transformations become [**untangled** into **short steps**][untangled flow].
 
+This section gives a brief overview of the motivations behind the smart
+pipeline operator. Examples from real-world libraries are also compared.
+The original examples have been lightly edited (e.g., breaking up lines,
+removing semicolons), to fit their horizontal widths into this table.
+
 <td>
 
 ```js
@@ -775,6 +780,10 @@ fetch('https://pk.example/berlin-calling',
 </table>
 
 ## [jQuery][]
+As the single most-used JavaScript libraries in the world, jQuery has provided
+an ergonomic API since 2006. This API requires complex data processing that
+becomes more readable with smart pipelines.
+
 <table>
 <thead>
 <tr>
@@ -791,6 +800,10 @@ return data
   |> #.childNodes
   |> jQuery.merge([], #)
 ```
+Imagine the path that your eyes must trace while reading this pipeline. Your
+eyes move straight down with occasional movement toward the right then back:
+from `data` to `buildFragment` (and its arguments), then `.childNodes`, then
+`jQuery.merge`. No one-off-variable assignment necessary.
 
 <td>
 
@@ -802,7 +815,11 @@ return jQuery.merge(
   [], parsed.childNodes
 )
 ```
-From [jquery/src/core/parseHTML.js][].
+From [jquery/src/core/parseHTML.js][]. In this code, the eyes first must look
+for `data` – then upwards to `parsed = buildFragment` (and then back for
+`buildFragment`’s other arguments) – then down, searching for the location of
+the `parsed` variable in the next statement – then right when noticing its
+`.childNodes` postfix – then back upward to `return jQuery.merge`.
 
 <tr>
 <td>
@@ -811,6 +828,9 @@ From [jquery/src/core/parseHTML.js][].
 (key |> toType) === 'object'
 key |> toType |> # === 'object'
 ```
+`|>` has a looser precedence than most operators, including `===`. (Only
+assignment operators, arrow function `=>`, yield operators, and the comma
+operator are any looser.)
 
 <td>
 
@@ -863,7 +883,7 @@ jQuery.merge(
   )
 )
 ```
-From [jquery/src/core/init.js][].
+From [jquery/src/core/init.js][]. Used `??.` in both versions for conciseness.
 
 <tr>
 <td>
@@ -876,7 +896,11 @@ match |> do {
     |> context[#] |> this.attr(match, #)
 }
 ```
-The parallelism between the two clauses becomes clearer.
+(This pipeline uses [Additional Feature UP][], in which unary `|> …` is short
+for `# |> …`.)
+Note how, in this version, the parallelism between the two clauses is very
+clear: they both share the form `match |> context[#] |> something(match, #)`.
+
 <td>
 
 ```js
