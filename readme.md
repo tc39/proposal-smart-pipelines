@@ -1087,7 +1087,7 @@ try {
 
 const fetchDependent = async ->
   |> await fetch
-  |> parseJSON
+  |> JSON.parse
   |> #.flatten()
   |> #.map(-> #.url)
   |> #.map(fetch)
@@ -1105,32 +1105,12 @@ try {
 <td>
 
 ```js
-const Future = require('ramda-fantasy').Future
-
-function fetchFuture (url) {
-  return new Future(function (rej, res) {
-    var oReq = fetch(url)
-      .then(res)
-      .catch(rej)
-  })
-}
-
-function parseJSON (str) {
-  return new Future(function(rej, res) {
-    try {
-      res(JSON.parse(str))
-    } catch (err) {
-      rej({ error: 'JSON parse error' })
-    }
-  })
-}
-
 const getNewTitles = R.compose(
   R.map(R.pluck('title')),
   R.map(R.filter(R.prop('new'))),
   R.pluck('items'),
-  R.chain(parseJSON),
-  fetchFuture
+  R.chain(JSON.parse),
+  fetch
 )
 
 getNewTitles('/products.json')
@@ -1140,7 +1120,7 @@ const fetchDependent = R.compose(
   R.chain(fetch),
   R.pluck('url'),
   R.chain(parseJSON),
-  fetchFuture
+  fetch
 )
 
 fetchDependent('urls.json')
@@ -1340,8 +1320,8 @@ readableStream.pipeTo(writableStream)
 <td>
 
 ```js
-const reader = readableStream.getReader(
-  { mode: "byob" })
+const reader = readableStream
+  .getReader({ mode: "byob" })
 
 try {
   new ArrayBuffer(1024)
@@ -1354,24 +1334,24 @@ try {
 }
 
 async function readInto(buffer, offset = 0) {
-  buffer |> do {
+  return buffer |> do {
     if (#.byteLength === offset)
-      return #
+      #
+    else
+      |> (#, offset, #.byteLength - offset)
+      |> new Uint8Array
+      |> await reader.read
+      |> (#.buffer, #.byteLength)
+      |> readInto(#, offset + ##)
   }
-  const view = new Uint8Array(
-    buffer, offset, buffer.byteLength - offset)
-  return reader
-    |> await #.read(view)
-    |> (#.buffer, #.byteLength)
-    |> readInto(#, offset + ##)
 }
 ```
 
 <td>
 
 ```js
-const reader = readableStream.getReader(
-  { mode: "byob" })
+const reader = readableStream
+  .getReader({ mode: "byob" })
 
 let startingAB = new ArrayBuffer(1024)
 readInto(startingAB)
@@ -1433,12 +1413,11 @@ class LipFuzzTransformer {
   }
 
   flush(controller) {
-    this.partialChunk
-      |> do {
-        if (#.length > 0) {
-          |> controller.enqueue
-        }
+    this.partialChunk |> do {
+      if (#.length > 0) {
+        |> controller.enqueue
       }
+    }
   }
 
   replaceTag(match, p1, offset) {
