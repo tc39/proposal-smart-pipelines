@@ -935,7 +935,169 @@ function (obj) {
 </table>
 
 ## [Lodash][]
-[TODO]
+<table>
+<thead>
+<tr>
+<th>With smart pipes
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+function hashGet (key) {
+  return this.__data__
+    |> do {
+      if (nativeCreate)
+        |> #[key]
+        |> # === HASH_UNDEFINED
+          ? undefined : #
+      else
+        |> hashOwnProperty.call(#, key)
+          ? #[key] : undefined
+    }
+}
+```
+
+<td>
+
+```js
+function hashGet (key) {
+  var data = this.__data__;
+  if (nativeCreate) {
+    var result = data[key];
+    return result === HASH_UNDEFINED
+      ? undefined : result;
+  }
+  return hasOwnProperty.call(data, key)
+    ? data[key] : undefined;
+}
+```
+
+<tr>
+<td>
+
+```js
+function listCacheHas (key) {
+  return this.__data__
+    |> assocIndexOf(#, key)
+    |> # > -1;
+}
+```
+
+<td>
+
+```js
+function listCacheHas (key) {
+  return assocIndexOf(this.__data__, key) > -1;
+}
+```
+
+<tr>
+<td>
+
+```js
+function mapCacheDelete (key) {
+  (this, key)
+    |> getMapData
+    |> #['delete']
+    |> #(key)
+    |> do {
+      this.size -= # ? 1 : 0
+      return #
+    }
+}
+```
+
+<td>
+
+```js
+function mapCacheDelete (key) {
+  var result = getMapData(this, key)['delete'](key)
+  this.size -= result ? 1 : 0
+  return result
+}
+```
+
+<tr>
+<td>
+
+```js
+function castPath (value, object) {
+  return value |> do {
+    if (|> isArray)
+      #
+    else if (|> isKey(#, object))
+      [#]
+    else
+      |> toString |> stringToPath
+  }
+}
+```
+
+<td>
+
+```js
+function castPath (value, object) {
+  if (isArray(value)) {
+    return value
+  }
+  return isKey(value, object)
+    ? [value]
+    : stringToPath(toString(value))
+}
+```
+
+<tr>
+<td>
+
+```js
+function createRound (methodName) {
+  var func = Math[methodName]
+  return function (number, precision) {
+    number = toNumber(number)
+    precision |> do {
+      if (# == null)
+        0
+      else
+        |> toInteger |> nativeMin(#, 292)
+    } |> do {
+      if (precision) {
+        // Shift with exponential notation to avoid floating-point issues.
+        // See [MDN](https://mdn.io/round#Examples) for more details.
+        |> [TODO]
+      } else
+        [TODO]
+    }
+  }
+}
+```
+
+<td>
+
+```js
+function createRound (methodName) {
+  var func = Math[methodName]
+  return function (number, precision) {
+    number = toNumber(number)
+    precision = precision == null ? 0 : nativeMin(toInteger(precision), 292)
+    if (precision) {
+      // Shift with exponential notation to avoid floating-point issues.
+      // See [MDN](https://mdn.io/round#Examples) for more details.
+      var pair = (toString(number) + 'e').split('e'),
+          value = func(pair[0] + 'e' + (+pair[1] + precision))
+
+      pair = (toString(value) + 'e').split('e')
+      return +(pair[0] + 'e' + (+pair[1] - precision))
+    }
+    return func(number)
+  }
+}
+
+```
+
+</table>
 
 ## [Ramda][]
 These examples were taken from the [Ramda wiki cookbook][].
