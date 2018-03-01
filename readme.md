@@ -1223,7 +1223,7 @@ pify(fs.readFile)('package.json', 'utf8')
 
 </table>
 
-## [Fetch Standard][]
+## [WHATWG Fetch Standard][]
 
 <table>
 <thead>
@@ -1306,7 +1306,208 @@ fetch('https://pk.example/berlin-calling',
 </table>
 
 ## WHATWG Streams
-[TODO]
+<table>
+<thead>
+<tr>
+<th>With smart pipes
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+try {
+  readableStream
+    |> await #.pipeTo(writableStream);
+  "Success"
+    |> console.log
+} catch {
+  ("Error", #)
+    |> console.error
+}
+```
+
+<td>
+
+```js
+readableStream.pipeTo(writableStream)
+  .then(() => console.log("Success"))
+  .catch(e => console.error("Error", e))
+```
+
+<tr>
+<td>
+
+```js
+const reader = readableStream.getReader(
+  { mode: "byob" })
+
+try {
+  new ArrayBuffer(1024)
+    |> await readInto
+    |> ("The first 1024 bytes:", #)
+    |> console.log
+} catch {
+  ("Something went wrong!", #)
+    |> console.error
+}
+
+async function readInto(buffer, offset = 0) {
+  buffer |> do {
+    if (#.byteLength === offset)
+      return #
+  }
+  const view = new Uint8Array(
+    buffer, offset, buffer.byteLength - offset)
+  return reader
+    |> await #.read(view)
+    |> (#.buffer, #.byteLength)
+    |> readInto(#, offset + ##)
+}
+```
+
+<td>
+
+```js
+const reader = readableStream.getReader(
+  { mode: "byob" })
+
+let startingAB = new ArrayBuffer(1024)
+readInto(startingAB)
+  .then(buffer =>
+    console.log("The first 1024 bytes:", buffer))
+  .catch(e =>
+    console.error("Something went wrong!", e))
+
+function readInto(buffer, offset = 0) {
+  if (offset === buffer.byteLength) {
+    return Promise.resolve(buffer);
+  }
+  const view = new Uint8Array(
+    buffer, offset, buffer.byteLength - offset)
+  return reader.read(view).then(newView => {
+    return readInto(newView.buffer,
+      offset + newView.byteLength);
+  })
+}
+```
+
+<tr>
+<td>
+
+```js
+class LipFuzzTransformer {
+  constructor(substitutions) {
+    this.substitutions = substitutions;
+    this.partialChunk = "";
+    this.lastIndex = undefined;
+  }
+
+  transform(chunk, controller) {
+    this.partialChunk = ""
+    this.lastIndex = 0
+    const partialAtEndRegexp =
+      /\{(\{([a-zA-Z0-9_-]+(\})?)?)?$/g
+    partialAtEndRegexp.lastIndex =
+      this.lastIndex
+    this.lastIndex = undefined
+    chunk
+      |> this.partialChunk + #
+      |> #.replace(
+        /\{\{([a-zA-Z0-9_-]+)\}\}/g,
+        -> this.replaceTag)
+      |> partialAtEndRegexp.exec
+      |> do {
+        if {
+          this.partialChunk =
+            |> #.index
+            |> chunk.substring
+          # |> #.index
+            |> chunk.substring(0, #)
+        } else {
+          #
+        }
+      }
+      |> controller.enqueue
+  }
+
+  flush(controller) {
+    this.partialChunk
+      |> if (#.length > 0) {
+        |> controller.enqueue
+      }
+  }
+
+  replaceTag(match, p1, offset) {
+    return this.substitutions
+      |> #[p1]
+      |> # === undefined ? '' : #
+      |> do {
+        const replacement = #
+        this.lastIndex = #
+          |> #.length
+          |> offset + #
+        replacement
+      }
+    }
+  }
+}
+```
+
+<td>
+
+```js
+class LipFuzzTransformer {
+  constructor(substitutions) {
+    this.substitutions = substitutions;
+    this.partialChunk = "";
+    this.lastIndex = undefined;
+  }
+
+  transform(chunk, controller) {
+    chunk = this.partialChunk + chunk;
+    this.partialChunk = "";
+    this.lastIndex = 0;
+    chunk = chunk.replace(
+      /\{\{([a-zA-Z0-9_-]+)\}\}/g,
+      this.replaceTag.bind(this));
+    const partialAtEndRegexp =
+      /\{(\{([a-zA-Z0-9_-]+(\})?)?)?$/g;
+    partialAtEndRegexp.lastIndex =
+      this.lastIndex;
+    this.lastIndex = undefined;
+    const match =
+      partialAtEndRegexp.exec(chunk);
+    if (match) {
+      this.partialChunk =
+        chunk.substring(match.index);
+      chunk =
+        chunk.substring(0, match.index);
+    }
+    controller.enqueue(chunk);
+  }
+
+  flush(controller) {
+    if (this.partialChunk.length > 0) {
+      controller.enqueue(
+        this.partialChunk);
+    }
+  }
+
+  replaceTag(match, p1, offset) {
+    let replacement = this.substitutions[p1];
+    if (replacement === undefined) {
+      replacement = "";
+    }
+    this.lastIndex =
+      offset + replacement.length;
+    return replacement;
+  }
+}
+```
+
+</table>
 
 # Goals
 
@@ -3985,7 +4186,7 @@ do { do { do { do { 3 * 3 } } }
 [expressions and operators (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
 [expressive versatility]: #expressive-versatility
 [F# pipe]: https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining
-[Fetch Standard]: https://fetch.spec.whatwg.org
+[WHATWG Fetch Standard]: https://fetch.spec.whatwg.org
 [first pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
 [footguns]: https://en.wiktionary.org/wiki/footgun
 [formal grammar]: #grammar
