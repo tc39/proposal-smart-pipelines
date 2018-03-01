@@ -202,6 +202,28 @@ The binary “smart” pipeline operator `|>` proposed here would provide a
 [**Nested** data transformations become **untangled** into **short
 steps**][untangled flow] by a **[zero-cost abstraction][zero runtime cost]**.
 
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+<td>
+
+```js
+new User.Message(
+  capitalize(
+    doubledSay(
+      (await promise)
+        ??: throw new TypeError(
+          `Invalid value from ${promise}`)
+    ), ', '
+  ) + '!'
+)
+```
 **Nested, deeply composed** expressions occur often in JavaScript. They occur
 whenever any single value must be processed by a **series of data
 transformations**, whether they be **operations, functions, or constructors**.
@@ -211,15 +233,18 @@ expressions together. Writing such code requires many nested **levels of
 indentation** and parentheses. Reading such code requires checking **both the
 left and right of each subexpression** to understand its data flow.
 
+<tr>
+<td>
+
 ```js
-new User.Message(
-  capitalize(
-    doubledSay(
-      (await stringPromise)
-        ??: throw new TypeError(`Expected string from ${stringPromise}`)
-    ), ', '
-  ) + '!'
-)
+promise
+  |> await #
+  |> # ??: throw new TypeError(
+    `Invalid value from ${promise}`)
+  |> doubleSay(#, ', ')
+  |> capitalize
+  |> # + '!'
+  |> new User.Message
 ```
 
 With smart pipelines, the code above could be **terser** and, literally,
@@ -229,19 +254,40 @@ from left to right** through a **single flat thread of postfix expressions**,
 with a [**single** level of **indentation**][untangled flow] and [**four fewer**
 pairs of **parentheses**][terse parentheses]  – essentially forming a [reverse
 Polish notation][].
-```js
-stringPromise
-  |> await #
-  |> # ??: throw new TypeError()
-  |> doubleSay(#, ', ')
-  |> capitalize // a bare unary function call
-  |> # + '!'
-  |> new User.Message // a bare unary constructor call
-```
 
-Each such postfix expression (called a **[pipeline body][]**) is in its own
-**inner lexical scope**, within which a special token `#` is defined. This `#`
-is a reference to the **[lexical topic][]** of the pipeline (`#` itself is a
+This uniform postfix notation preserves locality between related code much
+more than the original code.
+
+<td>
+
+```js
+new User.Message(
+  capitalize(
+    doubledSay(
+      (await promise)
+        ??: throw new TypeError(
+          `Invalid value from ${promise}`)
+    ), ', '
+  ) + '!'
+)
+```
+Compared with the pipeline version, the original code requires **additional
+indentation and grouping** on each step. This requires three more levels of
+indentation and four more pairs of parentheses.
+
+In addition, much related code is here separated by unrelated code. Rather than
+a **uniform** postfix chain, operations appear **either before** the previous
+step’s expression (`new User.Message(…)`, `capitalize(…)`, `doubledSay(…)`,
+`await …`) but also **after** (`… ??: throw new TypeError()`, `… + '!'`).
+An additional argument to function calls (such as `, ` in `doubledSay(…, ', ')`)
+is also separated from its function calls, forming another easy-to-miss
+“postfix” argument.
+
+</table>
+
+Each postfix expression in a pipeline (called a **[pipeline body][]**) is in its
+own **inner lexical scope**, within which a special token `#` is defined. This
+`#` is a reference to the **[lexical topic][]** of the pipeline (`#` itself is a
 **topic reference**). When the [pipeline’s **head**][pipeline structure] (the
 expression at its left-hand side) is **evaluated**, it then becomes the
 pipeline’s lexical topic. A new **Lexical Environment** is created, within which
@@ -269,28 +315,77 @@ function calls, property calls, method calls, object constructions, arithmetic
 operations, logical operations, bitwise operations, `typeof`, `instanceof`,
 `await`, `yield` and `yield *`, and `throw` expressions.
 
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
 ```js
-stringPromise
+promise
   |> await #
   |> # ??: throw new TypeError()
   |> doubleSay(#, ', ')
-  |> capitalize // a bare unary function call
-  |> # + '!'
-  |> new User.Message // a bare unary constructor call
-```
-Note that, in the example above, it was **not necessary** to include
-**parentheses** for `capitalize` or `new User.Message`; they were **tacitly
-implied**, respectively forming a **tacit unary function call** and a **tacit
-unary constructor call**. In other words, the example above is equivalent to:
-```js
-stringPromise
-  |> await #
-  |> # ??: throw new TypeError(`Expected string from ${#}`)
-  |> doubleSay(#, ', ')
-  |> capitalize(#)
+  |> capitalize
   |> # + '!'
   |> new User.Message
 ```
+Note that, in the example above, it is **not necessary** to include
+**parentheses** for `capitalize` or `new User.Message`; they were **tacitly
+implied**, respectively forming a **tacit unary function call** and a **tacit
+unary constructor call**. In other words, the example above is equivalent to
+the version below.
+
+<td>
+
+```js
+new User.Message(
+  capitalize(
+    doubledSay(
+      (await promise)
+        ??: throw new TypeError(
+          `Invalid value from ${promise}`)
+    ), ', '
+  ) + '!'
+)
+```
+
+<tr>
+<td>
+
+```js
+promise
+  |> await #
+  |> # ??: throw new TypeError(
+    `Invalid value from ${#}`)
+  |> doubleSay(#, ', ')
+  |> capitalize(#)
+  |> # + '!'
+  |> new User.Message(#)
+```
+This version is equivalent to the version above, except that the `capitalize`
+and `new User.Message` pipeline bodies explicitly include optional `#`s, making
+the expressions slightly wordier than necessary.
+
+<td>
+
+```js
+new User.Message(
+  capitalize(
+    doubledSay(
+      (await promise)
+        ??: throw new TypeError(
+          `Invalid value from ${promise}`)
+    ), ', '
+  ) + '!'
+)
+```
+</table>
+
 Being able to automatically detect this **“bare style”** is the [**smart** part
 of the “smart pipeline operator”][smart body syntax]. The styles of
 [**functional** programming][functional programming], [**dataflow**
@@ -307,7 +402,7 @@ function application][].
 <table>
 <thead>
 <tr>
-<th>With smart pipes
+<th>With smart pipelines
 <th>Status quo
 
 <tbody>
@@ -364,7 +459,7 @@ function capitalize (str) {
     + str.substring(1)
 }
 
-stringPromise
+promise
   |> await #
   |> # ??: throw new TypeError()
   |> doubleSay(#, ', ')
@@ -393,7 +488,7 @@ function capitalize (str) {
 new User.Message(
   capitalizedString(
     doubledSay(
-      (await stringPromise)
+      (await promise)
         ??: throw new TypeError()
     )
   ) + '!'
@@ -406,7 +501,7 @@ Reading its data flow requires checking both the beginning and end of each expre
 <td>
 
 ```js
-stringPromise
+promise
   |> await #
   |> # ??: throw new TypeError()
   |> `${#}, ${#}`
@@ -623,7 +718,7 @@ that they will not shadow topics either. See [other ECMAScript proposals][].)
 <table>
 <thead>
 <tr>
-<th>With smart pipes
+<th>With smart pipelines
 <th>Status quo
 
 <tbody>
@@ -823,7 +918,7 @@ From [jquery/src/core/access.js][].
 <table>
 <thead>
 <tr>
-<th>With smart pipes
+<th>With smart pipelines
 <th>Status quo
 
 <tbody>
@@ -943,7 +1038,7 @@ function (obj) {
 <table>
 <thead>
 <tr>
-<th>With smart pipes
+<th>With smart pipelines
 <th>Status quo
 
 <tbody>
@@ -995,7 +1090,8 @@ function listCacheHas (key) {
 
 ```js
 function listCacheHas (key) {
-  return assocIndexOf(this.__data__, key) > -1;
+  return assocIndexOf(this.__data__, key)
+    > -1;
 }
 ```
 
@@ -1019,7 +1115,8 @@ function mapCacheDelete (key) {
 
 ```js
 function mapCacheDelete (key) {
-  var result = getMapData(this, key)['delete'](key)
+  var result =
+    getMapData(this, key)['delete'](key)
   this.size -= result ? 1 : 0
   return result
 }
@@ -1069,8 +1166,9 @@ function createRound (methodName) {
         |> toInteger |> nativeMin(#, 292)
     } {
       if (precision) {
-        // Shift with exponential notation to avoid floating-point issues.
-        // See [MDN](https://mdn.io/round#Examples) for more details.
+        // Shift with exponential notation
+        // to avoid floating-point issues.
+        // See https://mdn.io/round#Examples.
         number
           |> `${#}e`
           |> ...#.split('e')
@@ -1095,15 +1193,24 @@ function createRound (methodName) {
   var func = Math[methodName]
   return function (number, precision) {
     number = toNumber(number)
-    precision = precision == null ? 0 : nativeMin(toInteger(precision), 292)
+    precision = precision == null
+      ? 0
+      : nativeMin(toInteger(precision), 292)
     if (precision) {
-      // Shift with exponential notation to avoid floating-point issues.
-      // See [MDN](https://mdn.io/round#Examples) for more details.
-      var pair = (toString(number) + 'e').split('e'),
-          value = func(pair[0] + 'e' + (+pair[1] + precision))
+      // Shift with exponential notation
+      // to avoid floating-point issues.
+      // See https://mdn.io/round#Examples.
+      var pair = (toString(number) + 'e')
+        .split('e'),
+      value = func(
+        pair[0] + 'e' + (
+          +pair[1] + precision))
 
-      pair = (toString(value) + 'e').split('e')
-      return +(pair[0] + 'e' + (+pair[1] - precision))
+      pair = (toString(value) + 'e')
+        .split('e')
+      return +(
+        pair[0] + 'e' + (
+          +pair[1] - precision))
     }
     return func(number)
   }
@@ -1119,7 +1226,7 @@ These examples were taken from the [Ramda wiki cookbook][].
 <table>
 <thead>
 <tr>
-<th>With smart pipes
+<th>With smart pipelines
 <th>Status quo
 
 <tbody>
@@ -1135,7 +1242,8 @@ const pickIndexes = -> R.values |> R.pickAll
 <td>
 
 ```js
-const pickIndexes = R.compose(R.values, R.pickAll)
+const pickIndexes = R.compose(
+  R.values, R.pickAll)
 pickIndexes([0, 2], ['a', 'b', 'c'])
 // -> ['a', 'c']
 ```
@@ -1353,7 +1461,7 @@ renameBy(R.concat('a'), { A: 1, B: 2, C: 3 })
 <table>
 <thead>
 <tr>
-<th>With smart pipes
+<th>With smart pipelines
 <th>Status quo
 
 <tbody>
@@ -1384,7 +1492,7 @@ pify(fs.readFile)('package.json', 'utf8')
 <table>
 <thead>
 <tr>
-<th>With smart pipes
+<th>With smart pipelines
 <th>Status quo
 
 <tbody>
@@ -1465,7 +1573,7 @@ fetch('https://pk.example/berlin-calling',
 <table>
 <thead>
 <tr>
-<th>With smart pipes
+<th>With smart pipelines
 <th>Status quo
 
 <tbody>
@@ -1981,15 +2089,15 @@ length, depending on their level in the syntactic tree. To use the example above
 new User.Message(
   capitalize(
     doubledSay(
-      (await stringPromise)
-        ??: throw new TypeError(`Expected string from ${stringPromise}`)
+      (await promise)
+        ??: throw new TypeError(`Invalid value from ${promise}`)
     )
   ) + '!'
 )
 ```
-…the deep inner expression `await stringPromise` is relatively short. In
+…the deep inner expression `await promise` is relatively short. In
 contrast, the shallow outer expression
-`` capitalize(doubledSay((await stringPromise) ??: throw new TypeError(`Expected string from ${stringPromise}`))) + '!'`) ``
+`` capitalize(doubledSay((await promise) ??: throw new TypeError(`Invalid value from ${promise}`))) + '!'`) ``
 is very long. Yet both are
 quite similar: they are transformations of a string into another. This
 insight is lost in the deeply nested noise.
@@ -2001,7 +2109,7 @@ only need to scan left, rather than in both directions as the deeply nested
 tree would require. To read the whole thing, a reader may simply follow
 along left to right, not back and forth.
 ```js
-stringPromise
+promise
   |> await #
   |> # ??: throw new TypeError()
   |> doubleSay(#, ', ')
@@ -4086,7 +4194,7 @@ do { do { 3 * 3 } }
 Consider also the motivating first example above:
 
 ```js
-stringPromise
+promise
   |> await #
   |> # ??: throw new TypeError()
   |> doubleSay // a bare unary function call
@@ -4101,7 +4209,7 @@ do {
   const #₃ = do {
     const #₂ = do {
       const #₁ = do {
-        const #₀ = await stringPromise;
+        const #₀ = await promise;
         #₀ ??: throw new TypeError()
       };
       doubleSay(#₁)
@@ -4156,7 +4264,7 @@ do { do { 3 * 3 } }
 
 Consider also the motivating first example above:
 ```js
-stringPromise
+promise
   |> await #
   |> # ??: throw new TypeError()
   |> doubleSay // a bare unary function call
@@ -4170,7 +4278,7 @@ do {
   const • = do {
     const • = do {
       const • = do {
-        const • = await stringPromise;
+        const • = await promise;
         do { const # = •; # ??: throw new TypeError() }
       };
       do { const # = •; doubleSay(#) }
