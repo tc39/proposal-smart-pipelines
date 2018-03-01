@@ -8,13 +8,13 @@ tentatively at **Stage 0** of the [TC39 process][TC39 process] but and is
 planned to be presented to TC39 by [Daniel “**littledan**” Ehrenberg of
 Igalia][littledan]. The proposal is divided into **five sub-proposals**:
 
-|Name                     |Features                                        | Purpose
-|-------------------------|------------------------------------------------| ---------------------------------------------------------
-|[Core Proposal][]        |Binary pipeline `\|>` and topic reference `#`   | Unary application of functions and expressions
-|[Additional Feature UP][]|Unary pipeline `\|>`                            | Application through `do` blocks
-|[Additional Feature PF][]|Pipeline functions `->`                         | Partial application, composition, method extraction
-|[Additional Feature MT][]|Multiple topic references `##`, `###`, and `...`| N-ary application of functions and expressions
-|[Additional Feature CT][]|`catch`-block topics                            | Application with errors
+|Name                     |Features                                      |Purpose
+|-------------------------|----------------------------------------------|---------------------------------------------------------
+|[Core Proposal][]        |Binary pipeline `\|>` and lexical topic `#`   |Unary application of functions and expressions
+|[Additional Feature UP][]|Unary pipeline `\|>`                          |Application through `do` blocks
+|[Additional Feature PF][]|Pipeline functions `->`                       |Partial application, composition, method extraction
+|[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application of functions and expressions
+|[Additional Feature CT][]|`catch`-block topics                          |Application with errors
 
 The core proposal is a **variant** of the [first pipe-operator proposal][]
 championed by [Daniel “littledan” Ehrenberg of Igalia][littledan]. This variant
