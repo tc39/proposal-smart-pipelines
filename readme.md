@@ -8,11 +8,13 @@ tentatively at **Stage 0** of the [TC39 process][TC39 process] but and is
 planned to be presented to TC39 by [Daniel “**littledan**” Ehrenberg of
 Igalia][littledan]. The proposal is divided into **five sub-proposals**:
 
-* **Core Proposal**: Smart pipeline `|>` and topic reference `#`
-* **Additional Feature UP**: Unary pipeline `|>`
-* **Additional Feature PF**: Pipeline functions `->`
-* **Additional Feature MT**: Multiple topic references `##`, `###`, and `...`
-* **Additional Feature CT**: `catch`-block topics
+| Name                      | Features                                         | Purpose
+| ========================= | ================================================ | =========================================================
+| [Core Proposal][]         | Binary pipeline `|>` and topic reference `#`     | Terse unary application of functions and expressions
+| [Additional Feature UP][] | Unary pipeline `|>`                              | Terse application through `do` blocks
+| [Additional Feature PF][] | Pipeline functions `->`                          | Terse partial application, composition, method extraction
+| [Additional Feature MT][] | Multiple topic references `##`, `###`, and `...` | Terse n-ary application of functions and expressions
+| [Additional Feature CT][] | `catch`-block topics                             | Terse application to errors
 
 The core proposal is a **variant** of the [first pipe-operator proposal][]
 championed by [Daniel “littledan” Ehrenberg of Igalia][littledan]. This variant
