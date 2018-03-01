@@ -690,6 +690,90 @@ that they will not shadow topics either. See [other ECMAScript proposals][].)
 
 </table>
 
+## WHATWG Fetch Standard
+The [WHATWG Fetch Standard][] contains several examples of using the DOM `fetch`
+function, examples which may become more readable with smart pipelines.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+'/music/pk/altes-kamuffel'
+  |> await fetch(#)
+  |> await #.blob()
+  |> playBlob
+```
+
+<td>
+
+```js
+fetch('/music/pk/altes-kamuffel')
+  .then(res => res.blob())
+  .then(playBlob)
+```
+
+<tr>
+<td>
+
+```js
+'https://example.com/'
+  |> await fetch(#, { method: 'HEAD' })
+  |> #.headers.get('content-type')
+  |> log
+```
+
+<td>
+
+```js
+fetch('https://example.com/',
+  { method: 'HEAD' }
+).then(res =>
+  log(res.headers.get('content-type'))
+)
+```
+
+<tr>
+<td>
+
+```js
+'https://pk.example/berlin-calling'
+  |> await fetch(#, { mode: 'cors' });
+response
+  |> #.headers.get('content-type')
+  |> #??.toLowerCase()
+  |> #.indexOf('application/json')
+  |> # >= 0
+  |> # ? response : throw new TypeError()
+  |> await #.json()
+  |> processJSON
+```
+
+<td>
+
+```js
+fetch('https://pk.example/berlin-calling',
+  { mode: 'cors' }
+).then(response => {
+  if (response.headers.get('content-type')
+    ??.toLowerCase()
+    .indexOf('application/json') >= 0
+  ) {
+    return response.json()
+  } else {
+    throw new TypeError()
+  }
+}).then(processJSON)
+```
+
+</table>
+
 ## [jQuery][]
 <table>
 <thead>
@@ -1459,88 +1543,6 @@ pify(fs.readFile)('package.json', 'utf8')
   .then(data => {
     console.log(JSON.parse(data).name)
   })
-```
-
-</table>
-
-## [WHATWG Fetch Standard][]
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-'/music/pk/altes-kamuffel'
-  |> await fetch(#)
-  |> await #.blob()
-  |> playBlob
-```
-
-<td>
-
-```js
-fetch('/music/pk/altes-kamuffel')
-  .then(res => res.blob())
-  .then(playBlob)
-```
-
-<tr>
-<td>
-
-```js
-'https://example.com/'
-  |> await fetch(#, { method: 'HEAD' })
-  |> #.headers.get('content-type')
-  |> log
-```
-
-<td>
-
-```js
-fetch('https://example.com/',
-  { method: 'HEAD' }
-).then(res =>
-  log(res.headers.get('content-type'))
-)
-```
-
-<tr>
-<td>
-
-```js
-'https://pk.example/berlin-calling'
-  |> await fetch(#, { mode: 'cors' });
-response
-  |> #.headers.get('content-type')
-  |> #??.toLowerCase()
-  |> #.indexOf('application/json')
-  |> # >= 0
-  |> # ? response : throw new TypeError()
-  |> await #.json()
-  |> processJSON
-```
-
-<td>
-
-```js
-fetch('https://pk.example/berlin-calling',
-  { mode: 'cors' }
-).then(response => {
-  if (response.headers.get('content-type')
-    ??.toLowerCase()
-    .indexOf('application/json') >= 0
-  ) {
-    return response.json()
-  } else {
-    throw new TypeError()
-  }
-}).then(processJSON)
 ```
 
 </table>
