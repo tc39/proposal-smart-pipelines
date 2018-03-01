@@ -1056,19 +1056,30 @@ function castPath (value, object) {
 function createRound (methodName) {
   var func = Math[methodName]
   return function (number, precision) {
-    number = toNumber(number)
-    precision |> do {
+    number = number |> toNumber
+    precision = precision |> do {
       if (# == null)
         0
       else
         |> toInteger |> nativeMin(#, 292)
-    } |> do {
+    } {
       if (precision) {
         // Shift with exponential notation to avoid floating-point issues.
         // See [MDN](https://mdn.io/round#Examples) for more details.
-        |> [TODO]
+        number
+          |> toString
+          |> `${#}e`
+          |> ...#.split('e')
+          |> `${#}e${+## + precision}`
+          |> func
+          |> toString
+          |> `${#}e`
+          |> ...#.split('e')
+          |> `${#}e${+## - precision}`
+          |> +#
       } else
-        [TODO]
+        number
+          |> func
     }
   }
 }
