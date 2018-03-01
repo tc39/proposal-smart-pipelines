@@ -1405,9 +1405,9 @@ class LipFuzzTransformer {
             |> chunk.substring
           # |> #.index
             |> chunk.substring(0, #)
-        } else {
-          #
         }
+        else
+          chunk
       }
       |> controller.enqueue
   }
