@@ -10,10 +10,11 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 
 - [Motivation](#motivation)
   - [Core Proposal](#core-proposal)
-  - [WHATWG Fetch Standard](#whatwg-fetch-standard)
+  - [WHATWG Fetch Standard (Core Proposal only)](#whatwg-fetch-standard-core-proposal-only)
+  - [jQuery (Core Proposal only)](#jquery-core-proposal-only)
   - [Additional Feature UP](#additional-feature%C2%A0up)
-  - [jQuery](#jquery)
-  - [Pify](#pify)
+  - [WHATWG Fetch Standard (Core Proposal + Additional Feature UP)](#whatwg-fetch-standard-core-proposal--additional-feature%C2%A0up)
+  - [jQuery (Core Proposal + Additional Feature UP)](#jquery-core-proposal--additional-feature%C2%A0up)
   - [Additional Feature CT](#additional-feature%C2%A0ct)
   - [Underscore.js](#underscorejs)
   - [Additional Feature PF](#additional-feature%C2%A0pf)
@@ -44,8 +45,10 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [Conceptual generality](#conceptual-generality)
     - [Human writability](#human-writability)
     - [Novice learnability](#novice-learnability)
+- [Smart body syntax](#smart-body-syntax)
 - [Relations to other work](#relations-to-other-work)
   - [Other ECMAScript proposals](#other-ecmascript-proposals)
+    - [`do` expressions](#do-expressions)
   - [Possible future extensions to the topic concept](#possible-future-extensions-to-the-topic-concept)
   - [Alternative solutions explored](#alternative-solutions-explored)
 - [Appendix: Explanation of nomenclature](#appendix-explanation-of-nomenclature)
@@ -834,8 +837,6 @@ pipeline body apply also to topical bodies that are `do` expressions.
 The [WHATWG Fetch Standard][] contains several examples of using the DOM `fetch`
 function, resolving its promises into values, then processing the values in
 various ways. These examples may become more easily readable with smart pipelines.
-The final examples also use [Additional Feature UP][] for extra terseness within
-inner `do` expressions and inner `if` statements.
 
 <table>
 <thead>
@@ -965,11 +966,10 @@ fetch('https://pk.example/berlin-calling',
   if (response.headers.get('content-type')
     ??.toLowerCase()
     .indexOf('application/json') >= 0
-  ) {
+  )
     return response.json()
-  } else {
+  else
     throw new TypeError()
-  }
 }).then(processJSON)
 ```
 
@@ -981,15 +981,15 @@ fetch('https://pk.example/berlin-calling',
   |> await fetch(#, { mode: 'cors' })
   |> do {
     if (
-      |> #.headers.get('content-type')
-      |> #??.toLowerCase()
-      |> #.indexOf('application/json')
-      |> # >= 0
+      # |> #.headers.get('content-type')
+        |> #??.toLowerCase()
+        |> #.indexOf('application/json')
+        |> # >= 0
     )
       throw new new TypeError()
     else
-      |> await #.json()
-      |> processJSON
+      # |> await #.json()
+        |> processJSON
   }
 }
 ```
@@ -1023,15 +1023,15 @@ do {
   |> await fetch(#, { mode: 'cors' })
   |> do {
     if (
-      |> #.headers.get('content-type')
-      |> #??.toLowerCase()
-      |> #.indexOf('application/json')
-      |> # >= 0
+      # |> #.headers.get('content-type')
+        |> #??.toLowerCase()
+        |> #.indexOf('application/json')
+        |> # >= 0
     )
       throw new new TypeError()
     else
-      |> await #.json()
-      |> processJSON
+      # |> await #.json()
+        |> processJSON
   }
 }
 ```
@@ -1059,42 +1059,12 @@ do {
 
 </table>
 
-## Additional Feature UP
-The first Additional Feature adds a “headless” unary form of the pipeline
-operator. The implicit, default head is the topic reference `#` itself, which
-must be defined within the outer lexical environment. This may occur within `if`
-statements, `try` statements, and eventually [`do` expressions][].
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-x |> do {
-}
-```
-
-<td>
-
-```js
-x |> do {
-}
-```
-</table>
-
-## jQuery
+## jQuery (Core Proposal only)
 As the single most-used JavaScript library in the world, [jQuery][] has provided
 an alternative human-ergonomic API to the DOM since 2006. jQuery is under the
 stewardship of the [JS Foundation][], a member organization of TC39 through which
 jQuery’s developers are represented in TC39. jQuery’s API requires complex data
-processing that becomes more readable with smart pipelines. Several examples
-below also use [Additional Feature UP][] for extra terseness.
+processing that becomes more readable with smart pipelines.
 
 <table>
 <thead>
@@ -1203,13 +1173,11 @@ From [jquery/src/core/init.js][]. Used `??.` in both versions for conciseness.
 ```js
 match |> do {
   if (this[match] |> isFunction)
-    |> context[#] |> this[match](#)
+    # |> context[#] |> this[match](#)
   else
-    |> context[#] |> this.attr(match, #)
+    # |> context[#] |> this.attr(match, #)
 }
 ```
-(This pipeline uses [Additional Feature UP][], in which unary `|> …` is short
-for `# |> …`.)
 Note how, in this version, the parallelism between the two clauses is very
 clear: they both share the form `match |> context[#] |> something(match, #)`.
 
@@ -1222,7 +1190,9 @@ if (isFunction(this[match])) {
   this.attr(match, context[match])
 }
 ```
-From [jquery/src/core/init.js][].
+From [jquery/src/core/init.js][]. Here, the parallelism between the clauses
+is somewhat less clear: the common expression `context[match]` is at the end
+of both clauses, at a different offset from the margin.
 
 <tr>
 <td>
@@ -1249,6 +1219,304 @@ return context |> do {
     …
   // Handle $(expr, $(...))
   else if (!# || #.jquery)
+    # |> # || root
+      |> #.find(selector)
+  // Handle $(expr, context)
+  else
+    # |> this.constructor
+      |> #.find(selector)
+}
+```
+The parallelism between the final two clauses becomes clearer here too.
+They both are of the form `# |> something |> #.find(selector)`.
+
+<td>
+
+```js
+// Handle HTML strings
+if (…) {
+  …
+// Handle $(expr, $(...))
+} else if (!context || context.jquery) {
+  return (context || root).find(selector)
+// Handle $(expr, context)
+} else {
+  return this.constructor(context)
+    .find(selector);
+}
+```
+From [jquery/src/core/init.js][]. The parallelism is much less clear here.
+
+<tr>
+<td>
+
+```js
+return selector |> do {
+  if (typeof # === 'string')
+    …
+  else if (# |> isFunction) {
+    if (root.ready !== undefined)
+      root.ready(#)
+    else
+      #(jQuery)
+  }
+  else
+    jQuery.makeArray(#, this)
+}
+```
+
+<td>
+
+```js
+if (typeof selector === 'string') {
+  …
+} else if (isFunction(selector)) {
+  return root.ready !== undefined
+    ? root.ready(selector)
+    : selector(jQuery)
+}
+return jQuery.makeArray(selector, this)
+```
+From [jquery/src/core/access.js][].
+
+</table>
+
+## Additional Feature UP
+The first Additional Feature adds a “headless” unary form of the pipeline
+operator. The implicit, default head is the topic reference `#` itself, which
+must be defined within the outer lexical environment. This may occur within `if`
+statements, `try` statements, and eventually [`do` expressions][].
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+x |> do {
+  if (# |> predicate)
+    # |> f |> # ** 2
+  else
+    # |> g |> # ** 3
+}
+```
+In this version, which uses Core Proposal syntax only, several pipelines start
+with the phrase `# |>`.
+
+<td>
+
+```js
+x |> do {
+  if (|> predicate)
+    |> f |> # ** 2
+  else
+    |> g |> # ** 3
+}
+```
+In this version, which also uses Additional Feature UP, those pipelines omit the
+phrase `# |>`, using a headless, unary `|>`, which is implied to use `#` as the
+value of their topics.
+
+</table>
+
+## WHATWG Fetch Standard (Core Proposal + Additional Feature UP)
+Revisiting the [examples above from the WHATWG Fetch Standard][WHATWG Fetch +
+Core Proposal] with [Additional Feature UP][] shows how terseness could be
+further improved within inner `do` expressions and inner `if` statements.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+
+<tr>
+<td>
+
+```js
+'https://pk.example/berlin-calling'
+  |> await fetch(#, { mode: 'cors' })
+  |> do {
+    if (
+      # |> #.headers.get('content-type')
+        |> #??.toLowerCase()
+        |> #.indexOf('application/json')
+        |> # >= 0
+    )
+      throw new new TypeError()
+    else
+      # |> await #.json()
+        |> processJSON
+  }
+}
+```
+
+<td>
+
+```js
+fetch('https://pk.example/berlin-calling',
+  { mode: 'cors' }
+).then(response => {
+  if (response.headers.get('content-type')
+    ??.toLowerCase()
+    .indexOf('application/json') >= 0
+  )
+    return response.json()
+  else
+    throw new TypeError()
+}).then(processJSON)
+```
+
+<tr>
+<td>
+
+```js
+'https://pk.example/berlin-calling'
+  |> await fetch(#, { mode: 'cors' })
+  |> do {
+    if (
+      |> #.headers.get('content-type')
+      |> #??.toLowerCase()
+      |> #.indexOf('application/json')
+      |> # >= 0
+    )
+      throw new new TypeError()
+    else
+      |> await #.json()
+      |> processJSON
+  }
+}
+```
+
+<td>
+
+```js
+fetch('https://pk.example/berlin-calling',
+  { mode: 'cors' }
+).then(response => {
+  if (response.headers.get('content-type')
+    ??.toLowerCase()
+    .indexOf('application/json') >= 0
+  )
+    return response.json()
+  else
+    throw new TypeError()
+}).then(processJSON)
+```
+
+</table>
+
+## jQuery (Core Proposal + Additional Feature UP)
+Similarly, revisiting the [examples above from jQuery][jQuery + Core Proposal]
+with [Additional Feature UP][] shows how terseness could be further improved
+within inner `do` expressions and inner `if` statements.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+match |> do {
+  if (this[match] |> isFunction)
+    # |> context[#] |> this[match](#)
+  else
+    # |> context[#] |> this.attr(match, #)
+}
+```
+
+<td>
+
+```js
+if (isFunction(this[match])) {
+  this[match](context[match])
+} else
+  this.attr(match, context[match])
+}
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+match |> do {
+  if (this[match] |> isFunction)
+    |> context[#] |> this[match](#)
+  else
+    |> context[#] |> this.attr(match, #)
+}
+```
+
+<td>
+
+```js
+if (isFunction(this[match])) {
+  this[match](context[match])
+} else
+  this.attr(match, context[match])
+}
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+return context |> do {
+  // Handle HTML strings
+  if (…)
+    …
+  // Handle $(expr, $(...))
+  else if (!# || #.jquery)
+    # |> # || root
+      |> #.find(selector)
+  // Handle $(expr, context)
+  else
+    # |> this.constructor
+      |> #.find(selector)
+}
+```
+
+<td>
+
+```js
+// Handle HTML strings
+if (…) {
+  …
+// Handle $(expr, $(...))
+} else if (!context || context.jquery) {
+  return (context || root).find(selector)
+// Handle $(expr, context)
+} else {
+  return this.constructor(context)
+    .find(selector);
+}
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+return context |> do {
+  // Handle HTML strings
+  if (…)
+    …
+  // Handle $(expr, $(...))
+  else if (!# || #.jquery)
     |> # || root
     |> #.find(selector)
   // Handle $(expr, context)
@@ -1257,7 +1525,6 @@ return context |> do {
     |> #.find(selector)
 }
 ```
-The parallelism between the two clauses becomes clearer.
 
 <td>
 
@@ -1283,6 +1550,36 @@ From [jquery/src/core/init.js][].
 return selector |> do {
   if (typeof # === 'string')
     …
+  else if (# |> isFunction)
+    root.ready !== undefined
+      ? root.ready(#)
+      : #(jQuery)
+  else
+    jQuery.makeArray(#, this)
+}
+```
+
+<td>
+
+```js
+if (typeof selector === 'string') {
+  …
+} else if (isFunction(selector)) {
+  return root.ready !== undefined
+    ? root.ready(selector)
+    : selector(jQuery)
+}
+return jQuery.makeArray(selector, this)
+```
+From [jquery/src/core/access.js][].
+
+<tr>
+<td>
+
+```js
+return selector |> do {
+  if (typeof # === 'string')
+    …
   else if (|> isFunction)
     root.ready !== undefined
       ? root.ready(#)
@@ -1291,7 +1588,6 @@ return selector |> do {
     jQuery.makeArray(#, this)
 }
 ```
-This example uses [`do` expressions][] and [Additional Feature UP][].
 
 <td>
 
@@ -1687,7 +1983,7 @@ const doubleThenSquareThenHalfAsync =
   =|> double |> await squareAsync # |> half
 ```
 Unlike the other version, this syntax does not need to give implicit special
-treatment to async functions and generators.
+treatment to async functions.
 
 <td>
 
@@ -3988,3 +4284,5 @@ do { do { do { do { 3 * 3 } } }
 [tc39/proposal-decorators#42]: tc39/proposal-decorators#42
 [tc39/proposal-decorators#60]: tc39/proposal-decorators#60
 [Visual Basic’s `select` statement]: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/select-case-statement
+[WHATWG Fetch + Core Proposal]: #whatwg-fetch-standard-core-proposal
+[jQuery + Core Proposal]: #jquery-standard-core-proposal
