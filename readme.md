@@ -721,7 +721,10 @@ that they will not shadow topics either. See [other ECMAScript proposals][].)
 
 ## WHATWG Fetch Standard
 The [WHATWG Fetch Standard][] contains several examples of using the DOM `fetch`
-function, examples which may become more readable with smart pipelines.
+function, resolving its promises into values, then processing the values in
+various ways. These examples may become more easily readable with smart pipelines.
+The final examples also use [Additional Feature UP][] for extra terseness within
+inner `do` expressions and inner `if` statements.
 
 <table>
 <thead>
@@ -747,6 +750,13 @@ fetch('/music/pk/altes-kamuffel')
   .then(res => res.blob())
   .then(playBlob)
 ```
+```js
+playBlob(
+  await (
+    await fetch('/music/pk/altes-kamuffel')
+  ).blob()
+)
+```
 
 <tr>
 <td>
@@ -755,7 +765,7 @@ fetch('/music/pk/altes-kamuffel')
 'https://example.com/'
   |> await fetch(#, { method: 'HEAD' })
   |> #.headers.get('content-type')
-  |> log
+  |> console.log
 ```
 
 <td>
@@ -763,8 +773,9 @@ fetch('/music/pk/altes-kamuffel')
 ```js
 fetch('https://example.com/',
   { method: 'HEAD' }
-).then(res =>
-  log(res.headers.get('content-type'))
+).then(response =>
+  console.log(
+    response.headers.get('content-type'))
 )
 ```
 
@@ -772,16 +783,66 @@ fetch('https://example.com/',
 <td>
 
 ```js
-'https://pk.example/berlin-calling'
-  |> await fetch(#, { mode: 'cors' });
-response
+'https://example.com/'
+  |> await fetch(#, { method: 'HEAD' })
   |> #.headers.get('content-type')
-  |> #??.toLowerCase()
-  |> #.indexOf('application/json')
-  |> # >= 0
-  |> # ? response : throw new TypeError()
-  |> await #.json()
-  |> processJSON
+  |> console.log
+```
+
+<td>
+
+```js
+console.log(
+  (await
+    fetch('https://example.com/',
+      { method: 'HEAD' }
+    )
+  ).headers.get('content-type')
+)
+```
+
+<tr>
+<td>
+
+```js
+'https://example.com/'
+  |> await fetch(#, { method: 'HEAD' })
+  |> #.headers.get('content-type')
+  |> console.log
+```
+
+<td>
+
+```js
+do {
+  const url = 'https://example.com/'
+  const response =
+    await fetch(url, { method: 'HEAD' })
+  const contentType =
+    response.headers.get('content-type')
+  console.log(contentType)
+}
+```
+
+<tr>
+<td>
+
+```js
+'https://pk.example/berlin-calling'
+  |> await fetch(#, { mode: 'cors' })
+  |> do {
+    if (
+      |> #.headers.get('content-type')
+      |> #??.toLowerCase()
+      |> #.indexOf('application/json')
+      |> # >= 0
+    )
+      throw new new TypeError()
+    else
+      |> await #.json()
+      |> processJSON
+  }
+}
 ```
 
 <td>
@@ -801,10 +862,93 @@ fetch('https://pk.example/berlin-calling',
 }).then(processJSON)
 ```
 
-</table>
+<tr>
+<td>
 
 ## Additional Feature UP
 [TODO]
+```js
+'https://pk.example/berlin-calling'
+  |> await fetch(#, { mode: 'cors' })
+  |> do {
+    if (
+      |> #.headers.get('content-type')
+      |> #??.toLowerCase()
+      |> #.indexOf('application/json')
+      |> # >= 0
+    )
+      throw new new TypeError()
+    else
+      |> await #.json()
+      |> processJSON
+  }
+}
+```
+
+<td>
+
+```js
+do {
+  const response =
+    await fetch('https://pk.example/berlin-calling',
+      { mode: 'cors' }
+    )
+  const json = do {
+    if (response.headers.get('content-type')
+      ??.toLowerCase()
+      .indexOf('application/json') >= 0
+    ) {
+      response.json()
+    } else {
+      throw new TypeError()
+    }
+  processJSON(json)
+}
+```
+
+<tr>
+<td>
+
+```js
+'https://pk.example/berlin-calling'
+  |> await fetch(#, { mode: 'cors' })
+  |> do {
+    if (
+      |> #.headers.get('content-type')
+      |> #??.toLowerCase()
+      |> #.indexOf('application/json')
+      |> # >= 0
+    )
+      throw new new TypeError()
+    else
+      |> await #.json()
+      |> processJSON
+  }
+}
+```
+
+<td>
+
+```js
+do {
+  const response =
+    await fetch('https://pk.example/berlin-calling',
+      { mode: 'cors' }
+    )
+  const json = do {
+    if (response.headers.get('content-type')
+      ??.toLowerCase()
+      .indexOf('application/json') >= 0
+    ) {
+      response.json()
+    } else {
+      throw new TypeError()
+    }
+  processJSON(json)
+}
+```
+
+</table>
 
 ## jQuery
 As the single most-used JavaScript libraries in the world, [jQuery][] has provided
