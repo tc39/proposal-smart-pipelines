@@ -76,11 +76,11 @@ pipeline-placeholder discussions], discussions which culminated in an
 invitation]. A **prototype Babel plugin** is also brewing.
 
 The **Additional Features** are **not part of the Stage-0 Core Proposal**. They
-are included to illustrate possible **separate follow-up proposals** in the case
-that the Core Proposal advances past Stage 1. Together, they demonstrate a
-**unified vision** of a future in which composition, partial application, method
-extraction, and error handling are all tersely expressible with the same simple
-and elegant pipeline/topic concept.
+are included to illustrate possible **separate follow-up proposals** for the case
+in which the Core Proposal advances past Stage 1. Together, the Core Proposal
+and the Additional Features demonstrate a **unified vision** of a future in
+which composition, partial application, method extraction, and error handling
+are all tersely expressible with the same simple pipeline/topic concept.
 
 You can take part in the discussions on the **[GitHub issue tracker][]**. When you
 file an issue, please note in it that you are talking **specifically** about
