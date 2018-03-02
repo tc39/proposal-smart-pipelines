@@ -570,8 +570,10 @@ type of block expression. Both versions of this code return an arrow function.
 <td>
 
 ```js
-const $ = value;
-x => $ + x
+do {
+  const $ = value
+  x => $ + x
+}
 ```
 The arrow function lexically closes over the topic value, takes one parameter,
 and returns the sum of the topic value and the parameter.
@@ -589,8 +591,10 @@ can be useful for using callbacks in a pipeline.
 <td>
 
 ```js
-const $ = value;
-settimeout(() => $ * 5)
+do {
+  const $ = value
+  settimeout(() => $ * 5)
+}
 ```
 The topic value (here represented by a normal variable `$`) is still lexically
 accessible within the arrow function’s body in both examples.
@@ -608,8 +612,10 @@ The arrow function can also be created on a separate pipeline step.
 <td>
 
 ```js
-const $ = value;
-settimeout(() => $ * 5)
+do {
+  const $ = value;
+  settimeout(() => $ * 5)
+}
 ```
 The result is the same.
 
@@ -654,9 +660,11 @@ Nested pipelines in the body are not encouraged, but they are still permitted.
 <td>
 
 ```js
-const $ = value;
-f(x => g($ + x) * 2)
-  .toString()
+do {
+  const $ = value;
+  f(x => g($ + x) * 2)
+    .toString()
+}
 ```
 A nested pipeline works consistently. It merely shadows the topic
 reference within its own body.
@@ -675,12 +683,13 @@ value
 <td>
 
 ```js
-const $ = value ** 2;
-
-f(x => {
-  const _$ = g($, x);
-  return [_$ * 3, _$ * 5]
-})
+do {
+  const $ = value ** 2;
+  f(x => {
+    const _$ = g($, x);
+    return [_$ * 3, _$ * 5]
+  })
+}
 ```
 This code still behaves consistently.
 
