@@ -358,8 +358,20 @@ body syntax][]**.
 <td>
 
 ```js
-g(-((f(value) + 2) * 3), x)
+g(
+  -(f(value) + 2)
+    * 3,
+  x
+)
 ```
+In contrast to the version with pipes, this code is deeply nested, not flat.
+
+The expression has two levels of indentation instead of one.
+Reading its data flow requires checking both the beginning and end of each
+expression, and each step expression gradually increases in size.
+
+Inserting or removing any step of the data flow also requires changes to the
+indentation of any previous steps’ lines.
 
 <tr>
 <td>
@@ -376,22 +388,6 @@ that is an **[early error][]**. Such a degenerate pipeline has a very good
 chance of actually being an accidental bug.
 
 <td>
-
-```js
-g(
-  -(f(value) + 2)
-    * 3,
-  x
-)
-```
-In contrast to the version with pipes, this code is deeply nested, not flat.
-
-The expression has two levels of indentation instead of one.
-Reading its data flow requires checking both the beginning and end of each
-expression, and each step expression gradually increases in size.
-
-Inserting or removing any step of the data flow also requires changes to the
-indentation of any previous steps’ lines.
 
 <tr>
 <td>
