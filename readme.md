@@ -1,5 +1,19 @@
+<style>
+html {
+  font: 12px / 18px sans-serif;
+}
 
+h1, h2, h3, h4, h5, h6, p, pre {
+  box-sizing: border-box;
+  margin: 1.5rem 1rem;
+}
 
+table {
+  box-sizing: border-box;
+  margin: 1.5rem -1rem;
+  border-collapse: collapse;
+  font-size: unset;
+}
 
 
 # Smart pipelines
@@ -89,6 +103,7 @@ been occurring on GitHub at [tc39/proposal-pipeline-operator
 issue #91][topic-token bikeshedding].
 
 # Motivation
+## Core Proposal
 
 <table>
 <thead>
@@ -786,8 +801,414 @@ fetch('https://pk.example/berlin-calling',
 
 </table>
 
-## [jQuery][]
-As the single most-used JavaScript libraries in the world, jQuery has provided
+## Additional Feature UP
+[TODO]
+
+## Additional Feature PF
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<th>
+
+Pipe functions
+
+<td>
+
+A new type of function, the pipe function `=|>` …, would act as if it were `$ =>
+$ |> …`, where `$` is a hygienically unique variable. A pipe function does not
+take a parameter list; it is essentially a unary operator on an expression.
+(Whether it could optionally take a parameter list is up for debate. It would be
+confusing if skinny arrows were allowed to include or omit parameters while fat
+arrows still always required parameters. See also [Brian Terlson’s proposal for
+headless fat-arrow functions][ECMAScript headless-arrow proposal]).
+
+A pipe function would bind its first argument to the topic reference within its
+body. It would also parse its body using the same smart body syntax that the
+pipeline operator uses.
+
+**More than any other** possible extension in this table, pipe functions would
+dramatically increase the potential of tacit programming. Just this single
+additional operator seems to solve:\
+tacit unary-**functional composition**,\
+tacit unary-functional **partial application**,\
+and tacit **method extraction**,\
+…all with a single additional concept.
+
+<tr>
+<td>
+
+```js
+=|> #
+```
+
+<td>
+
+```js
+$ => $ |> #
+```
+```js
+$ => $
+```
+
+<tr>
+<td>
+
+```js
+=|> # + 2
+```
+
+<td>
+
+```js
+$ => $ |> # + 2
+```
+```js
+$ => $ + 2
+```
+
+<tr>
+<td>
+
+```js
+=|> x + 2 // 🚫
+```
+
+<td>
+
+This is a syntax error, because the topic is not used anywhere in the pipe
+function’s body – just like with `… |> x + 2`. [TODO: Link to early error.]
+
+<tr>
+<td>
+
+```js
+=> # + 2 // 🚫
+```
+
+<td>
+
+If the skinny arrow `=|>` is typoed as a fat arrow `=>` instead, then this is
+a syntax error.
+This is a syntax error if not within a topic context.
+function’s body – just like with `… |> x + 2`. [TODO: Link to early error.]
+
+<tr>
+<td>
+
+```js
+=|> f(2, #)
+```
+
+<td>
+
+```js
+$ => $ |> f(2, #)
+```
+```js
+$ => f(2, $)
+```
+
+<tr>
+<td>
+
+```js
+=|> f |> g |> h(2, #) |> # + 2
+```
+**Functional composition** on unary functions is equivalent to piping a value
+through several function calls, within a unary function, starting with the outer
+function’s single tacit parameter.
+
+<td>
+
+```js
+$ => $
+```
+```js
+$ => h(2, g(f($))) + 2
+```
+
+<tr>
+<td>
+
+```js
+const doubleThenSquareThenHalfAsync =
+  =|> double |> await squareAsync # |> half
+```
+Unlike the other version, this syntax does not need to give implicit special
+treatment to async functions and generators.
+
+<td>
+
+```js
+const doubleThenSquareThenHalfAsync =
+  double +> squareAsync +> half
+```
+From the proposal for [syntactic functional composition][]
+by [Gilbert “mindeavor”][mindeavor].
+
+<tr>
+<td>
+
+```js
+const addOne = =|> add(1, #)
+addOne(2) // 3
+```
+**Partial application into a unary function** is equivalent to piping a tacit
+parameter into a function-call expression, within which the one parameter is
+resolvable.
+
+<td>
+
+```js
+const addOne = add(1, ?)
+addOne(2) // 3
+```
+Pipe functions look similar to the proposal for [syntactic partial
+application][] by [Ron Buckton][], except that partial-application expressions
+are simply pipeline bodies that are prefixed by a topic arrow.
+
+<tr>
+<td>
+
+```js
+const addTen = =|> add(#, 10)
+addTen(2) // 12
+```
+
+<td>
+
+```js
+const addTen = add(?, 10)
+addTen(2) // 12
+```
+
+<tr>
+<td>
+
+```js
+let newScore = player.score
+  |> add(7, #)
+  |> clamp(0, 100, #)
+```
+
+<td>
+
+```js
+let newScore = player.score
+  |> add(7, ?)
+  |> clamp(0, 100, ?)
+```
+
+<tr>
+
+<tr>
+<td>
+
+```js
+Promise.resolve(123).then(=|> console.log)
+```
+**Method extraction** can be addressed by pipe functions alone, as a natural
+result of their pipe-operator-like semantics.\
+`=|> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
+bare style. This in turn is `$ => console.log($)`…
+
+<td>
+
+```js
+Promise.resolve(123).then(::console.log)
+```
+…and `$ => console.log($)` is just a wordier version of which evaluates into a
+function equivalent to `console.log.bind(console)`.
+
+<tr>
+<td>
+
+```js
+$('.some-link').on('click', =|> view.reset)
+```
+
+<td>
+
+```js
+$('.some-link').on('click', ::view.reset)
+```
+
+<tr>
+<td>
+
+```js
+const { hasOwnProperty } = Object.prototype
+const x = { key: 5 }
+x::hasOwnProperty
+x::hasOwnProperty('key')
+```
+To do terse **method calling/binding**, the `::` operator would still be required.
+
+<td>
+
+```js
+const { hasOwnProperty } = Object.prototype
+const x = { key: 5 }
+x::hasOwnProperty
+x::hasOwnProperty('key')
+```
+But the `::` would only need to handle method calls. No operator overloading of
+`::` for method extraction would be needed.
+
+</table>
+
+## Additional Feature MT
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<th>
+
+Multiple lexical topics
+
+<td>
+
+Lexical environments could extended to support multiple topics at once. Regular
+pipelines would still have only one topic at a time. But pipe functions could
+bind multiple parameters to multiple topic references. `#` (as an alias for
+`#0`) would already represent its first parameters. But then `#1`, `#2`, … would
+represent its second, third, fourth, etc. parameters. Parameters in positions
+after the maximum-number topic used in the lexical context could be put into an
+array, to which the rest-topic reference (`...` or perhaps `...#`) would be
+bound in turn.
+
+This would be somewhat akin to Clojure’s compact anonymous functions, which use
+`%` aka `%1`, then `%2`, `%3`, … for its parameters within the compact
+functions’ bodies.
+
+Developers may be expected not to use pipe functions for functions with many
+parameters. But an alternative to `#`, `##`, `###`, …, not shown here, would be
+to use `#` or `#0`, then `#1`, `#2`, … for topic references instead.
+
+<tr>
+<td>
+
+```js
+(4, 3)
+  |> # - ##
+```
+
+<td>
+
+```js
+4 - 3
+```
+
+<tr>
+<td>
+
+```js
+(4, 3)
+  |> (f, # ** 2 + ##)
+  |> # - ##
+```
+
+<td>
+
+```js
+f(4) - (4 ** 2 + 3)
+```
+
+<tr>
+<td>
+
+```js
+array.sort(=|> # - ##)
+```
+
+<td>
+
+```js
+array.sort(function (x0, x1) {
+  return x0 - x1
+})
+```
+
+<tr>
+<td>
+
+```js
+[ { x: 22 }, { x: 42 } ]
+  .map(=|> #.x)
+  .reduce(=|> # - ##, 0)
+```
+
+<td>
+
+```js
+[ { x: 22 }, { x: 42 } ]
+  .map(el => el.x)
+  .reduce((x0, x1) => x0 - x1, 0)
+```
+
+<tr>
+
+<tr>
+<td>
+
+```js
+const f = (x, y, z) => [x, y, z]
+const g = f(#, 4, ##)
+g(1, 2) // [1, 4, 2]
+```
+**Partial application into an n-ary function** is solved by pipe functions with
+multiple topics.
+
+<td>
+
+```js
+const f = (x, y, z) => [x, y, z]
+const g = =|> f(?, 4, ?)
+g(1, 2) // [1, 4, 2]
+```
+[R. Buckton’s current proposal][syntactic partial application] assumes that each
+use of the same `?` placeholder token represents a different parameter. In contrast,
+each use of `#` within the same scope always refers to the same value. This is
+why additional topic parameters are required. The resulting model is more
+flexible: `=|> f(#, 4, ##)` is different from `=|> f(#, 4, #)`. The latter sensibly
+refers to a *unary* function that passes the same *one* argument into both the
+first and third parameters of the original function `f`.
+
+<tr>
+<td>
+
+```js
+const maxGreaterThanZero =
+  =|> Math.max(0, ...)
+maxGreaterThanZero(1, 2) // 2
+maxGreaterThanZero(-1, -2) // 0
+```
+Partial application into a variadic function requires a multi-topic environment
+and a rest-topic reference `...`.
+
+<td>
+
+```js
+const maxGreaterThanZero =
+  Math.max(0, ...)
+maxGreaterThanZero(1, 2) // 2
+maxGreaterThanZero(-1, -2) // 0
+```
+In this case, the topic function version looks once again nearly identical to
+the other proposal’s code.
+
+</table>
+
+## jQuery
+As the single most-used JavaScript libraries in the world, [jQuery][] has provided
 an ergonomic API since 2006. This API requires complex data processing that
 becomes more readable with smart pipelines.
 
@@ -1120,6 +1541,104 @@ function (obj) {
   return isArrayLike(obj)
     ? obj.length
     : _.keys(obj).length;
+}
+```
+
+</table>
+
+## Additional Feature CT
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<th>
+
+Tacit error capture
+
+<td>
+
+With this smart-pipe proposal only, all `try` statements’ `catch` clauses would
+prohibit the use of `#` within their bodies, except where `#` is inside an inner
+pipeline inside the `catch` clause. [TODO: Link to sections explaining these
+inner block rules.]
+
+With another, future proposal, all `catch` causes would implicitly bind
+their caught errors to `#`. This implicit binding would be in addition to the
+explicit binding of a normal variable `error` declared within the parenthesized
+antecedent `try { … } catch (error) { … }`.
+
+An additional bare `catch` form, completely lacking a parenthesized antecedent,
+has already been proposed as [ECMAScript optional catch binding][]. This bare
+form would also support implicit `#` binding, serving as the fully tacit form
+used in this example. [TODO: Link to section on deep nesting.] The bare form,
+along with the hypothetical headless property syntax from above, are
+demonstrated here.
+
+<tr>
+<td>
+
+```js
+try {
+  …
+} catch {
+  log(.message)
+} finally {
+  …
+}
+```
+
+<td>
+
+```js
+try {
+  …
+} catch (error) {
+  log(#.message)
+} finally {
+  …
+}
+```
+
+<tr>
+<td>
+
+```js
+try {
+  …
+} catch {
+  match {
+    MyError:
+      #|> f
+    TypeError:
+      #|> g
+    SyntaxError:
+      #|> f |> g
+    Error:
+      `Error: ${#.message}`
+  }
+}
+```
+
+<td>
+
+```js
+try {
+  …
+} catch (error) {
+  match (error) {
+    MyError:
+      error |> f
+    TypeError:
+      error |> g
+    SyntaxError:
+      error |> f |> g
+    Error:
+      `Error: ${error.message}`
+  }
 }
 ```
 
@@ -2387,393 +2906,6 @@ variables][], and [human writability][], while still preserving [simple
 scoping][] and [static analyzability][].
 
 <table>
-
-<tr>
-<th>
-
-Pipe functions
-
-<td>
-
-A new type of function, the pipe function `=|>` …, would act as if it were `$ =>
-$ |> …`, where `$` is a hygienically unique variable. A pipe function does not
-take a parameter list; it is essentially a unary operator on an expression.
-(Whether it could optionally take a parameter list is up for debate. It would be
-confusing if skinny arrows were allowed to include or omit parameters while fat
-arrows still always required parameters. See also [Brian Terlson’s proposal for
-headless fat-arrow functions][ECMAScript headless-arrow proposal]).
-
-A pipe function would bind its first argument to the topic reference within its
-body. It would also parse its body using the same smart body syntax that the
-pipeline operator uses.
-
-**More than any other** possible extension in this table, pipe functions would
-dramatically increase the potential of tacit programming. Just this single
-additional operator seems to solve:\
-tacit unary-**functional composition**,\
-tacit unary-functional **partial application**,\
-and tacit **method extraction**,\
-…all with a single additional concept.
-
-<tr>
-<td>
-
-```js
-=|> #
-```
-
-<td>
-
-```js
-$ => $ |> #
-```
-```js
-$ => $
-```
-
-<tr>
-<td>
-
-```js
-=|> # + 2
-```
-
-<td>
-
-```js
-$ => $ |> # + 2
-```
-```js
-$ => $ + 2
-```
-
-<tr>
-<td>
-
-```js
-=|> x + 2 // 🚫
-```
-
-<td>
-
-This is a syntax error, because the topic is not used anywhere in the pipe
-function’s body – just like with `… |> x + 2`. [TODO: Link to early error.]
-
-<tr>
-<td>
-
-```js
-=> # + 2 // 🚫
-```
-
-<td>
-
-If the skinny arrow `=|>` is typoed as a fat arrow `=>` instead, then this is
-a syntax error.
-This is a syntax error if not within a topic context.
-function’s body – just like with `… |> x + 2`. [TODO: Link to early error.]
-
-<tr>
-<td>
-
-```js
-=|> f(2, #)
-```
-
-<td>
-
-```js
-$ => $ |> f(2, #)
-```
-```js
-$ => f(2, $)
-```
-
-<tr>
-<td>
-
-```js
-=|> f |> g |> h(2, #) |> # + 2
-```
-**Functional composition** on unary functions is equivalent to piping a value
-through several function calls, within a unary function, starting with the outer
-function’s single tacit parameter.
-
-<td>
-
-```js
-$ => $
-```
-```js
-$ => h(2, g(f($))) + 2
-```
-
-<tr>
-<td>
-
-```js
-const doubleThenSquareThenHalfAsync =
-  =|> double |> await squareAsync # |> half
-```
-Unlike the other version, this syntax does not need to give implicit special
-treatment to async functions and generators.
-
-<td>
-
-```js
-const doubleThenSquareThenHalfAsync =
-  double +> squareAsync +> half
-```
-From the proposal for [syntactic functional composition][]
-by [Gilbert “mindeavor”][mindeavor].
-
-<tr>
-<td>
-
-```js
-const addOne = =|> add(1, #)
-addOne(2) // 3
-```
-**Partial application into a unary function** is equivalent to piping a tacit
-parameter into a function-call expression, within which the one parameter is
-resolvable.
-
-<td>
-
-```js
-const addOne = add(1, ?)
-addOne(2) // 3
-```
-Pipe functions look similar to the proposal for [syntactic partial
-application][] by [Ron Buckton][], except that partial-application expressions
-are simply pipeline bodies that are prefixed by a topic arrow.
-
-<tr>
-<td>
-
-```js
-const addTen = =|> add(#, 10)
-addTen(2) // 12
-```
-
-<td>
-
-```js
-const addTen = add(?, 10)
-addTen(2) // 12
-```
-
-<tr>
-<td>
-
-```js
-let newScore = player.score
-  |> add(7, #)
-  |> clamp(0, 100, #)
-```
-
-<td>
-
-```js
-let newScore = player.score
-  |> add(7, ?)
-  |> clamp(0, 100, ?)
-```
-
-<tr>
-
-<tr>
-<td>
-
-```js
-Promise.resolve(123).then(=|> console.log)
-```
-**Method extraction** can be addressed by pipe functions alone, as a natural
-result of their pipe-operator-like semantics.\
-`=|> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
-bare style. This in turn is `$ => console.log($)`…
-
-<td>
-
-```js
-Promise.resolve(123).then(::console.log)
-```
-…and `$ => console.log($)` is just a wordier version of which evaluates into a
-function equivalent to `console.log.bind(console)`.
-
-<tr>
-<td>
-
-```js
-$('.some-link').on('click', =|> view.reset)
-```
-
-<td>
-
-```js
-$('.some-link').on('click', ::view.reset)
-```
-
-<tr>
-<td>
-
-```js
-const { hasOwnProperty } = Object.prototype
-const x = { key: 5 }
-x::hasOwnProperty
-x::hasOwnProperty('key')
-```
-To do terse **method calling/binding**, the `::` operator would still be required.
-
-<td>
-
-```js
-const { hasOwnProperty } = Object.prototype
-const x = { key: 5 }
-x::hasOwnProperty
-x::hasOwnProperty('key')
-```
-But the `::` would only need to handle method calls. No operator overloading of
-`::` for method extraction would be needed.
-
-<tr>
-
-<tr>
-<th>
-
-Multiple lexical topics
-
-<td>
-
-Lexical environments could extended to support multiple topics at once. Regular
-pipelines would still have only one topic at a time. But pipe functions could
-bind multiple parameters to multiple topic references. `#` (as an alias for
-`#0`) would already represent its first parameters. But then `#1`, `#2`, … would
-represent its second, third, fourth, etc. parameters. Parameters in positions
-after the maximum-number topic used in the lexical context could be put into an
-array, to which the rest-topic reference (`...` or perhaps `...#`) would be
-bound in turn.
-
-This would be somewhat akin to Clojure’s compact anonymous functions, which use
-`%` aka `%1`, then `%2`, `%3`, … for its parameters within the compact
-functions’ bodies.
-
-Developers may be expected not to use pipe functions for functions with many
-parameters. But an alternative to `#`, `##`, `###`, …, not shown here, would be
-to use `#` or `#0`, then `#1`, `#2`, … for topic references instead.
-
-<tr>
-<td>
-
-```js
-(4, 3)
-  |> # - ##
-```
-
-<td>
-
-```js
-4 - 3
-```
-
-<tr>
-<td>
-
-```js
-(4, 3)
-  |> (f, # ** 2 + ##)
-  |> # - ##
-```
-
-<td>
-
-```js
-f(4) - (4 ** 2 + 3)
-```
-
-<tr>
-<td>
-
-```js
-array.sort(=|> # - ##)
-```
-
-<td>
-
-```js
-array.sort(function (x0, x1) {
-  return x0 - x1
-})
-```
-
-<tr>
-<td>
-
-```js
-[ { x: 22 }, { x: 42 } ]
-  .map(=|> #.x)
-  .reduce(=|> # - ##, 0)
-```
-
-<td>
-
-```js
-[ { x: 22 }, { x: 42 } ]
-  .map(el => el.x)
-  .reduce((x0, x1) => x0 - x1, 0)
-```
-
-<tr>
-
-<tr>
-<td>
-
-```js
-const f = (x, y, z) => [x, y, z]
-const g = f(#, 4, ##)
-g(1, 2) // [1, 4, 2]
-```
-**Partial application into an n-ary function** is solved by pipe functions with
-multiple topics.
-
-<td>
-
-```js
-const f = (x, y, z) => [x, y, z]
-const g = =|> f(?, 4, ?)
-g(1, 2) // [1, 4, 2]
-```
-[R. Buckton’s current proposal][syntactic partial application] assumes that each
-use of the same `?` placeholder token represents a different parameter. In contrast,
-each use of `#` within the same scope always refers to the same value. This is
-why additional topic parameters are required. The resulting model is more
-flexible: `=|> f(#, 4, ##)` is different from `=|> f(#, 4, #)`. The latter sensibly
-refers to a *unary* function that passes the same *one* argument into both the
-first and third parameters of the original function `f`.
-
-<tr>
-<td>
-
-```js
-const maxGreaterThanZero =
-  =|> Math.max(0, ...)
-maxGreaterThanZero(1, 2) // 2
-maxGreaterThanZero(-1, -2) // 0
-```
-Partial application into a variadic function requires a multi-topic environment
-and a rest-topic reference `...`.
-
-<td>
-
-```js
-const maxGreaterThanZero =
-  Math.max(0, ...)
-maxGreaterThanZero(1, 2) // 2
-maxGreaterThanZero(-1, -2) // 0
-```
-In this case, the topic function version looks once again nearly identical to
-the other proposal’s code.
-
 <tr>
 
 <th>
@@ -3013,94 +3145,6 @@ syntax from above.
       #.length
     else:
       throw new Error(vector)
-  }
-}
-```
-
-<tr>
-<th>
-
-Tacit error capture
-
-<td>
-
-With this smart-pipe proposal only, all `try` statements’ `catch` clauses would
-prohibit the use of `#` within their bodies, except where `#` is inside an inner
-pipeline inside the `catch` clause. [TODO: Link to sections explaining these
-inner block rules.]
-
-With another, future proposal, all `catch` causes would implicitly bind
-their caught errors to `#`. This implicit binding would be in addition to the
-explicit binding of a normal variable `error` declared within the parenthesized
-antecedent `try { … } catch (error) { … }`.
-
-An additional bare `catch` form, completely lacking a parenthesized antecedent,
-has already been proposed as [ECMAScript optional catch binding][]. This bare
-form would also support implicit `#` binding, serving as the fully tacit form
-used in this example. [TODO: Link to section on deep nesting.] The bare form,
-along with the hypothetical headless property syntax from above, are
-demonstrated here.
-
-<tr>
-<td>
-
-```js
-try {
-  …
-} catch {
-  log(.message)
-} finally {
-  …
-}
-```
-
-<td>
-
-```js
-try {
-  …
-} catch (error) {
-  log(#.message)
-} finally {
-  …
-}
-```
-
-<tr>
-<td>
-
-```js
-try {
-  …
-} catch {
-  match {
-    MyError:
-      #|> f
-    TypeError:
-      #|> g
-    SyntaxError:
-      #|> f |> g
-    Error:
-      `Error: ${#.message}`
-  }
-}
-```
-
-<td>
-
-```js
-try {
-  …
-} catch (error) {
-  match (error) {
-    MyError:
-      error |> f
-    TypeError:
-      error |> g
-    SyntaxError:
-      error |> f |> g
-    Error:
-      `Error: ${error.message}`
   }
 }
 ```
@@ -3606,9 +3650,9 @@ do { do { do { do { 3 * 3 } } }
 [zero runtime cost]: #zero-runtime-cost
 [formal pipeline specification]: https://jschoi.org/18/es-smart-pipelines/spec
 [Core Proposal]: https://jschoi.org/18/es-smart-pipelines/spec#introduction
-[Additional Feature PF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pf
-[Additional Feature MT]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-mt
-[Additional Feature TE]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-ef
-[Additional Feature UP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-up
-[Additional Feature TC]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-tc
+[Additional Feature PF]: #additional-feature-pf
+[Additional Feature MT]: #additional-feature-mt
+[Additional Feature TE]: #additional-feature-te
+[Additional Feature UP]: #additional-feature-up
+[Additional Feature TC]: #additional-feature-tc
 [Pipeline Proposal 1]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-1-f-sharp-only
