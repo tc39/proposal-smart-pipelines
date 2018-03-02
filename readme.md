@@ -448,7 +448,9 @@ do {
 }
 ```
 This is equivalent to storing the topic value in a unique variable, then using
-that variable multiple times in an expression.
+that variable multiple times in an expression. `do` expressions are used here to
+remain equivalent to the pipeline versions, which are themselves expressions that
+are embeddable in other expressions.
 
 <tr>
 <td>
@@ -462,9 +464,9 @@ promise
   |> # + '!'
   |> new User.Message
 ```
-When tiny functions are only used once, and their bodies would be obvious and
-self-documenting in meaning, they might be ritual boilerplate that a developer
-may prefer to inline, trading off self-documentation for localization of code.
+When tiny functions are only used once, and when their bodies would be obvious and
+self-documenting in meaning, then they might be ritual boilerplate that a developer
+may prefer to inline: trading off self-documentation for localization of code.
 
 <td>
 
@@ -479,8 +481,9 @@ new User.Message(do {
     + value.substring(1)
 } + '!')
 ```
-Inlining these functions directly into expressions is less successful than
-doing so with the pipeline, both in writability and readability.
+Inlining these functions directly into nested expressions using `do` is
+less successful than inlining the functions with the pipeline, both in
+writability and in readability.
 
 <tr>
 <td>
