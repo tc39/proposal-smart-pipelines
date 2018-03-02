@@ -716,13 +716,13 @@ value |> class { m: () { return # }}
 // 🚫 SyntaxError:
 // Pipeline body binds but never uses topic.
 ```
-More precisely, all block expressions (other than arrow functions) shadow any
+Block statements (and other statements that contain expressions) will shadow any
 outer lexical context’s topic with its own *absence* of a topic. This behavior
 is in order to fulfill the [Goals][] of [simple scoping][] and of [“don’t shoot
-me in the foot”][]: it makes the origin of a topic easier to find.
-
-(If [`do` expressions][] come in the future, they will be like arrow functions in
-that they will not shadow topics either. See [other ECMAScript proposals][].)
+me in the foot”][]: it prevents the origin of any topic from being difficult to
+find. The exceptions to this rule are **arrow functions, `try` statements, `if`
+statements** and eventually **[`do` expressions][]**: these do not shadow the
+topic within their inner scopes.
 
 <td>
 
