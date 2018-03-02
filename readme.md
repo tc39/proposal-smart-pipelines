@@ -9,13 +9,13 @@ planned to be presented, along with a [competing proposal][Pipeline Proposal 1]
 to TC39 by [Daniel “**littledan**” Ehrenberg of Igalia][littledan]. This
 proposal is divided into **five compatible sub-proposals**:
 
-|Name                     |Features                                      |Purpose                                            |
-|-------------------------|----------------------------------------------|---------------------------------------------------|
-|[Core Proposal][]        |Binary pipe `\|>` and lexical topic `#`       |Unary application                                  |
-|[Additional Feature UP][]|Unary pipe `\|>`                              |Application through `do`/`if` blocks               |
-|[Additional Feature PF][]|Pipeline functions `=|>`                      |Partial application, composition, method extraction|
-|[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                  |
-|[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                              |
+|Name                     |Features                                      |Purpose                                                |
+|-------------------------|----------------------------------------------|-------------------------------------------------------|
+|[Core Proposal][]        |Binary pipe `\|>` and lexical topic `#`       |Unary application                                      |
+|[Additional Feature UP][]|Unary pipe `\|>`                              |Application through `do`/`if` blocks                   |
+|[Additional Feature PF][]|Pipeline functions `=|>`                      |Partial application<br>Composition<br>Method extraction|
+|[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
+|[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                                  |
 
 The core proposal is a **variant** of the [first pipe-operator proposal][]
 also championed by Ehrenberg. This variant is listed as [**Proposal 4: Smart
@@ -3604,4 +3604,5 @@ do { do { do { do { 3 * 3 } } }
 [Additional Feature MT]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-mt
 [Additional Feature TE]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-ef
 [Additional Feature UP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-up
+[Additional Feature TC]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-tc
 [Pipeline Proposal 1]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-1-f-sharp-only
