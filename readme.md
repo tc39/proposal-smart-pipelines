@@ -1171,42 +1171,6 @@ From [jquery/src/core/access.js][].
 
 </table>
 
-## Pify
-[Pify][] is a library that promisifies callback-style functions. Although much
-of its functionality is now addressed by [Node.js 8’s standard `util.promisify`
-function][Node.js `util.promisify`], it remains popular and useful for
-callback-style APIs in other host environments such as the DOM. Pify’s readme
-has an example that demonstrates the benefits of smart pipelines’ expressiveness.
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-'package.json'
-  |> await pify(fs.readFile)(#, 'utf8')
-  |> JSON.parse
-  |> #.name
-  |> console.log
-```
-
-<td>
-
-```js
-pify(fs.readFile)('package.json', 'utf8')
-  .then(data => {
-    console.log(JSON.parse(data).name)
-  })
-```
-
-</table>
-
 ## Additional Feature CT
 <table>
 <thead>
@@ -3791,7 +3755,6 @@ do { do { do { do { 3 * 3 } } }
 [PEP 20]: https://www.python.org/dev/peps/pep-0020/
 [Perl 6 pipe]: https://docs.perl6.org/language/operators#infix_==&gt;
 [Perl 6 topicization]: https://www.perl.com/pub/2002/10/30/topic.html/
-[Pify]: https://github.com/sindresorhus/pify
 [pipeline syntax]: #pipeline-syntax
 [possible future extensions to the topic concept]: #possible-future-extensions-to-topic-concept
 [previous pipeline-placeholder discussions]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
