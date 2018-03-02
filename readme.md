@@ -211,7 +211,7 @@ is also separated from its function calls, forming another easy-to-miss
 Each postfix expression in a pipeline (called a **[pipeline body][]**) is in its
 own **inner lexical scope**, within which a special token `#` is defined. This
 `#` is a reference to the **[lexical topic][]** of the pipeline (`#` itself is a
-**topic reference**). When the [pipeline’s **head**][pipeline structure] (the
+**topic reference**). When the [pipeline’s **head**][pipeline head] (the
 expression at its left-hand side) is **evaluated**, it then becomes the
 pipeline’s lexical topic. A new **Lexical Environment** is created, within which
 `#` is immutably **bound to the topic**, and with which the pipeline’s body is
@@ -806,7 +806,7 @@ fetch('https://pk.example/berlin-calling',
 ## jQuery
 As the single most-used JavaScript libraries in the world, [jQuery][] has provided
 an alternative human-ergonomic API to the DOM since 2006. jQuery is under the
-stewardship of the JS Foundation, a member organization of TC39 through which
+stewardship of the [JS Foundation][], a member organization of TC39 through which
 jQuery’s developers are represented in TC39. jQuery’s API requires complex data
 processing that becomes more readable with smart pipelines.
 
@@ -1005,7 +1005,7 @@ return selector |> do {
     jQuery.makeArray(#, this)
 }
 ```
-This example uses [`do` expressions][] and [Additional Syntax TS][].
+This example uses [`do` expressions][] and [Additional Feature UP][].
 
 <td>
 
@@ -1545,7 +1545,7 @@ But the `::` would only need to handle method calls. No operator overloading of
 development. Along with Underscore.js’ other utility functions, Lodash provides
 many other high-order functions that attempt to make [functional programming][]
 more ergonomic. Like [jQuery][], Lodash is under the stewardship of the
-JS Foundation, a member organization of TC39, through which Lodash’s developers
+[JS Foundation][], a member organization of TC39, through which Lodash’s developers
 also have TC39 representation. And like jQuery and Underscore.js, Lodash’s API
 involves complex data processing that becomes more readable with smart pipelines.
 
@@ -1881,10 +1881,10 @@ the other proposal’s code.
 
 ## Ramda
 [Ramda][] is a utility library focused on [functional programming][] with [pure
-functions][] and [immutable data structures][]. Its functions are automatically
-[curried][functional currying]. Smart pipelines with [Additional Proposal PF][]
+functions][] and [immutable objects][]. Its functions are automatically
+[curried][currying]. Smart pipelines with [Additional Feature PF][]
 would address many of Rambda’s use cases, particularly when also coupled with
-[Additional Proposal MT][]. The examples below were taken from the [Ramda wiki
+[Additional Feature MT][]. The examples below were taken from the [Ramda wiki
 cookbook][]. They use smart pipelines with vanilla JavaScript APIs when possible
 (such as `Array.prototype.map` instead of `R.map`), but they also use Ramda
 functions wherever no terse JavaScript equivalent yet exists (such as with
@@ -2732,7 +2732,7 @@ the same time, excessive explicitness generates ritual, verbose boilerplate that
 also interferes with reading comprehension. Therefore, Goal 10 must be balanced
 with Goals 1, 4, and 5.
 
-[The Zen of Python][PEP 20] famously says, “Explicit is better than implicit,”
+[The Zen of Python][PEP 20] famously says, “Explicit is better than implicit,”
 but it also says, “Flat is better than nested,” and, “Sparse is better than
 dense.”
 
@@ -2897,6 +2897,8 @@ Pipeline operators are also conceptually similar to [WHATWG-stream piping][] and
 [TODO: Function bind: https://github.com/zenparsing/es-function-bind]
 
 [TODO: pattern matching https://github.com/tc39/proposal-pattern-matching]
+
+### `do` expressions
 
 ## Possible future extensions to the topic concept
 The [concept of the “topic variable” already exists in many other programming
@@ -3603,7 +3605,7 @@ do { do { do { do { 3 * 3 } } }
 [expressions and operators (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
 [expressive versatility]: #expressive-versatility
 [F# pipe]: https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining
-[WHATWG Fetch Standard]: https://fetch.spec.whatwg.org
+[WHATWG Fetch Standard]: https://fetch.spec.whatwg.org/
 [first pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
 [footguns]: https://en.wiktionary.org/wiki/footgun
 [formal grammar]: #grammar
@@ -3689,3 +3691,28 @@ do { do { do { do { 3 * 3 } } }
 [Additional Feature TC]: #additional-feature-tc
 [Pipeline Proposal 1]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-1-f-sharp-only
 [Node.js `util.promisify`]: https://nodejs.org/api/util.html#util_util_promisify_original
+[don’t break my code]: #dont-break-my-code
+[make my code easier to read]: #make-my-code-easier-to-read
+[lexical topic]: https://jschoi.org/18/es-smart-pipelines/spec#sec-lexical-topics
+[pipeline head]: https://jschoi.org/18/es-smart-pipelines/spec#prod-PipelineHead
+[pipeline body]: https://jschoi.org/18/es-smart-pipelines/spec#prod-PipelineBody
+[terse function application]: #terse-function-application
+[`do` expressions]: #do-expressions
+[jQuery]: https://jquery.com/
+[JS Foundation]: https://js.foundation/
+[jquery/src/core/parseHTML.js]: https://github.com/jquery/jquery/blob/2.2-stable/src/core/parseHTML.js
+[jquery/src/core/access.js]: https://github.com/jquery/jquery/blob/2.2-stable/src/core/access.js
+[jquery/src/core/init.js]: https://github.com/jquery/jquery/blob/2.2-stable/src/core/init.js
+[Lodash]: https://lodash.com/
+[Ramda]: http://ramdajs.com/
+[Ramda wiki cookbook]: https://github.com/ramda/ramda/wiki/Cookbook
+[pure functions]: https://en.wikipedia.org/wiki/Pure_function
+[immutable object]: https://en.wikipedia.org/wiki/Immutable_object
+[currying]: https://en.wikipedia.org/wiki/Currying
+[WHATWG Streams Standard]: https://stream.spec.whatwg.org/
+[MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
+[tc39/proposal-decorators#30]: tc39/proposal-decorators#30
+[tc39/proposal-decorators#42]: tc39/proposal-decorators#42
+[tc39/proposal-decorators#60]: tc39/proposal-decorators#60
+[ECMAScript pattern matching]: https://github.com/tc39/proposal-pattern-matching/
+[Visual Basic’s `select` statement]: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/select-case-statement
