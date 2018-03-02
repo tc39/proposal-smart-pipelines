@@ -1,21 +1,3 @@
-<style>
-html {
-  font: 12px / 18px sans-serif;
-}
-
-h1, h2, h3, h4, h5, h6, p, pre {
-  box-sizing: border-box;
-  margin: 1.5rem 1rem;
-}
-
-table {
-  box-sizing: border-box;
-  margin: 1.5rem -1rem;
-  border-collapse: collapse;
-  font-size: unset;
-}
-
-
 # Smart pipelines
 ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 
