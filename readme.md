@@ -369,8 +369,6 @@ chance of actually being an accidental bug.
 
 <td>
 
-<td>
-
 ```js
 g(
   -(f(value) + 2)
