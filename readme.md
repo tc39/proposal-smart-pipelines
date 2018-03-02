@@ -1600,7 +1600,7 @@ $ => $ + 2
 // binds topic but contains no topic reference.
 ```
 
-This is an [early error][early errors], as usual.The topic is not used anywhere
+This is an [early error][], as usual.The topic is not used anywhere
 in the pipe function’s body – just like with `… |> x + 2`.
 
 <td>
@@ -1630,7 +1630,7 @@ expects to always have a parameter antecedent as its head.
 // but has no topic binding.
 ```
 But even if that typo also includes a parameter head for the arrow function
-`=>`, this is would still be an [early error][early errors]…unless the outer
+`=>`, this is would still be an [early error][]…unless the outer
 lexical environment does have a topic binding.
 
 <td>
