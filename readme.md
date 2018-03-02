@@ -1,39 +1,9 @@
+
+
+
+
 # Smart pipelines
 ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
-
-This readme is an **explainer for** the [**formal specification** of a proposed
-**smart pipeline operator `|>`**][formal pipeline specification] in
-**JavaScript**, along with several other additional features. It is currently
-tentatively at **Stage 0** of the [TC39 process][TC39 process] but and is
-planned to be presented, along with a [competing proposal][Pipeline Proposal 1],
-to TC39 by [Daniel “**littledan**” Ehrenberg of Igalia][littledan]. This
-proposal is divided into **five compatible sub-proposals**:
-
-|Name                     |Features                                      |Purpose                                                |
-|-------------------------|----------------------------------------------|-------------------------------------------------------|
-|[Core Proposal][]        |Binary pipe `\|>` and lexical topic `#`       |Unary application                                      |
-|[Additional Feature UP][]|Unary pipe `\|>`                              |Application through `do`/`if` blocks                   |
-|[Additional Feature PF][]|Pipeline functions `=\|>`                     |Partial application<br>Composition<br>Method extraction|
-|[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
-|[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                                  |
-
-The core proposal is a **variant** of the [first pipe-operator proposal][]
-also championed by Ehrenberg. This variant is listed as [**Proposal 4: Smart
-Mix** on the pipe-proposal wiki][Pipeline Proposal 4]. The variant resulted from
-[previous discussions in the previous pipe-operator proposal][previous
-pipeline-placeholder discussions], discussions which culminated in an
-[invitation by Ehrenberg to try writing a specification draft][littledan
-invitation]. A **prototype Babel plugin** is also brewing.
-
-You can take part in the discussions on the **[GitHub issue tracker][]**. When you
-file an issue, please note in it that you are talking **specifically** about
-**[“Proposal 4: Smart Mix”][Pipeline Proposal 4]**.
-
-**This specification uses `#`** as its [“topic token”][nomenclature]. However,
-this is **not set** in stone. In particular, **`@` or `?`** could also be used.
-**Bikeshedding discussions** over what characters to use for the topic token has
-been occurring on GitHub at [tc39/proposal-pipeline-operator
-issue #91][topic-token bikeshedding].
 
 <nav><details>
 <summary><strong>Table of Contents</strong></summary>
@@ -81,6 +51,40 @@ issue #91][topic-token bikeshedding].
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 </details></nav>
+
+This document is an **explainer for** the [**formal specification** of a proposed
+**smart pipeline operator `|>`**][formal pipeline specification] in
+**JavaScript**, along with several other additional features. It is currently
+tentatively at **Stage 0** of the [TC39 process][TC39 process] but and is
+planned to be presented, along with a [competing proposal][Pipeline Proposal 1],
+to TC39 by [Daniel “**littledan**” Ehrenberg of Igalia][littledan]. This
+proposal is divided into **five compatible sub-proposals**:
+
+|Name                     |Features                                      |Purpose                                                |
+|-------------------------|----------------------------------------------|-------------------------------------------------------|
+|[Core Proposal][]        |Binary pipe `\|>` and lexical topic `#`       |Unary application                                      |
+|[Additional Feature UP][]|Unary pipe `\|>`                              |Application through `do`/`if`/`try` blocks             |
+|[Additional Feature PF][]|Pipeline functions `=\|>`                     |Partial application<br>Composition<br>Method extraction|
+|[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
+|[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                                  |
+
+The core proposal is a **variant** of the [first pipe-operator proposal][]
+also championed by Ehrenberg. This variant is listed as [**Proposal 4: Smart
+Mix** on the pipe-proposal wiki][Pipeline Proposal 4]. The variant resulted from
+[previous discussions in the previous pipe-operator proposal][previous
+pipeline-placeholder discussions], discussions which culminated in an
+[invitation by Ehrenberg to try writing a specification draft][littledan
+invitation]. A **prototype Babel plugin** is also brewing.
+
+You can take part in the discussions on the **[GitHub issue tracker][]**. When you
+file an issue, please note in it that you are talking **specifically** about
+**[“Proposal 4: Smart Mix”][Pipeline Proposal 4]**.
+
+**This specification uses `#`** as its [“topic token”][nomenclature]. However,
+this is **not set** in stone. In particular, **`@` or `?`** could also be used.
+**Bikeshedding discussions** over what characters to use for the topic token has
+been occurring on GitHub at [tc39/proposal-pipeline-operator
+issue #91][topic-token bikeshedding].
 
 # Motivation
 
