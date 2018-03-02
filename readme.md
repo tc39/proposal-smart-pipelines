@@ -1282,10 +1282,10 @@ From [jquery/src/core/access.js][].
 </table>
 
 ## Additional Feature UP
-The first Additional Feature adds a “headless” unary form of the pipeline
-operator. The implicit, default head is the topic reference `#` itself, which
-must be defined within the outer lexical environment. This may occur within `if`
-statements, `try` statements, and eventually [`do` expressions][].
+The first Additional Feature adds a “headless” tacit unary form of the pipeline
+operator. The tacit, default head is the topic reference `#` itself, which
+must be resolvable within the outer lexical environment. This may occur within
+`if` statements, `try` statements, and eventually [`do` expressions][].
 
 <table>
 <thead>
@@ -1311,6 +1311,18 @@ with the phrase `# |>`.
 <td>
 
 ```js
+do {
+  if (x |> predicate)
+    f(x) ** 2
+  else
+    g(x) ** 3
+}
+```
+
+<tr>
+<td>
+
+```js
 x |> do {
   if (|> predicate)
     |> f |> # ** 2
@@ -1319,8 +1331,47 @@ x |> do {
 }
 ```
 In this version, which also uses Additional Feature UP, those pipelines omit the
-phrase `# |>`, using a headless, unary `|>`, which is implied to use `#` as the
+phrase `# |>`, using a tacit unary `|>`, which is implied to use `#` as the
 value of their topics.
+
+<td>
+
+```js
+do {
+  if (x |> predicate)
+    f(x) ** 2
+  else
+    g(x) ** 3
+}
+```
+
+<tr>
+<td>
+
+```js
+function () {
+  |> f |> g
+}
+// 🚫 Syntax Error:
+// Lexical context `function () { |> f |> g }`
+// contains a unary pipeline `|> f`
+// but has no topic binding.
+```
+If a unary pipeline is used within a context in which the topic is not
+resolvable, then this is an [early error][], just like how it is an error to use
+explicit topic references within a context without a topic in general:
+
+```js
+function () {
+  # |> f |> g
+}
+// 🚫 Syntax Error:
+// Lexical context `function () { # |> f |> g }`
+// contains a topic reference
+// but has no topic binding.
+```
+
+<td>
 
 </table>
 
@@ -1357,6 +1408,8 @@ further improved within inner `do` expressions and inner `if` statements.
   }
 }
 ```
+This pipeline version uses [Core Proposal][] syntax only. Note that several
+expressions start with `# |>`.
 
 <td>
 
@@ -1394,6 +1447,8 @@ fetch('https://pk.example/berlin-calling',
   }
 }
 ```
+This pipeline version also uses [Additional Feature UP][]. The repeated `# |>`
+has been elided, but it is still tacitly there.
 
 <td>
 
@@ -1436,6 +1491,8 @@ match |> do {
     # |> context[#] |> this.attr(match, #)
 }
 ```
+This pipeline version uses [Core Proposal][] syntax only. Note that several
+expressions start with `# |>`.
 
 <td>
 
@@ -1459,6 +1516,8 @@ match |> do {
     |> context[#] |> this.attr(match, #)
 }
 ```
+This pipeline version also uses [Additional Feature UP][]. The repeated `# |>`
+has been elided, but it is still tacitly there.
 
 <td>
 
@@ -1489,6 +1548,8 @@ return context |> do {
       |> #.find(selector)
 }
 ```
+This pipeline version uses [Core Proposal][] syntax only. Note that several
+expressions start with `# |>`.
 
 <td>
 
@@ -1525,6 +1586,8 @@ return context |> do {
     |> #.find(selector)
 }
 ```
+This pipeline version also uses [Additional Feature UP][]. The repeated `# |>`
+has been elided, but it is still tacitly there.
 
 <td>
 
@@ -1558,6 +1621,8 @@ return selector |> do {
     jQuery.makeArray(#, this)
 }
 ```
+This pipeline version uses [Core Proposal][] syntax only. Note that several
+expressions start with `# |>`.
 
 <td>
 
@@ -1588,6 +1653,8 @@ return selector |> do {
     jQuery.makeArray(#, this)
 }
 ```
+This pipeline version also uses [Additional Feature UP][]. The repeated `# |>`
+has been elided, but it is still tacitly there.
 
 <td>
 
