@@ -52,6 +52,8 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 </details></nav>
 
+***
+
 This document is an **explainer for** the [**formal specification** of a proposed
 **smart pipeline operator `|>`**][formal pipeline specification] in
 **JavaScript**, along with several other additional features. It is currently
