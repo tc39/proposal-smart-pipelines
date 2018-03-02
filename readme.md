@@ -360,7 +360,7 @@ always contains at least one topic reference**.
 value |> 50
 // 🚫 Syntax Error:
 // Pipeline body `|> 50`
-// binds topic but never uses topic.
+// binds topic but contains no topic reference.
 ```
 In order to fulfill the [goal][goals] of [“don’t shoot me in the foot”][],
 when a **pipeline is in topic style** but its **body has no topic reference**,
@@ -729,7 +729,7 @@ value |> function () { return # }
 // but has no topic binding.
 // 🚫 Syntax Error:
 // Pipeline body `|> function () { … }`
-// binds topic but never uses topic.
+// binds topic but contains no topic reference.
 ```
 <td>
 
@@ -740,7 +740,7 @@ value |> function () { return # }
 value |> class { m: () { return # }}
 // 🚫 Syntax Error:
 // Pipeline body `|> class { … }`
-// binds topic but never uses topic.
+// binds topic but contains no topic reference.
 ```
 
 <td>
@@ -814,7 +814,7 @@ value
   |> g
 // 🚫 Syntax Error:
 // Pipeline body `|> do { … }`
-// binds topic but never uses topic.
+// binds topic but contains no topic reference.
 ```
 But the same [early error rules][early errors] that apply to any topical
 pipeline body apply also to topical bodies that are `do` expressions.
@@ -1599,7 +1599,7 @@ $ => $ + 2
 =|> x + 2
 // 🚫 Syntax Error:
 // Pipeline body `=|> x + 2`
-// binds topic but never uses topic.
+// binds topic but contains no topic reference.
 ```
 
 This is an [early error][early errors], as usual.The topic is not used anywhere
