@@ -13,7 +13,7 @@ proposal is divided into **five compatible sub-proposals**:
 |-------------------------|----------------------------------------------|---------------------------------------------------|
 |[Core Proposal][]        |Binary pipe `\|>` and lexical topic `#`       |Unary application                                  |
 |[Additional Feature UP][]|Unary pipe `\|>`                              |Application through `do`/`if` blocks               |
-|[Additional Feature PF][]|Pipeline functions `->`                       |Partial application, composition, method extraction|
+|[Additional Feature PF][]|Pipeline functions `=|>`                      |Partial application, composition, method extraction|
 |[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                  |
 |[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                              |
 
@@ -1358,7 +1358,7 @@ const cssQuery = =|> ##.querySelectorAll(#)
 const setStyle = =|> { ##.style = # }
 document
   |> cssQuery('a, p', #)
-  |> #.map(-> setStyle({ color: 'red' }))
+  |> #.map(=|> setStyle({ color: 'red' }))
 ```
 
 <td>
@@ -1378,7 +1378,7 @@ R.pipe(
 
 ```js
 const disco = =|>
-  |> R.zipWith(-> #(##),
+  |> R.zipWith(=|> #(##),
     [ red, green, blue ])
   |> #.join(' ')
 [ 'foo', 'bar', 'xyz' ]
@@ -1442,9 +1442,9 @@ const getNewTitles = async =|>
   |> await fetch
   |> parseJSON
   |> #.flatten()
-  |> #.map(-> #.items)
-  |> #.map(-> #.filter(-> #))
-  |> #.map(-> #.title)
+  |> #.map(=|> #.items)
+  |> #.map(=|> #.filter(=|> #))
+  |> #.map(=|> #.title)
 
 try {
   '/products.json'
@@ -1458,7 +1458,7 @@ const fetchDependent = async =|>
   |> await fetch
   |> JSON.parse
   |> #.flatten()
-  |> #.map(-> #.url)
+  |> #.map(=|> #.url)
   |> #.map(fetch)
   |> #.flatten()
 
@@ -1502,7 +1502,7 @@ fetchDependent('urls.json')
 ```js
 number
   |> R.repeat(Math.random, #)
-  |> #.map(-> #())
+  |> #.map(=|> #())
 ```
 
 <td>
@@ -1521,7 +1521,7 @@ const renameBy = (fn, obj) =>
     |> #.map(R.adjust(fn, 0)),
     |> {...#}
 { A: 1, B: 2, C: 3 }
-  |> renameBy(-> `a${#}`))
+  |> renameBy(=|> `a${#}`))
 // =|> { aA: 1, aB: 2, aC: 3 }
 ```
 
@@ -2302,7 +2302,7 @@ find the concept useful.
 <tr>
 <th>
 
-`->` `->>`\
+`=|>` `=|>>`\
 `as->` `as->>`\
 `some->` `some->>`\
 `cond->` `cond->>`
@@ -2389,7 +2389,7 @@ Pipe functions
 
 <td>
 
-A new type of function, the pipe function `->` …, would act as if it were `$ =>
+A new type of function, the pipe function `=|>` …, would act as if it were `$ =>
 $ |> …`, where `$` is a hygienically unique variable. A pipe function does not
 take a parameter list; it is essentially a unary operator on an expression.
 (Whether it could optionally take a parameter list is up for debate. It would be
@@ -2413,7 +2413,7 @@ and tacit **method extraction**,\
 <td>
 
 ```js
--> #
+=|> #
 ```
 
 <td>
@@ -2429,7 +2429,7 @@ $ => $
 <td>
 
 ```js
--> # + 2
+=|> # + 2
 ```
 
 <td>
@@ -2445,7 +2445,7 @@ $ => $ + 2
 <td>
 
 ```js
--> x + 2 // 🚫
+=|> x + 2 // 🚫
 ```
 
 <td>
@@ -2462,7 +2462,7 @@ function’s body – just like with `… |> x + 2`. [TODO: Link to early error.
 
 <td>
 
-If the skinny arrow `->` is typoed as a fat arrow `=>` instead, then this is
+If the skinny arrow `=|>` is typoed as a fat arrow `=>` instead, then this is
 a syntax error.
 This is a syntax error if not within a topic context.
 function’s body – just like with `… |> x + 2`. [TODO: Link to early error.]
@@ -2471,7 +2471,7 @@ function’s body – just like with `… |> x + 2`. [TODO: Link to early error.
 <td>
 
 ```js
--> f(2, #)
+=|> f(2, #)
 ```
 
 <td>
@@ -2487,7 +2487,7 @@ $ => f(2, $)
 <td>
 
 ```js
--> f |> g |> h(2, #) |> # + 2
+=|> f |> g |> h(2, #) |> # + 2
 ```
 **Functional composition** on unary functions is equivalent to piping a value
 through several function calls, within a unary function, starting with the outer
@@ -2580,11 +2580,11 @@ let newScore = player.score
 <td>
 
 ```js
-Promise.resolve(123).then(-> console.log)
+Promise.resolve(123).then(=|> console.log)
 ```
 **Method extraction** can be addressed by pipe functions alone, as a natural
 result of their pipe-operator-like semantics.\
-`-> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
+`=|> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
 bare style. This in turn is `$ => console.log($)`…
 
 <td>
@@ -2689,7 +2689,7 @@ f(4) - (4 ** 2 + 3)
 <td>
 
 ```js
-array.sort(-> # - ##)
+array.sort(=|> # - ##)
 ```
 
 <td>
@@ -2705,8 +2705,8 @@ array.sort(function (x0, x1) {
 
 ```js
 [ { x: 22 }, { x: 42 } ]
-  .map(-> #.x)
-  .reduce(-> # - ##, 0)
+  .map(=|> #.x)
+  .reduce(=|> # - ##, 0)
 ```
 
 <td>
@@ -2741,7 +2741,7 @@ g(1, 2) // [1, 4, 2]
 use of the same `?` placeholder token represents a different parameter. In contrast,
 each use of `#` within the same scope always refers to the same value. This is
 why additional topic parameters are required. The resulting model is more
-flexible: `-> f(#, 4, ##)` is different from `-> f(#, 4, #)`. The latter sensibly
+flexible: `=|> f(#, 4, ##)` is different from `=|> f(#, 4, #)`. The latter sensibly
 refers to a *unary* function that passes the same *one* argument into both the
 first and third parameters of the original function `f`.
 
@@ -2876,7 +2876,7 @@ in this proposal’s rules.)
 
 Note that this would be the same as:
 ```js
-materials.map(-> f |> .length)
+materials.map(=|> f |> .length)
 ```
 
 <td>
