@@ -951,11 +951,12 @@ do {
 </table>
 
 ## jQuery
-As the single most-used JavaScript libraries in the world, [jQuery][] has provided
+As the single most-used JavaScript library in the world, [jQuery][] has provided
 an alternative human-ergonomic API to the DOM since 2006. jQuery is under the
 stewardship of the [JS Foundation][], a member organization of TC39 through which
 jQuery’s developers are represented in TC39. jQuery’s API requires complex data
-processing that becomes more readable with smart pipelines.
+processing that becomes more readable with smart pipelines. Several examples
+below also use [Additional Feature UP][] for extra terseness.
 
 <table>
 <thead>
@@ -973,10 +974,10 @@ return data
   |> #.childNodes
   |> jQuery.merge([], #)
 ```
-Imagine the path that your eyes must trace while reading this pipeline. Your
-eyes move straight down with occasional movement toward the right then back:
-from `data` to `buildFragment` (and its arguments), then `.childNodes`, then
-`jQuery.merge`. No one-off-variable assignment necessary.
+The path that a reader’s eyes must trace while reading this pipeline moves
+straight down, with some movement toward the right then back: from `data` to
+`buildFragment` (and its arguments), then `.childNodes`, then `jQuery.merge`.
+Here, no one-off-variable assignment is necessary.
 
 <td>
 
