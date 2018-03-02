@@ -91,7 +91,7 @@ You can take part in the discussions on the **[GitHub issue tracker][]**. When y
 file an issue, please note in it that you are talking **specifically** about
 **[“Proposal 4: Smart Mix”][Pipeline Proposal 4]**.
 
-**This specification uses `#`** as its [“topic token”][nomenclature]. However,
+**This specification uses `#`** as its [topic reference][nomenclature]. However,
 this is **not set** in stone. In particular, **`@` or `?`** could also be used.
 **Bikeshedding discussions** over what characters to use for the topic token has
 been occurring on GitHub at [tc39/proposal-pipeline-operator
@@ -209,15 +209,15 @@ is also separated from its function calls, forming another easy-to-miss
 <td>
 
 Each postfix expression in a pipeline (called a **[pipeline body][]**) is in its
-own **inner lexical scope**, within which a special token `#` is defined. This
-`#` is a reference to the **[lexical topic][]** of the pipeline (`#` itself is a
-**topic reference**). When the [pipeline’s **head**][pipeline head] (the
-expression at its left-hand side) is **evaluated**, it then becomes the
-pipeline’s lexical topic. A new **Lexical Environment** is created, within which
-`#` is immutably **bound to the topic**, and with which the pipeline’s body is
-then evaluated, using that **topic binding**. In the end, the whole pipeline
-expression’s value is the end result into which the pipeline body evaluated with
-the topic binding.
+own **inner lexical scope**, within which a special topic reference `#` is
+defined. This `#` is a reference to the **[lexical topic][]** of the pipeline
+(`#` itself is a **topic reference**). When the [pipeline’s **head**][pipeline
+head] (the expression at its left-hand side) is **evaluated**, it then becomes
+the pipeline’s lexical topic. A new **Lexical Environment** is created, within
+which `#` is immutably **bound to the topic**, and with which the pipeline’s
+body is then evaluated, using that **topic binding**. In the end, the whole
+pipeline expression’s value is the end result into which the pipeline body
+evaluated with the topic binding.
 
 <td>
 
@@ -301,8 +301,8 @@ promise
   |> new User.Message(#)
 ```
 This version is equivalent to the version above, except that the `capitalize`
-and `new User.Message` pipeline bodies explicitly include optional `#`s, making
-the expressions slightly wordier than necessary.
+and `new User.Message` pipeline bodies explicitly include optional topic
+references `#`s, making the expressions slightly wordier than necessary.
 
 <td>
 
@@ -341,11 +341,11 @@ value
   |> -#
   |> g(#, x)
 ```
-This pipeline is relatively flat, with only one level of indentation, and with
-each transformation step on its own line.
+This pipeline is a very flat expression, with only one level of indentation, and
+with each transformation step on its own line.
 
 Note that `|> f` is a bare unary function call. This is the same as `|> f(#)`,
-but the `#` is unnecessary; it is invisibly, tacitly implied.
+but the topic reference `#` is unnecessary; it is invisibly, tacitly implied.
 
 This is the [smart part of the pipeline operator][smart body syntax], which can
 distinguish between two syntax styles (bare vs. topic) by using a simple rule:
@@ -390,8 +390,8 @@ promise
   |> capitalize |> # + '!'
   |> new User.Message
 ```
-This pipeline is relatively flat, with only one level of indentation, and with
-each transformation step on its own line.
+This pipeline is also relatively flat, with only one level of indentation, and
+with each transformation step on its own line.
 
 (`|> capitalize` is a bare unary function call equivalent to `|> capitalize(#)`.
 Similarly, `|> new User.Message` is a bare unary constructor call, abbreviated
@@ -451,6 +451,20 @@ This is equivalent to storing the topic value in a unique variable, then using
 that variable multiple times in an expression. `do` expressions are used here to
 remain equivalent to the pipeline versions, which are themselves expressions that
 are embeddable in other expressions.
+
+<tr>
+<td>
+
+```js
+value |> 50
+// 🚫 SyntaxError:
+// Pipeline body binds topic but never uses topic.
+```
+In order to fulfill the [goal][goals] of [“don’t shoot me in the foot”][],
+**every pipeline body must contain a topic reference** if the pipeline body
+is **not a simple reference** to a function call or constructor call.
+
+<td>
 
 <tr>
 <td>
@@ -666,8 +680,8 @@ do {
     .toString()
 }
 ```
-A nested pipeline works consistently. It merely shadows the topic
-reference within its own body.
+A nested pipeline works consistently. It merely shadows the outer context’s
+topic with the topic within its own body’s inner context.
 
 <tr>
 <td>
@@ -699,12 +713,18 @@ This code still behaves consistently.
 ```js
 value |> function () { return # }
 // 🚫 SyntaxError:
-// Pipeline body binds but never uses topic.
+// Context contains a topic reference but does not bind topic.
+// Pipeline body binds topic but never uses topic.
 ```
-Arrow functions are special in that they do not shadow the topic. Every other
-block prevents you from using an outside context’s topic. You cannot use use
-topic references inside of other types of blocks: function, async function,
-generator, async generator, or class.
+**Most statements cannot** use an **outside context’s topic** in their
+expressions. This includes block statements; function, async-function,
+generator, async-generator, and class definitions, `for` and `while` statements;
+and `catch` clauses. (Exceptions include arrow functions and `do`, `if`, `try`,
+`return`, `yield`, and `yield *` statements.)
+
+This behavior is in order to fulfill the [goals][] of [simple scoping][] and of
+[“don’t shoot me in the foot”][]: it prevents the origin of any topic from being
+difficult to find.
 
 <td>
 
@@ -714,17 +734,64 @@ generator, async generator, or class.
 ```js
 value |> class { m: () { return # }}
 // 🚫 SyntaxError:
-// Pipeline body binds but never uses topic.
+// Pipeline body binds topic but never uses topic.
 ```
-Block statements (and other statements that contain expressions) will shadow any
-outer lexical context’s topic with its own *absence* of a topic. This behavior
-is in order to fulfill the [Goals][] of [simple scoping][] and of [“don’t shoot
-me in the foot”][]: it prevents the origin of any topic from being difficult to
-find. The exceptions to this rule are **arrow functions, `try` statements, `if`
-statements** and eventually **[`do` expressions][]**: these do not shadow the
-topic within their inner scopes.
 
 <td>
+
+<tr>
+<td>
+
+```js
+value
+  |> await f(#, 5)
+  |> do {
+    # + 30
+  }
+  |> g
+```
+The statements that may contain topic references from outer lexical environments
+are **[`do` expressions][]**, **arrow functions, `if` statements**, `try`
+statements (though not `catch` clauses), and `return`, `yield`, and `yield *`
+statements.
+
+This example demonstrates how a `do` expression can be a pipeline body if it
+contains an outer topic reference `#`.
+
+<td>
+
+```js
+g(await f(value, 5) + 30)
+```
+
+<tr>
+<td>
+
+```js
+value
+  |> await f(#, 5)
+  |> do {
+    if (# > 20)
+      # + 30
+    else
+      # - 10
+  }
+  |> g
+```
+Using `do` expressions then allows the embedding of arbitrary statements such as
+`if` statements inside pipeline bodies, greatly increasing their expressiveness.
+
+<td>
+
+```js
+g(do {
+  const value_ = await f(value, 5)
+  if (value_ > 20)
+    value_ + 30
+  else
+    value_ - 10
+})
+```
 
 </table>
 
@@ -874,8 +941,6 @@ fetch('https://pk.example/berlin-calling',
 <tr>
 <td>
 
-## Additional Feature UP
-[TODO]
 ```js
 'https://pk.example/berlin-calling'
   |> await fetch(#, { mode: 'cors' })
@@ -957,6 +1022,35 @@ do {
 }
 ```
 
+</table>
+
+## Additional Feature UP
+The first Additional Feature adds a “headless” unary form of the pipeline
+operator. The implicit, default head is the topic reference `#` itself, which
+must be defined within the outer lexical environment. This may occur within `if`
+statements, `try` statements, and eventually [`do` expressions][].
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+x |> do {
+}
+```
+
+<td>
+
+```js
+x |> do {
+}
+```
 </table>
 
 ## jQuery
@@ -1196,21 +1290,21 @@ Tacit error capture
 <td>
 
 With this smart-pipe proposal only, all `try` statements’ `catch` clauses would
-prohibit the use of `#` within their bodies, except where `#` is inside an inner
-pipeline inside the `catch` clause. [TODO: Link to sections explaining these
-inner block rules.]
+prohibit the use of the topic reference `#` within their bodies, except where
+`#` is inside an inner pipeline inside the `catch` clause. [TODO: Link to
+sections explaining these inner block rules.]
 
 With another, future proposal, all `catch` causes would implicitly bind
-their caught errors to `#`. This implicit binding would be in addition to the
-explicit binding of a normal variable `error` declared within the parenthesized
-antecedent `try { … } catch (error) { … }`.
+their caught errors to the topic reference `#`. This implicit binding would be
+in addition to the explicit binding of a normal variable `error` declared within
+the parenthesized antecedent `try { … } catch (error) { … }`.
 
 An additional bare `catch` form, completely lacking a parenthesized antecedent,
 has already been proposed as [ECMAScript optional catch binding][]. This bare
-form would also support implicit `#` binding, serving as the fully tacit form
-used in this example. [TODO: Link to section on deep nesting.] The bare form,
-along with the hypothetical headless property syntax from above, are
-demonstrated here.
+form would also support implicit topic binding (`#` binding), serving as the
+fully tacit form used in this example. [TODO: Link to section on deep nesting.]
+The bare form, along with the hypothetical headless property syntax from above,
+are demonstrated here.
 
 <tr>
 <td>
@@ -2456,13 +2550,13 @@ class LipFuzzTransformer {
 
 # Goals
 
-There are seventeen ordered Goals that the smart body syntax tries to fulfill,
+There are seventeen ordered goals that the smart body syntax tries to fulfill,
 which may be summarized,<br>
 “Don’t break my code,”<br>
 “Don’t make me overthink,”<br>
 “Don’t shoot me in the foot,”<br>
 “Make my code easier to read,”<br>
-and a few other Goals.
+and a few other goals.
 
 <table>
 <tr>
@@ -2523,7 +2617,7 @@ which both may cause surprising results to a developer who adopts pipelines
 while also using a globally bound convenience variable. It is a common pattern
 to do this even without a library: `var $ = document.querySelectorAll`”. The
 silent shadowing of such outer-context variables may silently cause bugs, which
-may also be difficult to debug (see Goal 6).
+may also be difficult to debug (see [Goal 6][TODO]).
 
 Nor can it cause previously valid code to become invalid. This includes, to a
 lesser extent, common nonstandard extensions to JavaScript: for instance, using
@@ -2570,7 +2664,7 @@ of topic reference and in its prohibition of topic references within any block
 (other than arrow functions).
 
 Forward compatibility is elaborated in the section on [relations to other
-work][]. See also Goal 9 below. See also [inner blocks in pipelines][inner
+work][]. See also [Goal 9][TODO] below. See also [inner blocks in pipelines][inner
 blocks].
 
 ## “Don’t make me overthink.”
@@ -2698,20 +2792,20 @@ JavaScript functions have never fulfilled the [Tennent correspondence
 principle][]. Several common types of expressions cannot be equivalently used
 within inner functions, particularly `await` and `yield`. In these frequent
 cases, attempting to replacing code with “equivalent” IIFEs may cause different
-behavior, may cause different performance behavior (see example in Goal 2), or
+behavior, may cause different performance behavior (see example in [Goal 2][TODO]), or
 may require dramatic rearrangement of logic to conserve the old code’s behavior.
 
 It would be possible to add ad-hoc handling, for selected other expression
 types, to the operator’s grammar. This would expand its benefits to that type.
-However, this conflicts with Goal 5 (adding cyclomatic complexity to the parsing
+However, this conflicts with [Goal 5][TODO] (adding cyclomatic complexity to the parsing
 process, proportional to the number of ad-hoc handled cases). It also does not
-fulfill this Goal well either: excluding, perhaps arbitrarily, whatever classes
+fulfill this goal well either: excluding, perhaps arbitrarily, whatever classes
 its grammar’s branches do not handle.
 
 Such new [incidental complexity][] makes code less readable and distracts the
 developer from the program’s [essential logic][essential complexity]. A pipeline
-operator that improves readability should be versatile (this Goal) but
-conceptually and cyclomatically simple (Goal 5). Such an operator should be able
+operator that improves readability should be versatile (this goal) but
+conceptually and cyclomatically simple ([Goal 5][TODO]). Such an operator should be able
 to handle **all** expressions, in a **single** manner **uniformly**
 **universally** applicable to **all** expressions. It is the hope of this
 proposal’s authors that its [smart body syntax][] fulfills both criteria.
@@ -2846,12 +2940,12 @@ its claimed benefits in a 1970 paper as such:
 > – you can sometimes step lightly across the surface of the quagmire.
 
 This sort of terseness, in which the explicit is made tacit and implicit, must
-be balanced with Goals 4 and 5. Excessive implicitness compromises
+be balanced with [Goals 4 and 5][TODO]. Excessive implicitness compromises
 comprehensibility, at least without low-level tracing of tacit arguments’
 invisible paths, rather than the actual, high-level meaning of the code. Yet at
 the same time, excessive explicitness generates ritual, verbose boilerplate that
-also interferes with reading comprehension. Therefore, Goal 10 must be balanced
-with Goals 1, 4, and 5.
+also interferes with reading comprehension. Therefore, [Goal 10][TODO] must be balanced
+with [Goals 1, 4, and 5][TODO].
 
 [The Zen of Python][PEP 20] famously says, “Explicit is better than implicit,”
 but it also says, “Flat is better than nested,” and, “Sparse is better than
@@ -2861,10 +2955,10 @@ dense.”
 Unary function / constructor calls are a particularly frequent type of
 expression and a good target for especial human optimization. However, such
 extra shortening might dramatically reduce the verbosity of unary function
-calls, but again this must be balanced with Goals 1, 4, and 5.
+calls, but again this must be balanced with [Goals 1, 4, and 5][TODO].
 
 It is the hope of this proposal’s authors that its [smart body syntax][] reaches
-a good balance between this Goal and Goals 4 and 5, in the same manner that
+a good balance between this goal and [Goals 4 and 5][TODO], in the same manner that
 [Huffman coding][] optimizes textual symbols’ length for their frequency of use:
 more commonly used symbols are shorter.
 
@@ -2875,7 +2969,7 @@ Although these have been prioritized last, they are still important.
 If a concept is uniformly generalizable to many other cases, then this
 multiplies its usefulness. The more versatile its concepts, the more it may be
 applied to other syntax, including existing syntax and future syntax (compare
-with Goal 3).
+with [Goal 3][TODO]).
 
 This proposal’s concept of a **topic reference does not need to be coupled only
 to pipelines**. The [topic concept is **generalizable to many syntactic
@@ -2898,18 +2992,18 @@ indentation, de-indentation, parenthetical grouping, and parenthetical
 flattening of many lines of code; the tedium of these incidental changes is a
 major factor in the general popularity of automatic code formatters.
 
-Achieving Goal 8 therefore also improves the ease of composing and editing code.
+Achieving [Goal 8][TODO] therefore also improves the ease of composing and editing code.
 By flattening deeply nested expression trees into single threads of postfix
 steps, a step may be added oredited in isolation on a single line, it may be
 rearranged up or down, it may be removed – all without affecting the pipeline’s
 other steps in the lines above or below it.
 
 ### Novice learnability
-Learnability of the syntax is a desirable Goal: the more intuitive the syntax
+Learnability of the syntax is a desirable goal: the more intuitive the syntax
 is, the more rapidly it might be adopted by developers. However, learnability in
-of itself is not more desirable than the other Goals above. Most JavaScript
-developers would be novices to this syntax at most once, during which the
-intuitiveness of the syntax will dominate their experience. But after that
+of itself is not more desirable than the [other goals above][goals]. Most
+JavaScript developers would be novices to this syntax at most once, during which
+the intuitiveness of the syntax will dominate their experience. But after that
 honeymoon period, the syntax’s usability in workaday programming will instead
 affect their reading and writing most.
 
@@ -2919,6 +3013,9 @@ with learnability itself. However, a syntax that is simple but expressive – an
 most of all, readable – could well be easier to learn. Its up-front cost in
 learning could be small, particularly in comparison to the large gains in
 readability and comprehensibility that it might bring to code in general.
+
+# Smart body syntax
+[TODO]
 
 # Relations to other work
 
