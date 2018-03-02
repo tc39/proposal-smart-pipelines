@@ -65,7 +65,7 @@ proposal is divided into **five compatible sub-proposals**:
 |Name                     |Features                                      |Purpose                                                |
 |-------------------------|----------------------------------------------|-------------------------------------------------------|
 |[Core Proposal][]        |Binary pipe `\|>` and lexical topic `#`       |Unary application                                      |
-|[Additional Feature UP][]|Unary pipe `\|>`                              |Application through `do`/`if`/`try` blocks             |
+|[Additional Feature UP][]|Unary pipe `\|>`                              |Application in `do`/`if`/`try` blocks                  |
 |[Additional Feature PF][]|Pipeline functions `=\|>`                     |Partial application<br>Composition<br>Method extraction|
 |[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
 |[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                                  |
