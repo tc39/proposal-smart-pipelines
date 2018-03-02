@@ -9,13 +9,18 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 
 
 - [Motivation](#motivation)
-  - [[WHATWG Fetch Standard][]](#whatwg-fetch-standard)
-  - [[jQuery][]](#jquery)
-  - [[Underscore.js][]](#underscorejs)
-  - [[Lodash][]](#lodash)
-  - [[Ramda][]](#ramda)
-  - [[Pify][]](#pify)
-  - [[WHATWG Streams Standard][]](#whatwg-streams-standard)
+  - [Core Proposal](#core-proposal)
+  - [WHATWG Fetch Standard](#whatwg-fetch-standard)
+  - [Additional Feature UP](#additional-feature%C2%A0up)
+  - [Additional Feature PF](#additional-feature%C2%A0pf)
+  - [Additional Feature MT](#additional-feature%C2%A0mt)
+  - [jQuery](#jquery)
+  - [Underscore.js](#underscorejs)
+  - [Additional Feature CT](#additional-feature%C2%A0ct)
+  - [Lodash](#lodash)
+  - [Ramda](#ramda)
+  - [Pify](#pify)
+  - [WHATWG Streams Standard](#whatwg-streams-standard)
 - [Goals](#goals)
   - [“Don’t break my code.”](#dont-break-my-code)
     - [Backward compatibility](#backward-compatibility)
@@ -1203,8 +1208,10 @@ the other proposal’s code.
 
 ## jQuery
 As the single most-used JavaScript libraries in the world, [jQuery][] has provided
-an ergonomic API since 2006. This API requires complex data processing that
-becomes more readable with smart pipelines.
+an alternative human-ergonomic API to the DOM since 2006. jQuery is under the
+stewardship of the JS Foundation, a member organization of TC39 through which
+jQuery’s developers are represented in TC39. jQuery’s API requires complex data
+processing that becomes more readable with smart pipelines.
 
 <table>
 <thead>
@@ -1419,7 +1426,11 @@ From [jquery/src/core/access.js][].
 
 </table>
 
-## [Underscore.js][]
+## Underscore.js
+[Underscore.js][] is another utility library very widely used since 2009,
+providing numerous functions that manipulate arrays, objects, and other
+functions. It too has a codebase that transforms values through many expressions
+– a codebase whose readability would therefore benefit from smart pipelines.
 
 <table>
 <thead>
@@ -1638,7 +1649,15 @@ try {
 
 </table>
 
-## [Lodash][]
+## Lodash
+[Lodash][] is a fork of [Underscore.js][] that remains under rapid active
+development. Along with Underscore.js’ other utility functions, Lodash provides
+many other high-order functions that attempt to make [functional programming][]
+more ergonomic. Like [jQuery][], Lodash is under the stewardship of the
+JS Foundation, a member organization of TC39, through which Lodash’s developers
+also have TC39 representation. And like jQuery and Underscore.js, Lodash’s API
+involves complex data processing that becomes more readable with smart pipelines.
+
 <table>
 <thead>
 <tr>
@@ -1824,8 +1843,16 @@ function createRound (methodName) {
 
 </table>
 
-## [Ramda][]
-These examples were taken from the [Ramda wiki cookbook][].
+## Ramda
+[Ramda][] is a utility library focused on [functional programming][] with [pure
+functions][] and [immutable data structures][]. Its functions are automatically
+[curried][functional currying]. Smart pipelines with [Additional Proposal PF][]
+would address many of Rambda’s use cases, particularly when also coupled with
+[Additional Proposal MT][]. The examples below were taken from the [Ramda wiki
+cookbook][]. They use smart pipelines with vanilla JavaScript APIs when possible
+(such as `Array.prototype.map` instead of `R.map`), but they also use Ramda
+functions wherever no terse JavaScript equivalent yet exists (such as with
+`R.zipWith` and `R.adjust`).
 
 <table>
 <thead>
@@ -2060,7 +2087,12 @@ renameBy(R.concat('a'), { A: 1, B: 2, C: 3 })
 
 </table>
 
-## [Pify][]
+## Pify
+[Pify][] is a library that promisifies callback-style functions. Although much
+of its functionality is now addressed by [Node.js 8’s standard `util.promisify`
+function][Node.js `util.promisify`], it remains popular and useful for
+callback-style APIs in other host environments such as the DOM. Pify’s readme
+has an example that demonstrates the benefits of smart pipelines’ expressiveness.
 
 <table>
 <thead>
@@ -2091,7 +2123,13 @@ pify(fs.readFile)('package.json', 'utf8')
 
 </table>
 
-## [WHATWG Streams Standard][]
+## WHATWG Streams Standard
+The [WHATWG Streams Standard][] provides an efficient, standardized stream API,
+inspired by Node.js’s Streams API, but also applicable to the DOM. The
+specification contains numerous usage examples that would become more readable
+with smart pipelines. The Core Proposal alone would untangle much of this code,
+and the Additional Features would further improve its terseness.
+
 <table>
 <thead>
 <tr>
@@ -2358,7 +2396,7 @@ compatible with future code.
 
 ### Backward compatibility
 The syntax must avoid stepping on the toes of existing code, including but not
-limited to JavaScript libraries such as jQuery and Underscore.js. In particular,
+limited to JavaScript libraries such as [jQuery][] and [Lodash][]. In particular,
 the topic reference should not be an existing identifier such as `$` or `_`,
 which both may cause surprising results to a developer who adopts pipelines
 while also using a globally bound convenience variable. It is a common pattern
@@ -3650,3 +3688,4 @@ do { do { do { do { 3 * 3 } } }
 [Additional Feature UP]: #additional-feature-up
 [Additional Feature TC]: #additional-feature-tc
 [Pipeline Proposal 1]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-1-f-sharp-only
+[Node.js `util.promisify`]: https://nodejs.org/api/util.html#util_util_promisify_original
