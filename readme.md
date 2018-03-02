@@ -347,11 +347,19 @@ with each transformation step on its own line.
 Note that `|> f` is a bare unary function call. This is the same as `|> f(#)`,
 but the topic reference `#` is unnecessary; it is invisibly, tacitly implied.
 
-This is the [smart part of the pipeline operator][smart body syntax], which can
-distinguish between two syntax styles (**bare style** vs. **topic style**) by
-using a simple rule: **bare style uses only identifiers, dots, and `new`**, and
-**never parentheses, brackets, braces, or other operators**. And **topic style
-always contains at least one topic reference**.
+This is the [**smart** part of the smart pipeline operator][smart body syntax],
+which can distinguish between two syntax styles (**bare style** vs. **topic
+style**) by using a simple rule: **bare** style uses only **identifiers, dots,
+and `new`**, and **never parentheses, brackets, braces**, or other
+**operators**. And **topic** style **always** contains at least one **topic
+reference**. For more information, see the reference below about the **[smart
+body syntax][]**.
+
+<td>
+
+```js
+g(-((f(value) + 2) * 3), x)
+```
 
 <tr>
 <td>
