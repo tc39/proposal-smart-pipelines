@@ -2489,7 +2489,7 @@ meaning of their code.
 
 ### Expressive versatility
 JavaScript is a language rich with [expressions of numerous kinds][MDN
-operator predecence], each of which may usefully transform data from one
+operator precedence], each of which may usefully transform data from one
 form to another. There is **no single type** of expression that forms a
 **majority of used expressions**.
 
@@ -3106,6 +3106,7 @@ server(app) {
 Topic pattern matching
 
 <td>
+
 The proposed syntax of [ECMAScript pattern matching][] would bind the topic
 reference within the scope of a successful match clause’s scope. The topic value
 would be the truthy result of the successful `Symbol.matches` call. This example
@@ -3143,7 +3144,7 @@ Tacit pattern matching
 
 <td>
 
-[ECMAScript pattern matching] could also have a completely tacit version, in
+[ECMAScript pattern matching][] could also have a completely tacit version, in
 which the parenthesized antecedent is completely omitted in favor of tacitly
 using the outer context’s topic. (This would have to somehow be distinguishable
 from a call to a function named `match` with a [bare block argument][ECMAScript
@@ -3707,12 +3708,11 @@ do { do { do { do { 3 * 3 } } }
 [Ramda]: http://ramdajs.com/
 [Ramda wiki cookbook]: https://github.com/ramda/ramda/wiki/Cookbook
 [pure functions]: https://en.wikipedia.org/wiki/Pure_function
-[immutable object]: https://en.wikipedia.org/wiki/Immutable_object
+[immutable objects]: https://en.wikipedia.org/wiki/Immutable_object
 [currying]: https://en.wikipedia.org/wiki/Currying
 [WHATWG Streams Standard]: https://stream.spec.whatwg.org/
 [MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
 [tc39/proposal-decorators#30]: tc39/proposal-decorators#30
 [tc39/proposal-decorators#42]: tc39/proposal-decorators#42
 [tc39/proposal-decorators#60]: tc39/proposal-decorators#60
-[ECMAScript pattern matching]: https://github.com/tc39/proposal-pattern-matching/
 [Visual Basic’s `select` statement]: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/select-case-statement
