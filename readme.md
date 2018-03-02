@@ -213,7 +213,7 @@ own **inner lexical scope**, within which a special topic reference `#` is
 defined. This `#` is a reference to the **[lexical topic][]** of the pipeline
 (`#` itself is a **topic reference**). When the [pipeline’s **head**][pipeline
 head] (the expression at its left-hand side) is **evaluated**, it then becomes
-the pipeline’s lexical topic. A new **Lexical Environment** is created, within
+the pipeline’s lexical topic. A **new lexical environment** is created, within
 which `#` is immutably **bound to the topic**, and with which the pipeline’s
 body is then evaluated, using that **topic binding**. In the end, the whole
 pipeline expression’s value is the end result into which the pipeline body
@@ -348,9 +348,26 @@ Note that `|> f` is a bare unary function call. This is the same as `|> f(#)`,
 but the topic reference `#` is unnecessary; it is invisibly, tacitly implied.
 
 This is the [smart part of the pipeline operator][smart body syntax], which can
-distinguish between two syntax styles (bare vs. topic) by using a simple rule:
-bare style uses only identifiers, dots, and `new`, and never parentheses,
-brackets, braces, or other operators.
+distinguish between two syntax styles (**bare style** vs. **topic style**) by
+using a simple rule: **bare style uses only identifiers, dots, and `new`**, and
+**never parentheses, brackets, braces, or other operators**. And **topic style
+always contains at least one topic reference**.
+
+<tr>
+<td>
+
+```js
+value |> 50
+// 🚫 Syntax Error:
+// Pipeline body `|> 50`
+// binds topic but never uses topic.
+```
+In order to fulfill the [goal][goals] of [“don’t shoot me in the foot”][],
+when a **pipeline is in topic style** but its **body has no topic reference**,
+that is an **[early error][]**. Such a degenerate pipeline has a very good
+chance of actually being an accidental bug.
+
+<td>
 
 <td>
 
@@ -451,21 +468,6 @@ This is equivalent to storing the topic value in a unique variable, then using
 that variable multiple times in an expression. `do` expressions are used here to
 remain equivalent to the pipeline versions, which are themselves expressions that
 are embeddable in other expressions.
-
-<tr>
-<td>
-
-```js
-value |> 50
-// 🚫 SyntaxError:
-// Pipeline body `|> 50`
-// binds topic but never uses topic.
-```
-In order to fulfill the [goal][goals] of [“don’t shoot me in the foot”][],
-**every pipeline body must contain a topic reference** if the pipeline body
-is **not a [simple reference][]** to a function call or constructor call.
-
-<td>
 
 <tr>
 <td>
@@ -641,7 +643,7 @@ The result here is the same.
 value
   |> () => # * 5
   |> settimeout
-// 🚫 SyntaxError:
+// 🚫 Syntax Error:
 // Unexpected token `=>`.
 // Cannot parse base expression.
 ```
@@ -653,7 +655,7 @@ the pipeline operator.) The example above is being parsed as if it were:
 ```js
 (value |> ()) =>
   (# * 5 |> settimeout)
-// 🚫 SyntaxError:
+// 🚫 Syntax Error:
 // Unexpected token `=>`.
 // Cannot parse base expression.
 ```
@@ -663,16 +665,18 @@ the pipeline operator.) The example above is being parsed as if it were:
 <tr>
 <td>
 
+Both the head and the body of a pipeline may contain nested inner pipelines.
 ```js
 value
   |> f(x =>
     # + x |> g |> # * 2)
   |> #.toString()
 ```
-Both the head and the body of a pipeline may contain nested inner pipelines.
 
 <td>
 
+A nested pipeline works consistently. It merely shadows the outer context’s
+topic with the topic within its own body’s inner context.
 ```js
 do {
   const $ = value;
@@ -680,8 +684,6 @@ do {
     .toString()
 }
 ```
-A nested pipeline works consistently. It merely shadows the outer context’s
-topic with the topic within its own body’s inner context.
 
 <tr>
 <td>
@@ -705,21 +707,10 @@ do {
   })
 }
 ```
-This code still behaves consistently.
 
 <tr>
 <td>
 
-```js
-value |> function () { return # }
-// 🚫 SyntaxError:
-// Context `function () { return # }`
-// contains a topic reference
-// but does not bind topic.
-// 🚫 SyntaxError:
-// Pipeline body `|> function () { … }`
-// binds topic but never uses topic.
-```
 **Most statements cannot** use an **outside context’s topic** in their
 expressions. This includes block statements; function, async-function,
 generator, async-generator, and class definitions, `for` and `while` statements;
@@ -730,6 +721,16 @@ This behavior is in order to fulfill the [goals][] of [simple scoping][] and of
 [“don’t shoot me in the foot”][]: it prevents the origin of any topic from being
 difficult to find.
 
+```js
+value |> function () { return # }
+// 🚫 Syntax Error:
+// Lexical context `function () { return # }`
+// contains a topic reference
+// but has no topic binding.
+// 🚫 Syntax Error:
+// Pipeline body `|> function () { … }`
+// binds topic but never uses topic.
+```
 <td>
 
 <tr>
@@ -737,7 +738,7 @@ difficult to find.
 
 ```js
 value |> class { m: () { return # }}
-// 🚫 SyntaxError:
+// 🚫 Syntax Error:
 // Pipeline body `|> class { … }`
 // binds topic but never uses topic.
 ```
@@ -798,9 +799,31 @@ g(do {
 })
 ```
 
+<tr>
+<td>
+
+```js
+value
+  |> await f(#, 5)
+  |> do {
+    if (x > 20)
+      x + 30
+    else
+      x - 10
+  }
+  |> g
+// 🚫 Syntax Error:
+// Pipeline body `|> do { … }`
+// binds topic but never uses topic.
+```
+But the same [early error rules][early errors] that apply to any topical
+pipeline body apply also to topical bodies that are `do` expressions.
+<td>
+
+
 </table>
 
-## WHATWG Fetch Standard
+## WHATWG Fetch Standard (Core Proposal only)
 The [WHATWG Fetch Standard][] contains several examples of using the DOM `fetch`
 function, resolving its promises into values, then processing the values in
 various ways. These examples may become more easily readable with smart pipelines.
@@ -1573,27 +1596,46 @@ $ => $ + 2
 <td>
 
 ```js
-=|> x + 2 // 🚫
+=|> x + 2
+// 🚫 Syntax Error:
+// Pipeline body `=|> x + 2`
+// binds topic but never uses topic.
 ```
 
-<td>
+This is an [early error][early errors], as usual.The topic is not used anywhere
+in the pipe function’s body – just like with `… |> x + 2`.
 
-This is a syntax error, because the topic is not used anywhere in the pipe
-function’s body – just like with `… |> x + 2`. [TODO: Link to early error.]
+<td>
 
 <tr>
 <td>
 
 ```js
-=> # + 2 // 🚫
+=> # + 2
+// 🚫 Syntax Error:
+// Unexpected token `=>`.
 ```
+If the pipeline-function operator `=|>` is typoed as an arrow function `=>`
+instead, then this is another syntax error, because the arrow function `=>`
+expects to always have a parameter antecedent as its head.
 
 <td>
 
-If the skinny arrow `=|>` is typoed as a fat arrow `=>` instead, then this is
-a syntax error.
-This is a syntax error if not within a topic context.
-function’s body – just like with `… |> x + 2`. [TODO: Link to early error.]
+<tr>
+<td>
+
+```js
+() => # + 2
+// 🚫 Syntax Error:
+// Lexical context `() => # + 2`
+// contains a topic reference
+// but has no topic binding.
+```
+But even if that typo also includes a parameter head for the arrow function
+`=>`, this is would still be an [early error][early errors]…unless the outer
+lexical environment does have a topic binding.
+
+<td>
 
 <tr>
 <td>
