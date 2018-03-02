@@ -1319,9 +1319,9 @@ These examples were taken from the [Ramda wiki cookbook][].
 <td>
 
 ```js
-const pickIndexes = -> R.values |> R.pickAll
+const pickIndexes = =|> R.values |> R.pickAll
 ['a', 'b', 'c'] |> pickIndexes([0, 2], #)
-// -> ['a', 'c']
+// =|> ['a', 'c']
 ```
 
 <td>
@@ -1330,16 +1330,16 @@ const pickIndexes = -> R.values |> R.pickAll
 const pickIndexes = R.compose(
   R.values, R.pickAll)
 pickIndexes([0, 2], ['a', 'b', 'c'])
-// -> ['a', 'c']
+// =|> ['a', 'c']
 ```
 
 <tr>
 <td>
 
 ```js
-const list = -> [...]
+const list = =|> [...]
 list(1, 2, 3)
-// -> [1, 2, 3]
+// =|> [1, 2, 3]
 ```
 
 <td>
@@ -1347,15 +1347,15 @@ list(1, 2, 3)
 ```js
 const list = R.unapply(R.identity)
 list(1, 2, 3)
-// -> [1, 2, 3]
+// =|> [1, 2, 3]
 ```
 
 <tr>
 <td>
 
 ```js
-const cssQuery = -> ##.querySelectorAll(#)
-const setStyle = -> { ##.style = # }
+const cssQuery = =|> ##.querySelectorAll(#)
+const setStyle = =|> { ##.style = # }
 document
   |> cssQuery('a, p', #)
   |> #.map(-> setStyle({ color: 'red' }))
@@ -1377,7 +1377,7 @@ R.pipe(
 <td>
 
 ```js
-const disco = ->
+const disco = =|>
   |> R.zipWith(-> #(##),
     [ red, green, blue ])
   |> #.join(' ')
@@ -1403,10 +1403,10 @@ console.log(
 <td>
 
 ```js
-const dotPath = ->
+const dotPath = =|>
   |> (#.split('.'), ##)
   |> R.path(#, ##)
-const propsDotPath = ->
+const propsDotPath = =|>
   |> (R.map(dotPath), [##])
   |> R.ap
 const obj = {
@@ -1414,7 +1414,7 @@ const obj = {
   x: 2
 }
 propsDotPath(['a.b.c', 'x'], obj)
-// -> [ 1, 2 ]
+// =|> [ 1, 2 ]
 ```
 
 <td>
@@ -1431,14 +1431,14 @@ const obj = {
   x: 2
 }
 propsDotPath(['a.b.c', 'x'], obj)
-// -> [ 1, 2 ]
+// =|> [ 1, 2 ]
 ```
 
 <tr>
 <td>
 
 ```js
-const getNewTitles = async ->
+const getNewTitles = async =|>
   |> await fetch
   |> parseJSON
   |> #.flatten()
@@ -1454,7 +1454,7 @@ try {
   |> console.error
 }
 
-const fetchDependent = async ->
+const fetchDependent = async =|>
   |> await fetch
   |> JSON.parse
   |> #.flatten()
@@ -1522,7 +1522,7 @@ const renameBy = (fn, obj) =>
     |> {...#}
 { A: 1, B: 2, C: 3 }
   |> renameBy(-> `a${#}`))
-// -> { aA: 1, aB: 2, aC: 3 }
+// =|> { aA: 1, aB: 2, aC: 3 }
 ```
 
 <td>
@@ -1536,7 +1536,7 @@ const renameBy = R.curry((fn, obj) =>
   )(obj)
 )
 renameBy(R.concat('a'), { A: 1, B: 2, C: 3 })
-// -> { aA: 1, aB: 2, aC: 3 }
+// =|> { aA: 1, aB: 2, aC: 3 }
 ```
 
 </table>
@@ -1683,7 +1683,7 @@ class LipFuzzTransformer {
       |> this.partialChunk + #
       |> #.replace(
         /\{\{([a-zA-Z0-9_-]+)\}\}/g,
-        -> this.replaceTag)
+        =|> this.replaceTag)
       |> partialAtEndRegexp.exec
       |> do {
         if {
@@ -2507,7 +2507,7 @@ $ => h(2, g(f($))) + 2
 
 ```js
 const doubleThenSquareThenHalfAsync =
-  -> double |> await squareAsync # |> half
+  =|> double |> await squareAsync # |> half
 ```
 Unlike the other version, this syntax does not need to give implicit special
 treatment to async functions and generators.
@@ -2525,7 +2525,7 @@ by [Gilbert “mindeavor”][mindeavor].
 <td>
 
 ```js
-const addOne = -> add(1, #)
+const addOne = =|> add(1, #)
 addOne(2) // 3
 ```
 **Partial application into a unary function** is equivalent to piping a tacit
@@ -2546,7 +2546,7 @@ are simply pipeline bodies that are prefixed by a topic arrow.
 <td>
 
 ```js
-const addTen = -> add(#, 10)
+const addTen = =|> add(#, 10)
 addTen(2) // 12
 ```
 
@@ -2599,7 +2599,7 @@ function equivalent to `console.log.bind(console)`.
 <td>
 
 ```js
-$('.some-link').on('click', -> view.reset)
+$('.some-link').on('click', =|> view.reset)
 ```
 
 <td>
@@ -2734,7 +2734,7 @@ multiple topics.
 
 ```js
 const f = (x, y, z) => [x, y, z]
-const g = -> f(?, 4, ?)
+const g = =|> f(?, 4, ?)
 g(1, 2) // [1, 4, 2]
 ```
 [R. Buckton’s current proposal][syntactic partial application] assumes that each
@@ -2750,7 +2750,7 @@ first and third parameters of the original function `f`.
 
 ```js
 const maxGreaterThanZero =
-  -> Math.max(0, ...)
+  =|> Math.max(0, ...)
 maxGreaterThanZero(1, 2) // 2
 maxGreaterThanZero(-1, -2) // 0
 ```
@@ -2959,7 +2959,7 @@ match (x) {
   100: x
   Array:
     x.length
-  /(\d)(\d)(\d)/ -> m:
+  /(\d)(\d)(\d)/ =|> m:
     m.groups |> #[0] + #[1] + #[2]
 }
 ```
