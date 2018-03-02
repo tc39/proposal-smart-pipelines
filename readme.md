@@ -302,7 +302,7 @@ promise
 ```
 This version is equivalent to the version above, except that the `capitalize`
 and `new User.Message` pipeline bodies explicitly include optional topic
-references `#`s, making the expressions slightly wordier than necessary.
+references `#`, making the expressions slightly wordier than necessary.
 
 <td>
 
@@ -377,15 +377,20 @@ indentation of any previous steps’ lines.
 <td>
 
 ```js
-value |> 50
+value |> x + 50 |> f |> g(x, 2)
 // 🚫 Syntax Error:
-// Pipeline body `|> 50`
+// Pipeline body `|> x + 50`
+// binds topic but contains no topic reference.
+// 🚫 Syntax Error:
+// Pipeline body `|> f(x, 2)`
 // binds topic but contains no topic reference.
 ```
 In order to fulfill the [goal][goals] of [“don’t shoot me in the foot”][],
 when a **pipeline is in topic style** but its **body has no topic reference**,
 that is an **[early error][]**. Such a degenerate pipeline has a very good
-chance of actually being an accidental bug.
+chance of actually being an accidental bug. (Note that the bare-style pipeline
+body `|> f` is *not* an error. The bare style is not supposed to contain any
+topic references `#`.)
 
 <td>
 
