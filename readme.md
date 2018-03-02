@@ -3831,6 +3831,7 @@ do { do { do { do { 3 * 3 } } }
 [dataflow programming]: https://en.wikipedia.org/wiki/Dataflow_programming
 [distinguishable punctuators]: #distinguishable-punctuators
 [DSLs]: https://en.wikipedia.org/wiki/Domain-specific_language
+[early error]: #static-early-errors
 [early errors]: #static-early-errors
 [ECMAScript _Identifier Name_]: https://tc39.github.io/ecma262/#prod-IdentifierName
 [ECMAScript _Identifier Reference_]: https://tc39.github.io/ecma262/#prod-IdentifierReference
