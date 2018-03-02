@@ -13,7 +13,7 @@ proposal is divided into **five compatible sub-proposals**:
 |-------------------------|----------------------------------------------|-------------------------------------------------------|
 |[Core Proposal][]        |Binary pipe `\|>` and lexical topic `#`       |Unary application                                      |
 |[Additional Feature UP][]|Unary pipe `\|>`                              |Application through `do`/`if` blocks                   |
-|[Additional Feature PF][]|Pipeline functions `=|>`                      |Partial application<br>Composition<br>Method extraction|
+|[Additional Feature PF][]|Pipeline functions `=\|>`                     |Partial application<br>Composition<br>Method extraction|
 |[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
 |[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                                  |
 
