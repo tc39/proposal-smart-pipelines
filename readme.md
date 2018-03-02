@@ -458,11 +458,12 @@ are embeddable in other expressions.
 ```js
 value |> 50
 // 🚫 SyntaxError:
-// Pipeline body binds topic but never uses topic.
+// Pipeline body `|> 50`
+// binds topic but never uses topic.
 ```
 In order to fulfill the [goal][goals] of [“don’t shoot me in the foot”][],
 **every pipeline body must contain a topic reference** if the pipeline body
-is **not a simple reference** to a function call or constructor call.
+is **not a [simple reference][]** to a function call or constructor call.
 
 <td>
 
@@ -631,7 +632,7 @@ do {
   settimeout(() => $ * 5)
 }
 ```
-The result is the same.
+The result here is the same.
 
 <tr>
 <td>
@@ -641,7 +642,7 @@ value
   |> () => # * 5
   |> settimeout
 // 🚫 SyntaxError:
-// Unexpected token '=>'.
+// Unexpected token `=>`.
 // Cannot parse base expression.
 ```
 Note, however, that arrow functions have looser precedence than the pipe
@@ -653,7 +654,7 @@ the pipeline operator.) The example above is being parsed as if it were:
 (value |> ()) =>
   (# * 5 |> settimeout)
 // 🚫 SyntaxError:
-// Unexpected token '=>'.
+// Unexpected token `=>`.
 // Cannot parse base expression.
 ```
 
@@ -669,7 +670,6 @@ value
   |> #.toString()
 ```
 Both the head and the body of a pipeline may contain nested inner pipelines.
-Nested pipelines in the body are not encouraged, but they are still permitted.
 
 <td>
 
@@ -713,8 +713,12 @@ This code still behaves consistently.
 ```js
 value |> function () { return # }
 // 🚫 SyntaxError:
-// Context contains a topic reference but does not bind topic.
-// Pipeline body binds topic but never uses topic.
+// Context `function () { return # }`
+// contains a topic reference
+// but does not bind topic.
+// 🚫 SyntaxError:
+// Pipeline body `|> function () { … }`
+// binds topic but never uses topic.
 ```
 **Most statements cannot** use an **outside context’s topic** in their
 expressions. This includes block statements; function, async-function,
@@ -734,7 +738,8 @@ difficult to find.
 ```js
 value |> class { m: () { return # }}
 // 🚫 SyntaxError:
-// Pipeline body binds topic but never uses topic.
+// Pipeline body `|> class { … }`
+// binds topic but never uses topic.
 ```
 
 <td>
