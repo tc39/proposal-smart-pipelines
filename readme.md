@@ -66,13 +66,20 @@ proposal is divided into **five compatible sub-proposals**:
 |[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
 |[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                                  |
 
-The core proposal is a **variant** of the [first pipe-operator proposal][]
+The Core Proposal is a **variant** of the [first pipe-operator proposal][]
 also championed by Ehrenberg. This variant is listed as [**Proposal 4: Smart
 Mix** on the pipe-proposal wiki][Pipeline Proposal 4]. The variant resulted from
 [previous discussions in the previous pipe-operator proposal][previous
 pipeline-placeholder discussions], discussions which culminated in an
 [invitation by Ehrenberg to try writing a specification draft][littledan
 invitation]. A **prototype Babel plugin** is also brewing.
+
+The Additional Features are **not part of the Stage-0 Core Proposal**. They are
+included to illustrate possible **separate follow-up proposals** in the case
+that the Core Proposal advances past Stage 1. Together, they demonstrate a
+**unified vision** of a future in which composition, partial application, method
+extraction, and error handling are all tersely expressible with the same simple
+and elegant pipeline/topic concept.
 
 You can take part in the discussions on the **[GitHub issue tracker][]**. When you
 file an issue, please note in it that you are talking **specifically** about
@@ -85,6 +92,12 @@ been occurring on GitHub at [tc39/proposal-pipeline-operator
 issue #91][topic-token bikeshedding].
 
 # Motivation
+This section gives a brief overview of the motivations behind the smart pipeline
+operator’s Core Proposal, as well the Additional Features listed above. Examples
+from real-world libraries are juxtaposed with their original versions. The
+original versions have been lightly edited (e.g., breaking up lines, removing
+semicolons), in order to fit their horizontal widths into this table.
+
 ## Core Proposal
 
 <table>
@@ -103,11 +116,6 @@ The binary “smart” pipeline operator `|>` proposed here would provide a
 
 Using a **[zero-cost abstraction][zero runtime cost]**, **nested** data
 transformations become [**untangled** into **short steps**][untangled flow].
-
-This section gives a brief overview of the motivations behind the smart
-pipeline operator. Examples from real-world libraries are also compared.
-The original examples have been lightly edited (e.g., breaking up lines,
-removing semicolons), to fit their horizontal widths into this table.
 
 <td>
 
@@ -3631,7 +3639,7 @@ do { do { do { do { 3 * 3 } } }
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
 [zero runtime cost]: #zero-runtime-cost
 [formal pipeline specification]: https://jschoi.org/18/es-smart-pipelines/spec
-[Core Proposal]: https://jschoi.org/18/es-smart-pipelines/spec#introduction
+[Core Proposal]: #core-proposal
 [Additional Feature PF]: #additional-feature-pf
 [Additional Feature MT]: #additional-feature-mt
 [Additional Feature TE]: #additional-feature-te
