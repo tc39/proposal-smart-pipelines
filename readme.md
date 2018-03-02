@@ -14,7 +14,7 @@ Igalia][littledan]. The proposal is divided into **five sub-proposals**:
 |[Additional Feature UP][]|Unary pipeline `\|>`                          |Application through `do` blocks
 |[Additional Feature PF][]|Pipeline functions `->`                       |Partial application, composition, method extraction
 |[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application of functions and expressions
-|[Additional Feature CT][]|`catch`-block topics                          |Application with errors
+|[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors
 
 The core proposal is a **variant** of the [first pipe-operator proposal][]
 championed by [Daniel “littledan” Ehrenberg of Igalia][littledan]. This variant
