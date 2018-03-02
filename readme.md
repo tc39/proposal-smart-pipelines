@@ -12,14 +12,14 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
   - [Core Proposal](#core-proposal)
   - [WHATWG Fetch Standard](#whatwg-fetch-standard)
   - [Additional Feature UP](#additional-feature%C2%A0up)
-  - [Additional Feature PF](#additional-feature%C2%A0pf)
-  - [Additional Feature MT](#additional-feature%C2%A0mt)
   - [jQuery](#jquery)
-  - [Underscore.js](#underscorejs)
-  - [Additional Feature CT](#additional-feature%C2%A0ct)
-  - [Lodash](#lodash)
-  - [Ramda](#ramda)
   - [Pify](#pify)
+  - [Additional Feature CT](#additional-feature%C2%A0ct)
+  - [Underscore.js](#underscorejs)
+  - [Additional Feature PF](#additional-feature%C2%A0pf)
+  - [Lodash](#lodash)
+  - [Additional Feature MT](#additional-feature%C2%A0mt)
+  - [Ramda](#ramda)
   - [WHATWG Streams Standard](#whatwg-streams-standard)
 - [Goals](#goals)
   - [“Don’t break my code.”](#dont-break-my-code)
@@ -803,6 +803,485 @@ fetch('https://pk.example/berlin-calling',
 ## Additional Feature UP
 [TODO]
 
+## jQuery
+As the single most-used JavaScript libraries in the world, [jQuery][] has provided
+an alternative human-ergonomic API to the DOM since 2006. jQuery is under the
+stewardship of the JS Foundation, a member organization of TC39 through which
+jQuery’s developers are represented in TC39. jQuery’s API requires complex data
+processing that becomes more readable with smart pipelines.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+return data
+  |> buildFragment([#], context, scripts)
+  |> #.childNodes
+  |> jQuery.merge([], #)
+```
+Imagine the path that your eyes must trace while reading this pipeline. Your
+eyes move straight down with occasional movement toward the right then back:
+from `data` to `buildFragment` (and its arguments), then `.childNodes`, then
+`jQuery.merge`. No one-off-variable assignment necessary.
+
+<td>
+
+```js
+parsed = buildFragment(
+  [ data ], context, scripts
+)
+return jQuery.merge(
+  [], parsed.childNodes
+)
+```
+From [jquery/src/core/parseHTML.js][]. In this code, the eyes first must look
+for `data` – then upwards to `parsed = buildFragment` (and then back for
+`buildFragment`’s other arguments) – then down, searching for the location of
+the `parsed` variable in the next statement – then right when noticing its
+`.childNodes` postfix – then back upward to `return jQuery.merge`.
+
+<tr>
+<td>
+
+```js
+(key |> toType) === 'object'
+key |> toType |> # === 'object'
+```
+`|>` has a looser precedence than most operators, including `===`. (Only
+assignment operators, arrow function `=>`, yield operators, and the comma
+operator are any looser.)
+
+<td>
+
+```js
+toType(key) === 'object'
+```
+From [jquery/src/core/access.js][].
+
+<tr>
+<td>
+
+```js
+context = context
+  |> # instanceof jQuery
+    ? #[0] : #
+```
+
+<td>
+
+```js
+context =
+  context instanceof jQuery
+    ? context[0] : context
+```
+From [jquery/src/core/access.js][].
+
+<tr>
+<td>
+
+```js
+context
+  |> #??.nodeType
+      ? #.ownerDocument || #
+      : document
+  |> jQuery.parseHTML(match[1], #, true)
+  |> jQuery.merge
+```
+
+<td>
+
+```js
+jQuery.merge(
+  this, jQuery.parseHTML(
+    match[1],
+    context??.nodeType
+      ? context.ownerDocument
+        || context
+      : document,
+    true
+  )
+)
+```
+From [jquery/src/core/init.js][]. Used `??.` in both versions for conciseness.
+
+<tr>
+<td>
+
+```js
+match |> do {
+  if (this[match] |> isFunction)
+    |> context[#] |> this[match](#)
+  else
+    |> context[#] |> this.attr(match, #)
+}
+```
+(This pipeline uses [Additional Feature UP][], in which unary `|> …` is short
+for `# |> …`.)
+Note how, in this version, the parallelism between the two clauses is very
+clear: they both share the form `match |> context[#] |> something(match, #)`.
+
+<td>
+
+```js
+if (isFunction(this[match])) {
+  this[match](context[match])
+} else
+  this.attr(match, context[match])
+}
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+elem = match[2]
+  |> document.getElementById
+```
+
+<td>
+
+```js
+elem = document.getElementById( match[ 2 ] )
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+return context |> do {
+  // Handle HTML strings
+  if (…)
+    …
+  // Handle $(expr, $(...))
+  else if (!# || #.jquery)
+    |> # || root
+    |> #.find(selector)
+  // Handle $(expr, context)
+  else
+    |> this.constructor
+    |> #.find(selector)
+}
+```
+The parallelism between the two clauses becomes clearer.
+
+<td>
+
+```js
+// Handle HTML strings
+if (…) {
+  …
+// Handle $(expr, $(...))
+} else if (!context || context.jquery) {
+  return (context || root).find(selector)
+// Handle $(expr, context)
+} else {
+  return this.constructor(context)
+    .find(selector);
+}
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+return selector |> do {
+  if (typeof # === 'string')
+    …
+  else if (|> isFunction)
+    root.ready !== undefined
+      ? root.ready(#)
+      : #(jQuery)
+  else
+    jQuery.makeArray(#, this)
+}
+```
+This example uses [`do` expressions][] and [Additional Syntax TS][].
+
+<td>
+
+```js
+if (typeof selector === 'string') {
+  …
+} else if (isFunction(selector)) {
+  return root.ready !== undefined
+    ? root.ready(selector)
+    : selector(jQuery)
+}
+return jQuery.makeArray(selector, this)
+```
+From [jquery/src/core/access.js][].
+
+</table>
+
+## Pify
+[Pify][] is a library that promisifies callback-style functions. Although much
+of its functionality is now addressed by [Node.js 8’s standard `util.promisify`
+function][Node.js `util.promisify`], it remains popular and useful for
+callback-style APIs in other host environments such as the DOM. Pify’s readme
+has an example that demonstrates the benefits of smart pipelines’ expressiveness.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+'package.json'
+  |> await pify(fs.readFile)(#, 'utf8')
+  |> JSON.parse
+  |> #.name
+  |> console.log
+```
+
+<td>
+
+```js
+pify(fs.readFile)('package.json', 'utf8')
+  .then(data => {
+    console.log(JSON.parse(data).name)
+  })
+```
+
+</table>
+
+## Additional Feature CT
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<th>
+
+Tacit error capture
+
+<td>
+
+With this smart-pipe proposal only, all `try` statements’ `catch` clauses would
+prohibit the use of `#` within their bodies, except where `#` is inside an inner
+pipeline inside the `catch` clause. [TODO: Link to sections explaining these
+inner block rules.]
+
+With another, future proposal, all `catch` causes would implicitly bind
+their caught errors to `#`. This implicit binding would be in addition to the
+explicit binding of a normal variable `error` declared within the parenthesized
+antecedent `try { … } catch (error) { … }`.
+
+An additional bare `catch` form, completely lacking a parenthesized antecedent,
+has already been proposed as [ECMAScript optional catch binding][]. This bare
+form would also support implicit `#` binding, serving as the fully tacit form
+used in this example. [TODO: Link to section on deep nesting.] The bare form,
+along with the hypothetical headless property syntax from above, are
+demonstrated here.
+
+<tr>
+<td>
+
+```js
+try {
+  …
+} catch {
+  log(.message)
+} finally {
+  …
+}
+```
+
+<td>
+
+```js
+try {
+  …
+} catch (error) {
+  log(#.message)
+} finally {
+  …
+}
+```
+
+<tr>
+<td>
+
+```js
+try {
+  …
+} catch {
+  match {
+    MyError:
+      #|> f
+    TypeError:
+      #|> g
+    SyntaxError:
+      #|> f |> g
+    Error:
+      `Error: ${#.message}`
+  }
+}
+```
+
+<td>
+
+```js
+try {
+  …
+} catch (error) {
+  match (error) {
+    MyError:
+      error |> f
+    TypeError:
+      error |> g
+    SyntaxError:
+      error |> f |> g
+    Error:
+      `Error: ${error.message}`
+  }
+}
+```
+
+</table>
+
+## Underscore.js
+[Underscore.js][] is another utility library very widely used since 2009,
+providing numerous functions that manipulate arrays, objects, and other
+functions. It too has a codebase that transforms values through many expressions
+– a codebase whose readability would therefore benefit from smart pipelines.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+function (obj, pred, context) {
+  return obj
+    |> isArrayLike
+    |> # ? _.findIndex : _.findKey
+    |> #(obj, pred, context)
+    |> (# !== void 0 && # !== -1)
+      ? obj[#] : undefined;
+}
+```
+
+<td>
+
+```js
+function (obj, pred, context) {
+  var key;
+  if (isArrayLike(obj)) {
+    key = _.findIndex(obj, pred, context);
+  } else {
+    key = _.findKey(obj, pred, context);
+  }
+  if (key !== void 0 && key !== -1)
+    return obj[key];
+}
+```
+
+<tr>
+<td>
+
+```js
+function (obj, pred, context) {
+  return pred
+    |> cb
+    |> _.negate
+    |> _.filter(obj, #, context)
+}
+```
+
+<td>
+
+```js
+function (obj, pred, context) {
+  return _.filter(obj,
+    _.negate(cb(pred)),
+    context
+  )
+}
+```
+
+<tr>
+<td>
+
+```js
+function (
+  srcFn, boundFn, ctxt, callingCtxt, args
+) {
+  if (!(callingCtxt instanceof boundFn))
+    return srcFn.apply(ctxt, args);
+  var self = srcFn
+    |> #.prototype |> baseCreate;
+  return self
+    |> srcFn.apply(#, args)
+    |> _.isObject(#) ? # : self;
+}
+```
+
+<td>
+
+```js
+function (
+  srcFn, boundFn,
+  ctxt, callingCtxt, args
+) {
+  if (!(callingCtxt instanceof boundFn))
+    return srcFn.apply(ctxt, args);
+  var self = baseCreate(srcFn.prototype);
+  var result = srcFn.apply(self, args);
+  if (_.isObject(result)) return result;
+  return self
+}
+```
+
+<tr>
+<td>
+
+```js
+function (obj) {
+  return obj |> do {
+    if (# == null) 0
+    else if (|> isArrayLike) #.length
+    else |> _.keys |> #.length
+  }
+}
+```
+The parallelism between the two clauses becomes clearer.
+
+<td>
+
+```js
+function (obj) {
+  if (obj == null) return 0;
+  return isArrayLike(obj)
+    ? obj.length
+    : _.keys(obj).length;
+}
+```
+
+</table>
+
 ## Additional Feature PF
 <table>
 <thead>
@@ -1061,594 +1540,6 @@ But the `::` would only need to handle method calls. No operator overloading of
 
 </table>
 
-## Additional Feature MT
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<th>
-
-Multiple lexical topics
-
-<td>
-
-Lexical environments could extended to support multiple topics at once. Regular
-pipelines would still have only one topic at a time. But pipe functions could
-bind multiple parameters to multiple topic references. `#` (as an alias for
-`#0`) would already represent its first parameters. But then `#1`, `#2`, … would
-represent its second, third, fourth, etc. parameters. Parameters in positions
-after the maximum-number topic used in the lexical context could be put into an
-array, to which the rest-topic reference (`...` or perhaps `...#`) would be
-bound in turn.
-
-This would be somewhat akin to Clojure’s compact anonymous functions, which use
-`%` aka `%1`, then `%2`, `%3`, … for its parameters within the compact
-functions’ bodies.
-
-Developers may be expected not to use pipe functions for functions with many
-parameters. But an alternative to `#`, `##`, `###`, …, not shown here, would be
-to use `#` or `#0`, then `#1`, `#2`, … for topic references instead.
-
-<tr>
-<td>
-
-```js
-(4, 3)
-  |> # - ##
-```
-
-<td>
-
-```js
-4 - 3
-```
-
-<tr>
-<td>
-
-```js
-(4, 3)
-  |> (f, # ** 2 + ##)
-  |> # - ##
-```
-
-<td>
-
-```js
-f(4) - (4 ** 2 + 3)
-```
-
-<tr>
-<td>
-
-```js
-array.sort(=|> # - ##)
-```
-
-<td>
-
-```js
-array.sort(function (x0, x1) {
-  return x0 - x1
-})
-```
-
-<tr>
-<td>
-
-```js
-[ { x: 22 }, { x: 42 } ]
-  .map(=|> #.x)
-  .reduce(=|> # - ##, 0)
-```
-
-<td>
-
-```js
-[ { x: 22 }, { x: 42 } ]
-  .map(el => el.x)
-  .reduce((x0, x1) => x0 - x1, 0)
-```
-
-<tr>
-
-<tr>
-<td>
-
-```js
-const f = (x, y, z) => [x, y, z]
-const g = f(#, 4, ##)
-g(1, 2) // [1, 4, 2]
-```
-**Partial application into an n-ary function** is solved by pipe functions with
-multiple topics.
-
-<td>
-
-```js
-const f = (x, y, z) => [x, y, z]
-const g = =|> f(?, 4, ?)
-g(1, 2) // [1, 4, 2]
-```
-[R. Buckton’s current proposal][syntactic partial application] assumes that each
-use of the same `?` placeholder token represents a different parameter. In contrast,
-each use of `#` within the same scope always refers to the same value. This is
-why additional topic parameters are required. The resulting model is more
-flexible: `=|> f(#, 4, ##)` is different from `=|> f(#, 4, #)`. The latter sensibly
-refers to a *unary* function that passes the same *one* argument into both the
-first and third parameters of the original function `f`.
-
-<tr>
-<td>
-
-```js
-const maxGreaterThanZero =
-  =|> Math.max(0, ...)
-maxGreaterThanZero(1, 2) // 2
-maxGreaterThanZero(-1, -2) // 0
-```
-Partial application into a variadic function requires a multi-topic environment
-and a rest-topic reference `...`.
-
-<td>
-
-```js
-const maxGreaterThanZero =
-  Math.max(0, ...)
-maxGreaterThanZero(1, 2) // 2
-maxGreaterThanZero(-1, -2) // 0
-```
-In this case, the topic function version looks once again nearly identical to
-the other proposal’s code.
-
-</table>
-
-## jQuery
-As the single most-used JavaScript libraries in the world, [jQuery][] has provided
-an alternative human-ergonomic API to the DOM since 2006. jQuery is under the
-stewardship of the JS Foundation, a member organization of TC39 through which
-jQuery’s developers are represented in TC39. jQuery’s API requires complex data
-processing that becomes more readable with smart pipelines.
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-return data
-  |> buildFragment([#], context, scripts)
-  |> #.childNodes
-  |> jQuery.merge([], #)
-```
-Imagine the path that your eyes must trace while reading this pipeline. Your
-eyes move straight down with occasional movement toward the right then back:
-from `data` to `buildFragment` (and its arguments), then `.childNodes`, then
-`jQuery.merge`. No one-off-variable assignment necessary.
-
-<td>
-
-```js
-parsed = buildFragment(
-  [ data ], context, scripts
-)
-return jQuery.merge(
-  [], parsed.childNodes
-)
-```
-From [jquery/src/core/parseHTML.js][]. In this code, the eyes first must look
-for `data` – then upwards to `parsed = buildFragment` (and then back for
-`buildFragment`’s other arguments) – then down, searching for the location of
-the `parsed` variable in the next statement – then right when noticing its
-`.childNodes` postfix – then back upward to `return jQuery.merge`.
-
-<tr>
-<td>
-
-```js
-(key |> toType) === 'object'
-key |> toType |> # === 'object'
-```
-`|>` has a looser precedence than most operators, including `===`. (Only
-assignment operators, arrow function `=>`, yield operators, and the comma
-operator are any looser.)
-
-<td>
-
-```js
-toType(key) === 'object'
-```
-From [jquery/src/core/access.js][].
-
-<tr>
-<td>
-
-```js
-context = context
-  |> # instanceof jQuery
-    ? #[0] : #
-```
-
-<td>
-
-```js
-context =
-  context instanceof jQuery
-    ? context[0] : context
-```
-From [jquery/src/core/access.js][].
-
-<tr>
-<td>
-
-```js
-context
-  |> #??.nodeType
-      ? #.ownerDocument || #
-      : document
-  |> jQuery.parseHTML(match[1], #, true)
-  |> jQuery.merge
-```
-
-<td>
-
-```js
-jQuery.merge(
-  this, jQuery.parseHTML(
-    match[1],
-    context??.nodeType
-      ? context.ownerDocument
-        || context
-      : document,
-    true
-  )
-)
-```
-From [jquery/src/core/init.js][]. Used `??.` in both versions for conciseness.
-
-<tr>
-<td>
-
-```js
-match |> do {
-  if (this[match] |> isFunction)
-    |> context[#] |> this[match](#)
-  else
-    |> context[#] |> this.attr(match, #)
-}
-```
-(This pipeline uses [Additional Feature UP][], in which unary `|> …` is short
-for `# |> …`.)
-Note how, in this version, the parallelism between the two clauses is very
-clear: they both share the form `match |> context[#] |> something(match, #)`.
-
-<td>
-
-```js
-if (isFunction(this[match])) {
-  this[match](context[match])
-} else
-  this.attr(match, context[match])
-}
-```
-From [jquery/src/core/init.js][].
-
-<tr>
-<td>
-
-```js
-elem = match[2]
-  |> document.getElementById
-```
-
-<td>
-
-```js
-elem = document.getElementById( match[ 2 ] )
-```
-From [jquery/src/core/init.js][].
-
-<tr>
-<td>
-
-```js
-return context |> do {
-  // Handle HTML strings
-  if (…)
-    …
-  // Handle $(expr, $(...))
-  else if (!# || #.jquery)
-    |> # || root
-    |> #.find(selector)
-  // Handle $(expr, context)
-  else
-    |> this.constructor
-    |> #.find(selector)
-}
-```
-The parallelism between the two clauses becomes clearer.
-
-<td>
-
-```js
-// Handle HTML strings
-if (…) {
-  …
-// Handle $(expr, $(...))
-} else if (!context || context.jquery) {
-  return (context || root).find(selector)
-// Handle $(expr, context)
-} else {
-  return this.constructor(context)
-    .find(selector);
-}
-```
-From [jquery/src/core/init.js][].
-
-<tr>
-<td>
-
-```js
-return selector |> do {
-  if (typeof # === 'string')
-    …
-  else if (|> isFunction)
-    root.ready !== undefined
-      ? root.ready(#)
-      : #(jQuery)
-  else
-    jQuery.makeArray(#, this)
-}
-```
-This example uses [`do` expressions][] and [Additional Syntax TS][].
-
-<td>
-
-```js
-if (typeof selector === 'string') {
-  …
-} else if (isFunction(selector)) {
-  return root.ready !== undefined
-    ? root.ready(selector)
-    : selector(jQuery)
-}
-return jQuery.makeArray(selector, this)
-```
-From [jquery/src/core/access.js][].
-
-</table>
-
-## Underscore.js
-[Underscore.js][] is another utility library very widely used since 2009,
-providing numerous functions that manipulate arrays, objects, and other
-functions. It too has a codebase that transforms values through many expressions
-– a codebase whose readability would therefore benefit from smart pipelines.
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-function (obj, pred, context) {
-  return obj
-    |> isArrayLike
-    |> # ? _.findIndex : _.findKey
-    |> #(obj, pred, context)
-    |> (# !== void 0 && # !== -1)
-      ? obj[#] : undefined;
-}
-```
-
-<td>
-
-```js
-function (obj, pred, context) {
-  var key;
-  if (isArrayLike(obj)) {
-    key = _.findIndex(obj, pred, context);
-  } else {
-    key = _.findKey(obj, pred, context);
-  }
-  if (key !== void 0 && key !== -1)
-    return obj[key];
-}
-```
-
-<tr>
-<td>
-
-```js
-function (obj, pred, context) {
-  return pred
-    |> cb
-    |> _.negate
-    |> _.filter(obj, #, context)
-}
-```
-
-<td>
-
-```js
-function (obj, pred, context) {
-  return _.filter(obj,
-    _.negate(cb(pred)),
-    context
-  )
-}
-```
-
-<tr>
-<td>
-
-```js
-function (
-  srcFn, boundFn, ctxt, callingCtxt, args
-) {
-  if (!(callingCtxt instanceof boundFn))
-    return srcFn.apply(ctxt, args);
-  var self = srcFn
-    |> #.prototype |> baseCreate;
-  return self
-    |> srcFn.apply(#, args)
-    |> _.isObject(#) ? # : self;
-}
-```
-
-<td>
-
-```js
-function (
-  srcFn, boundFn,
-  ctxt, callingCtxt, args
-) {
-  if (!(callingCtxt instanceof boundFn))
-    return srcFn.apply(ctxt, args);
-  var self = baseCreate(srcFn.prototype);
-  var result = srcFn.apply(self, args);
-  if (_.isObject(result)) return result;
-  return self
-}
-```
-
-<tr>
-<td>
-
-```js
-function (obj) {
-  return obj |> do {
-    if (# == null) 0
-    else if (|> isArrayLike) #.length
-    else |> _.keys |> #.length
-  }
-}
-```
-The parallelism between the two clauses becomes clearer.
-
-<td>
-
-```js
-function (obj) {
-  if (obj == null) return 0;
-  return isArrayLike(obj)
-    ? obj.length
-    : _.keys(obj).length;
-}
-```
-
-</table>
-
-## Additional Feature CT
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<th>
-
-Tacit error capture
-
-<td>
-
-With this smart-pipe proposal only, all `try` statements’ `catch` clauses would
-prohibit the use of `#` within their bodies, except where `#` is inside an inner
-pipeline inside the `catch` clause. [TODO: Link to sections explaining these
-inner block rules.]
-
-With another, future proposal, all `catch` causes would implicitly bind
-their caught errors to `#`. This implicit binding would be in addition to the
-explicit binding of a normal variable `error` declared within the parenthesized
-antecedent `try { … } catch (error) { … }`.
-
-An additional bare `catch` form, completely lacking a parenthesized antecedent,
-has already been proposed as [ECMAScript optional catch binding][]. This bare
-form would also support implicit `#` binding, serving as the fully tacit form
-used in this example. [TODO: Link to section on deep nesting.] The bare form,
-along with the hypothetical headless property syntax from above, are
-demonstrated here.
-
-<tr>
-<td>
-
-```js
-try {
-  …
-} catch {
-  log(.message)
-} finally {
-  …
-}
-```
-
-<td>
-
-```js
-try {
-  …
-} catch (error) {
-  log(#.message)
-} finally {
-  …
-}
-```
-
-<tr>
-<td>
-
-```js
-try {
-  …
-} catch {
-  match {
-    MyError:
-      #|> f
-    TypeError:
-      #|> g
-    SyntaxError:
-      #|> f |> g
-    Error:
-      `Error: ${#.message}`
-  }
-}
-```
-
-<td>
-
-```js
-try {
-  …
-} catch (error) {
-  match (error) {
-    MyError:
-      error |> f
-    TypeError:
-      error |> g
-    SyntaxError:
-      error |> f |> g
-    Error:
-      `Error: ${error.message}`
-  }
-}
-```
-
-</table>
-
 ## Lodash
 [Lodash][] is a fork of [Underscore.js][] that remains under rapid active
 development. Along with Underscore.js’ other utility functions, Lodash provides
@@ -1840,6 +1731,151 @@ function createRound (methodName) {
 }
 
 ```
+
+</table>
+
+## Additional Feature MT
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<th>
+
+Multiple lexical topics
+
+<td>
+
+Lexical environments could extended to support multiple topics at once. Regular
+pipelines would still have only one topic at a time. But pipe functions could
+bind multiple parameters to multiple topic references. `#` (as an alias for
+`#0`) would already represent its first parameters. But then `#1`, `#2`, … would
+represent its second, third, fourth, etc. parameters. Parameters in positions
+after the maximum-number topic used in the lexical context could be put into an
+array, to which the rest-topic reference (`...` or perhaps `...#`) would be
+bound in turn.
+
+This would be somewhat akin to Clojure’s compact anonymous functions, which use
+`%` aka `%1`, then `%2`, `%3`, … for its parameters within the compact
+functions’ bodies.
+
+Developers may be expected not to use pipe functions for functions with many
+parameters. But an alternative to `#`, `##`, `###`, …, not shown here, would be
+to use `#` or `#0`, then `#1`, `#2`, … for topic references instead.
+
+<tr>
+<td>
+
+```js
+(4, 3)
+  |> # - ##
+```
+
+<td>
+
+```js
+4 - 3
+```
+
+<tr>
+<td>
+
+```js
+(4, 3)
+  |> (f, # ** 2 + ##)
+  |> # - ##
+```
+
+<td>
+
+```js
+f(4) - (4 ** 2 + 3)
+```
+
+<tr>
+<td>
+
+```js
+array.sort(=|> # - ##)
+```
+
+<td>
+
+```js
+array.sort(function (x0, x1) {
+  return x0 - x1
+})
+```
+
+<tr>
+<td>
+
+```js
+[ { x: 22 }, { x: 42 } ]
+  .map(=|> #.x)
+  .reduce(=|> # - ##, 0)
+```
+
+<td>
+
+```js
+[ { x: 22 }, { x: 42 } ]
+  .map(el => el.x)
+  .reduce((x0, x1) => x0 - x1, 0)
+```
+
+<tr>
+
+<tr>
+<td>
+
+```js
+const f = (x, y, z) => [x, y, z]
+const g = f(#, 4, ##)
+g(1, 2) // [1, 4, 2]
+```
+**Partial application into an n-ary function** is solved by pipe functions with
+multiple topics.
+
+<td>
+
+```js
+const f = (x, y, z) => [x, y, z]
+const g = =|> f(?, 4, ?)
+g(1, 2) // [1, 4, 2]
+```
+[R. Buckton’s current proposal][syntactic partial application] assumes that each
+use of the same `?` placeholder token represents a different parameter. In contrast,
+each use of `#` within the same scope always refers to the same value. This is
+why additional topic parameters are required. The resulting model is more
+flexible: `=|> f(#, 4, ##)` is different from `=|> f(#, 4, #)`. The latter sensibly
+refers to a *unary* function that passes the same *one* argument into both the
+first and third parameters of the original function `f`.
+
+<tr>
+<td>
+
+```js
+const maxGreaterThanZero =
+  =|> Math.max(0, ...)
+maxGreaterThanZero(1, 2) // 2
+maxGreaterThanZero(-1, -2) // 0
+```
+Partial application into a variadic function requires a multi-topic environment
+and a rest-topic reference `...`.
+
+<td>
+
+```js
+const maxGreaterThanZero =
+  Math.max(0, ...)
+maxGreaterThanZero(1, 2) // 2
+maxGreaterThanZero(-1, -2) // 0
+```
+In this case, the topic function version looks once again nearly identical to
+the other proposal’s code.
 
 </table>
 
@@ -2083,42 +2119,6 @@ const renameBy = R.curry((fn, obj) =>
 )
 renameBy(R.concat('a'), { A: 1, B: 2, C: 3 })
 // =|> { aA: 1, aB: 2, aC: 3 }
-```
-
-</table>
-
-## Pify
-[Pify][] is a library that promisifies callback-style functions. Although much
-of its functionality is now addressed by [Node.js 8’s standard `util.promisify`
-function][Node.js `util.promisify`], it remains popular and useful for
-callback-style APIs in other host environments such as the DOM. Pify’s readme
-has an example that demonstrates the benefits of smart pipelines’ expressiveness.
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-'package.json'
-  |> await pify(fs.readFile)(#, 'utf8')
-  |> JSON.parse
-  |> #.name
-  |> console.log
-```
-
-<td>
-
-```js
-pify(fs.readFile)('package.json', 'utf8')
-  .then(data => {
-    console.log(JSON.parse(data).name)
-  })
 ```
 
 </table>
