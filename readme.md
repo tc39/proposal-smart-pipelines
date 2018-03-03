@@ -3581,7 +3581,22 @@ must learn and remember in order to use the syntax. The more uniform and
 simple the syntax’s rules, the more the developer may focus on the actual
 meaning of their code.
 
-[TODO: Tradeoff between versatility and simplicity]
+Both [expressive versatility][] and simplicity are important components of
+[“don’t make me overthink”][], but they sometimes conflict with one another.
+When this happens, expressive versatility often wins: simplicity is important,
+but sometimes it may be traded off for increased expressiveness. For instance,
+[terse function calls][] are important for [tacit functional programming][tacit
+programming], one of the impetuses for the [first pipeline-operator proposal][].
+
+The pipeline operator could be designed to support only [topic style][]: that
+would require `x |> f` to be `x |> f(#)`. But adding a [bare style][] brings
+many expressive benefits for tacit functional programming: not just [terse
+function calls][] but also the possibility of [terse function composition][]
+with [Additional Feature PF][].
+
+But even with this tradeoff, not too much simplicity should be given up. The
+sacrifice of simplicity for bare style’s alternate mode can be minimized by
+ensuring that [bare style’s parsing rules][smart body syntax] are very simple.
 
 ## “Make my code easier to read.”
 The new syntax should increase the human readability and writability of much
