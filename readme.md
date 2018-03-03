@@ -10,18 +10,19 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 
 - [Motivation](#motivation)
   - [Core Proposal](#core-proposal)
-  - [WHATWG Fetch Standard (Core Proposal only)](#whatwg-fetch-standard-core-proposal-only)
-  - [jQuery (Core Proposal only)](#jquery-core-proposal-only)
-  - [Additional Feature PP](#additional-feature%C2%A0up)
-  - [WHATWG Fetch Standard (Core Proposal + Additional Feature PP)](#whatwg-fetch-standard-core-proposal--additional-feature%C2%A0up)
-  - [jQuery (Core Proposal + Additional Feature PP)](#jquery-core-proposal--additional-feature%C2%A0up)
-  - [Additional Feature CT](#additional-feature%C2%A0ct)
-  - [Underscore.js](#underscorejs)
-  - [Additional Feature PF](#additional-feature%C2%A0pf)
-  - [Lodash](#lodash)
-  - [Additional Feature MT](#additional-feature%C2%A0mt)
-  - [Ramda](#ramda)
-  - [WHATWG Streams Standard](#whatwg-streams-standard)
+    - [WHATWG Fetch Standard (Core Proposal only)](#whatwg-fetch-standard-core-proposal-only)
+    - [jQuery (Core Proposal only)](#jquery-core-proposal-only)
+    - [Underscore.js (Core Proposal only)](#underscorejs-core-proposal-only)
+  - [Additional Feature PP](#additional-feature-pp)
+    - [WHATWG Fetch Standard (Core Proposal + Additional Feature PP)](#whatwg-fetch-standard-core-proposal--additional-feature-pp)
+    - [jQuery (Core Proposal + Additional Feature PP)](#jquery-core-proposal--additional-feature-pp)
+    - [Underscore.js (Core Proposal + Additional Feature PP)](#underscorejs-core-proposal--additional-feature-pp)
+  - [Additional Feature CT](#additional-feature-ct)
+  - [Additional Feature PF](#additional-feature-pf)
+    - [Lodash](#lodash)
+  - [Additional Feature MT](#additional-feature-mt)
+    - [Ramda](#ramda)
+    - [WHATWG Streams Standard](#whatwg-streams-standard)
 - [Goals](#goals)
   - [“Don’t break my code.”](#dont-break-my-code)
     - [Backward compatibility](#backward-compatibility)
@@ -833,7 +834,7 @@ pipeline body apply also to topical bodies that are `do` expressions.
 
 </table>
 
-## WHATWG Fetch Standard (Core Proposal only)
+### WHATWG Fetch Standard (Core Proposal only)
 The [WHATWG Fetch Standard][] contains several examples of using the DOM `fetch`
 function, resolving its promises into values, then processing the values in
 various ways. These examples may become more easily readable with smart pipelines.
@@ -1059,7 +1060,7 @@ do {
 
 </table>
 
-## jQuery (Core Proposal only)
+### jQuery (Core Proposal only)
 As the single most-used JavaScript library in the world, [jQuery][] has provided
 an alternative human-ergonomic API to the DOM since 2006. jQuery is under the
 stewardship of the [JS Foundation][], a member organization of TC39 through which
@@ -1281,7 +1282,7 @@ From [jquery/src/core/access.js][].
 
 </table>
 
-## Underscore.js (Core Proposal only)
+### Underscore.js (Core Proposal only)
 [Underscore.js][] is another utility library very widely used since 2009,
 providing numerous functions that manipulate arrays, objects, and other
 functions. It too has a codebase that transforms values through many expressions
@@ -1512,7 +1513,7 @@ function () {
 
 </table>
 
-## WHATWG Fetch Standard (Core Proposal + Additional Feature PP)
+### WHATWG Fetch Standard (Core Proposal + Additional Feature PP)
 Revisiting the [examples above from the WHATWG Fetch Standard][WHATWG Fetch +
 Core Proposal] with [Additional Feature PP][] shows how terseness could be
 further improved within inner `do` expressions and inner `if` statements.
@@ -1605,7 +1606,7 @@ fetch('https://pk.example/berlin-calling',
 
 </table>
 
-## jQuery (Core Proposal + Additional Feature PP)
+### jQuery (Core Proposal + Additional Feature PP)
 Similarly, revisiting the [examples above from jQuery][jQuery + Core Proposal]
 with [Additional Feature PP][] shows how terseness could be further improved
 within inner `do` expressions and inner `if` statements.
@@ -1809,7 +1810,7 @@ From [jquery/src/core/access.js][].
 
 </table>
 
-## Underscore.js (Core Proposal + Additional Feature PP)
+### Underscore.js (Core Proposal + Additional Feature PP)
 One of the [examples above from Underscore.js][Underscore.js + Core Proposal]
 with [Additional Feature PP][] improves the visual parallelism of its code.
 
@@ -2263,7 +2264,7 @@ But the `::` would only need to handle method calls. No operator overloading of
 
 </table>
 
-## Lodash
+### Lodash
 [Lodash][] is a fork of [Underscore.js][] that remains under rapid active
 development. Along with Underscore.js’ other utility functions, Lodash provides
 many other high-order functions that attempt to make [functional programming][]
@@ -2600,7 +2601,7 @@ the other proposal’s code.
 
 </table>
 
-## Ramda
+### Ramda
 [Ramda][] is a utility library focused on [functional programming][] with [pure
 functions][] and [immutable objects][]. Its functions are automatically
 [curried][currying]. Smart pipelines with [Additional Feature PF][]
@@ -2844,7 +2845,7 @@ renameBy(R.concat('a'), { A: 1, B: 2, C: 3 })
 
 </table>
 
-## WHATWG Streams Standard
+### WHATWG Streams Standard
 The [WHATWG Streams Standard][] provides an efficient, standardized stream API,
 inspired by Node.js’s Streams API, but also applicable to the DOM. The
 specification contains numerous usage examples that would become more readable
