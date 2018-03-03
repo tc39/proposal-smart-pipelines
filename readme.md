@@ -1960,7 +1960,8 @@ and tacit **method extraction**,\
 …all with a single additional concept.
 
 The precise appearance of the pipeline-function operator does not have to be
-`=|>`. It could also be `=|`, `->`, or something else.
+`=|>`. It could also be `=|`, `->`, or something else to be decided after
+much bikeshedding.
 
 <table>
 <thead>
@@ -1973,46 +1974,89 @@ The precise appearance of the pipeline-function operator does not have to be
 <td>
 
 ```js
-$ => $ |> #
+array.map($ => $ |> #)
 ```
-This arrow function is valid under the [Core Proposal][] alone. It pipes its
-unary parameter into a topic-style pipeline that simply returns the topic.
+```js
+array.map($ => $)
+```
+These functions are the same. They both pipe a unary parameter into a
+topic-style pipeline whose bodies evaluate simply to the topic, unmodified.
 
 <td>
 
 ```js
-$ => $
+array.map($ => $)
 ```
-In other words, this is the [identity function][].
+In other words, they are both [identity function][]s.
 
 <tr>
 <td>
 
 ```js
-=|> #
+array.map($ => $ |> # + 2)
+array.map(=|> # + 2)
 ```
-This is the same function expressed as a pipeline function.
+These functions are also the same with each other. They both pipe a unary
+parameter into a topic-style pipeline whose bodies are the topic plus two.
 
 <td>
 
 ```js
-$ => $
+array.map($ => $ + 2)
 ```
 
 <tr>
 <td>
 
 ```js
-=|> # + 2
+array.map($ => $ |> f)
+array.map(=|> f)
 ```
+These functions are also the same as each other. However, their pipelines
+are in **bare mode**, so no topic reference is needed in their bodies.
 
 <td>
 
 ```js
-$ => $ |> # + 2
+array.map($ => f($))
 ```
+
+<tr>
+<td>
+
 ```js
-$ => $ + 2
+array.map($ => $ |> f |> g |> h |> # * 2)
+array.map(=|> f |> g |> h |> # * 2)
+```
+Pipelines may be chained within a pipeline function. The prefix
+pipeline-function operator `=|>` would have looser precedence than the infix
+pipeline operator `|>`.
+
+<td>
+
+```js
+array.map($ => h(g(f($))) * 2)
+```
+
+<tr>
+<td>
+
+```js
+array.map(=|> |> f |> g |> h |> # * 2)
+array.map($ =|> # |> f |> g |> h |> # * 2)
+array.map($ => $ |> # |> f |> g |> h |> # * 2)
+array.map($ => $ |> f |> g |> h |> # * 2)
+array.map($ =|> f |> g |> h |> # * 2)
+```
+When coupled with [Additional Feature UP][], the phrase `=|> |>` (that is,
+prefix pipeline function `|=>` immediately followed by prefix pipeline `|>`)
+cancels out into simply the prefix pipeline function `=|>`. All four of these
+expressions here are equivalent.
+
+<td>
+
+```js
+array.map($ => h(g(f($))) * 2)
 ```
 
 <tr>
@@ -2131,7 +2175,7 @@ resolvable.
 const addOne = add(1, ?)
 addOne(2) // 3
 ```
-pipeline functions look similar to the proposal for [syntactic partial
+Pipeline functions look similar to the proposal for [syntactic partial
 application][] by [Ron Buckton][], except that partial-application expressions
 are simply pipeline bodies that are prefixed by a topic arrow.
 
