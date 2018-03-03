@@ -2459,6 +2459,23 @@ function createRound (methodName) {
 </table>
 
 ## Additional Feature MT
+Another Additional Feature introduces **multiple lexical topics** at once: not
+only the **primary** topic reference `#`, but also the **secondary** `##`,
+**tertiary** `###`, and **rest** `...` **topic references**. It also enables
+both **n-ary application** and **n-ary partial application**.
+
+This would be somewhat akin to [Clojure’s compact anonymous functions][Clojure
+compact function], which use `%` aka `%1`, then `%2`, `%3`, … for its parameters
+within the compact functions’ bodies.
+
+This explainer limits this Additional Feature to three topic references plus a
+rest topic reference. This limit could theoretically be lifted, but readability
+would rapidly suffer with five, six, seven different topics at once. Arrow
+functions could always be used instead for such many-parameter functions.\
+The precise appearances of the secondary, tertiary, and rest topic references do
+not have to be `##`, `###`, and `...`. For instance, they could instead be `#1`,
+`#2`, and `#...`; this is yet to be bikeshedded.
+
 <table>
 <thead>
 <tr>
@@ -2466,56 +2483,120 @@ function createRound (methodName) {
 <th>Status quo
 
 <tbody>
-<th>
-
-Multiple lexical topics
-
-<td>
-
-Lexical environments could extended to support multiple topics at once. Regular
-pipelines would still have only one topic at a time. But pipeline functions could
-bind multiple parameters to multiple topic references. `#` (as an alias for
-`#0`) would already represent its first parameters. But then `#1`, `#2`, … would
-represent its second, third, fourth, etc. parameters. Parameters in positions
-after the maximum-number topic used in the lexical context could be put into an
-array, to which the rest-topic reference (`...` or perhaps `...#`) would be
-bound in turn.
-
-This would be somewhat akin to Clojure’s compact anonymous functions, which use
-`%` aka `%1`, then `%2`, `%3`, … for its parameters within the compact
-functions’ bodies.
-
-Developers may be expected not to use pipeline functions for functions with many
-parameters. But an alternative to `#`, `##`, `###`, …, not shown here, would be
-to use `#` or `#0`, then `#1`, `#2`, … for topic references instead.
-
 <tr>
 <td>
 
 ```js
-(4, 3)
-  |> # - ##
+(a, b)
+  |> f
 ```
 
 <td>
 
 ```js
-4 - 3
+f(a, b)
 ```
 
 <tr>
 <td>
 
 ```js
-(4, 3)
-  |> (f, # ** 2 + ##)
+(a, b, ...c, d)
+  |> f
+```
+
+<td>
+
+```js
+f(a, b, ...c, d)
+```
+
+<tr>
+<td>
+
+```js
+(a, b)
+  |> f(#, x, ##)
+```
+
+<td>
+
+```js
+f(a, x, b)
+```
+
+<tr>
+<td>
+
+```js
+(a, b, ...c, d)
+  |> f(#, x, ...)
+```
+
+<td>
+
+```js
+f(a, ...[b, ...c, d])
+```
+
+<tr>
+<td>
+
+```js
+(a, b, ...c, d)
+  |> f(#, ###, x, ...)
+```
+
+<td>
+
+```js
+do {
+  const [_2, ..._spread] = c
+  f(a, _2, x, ...[...c, d])
+}
+```
+
+<tr>
+<td>
+
+```js
+(a, b)
   |> # - ##
 ```
 
 <td>
 
 ```js
-f(4) - (4 ** 2 + 3)
+a - b
+```
+
+<tr>
+<td>
+
+```js
+(a, b)
+  |> (f, # ** c + ##)
+  |> # - ##
+```
+
+<td>
+
+```js
+f(a) - (a ** c + b)
+```
+
+<tr>
+<td>
+
+```js
+...a
+  |> #.toString()
+```
+
+<td>
+
+```js
+[...a].toString()
 ```
 
 <tr>
@@ -2528,9 +2609,7 @@ array.sort(=|> # - ##)
 <td>
 
 ```js
-array.sort(function (x0, x1) {
-  return x0 - x1
-})
+array.sort((_0, _1) => _0 - _1)
 ```
 
 <tr>
@@ -2547,7 +2626,7 @@ array.sort(function (x0, x1) {
 ```js
 [ { x: 22 }, { x: 42 } ]
   .map(el => el.x)
-  .reduce((x0, x1) => x0 - x1, 0)
+  .reduce((_0, _1) => _0 - _1, 0)
 ```
 
 <tr>
@@ -4442,3 +4521,4 @@ do { do { do { do { 3 * 3 } } }
 [Underscore.js + Core Proposal]: #underscorejs--proposal
 [Underscore.js + CP + UP]: #underscorejs-core-proposal-additional-feature-up
 [identity function]: https://en.wikipedia.org/wiki/Identity_function
+[Clojure compact function]: https://clojure.org/reference/reader#_dispatch
