@@ -1281,7 +1281,7 @@ From [jquery/src/core/access.js][].
 
 </table>
 
-## Additional Feature UP
+## Additional Feature UP
 The first Additional Feature adds a “headless” tacit unary form of the pipeline
 operator. The tacit, default head is the topic reference `#` itself, which
 must be resolvable within the outer lexical environment. This may occur within
@@ -1677,7 +1677,7 @@ From [jquery/src/core/access.js][].
 
 </table>
 
-## Additional Feature CT
+## Additional Feature CT
 <table>
 <thead>
 <tr>
@@ -1907,7 +1907,7 @@ function (obj) {
 
 </table>
 
-## Additional Feature PF
+## Additional Feature PF
 <table>
 <thead>
 <tr>
@@ -2378,7 +2378,7 @@ function createRound (methodName) {
 
 </table>
 
-## Additional Feature MT
+## Additional Feature MT
 <table>
 <thead>
 <tr>
@@ -4364,4 +4364,6 @@ do { do { do { do { 3 * 3 } } }
 [tc39/proposal-decorators#60]: tc39/proposal-decorators#60
 [Visual Basic’s `select` statement]: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/select-case-statement
 [WHATWG Fetch + Core Proposal]: #whatwg-fetch-standard-core-proposal
-[jQuery + Core Proposal]: #jquery-standard-core-proposal
+[jQuery + Core Proposal]: #jquery-core-proposal
+[Underscore.js + Core Proposal]: #underscorejs--proposal
+[Underscore.js + CP + UP]: #underscorejs-core-proposal-additional-feature-up
