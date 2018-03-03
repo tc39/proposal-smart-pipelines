@@ -2212,8 +2212,6 @@ let newScore = player.score
 ```
 
 <tr>
-
-<tr>
 <td>
 
 ```js
@@ -2554,8 +2552,6 @@ array.sort(function (x0, x1) {
   .map(el => el.x)
   .reduce((x0, x1) => x0 - x1, 0)
 ```
-
-<tr>
 
 <tr>
 <td>
@@ -3831,8 +3827,6 @@ server(app) {
 ```
 
 <tr>
-
-<tr>
 <th>
 
 Topic pattern matching
@@ -3915,8 +3909,6 @@ syntax from above.
   }
 }
 ```
-
-<tr>
 
 <tr>
 <th>
