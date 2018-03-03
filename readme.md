@@ -1940,6 +1940,28 @@ normal variable `error` declared within any parenthesized antecedent.
 </table>
 
 ## Additional Feature PF
+The third Additional Feature introduces a **new prefix operator `=|> …`**, which
+creates a new type of function, the **pipeline function**. `=|> …` interprets
+its inner expression as a **pipeline body** but wraps it in a **unary arrow
+function**, which plugs its single parameter into the pipeline body as if it
+were a pipeline head. In other words, a pipeline function would act as if it
+were `$ => $ |> …`, where `$` is a hygienically unique variable.
+
+A pipe function takes **no** a parameter list; its unary parameter is implicitly
+bound to the tacit pipeline head. And just like with regular pipelines, a
+pipeline function may be in **bare style or topic style**.
+
+**More than any other** possible extension in this table, pipeline functions would
+dramatically increase the potential of tacit programming. Just this single
+additional operator seems to solve:\
+tacit unary-**functional composition**,\
+tacit unary-functional **partial application**,\
+and tacit **method extraction**,\
+…all with a single additional concept.
+
+The precise appearance of the pipeline-function operator does not have to be
+`=|>`. It could also be `=|`, `->`, or something else.
+
 <table>
 <thead>
 <tr>
@@ -1948,31 +1970,20 @@ normal variable `error` declared within any parenthesized antecedent.
 
 <tbody>
 <tr>
-<th>
+<td>
 
-Pipe functions
+```js
+$ => $ |> #
+```
+This arrow function is valid under the [Core Proposal][] alone. It pipes its
+unary parameter into a topic-style pipeline that simply returns the topic.
 
 <td>
 
-A new type of function, the pipe function `=|>` …, would act as if it were `$ =>
-$ |> …`, where `$` is a hygienically unique variable. A pipe function does not
-take a parameter list; it is essentially a unary operator on an expression.
-(Whether it could optionally take a parameter list is up for debate. It would be
-confusing if skinny arrows were allowed to include or omit parameters while fat
-arrows still always required parameters. See also [Brian Terlson’s proposal for
-headless fat-arrow functions][ECMAScript headless-arrow proposal]).
-
-A pipe function would bind its first argument to the topic reference within its
-body. It would also parse its body using the same smart body syntax that the
-pipeline operator uses.
-
-**More than any other** possible extension in this table, pipe functions would
-dramatically increase the potential of tacit programming. Just this single
-additional operator seems to solve:\
-tacit unary-**functional composition**,\
-tacit unary-functional **partial application**,\
-and tacit **method extraction**,\
-…all with a single additional concept.
+```js
+$ => $
+```
+In other words, this is the [identity function][].
 
 <tr>
 <td>
@@ -1980,12 +1991,10 @@ and tacit **method extraction**,\
 ```js
 =|> #
 ```
+This is the same function expressed as a pipeline function.
 
 <td>
 
-```js
-$ => $ |> #
-```
 ```js
 $ => $
 ```
