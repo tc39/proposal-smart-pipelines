@@ -20,9 +20,11 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
   - [Additional Feature CT](#additional-feature-ct)
   - [Additional Feature PF](#additional-feature-pf)
     - [Lodash](#lodash)
+    - [Ramda (Core Proposal + Additional Feature PF)](#ramda-core-proposal--additional-feature%C2%A0pf)
+    - [WHATWG Streams Standard (Core Proposal + Additional Features PP+PF)](#whatwg-streams-standard-core-proposal--additional-features%C2%A0pppf)
   - [Additional Feature MT](#additional-feature-mt)
-    - [Ramda](#ramda)
-    - [WHATWG Streams Standard](#whatwg-streams-standard)
+    - [Ramda (Core Proposal + Additional Features PF+MT)](#ramda-core-proposal--additional-features%C2%A0pfmt)
+    - [WHATWG Streams Standard (Core Proposal + Additional Features PP+PF+MT)](#whatwg-streams-standard-core-proposal--additional-features%C2%A0pppfmt)
 - [Goals](#goals)
   - [“Don’t break my code.”](#dont-break-my-code)
     - [Backward compatibility](#backward-compatibility)
@@ -1607,7 +1609,7 @@ fetch('https://pk.example/berlin-calling',
 </table>
 
 ### jQuery (Core Proposal + Additional Feature PP)
-Similarly, revisiting the [examples above from jQuery][jQuery + Core Proposal]
+Similarly, revisiting the [examples above from jQuery][jQuery + CP]
 with [Additional Feature PP][] shows how terseness could be further improved
 within inner `do` expressions and inner `if` statements.
 
@@ -1811,7 +1813,7 @@ From [jquery/src/core/access.js][].
 </table>
 
 ### Underscore.js (Core Proposal + Additional Feature PP)
-One of the [examples above from Underscore.js][Underscore.js + Core Proposal]
+One of the [examples above from Underscore.js][Underscore.js + CP]
 with [Additional Feature PP][] improves the visual parallelism of its code.
 
 <table>
@@ -2458,6 +2460,298 @@ function createRound (methodName) {
 
 </table>
 
+### Ramda (Core Proposal + Additional Feature PF)
+[Ramda][] is a utility library focused on [functional programming][] with [pure
+functions][] and [immutable objects][]. Its functions are automatically
+[curried][currying]. Smart pipelines with [Additional Feature PF][]
+would address many of Rambda’s use cases. The examples below were taken from the [Ramda wiki
+cookbook][]. They use smart pipelines with vanilla JavaScript APIs when possible
+(such as `Array.prototype.map` instead of `R.map`), but they also use Ramda
+functions wherever no terse JavaScript equivalent yet exists (such as with
+`R.zipWith` and `R.adjust`).
+
+[Even more of Ramda’s use cases are covered][Ramda + CP + PF + MT] when
+[Additional Feature MT][] syntax is supported.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+const pickIndexes = =|> R.values |> R.pickAll
+['a', 'b', 'c'] |> pickIndexes([0, 2], #)
+// ['a', 'c']
+```
+
+<td>
+
+```js
+const pickIndexes = R.compose(
+  R.values, R.pickAll)
+pickIndexes([0, 2], ['a', 'b', 'c'])
+// ['a', 'c']
+```
+
+<tr>
+<td>
+
+```js
+const list = =|> [...]
+list(1, 2, 3)
+// [1, 2, 3]
+```
+
+<td>
+
+```js
+const list = R.unapply(R.identity)
+list(1, 2, 3)
+// [1, 2, 3]
+```
+
+<tr>
+<td>
+
+```js
+const getNewTitles = async =|>
+  |> await fetch
+  |> parseJSON
+  |> #.flatten()
+  |> #.map(=|> #.items)
+  |> #.map(=|> #.filter(=|> #))
+  |> #.map(=|> #.title)
+
+try {
+  '/products.json'
+    |> getNewTitles
+    |> console.log
+} catch {
+  |> console.error
+}
+
+const fetchDependent = async =|>
+  |> await fetch
+  |> JSON.parse
+  |> #.flatten()
+  |> #.map(=|> #.url)
+  |> #.map(fetch)
+  |> #.flatten()
+
+try {
+  'urls.json'
+    |> fetchDependent
+    |> console.log
+} catch {
+  |> console.error
+}
+```
+
+<td>
+
+```js
+const getNewTitles = R.compose(
+  R.map(R.pluck('title')),
+  R.map(R.filter(R.prop('new'))),
+  R.pluck('items'),
+  R.chain(JSON.parse),
+  fetch
+)
+
+getNewTitles('/products.json')
+  .fork(console.error, console.log);
+
+const fetchDependent = R.compose(
+  R.chain(fetch),
+  R.pluck('url'),
+  R.chain(parseJSON),
+  fetch
+)
+
+fetchDependent('urls.json')
+  .fork(console.error, console.log)
+```
+
+<tr>
+<td>
+
+```js
+number
+  |> R.repeat(Math.random, #)
+  |> #.map(=|> #())
+```
+
+<td>
+
+```js
+R.map(R.call,
+  R.repeat(Math.random, number))
+```
+
+<tr>
+<td>
+
+```js
+const renameBy = (fn, obj) =>
+  [...obj]
+    |> #.map(R.adjust(fn, 0)),
+    |> {...#}
+{ A: 1, B: 2, C: 3 }
+  |> renameBy(=|> `a${#}`))
+// { aA: 1, aB: 2, aC: 3 }
+```
+
+<td>
+
+```js
+const renameBy = R.curry((fn, obj) =>
+  R.pipe(
+    R.toPairs,
+    R.map(R.adjust(fn, 0)),
+    R.fromPairs
+  )(obj)
+)
+renameBy(R.concat('a'), { A: 1, B: 2, C: 3 })
+// { aA: 1, aB: 2, aC: 3 }
+```
+
+</table>
+
+### WHATWG Streams Standard (Core Proposal + Additional Features PP+PF)
+The [WHATWG Streams Standard][] provides an efficient, standardized stream API,
+inspired by Node.js’s Streams API, but also applicable to the DOM. The
+specification contains numerous usage examples that would become more readable
+with smart pipelines. The Core Proposal alone would untangle much of this code,
+and the Additional Features would further improve its terseness.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+class LipFuzzTransformer {
+  constructor(substitutions) {
+    this.substitutions = substitutions;
+    this.partialChunk = "";
+    this.lastIndex = undefined;
+  }
+
+  transform(chunk, controller) {
+    this.partialChunk = ""
+    this.lastIndex = 0
+    const partialAtEndRegexp =
+      /\{(\{([a-zA-Z0-9_-]+(\})?)?)?$/g
+    partialAtEndRegexp.lastIndex =
+      this.lastIndex
+    this.lastIndex = undefined
+    chunk
+      |> this.partialChunk + #
+      |> #.replace(
+        /\{\{([a-zA-Z0-9_-]+)\}\}/g,
+        =|> this.replaceTag)
+      |> partialAtEndRegexp.exec
+      |> do {
+        if (#) {
+          this.partialChunk =
+            |> #.index
+            |> chunk.substring
+          # |> #.index
+            |> chunk.substring(0, #)
+        }
+        else
+          chunk
+      }
+      |> controller.enqueue
+  }
+
+  flush(controller) {
+    this.partialChunk |> do {
+      if (#.length > 0) {
+        |> controller.enqueue
+      }
+    }
+  }
+
+  replaceTag(match, p1, offset) {
+    return this.substitutions
+      |> #[p1]
+      |> # === undefined ? '' : #
+      |> do {
+        this.lastIndex =
+          |> #.length
+          |> offset + #
+        #
+      }
+    }
+  }
+}
+```
+
+<td>
+
+```js
+class LipFuzzTransformer {
+  constructor(substitutions) {
+    this.substitutions = substitutions;
+    this.partialChunk = "";
+    this.lastIndex = undefined;
+  }
+
+  transform(chunk, controller) {
+    chunk = this.partialChunk + chunk;
+    this.partialChunk = "";
+    this.lastIndex = 0;
+    chunk = chunk.replace(
+      /\{\{([a-zA-Z0-9_-]+)\}\}/g,
+      this.replaceTag.bind(this));
+    const partialAtEndRegexp =
+      /\{(\{([a-zA-Z0-9_-]+(\})?)?)?$/g;
+    partialAtEndRegexp.lastIndex =
+      this.lastIndex;
+    this.lastIndex = undefined;
+    const match =
+      partialAtEndRegexp.exec(chunk);
+    if (match) {
+      this.partialChunk =
+        chunk.substring(match.index);
+      chunk =
+        chunk.substring(0, match.index);
+    }
+    controller.enqueue(chunk);
+  }
+
+  flush(controller) {
+    if (this.partialChunk.length > 0) {
+      controller.enqueue(
+        this.partialChunk);
+    }
+  }
+
+  replaceTag(match, p1, offset) {
+    let replacement = this.substitutions[p1];
+    if (replacement === undefined) {
+      replacement = "";
+    }
+    this.lastIndex =
+      offset + replacement.length;
+    return replacement;
+  }
+}
+```
+
+</table>
+
 ## Additional Feature MT
 Another Additional Feature introduces **multiple lexical topics** at once: not
 only the **primary** topic reference `#`, but also the **secondary** `##`,
@@ -2680,16 +2974,10 @@ the other proposal’s code.
 
 </table>
 
-### Ramda
-[Ramda][] is a utility library focused on [functional programming][] with [pure
-functions][] and [immutable objects][]. Its functions are automatically
-[curried][currying]. Smart pipelines with [Additional Feature PF][]
-would address many of Rambda’s use cases, particularly when also coupled with
-[Additional Feature MT][]. The examples below were taken from the [Ramda wiki
-cookbook][]. They use smart pipelines with vanilla JavaScript APIs when possible
-(such as `Array.prototype.map` instead of `R.map`), but they also use Ramda
-functions wherever no terse JavaScript equivalent yet exists (such as with
-`R.zipWith` and `R.adjust`).
+### Ramda (Core Proposal + Additional Features PF+MT)
+[Many examples above using Ramda][Ramda + CP + PF] benefited from pipeline
+functions with Additional Feature PF. Even more use cases are covered by
+pipeline functions when [Additional Feature MT][] syntax is supported.
 
 <table>
 <thead>
@@ -2698,41 +2986,6 @@ functions wherever no terse JavaScript equivalent yet exists (such as with
 <th>Status quo
 
 <tbody>
-<tr>
-<td>
-
-```js
-const pickIndexes = =|> R.values |> R.pickAll
-['a', 'b', 'c'] |> pickIndexes([0, 2], #)
-// ['a', 'c']
-```
-
-<td>
-
-```js
-const pickIndexes = R.compose(
-  R.values, R.pickAll)
-pickIndexes([0, 2], ['a', 'b', 'c'])
-// ['a', 'c']
-```
-
-<tr>
-<td>
-
-```js
-const list = =|> [...]
-list(1, 2, 3)
-// [1, 2, 3]
-```
-
-<td>
-
-```js
-const list = R.unapply(R.identity)
-list(1, 2, 3)
-// [1, 2, 3]
-```
-
 <tr>
 <td>
 
@@ -2817,119 +3070,12 @@ propsDotPath(['a.b.c', 'x'], obj)
 // [ 1, 2 ]
 ```
 
-<tr>
-<td>
-
-```js
-const getNewTitles = async =|>
-  |> await fetch
-  |> parseJSON
-  |> #.flatten()
-  |> #.map(=|> #.items)
-  |> #.map(=|> #.filter(=|> #))
-  |> #.map(=|> #.title)
-
-try {
-  '/products.json'
-    |> getNewTitles
-    |> console.log
-} catch {
-  |> console.error
-}
-
-const fetchDependent = async =|>
-  |> await fetch
-  |> JSON.parse
-  |> #.flatten()
-  |> #.map(=|> #.url)
-  |> #.map(fetch)
-  |> #.flatten()
-
-try {
-  'urls.json'
-    |> fetchDependent
-    |> console.log
-} catch {
-  |> console.error
-}
-```
-
-<td>
-
-```js
-const getNewTitles = R.compose(
-  R.map(R.pluck('title')),
-  R.map(R.filter(R.prop('new'))),
-  R.pluck('items'),
-  R.chain(JSON.parse),
-  fetch
-)
-
-getNewTitles('/products.json')
-  .fork(console.error, console.log);
-
-const fetchDependent = R.compose(
-  R.chain(fetch),
-  R.pluck('url'),
-  R.chain(parseJSON),
-  fetch
-)
-
-fetchDependent('urls.json')
-  .fork(console.error, console.log)
-```
-
-<tr>
-<td>
-
-```js
-number
-  |> R.repeat(Math.random, #)
-  |> #.map(=|> #())
-```
-
-<td>
-
-```js
-R.map(R.call,
-  R.repeat(Math.random, number))
-```
-
-<tr>
-<td>
-
-```js
-const renameBy = (fn, obj) =>
-  [...obj]
-    |> #.map(R.adjust(fn, 0)),
-    |> {...#}
-{ A: 1, B: 2, C: 3 }
-  |> renameBy(=|> `a${#}`))
-// { aA: 1, aB: 2, aC: 3 }
-```
-
-<td>
-
-```js
-const renameBy = R.curry((fn, obj) =>
-  R.pipe(
-    R.toPairs,
-    R.map(R.adjust(fn, 0)),
-    R.fromPairs
-  )(obj)
-)
-renameBy(R.concat('a'), { A: 1, B: 2, C: 3 })
-// { aA: 1, aB: 2, aC: 3 }
-```
-
 </table>
 
-### WHATWG Streams Standard
-The [WHATWG Streams Standard][] provides an efficient, standardized stream API,
-inspired by Node.js’s Streams API, but also applicable to the DOM. The
-specification contains numerous usage examples that would become more readable
-with smart pipelines. The Core Proposal alone would untangle much of this code,
-and the Additional Features would further improve its terseness.
+### WHATWG Streams Standard (Core Proposal + Additional Features PP+PF+MT)
+[Many examples above using WHATWG Streams][WHATWG Streams + CP + PF] benefited
+from pipeline functions with Additional Features CP + PF. Even more use cases
+are covered by pipeline functions when [Additional Feature MT][] is added.
 
 <table>
 <thead>
@@ -3015,120 +3161,6 @@ function readInto(buffer, offset = 0) {
     return readInto(newView.buffer,
       offset + newView.byteLength);
   })
-}
-```
-
-<tr>
-<td>
-
-```js
-class LipFuzzTransformer {
-  constructor(substitutions) {
-    this.substitutions = substitutions;
-    this.partialChunk = "";
-    this.lastIndex = undefined;
-  }
-
-  transform(chunk, controller) {
-    this.partialChunk = ""
-    this.lastIndex = 0
-    const partialAtEndRegexp =
-      /\{(\{([a-zA-Z0-9_-]+(\})?)?)?$/g
-    partialAtEndRegexp.lastIndex =
-      this.lastIndex
-    this.lastIndex = undefined
-    chunk
-      |> this.partialChunk + #
-      |> #.replace(
-        /\{\{([a-zA-Z0-9_-]+)\}\}/g,
-        =|> this.replaceTag)
-      |> partialAtEndRegexp.exec
-      |> do {
-        if (#) {
-          this.partialChunk =
-            |> #.index
-            |> chunk.substring
-          # |> #.index
-            |> chunk.substring(0, #)
-        }
-        else
-          chunk
-      }
-      |> controller.enqueue
-  }
-
-  flush(controller) {
-    this.partialChunk |> do {
-      if (#.length > 0) {
-        |> controller.enqueue
-      }
-    }
-  }
-
-  replaceTag(match, p1, offset) {
-    return this.substitutions
-      |> #[p1]
-      |> # === undefined ? '' : #
-      |> do {
-        this.lastIndex =
-          |> #.length
-          |> offset + #
-        #
-      }
-    }
-  }
-}
-```
-
-<td>
-
-```js
-class LipFuzzTransformer {
-  constructor(substitutions) {
-    this.substitutions = substitutions;
-    this.partialChunk = "";
-    this.lastIndex = undefined;
-  }
-
-  transform(chunk, controller) {
-    chunk = this.partialChunk + chunk;
-    this.partialChunk = "";
-    this.lastIndex = 0;
-    chunk = chunk.replace(
-      /\{\{([a-zA-Z0-9_-]+)\}\}/g,
-      this.replaceTag.bind(this));
-    const partialAtEndRegexp =
-      /\{(\{([a-zA-Z0-9_-]+(\})?)?)?$/g;
-    partialAtEndRegexp.lastIndex =
-      this.lastIndex;
-    this.lastIndex = undefined;
-    const match =
-      partialAtEndRegexp.exec(chunk);
-    if (match) {
-      this.partialChunk =
-        chunk.substring(match.index);
-      chunk =
-        chunk.substring(0, match.index);
-    }
-    controller.enqueue(chunk);
-  }
-
-  flush(controller) {
-    if (this.partialChunk.length > 0) {
-      controller.enqueue(
-        this.partialChunk);
-    }
-  }
-
-  replaceTag(match, p1, offset) {
-    let replacement = this.substitutions[p1];
-    if (replacement === undefined) {
-      replacement = "";
-    }
-    this.lastIndex =
-      offset + replacement.length;
-    return replacement;
-  }
 }
 ```
 
@@ -4516,9 +4548,16 @@ do { do { do { do { 3 * 3 } } }
 [tc39/proposal-decorators#42]: tc39/proposal-decorators#42
 [tc39/proposal-decorators#60]: tc39/proposal-decorators#60
 [Visual Basic’s `select` statement]: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/select-case-statement
-[WHATWG Fetch + Core Proposal]: #whatwg-fetch-standard-core-proposal
-[jQuery + Core Proposal]: #jquery-core-proposal
-[Underscore.js + Core Proposal]: #underscorejs--proposal
-[Underscore.js + CP + UP]: #underscorejs-core-proposal-additional-feature-up
+[WHATWG Fetch + CP]: #whatwg-fetch-standard-core-proposal
+[jQuery + CP]: #jquery-core-proposal
+[Underscore.js + CP]: #underscorejs-core-proposal
+[Underscore.js + CP + UP]: #underscorejs-core-proposal--additional-feature-up
+[Lodash + CP]: #lodash-core-proposal
+[Lodash + CP + PF]: #lodash-core-proposal--additional-feature-pf
+[Lodash + CP + PF + MT]: #lodash-core-proposal--additional-features-pf-mt
+[Ramda + CP + PF]: #ramda-core-proposal--additional-feature-pf
+[Ramda + CP + PF + MT]: #ramda-core-proposal--additional-features-pf-mt
+[WHATWG Streams + CP + PF]: #whatwg-streams-standard-core-proposal--additional-feature-pf
+[WHATWG Streams + CP + PF + MT]: #whatwg-streams-standard-core-proposal--additional-features-pf-mt
 [identity function]: https://en.wikipedia.org/wiki/Identity_function
 [Clojure compact function]: https://clojure.org/reference/reader#_dispatch
