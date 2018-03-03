@@ -1918,34 +1918,6 @@ try {
 The second Additional Feature makes all `catch` clauses implicitly bind their
 caught errors to the topic reference `#`.
 
-<td>
-
-```js
-try {
-  …
-} catch (error) {
-  log(error.message)
-} finally {
-  …
-}
-```
-
-The implicit topic binding would be in addition to the explicit binding of a
-normal variable `error` declared within any parenthesized antecedent.
-
-<tr>
-<td>
-
-```js
-try {
-  …
-} catch {
-  #.message |> console.log
-} finally {
-  …
-}
-```
-
 An additional bare `catch` form, completely lacking a parenthesized antecedent,
 has already been proposed as [ECMAScript optional catch binding][]. This bare
 form would also support the tacit topic binding.
@@ -1962,86 +1934,8 @@ try {
 }
 ```
 
-<tr>
-<td>
-
-```js
-try {
-  …
-} catch {
-  match {
-    MyError:
-      #|> f
-    TypeError:
-      #|> g
-    SyntaxError:
-      #|> f |> g
-    Error:
-      `Error: ${#.message}`
-  }
-}
-```
-
-<td>
-
-```js
-try {
-  …
-} catch (error) {
-  match (error) {
-    MyError:
-      error |> f
-    TypeError:
-      error |> g
-    SyntaxError:
-      error |> f |> g
-    Error:
-      `Error: ${error.message}`
-  }
-}
-```
-
-<tr>
-<td>
-
-```js
-try {
-  …
-} catch {
-  match {
-    MyError:
-      |> f
-    TypeError:
-      |> g
-    SyntaxError:
-      |> f |> g
-    Error:
-      `Error: ${#.message}`
-  }
-}
-```
-
-This tacit topic binding to caught errors is especially powerful with
-[Additional Feature UP][].
-
-<td>
-
-```js
-try {
-  …
-} catch (error) {
-  match (error) {
-    MyError:
-      error |> f
-    TypeError:
-      error |> g
-    SyntaxError:
-      error |> f |> g
-    Error:
-      `Error: ${error.message}`
-  }
-}
-```
+The implicit topic binding would be in addition to the explicit binding of a
+normal variable `error` declared within any parenthesized antecedent.
 
 </table>
 
