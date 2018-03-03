@@ -79,13 +79,13 @@ Features**:
 |[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
 |[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                                  |
 
-The **Core Proposal** is a **variant** of the [first pipe-operator proposal][]
-also championed by Ehrenberg. This variant is listed as [**Proposal 4: Smart
-Mix** on the pipe-proposal wiki][Pipeline Proposal 4]. The variant resulted from
-[previous discussions in the previous pipe-operator proposal][previous
-pipeline-placeholder discussions], discussions which culminated in an
-[invitation by Ehrenberg to try writing a specification draft][littledan
-invitation]. A **prototype Babel plugin** is also brewing.
+The **Core Proposal** is a **variant** of the [first pipeline-operator
+proposal][] also championed by Ehrenberg. This variant is listed as
+[**Proposal 4: Smart Mix** on the pipe-proposal wiki][Pipeline Proposal 4]. The
+variant resulted from [previous discussions in the previous pipeline-operator
+proposal][previous pipeline-placeholder discussions], discussions which
+culminated in an [invitation by Ehrenberg to try writing a specification
+draft][littledan invitation]. A **prototype Babel plugin** is also brewing.
 
 The **Additional Features** are **not part of the Stage-0 Core Proposal**. They
 are included to illustrate possible **separate follow-up proposals** for the case
@@ -2461,7 +2461,7 @@ let newScore = player.score
 Promise.resolve(123).then(=|> console.log)
 ```
 **Method extraction** can be addressed by pipeline functions alone, as a natural
-result of their pipe-operator-like semantics.\
+result of their pipeline-operator-like semantics.\
 `=|> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
 bare style. This in turn is `$ => console.log($)`…
 
@@ -4578,7 +4578,7 @@ do { do { do { do { 3 * 3 } } }
 [expressive versatility]: #expressive-versatility
 [F# pipe]: https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining
 [WHATWG Fetch Standard]: https://fetch.spec.whatwg.org/
-[first pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
+[first pipeline-operator proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
 [footguns]: https://en.wiktionary.org/wiki/footgun
 [formal grammar]: #grammar
 [forward compatibility]: #forward-compatibility
@@ -4587,7 +4587,7 @@ do { do { do { do { 3 * 3 } } }
 [GitHub issue tracker]: https://github.com/tc39/proposal-pipeline-operator/issues
 [goals]: #goals
 [grammar parameters]: #grammar-parameters
-[Hack pipe]: https://docs.hhvm.com/hack/operators/pipe-operator
+[Hack pipe]: https://docs.hhvm.com/hack/operators/pipeline-operator
 [Huffman coding]: https://en.wikipedia.org/wiki/Huffman_coding
 [human writability]: #human-writability
 [IIFEs]: https://en.wikipedia.org/wiki/Immediately-invoked_function_expression
