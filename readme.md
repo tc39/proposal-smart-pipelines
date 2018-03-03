@@ -1517,8 +1517,8 @@ function () {
 
 ### WHATWG Fetch Standard (Core Proposal + Additional Feature PP)
 Revisiting the [examples above from the WHATWG Fetch Standard][WHATWG Fetch +
-Core Proposal] with [Additional Feature PP][] shows how terseness could be
-further improved within inner `do` expressions and inner `if` statements.
+CP] with [Additional Feature PP][] shows how terseness could be further improved
+within inner `do` expressions and inner `if` statements.
 
 <table>
 <thead>
@@ -4548,11 +4548,11 @@ do { do { do { do { 3 * 3 } } }
 [tc39/proposal-decorators#42]: tc39/proposal-decorators#42
 [tc39/proposal-decorators#60]: tc39/proposal-decorators#60
 [Visual Basic’s `select` statement]: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/select-case-statement
-[WHATWG Fetch + CP]: #whatwg-fetch-standard-core-proposal
-[jQuery + CP]: #jquery-core-proposal
-[Underscore.js + CP]: #underscorejs-core-proposal
+[WHATWG Fetch + CP]: #whatwg-fetch-standard-core-proposal-only
+[jQuery + CP]: #jquery-core-proposal-only
+[Underscore.js + CP]: #underscorejs-core-proposal-only
 [Underscore.js + CP + UP]: #underscorejs-core-proposal--additional-feature-up
-[Lodash + CP]: #lodash-core-proposal
+[Lodash + CP]: #lodash-core-proposal-only
 [Lodash + CP + PF]: #lodash-core-proposal--additional-feature-pf
 [Lodash + CP + PF + MT]: #lodash-core-proposal--additional-features-pf-mt
 [Ramda + CP + PF]: #ramda-core-proposal--additional-feature-pf
