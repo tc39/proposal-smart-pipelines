@@ -2625,7 +2625,7 @@ functions wherever no terse JavaScript equivalent yet exists (such as with
 ```js
 const pickIndexes = =|> R.values |> R.pickAll
 ['a', 'b', 'c'] |> pickIndexes([0, 2], #)
-// =|> ['a', 'c']
+// ['a', 'c']
 ```
 
 <td>
@@ -2634,7 +2634,7 @@ const pickIndexes = =|> R.values |> R.pickAll
 const pickIndexes = R.compose(
   R.values, R.pickAll)
 pickIndexes([0, 2], ['a', 'b', 'c'])
-// =|> ['a', 'c']
+// ['a', 'c']
 ```
 
 <tr>
@@ -2643,7 +2643,7 @@ pickIndexes([0, 2], ['a', 'b', 'c'])
 ```js
 const list = =|> [...]
 list(1, 2, 3)
-// =|> [1, 2, 3]
+// [1, 2, 3]
 ```
 
 <td>
@@ -2651,7 +2651,7 @@ list(1, 2, 3)
 ```js
 const list = R.unapply(R.identity)
 list(1, 2, 3)
-// =|> [1, 2, 3]
+// [1, 2, 3]
 ```
 
 <tr>
@@ -2718,7 +2718,7 @@ const obj = {
   x: 2
 }
 propsDotPath(['a.b.c', 'x'], obj)
-// =|> [ 1, 2 ]
+// [ 1, 2 ]
 ```
 
 <td>
@@ -2735,7 +2735,7 @@ const obj = {
   x: 2
 }
 propsDotPath(['a.b.c', 'x'], obj)
-// =|> [ 1, 2 ]
+// [ 1, 2 ]
 ```
 
 <tr>
@@ -2826,7 +2826,7 @@ const renameBy = (fn, obj) =>
     |> {...#}
 { A: 1, B: 2, C: 3 }
   |> renameBy(=|> `a${#}`))
-// =|> { aA: 1, aB: 2, aC: 3 }
+// { aA: 1, aB: 2, aC: 3 }
 ```
 
 <td>
@@ -2840,7 +2840,7 @@ const renameBy = R.curry((fn, obj) =>
   )(obj)
 )
 renameBy(R.concat('a'), { A: 1, B: 2, C: 3 })
-// =|> { aA: 1, aB: 2, aC: 3 }
+// { aA: 1, aB: 2, aC: 3 }
 ```
 
 </table>
