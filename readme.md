@@ -2108,7 +2108,7 @@ lexical environment does have a topic binding.
 <td>
 
 ```js
-=|> f |> g |> h(2, #) |> # + 2
+array.map(=|> f |> g |> h(2, #) |> # + 2)
 ```
 **Functional composition** on unary functions is equivalent to piping a value
 through several function calls, within a unary function, starting with the outer
@@ -2117,10 +2117,7 @@ function’s single tacit parameter.
 <td>
 
 ```js
-$ => $
-```
-```js
-$ => h(2, g(f($))) + 2
+array.map($ => h(2, g(f($))) + 2)
 ```
 
 <tr>
