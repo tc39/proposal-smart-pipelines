@@ -21,10 +21,10 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
   - [Additional Feature PF](#additional-feature-pf)
     - [Lodash](#lodash)
     - [Ramda (Core Proposal + Additional Feature PF)](#ramda-core-proposal--additional-feature-pf)
-    - [WHATWG Streams Standard (Core Proposal + Additional Features PP+PF)](#whatwg-streams-standard-core-proposal--additional-features%C2%A0pppf)
+    - [WHATWG Streams Standard (Core Proposal + Additional Features PP+PF)](#whatwg-streams-standard-core-proposal--additional-features-pppf)
   - [Additional Feature MT](#additional-feature-mt)
     - [Ramda (Core Proposal + Additional Features PF+MT)](#ramda-core-proposal--additional-features-pfmt)
-    - [WHATWG Streams Standard (Core Proposal + Additional Features PP+PF+MT)](#whatwg-streams-standard-core-proposal--additional-features%C2%A0pppfmt)
+    - [WHATWG Streams Standard (Core Proposal + Additional Features PP+PF+MT)](#whatwg-streams-standard-core-proposal--additional-features-pppfmt)
 - [Goals](#goals)
   - [“Don’t break my code.”](#dont-break-my-code)
     - [Backward compatibility](#backward-compatibility)
@@ -2622,7 +2622,7 @@ renameBy(R.concat('a'), { A: 1, B: 2, C: 3 })
 
 </table>
 
-### WHATWG Streams Standard (Core Proposal + Additional Features PP+PF)
+### WHATWG Streams Standard (Core Proposal + Additional Features PP+PF)
 The [WHATWG Streams Standard][] provides an efficient, standardized stream API,
 inspired by Node.js’s Streams API, but also applicable to the DOM. The
 specification contains numerous usage examples that would become more readable
@@ -3072,7 +3072,7 @@ propsDotPath(['a.b.c', 'x'], obj)
 
 </table>
 
-### WHATWG Streams Standard (Core Proposal + Additional Features PP+PF+MT)
+### WHATWG Streams Standard (Core Proposal + Additional Features PP+PF+MT)
 [Many examples above using WHATWG Streams][WHATWG Streams + CP + PF] benefited
 from pipeline functions with Additional Features CP + PF. Even more use cases
 are covered by pipeline functions when [Additional Feature MT][] is added.
