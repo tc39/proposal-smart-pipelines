@@ -167,6 +167,7 @@ promise
   |> capitalize
   |> # + '!'
   |> new User.Message
+  |> await stream.write
 ```
 
 With smart pipelines, the code above could be **terser** and, literally,
@@ -189,27 +190,29 @@ unrelated lines.
 <td>
 
 ```js
-new User.Message(
-  capitalize(
-    doubledSay(
-      await promise
-        ??: throw new TypeError(
-          `Invalid value from ${promise}`)
-    ), ', '
-  ) + '!'
+await stream.write(
+  new User.Message(
+    capitalize(
+      doubledSay(
+        await promise
+          ??: throw new TypeError(
+            `Invalid value from ${promise}`)
+      ), ', '
+    ) + '!'
+  )
 )
 ```
 Compared with the pipeline version, the original code requires **additional
-indentation and grouping** on each step. This requires three more levels of
-indentation and three more pairs of parentheses.
+indentation and grouping** on each step. This requires four more levels of
+indentation and four more pairs of parentheses.
 
 In addition, much related code is here separated by unrelated code. Rather than
 a **uniform** postfix chain, operations appear **either before** the previous
-step’s expression (`new User.Message(…)`, `capitalize(…)`, `doubledSay(…)`,
-`await …`) but also **after** (`… ??: throw new TypeError()`, `… + '!'`).
-An additional argument to function calls (such as `, ` in `doubledSay(…, ', ')`)
-is also separated from its function calls, forming another easy-to-miss
-“postfix” argument.
+step’s expression (`await stream.write(…)`,`new User.Message(…)`,
+`capitalize(…)`, `doubledSay(…)`, `await …`) but also **after** (`… ??: throw
+new TypeError()`, `… + '!'`). An additional argument to function calls (such as
+`, ` in `doubledSay(…, ', ')`) is also separated from its function calls,
+forming another easy-to-miss “postfix” argument.
 
 
 <tr>
@@ -273,6 +276,7 @@ promise
   |> capitalize
   |> # + '!'
   |> new User.Message
+  |> await stream.write
 ```
 Note that, in the example above, it is **not necessary** to include
 **parentheses** for `capitalize` or `new User.Message`; they were **tacitly
@@ -283,14 +287,16 @@ the version below.
 <td>
 
 ```js
-new User.Message(
-  capitalize(
-    doubledSay(
-      await promise
-        ??: throw new TypeError(
-          `Invalid value from ${promise}`)
-    ), ', '
-  ) + '!'
+await stream.write(
+  new User.Message(
+    capitalize(
+      doubledSay(
+        await promise
+          ??: throw new TypeError(
+            `Invalid value from ${promise}`)
+      ), ', '
+    ) + '!'
+  )
 )
 ```
 
@@ -306,6 +312,7 @@ promise
   |> capitalize(#)
   |> # + '!'
   |> new User.Message(#)
+  |> await stream.write(#)
 ```
 This version is equivalent to the version above, except that the `capitalize`
 and `new User.Message` pipeline bodies explicitly include optional topic
@@ -314,14 +321,16 @@ references `#`, making the expressions slightly wordier than necessary.
 <td>
 
 ```js
-new User.Message(
-  capitalize(
-    doubledSay(
-      await promise
-        ??: throw new TypeError(
-          `Invalid value from ${promise}`)
-    ), ', '
-  ) + '!'
+await stream.write(
+  new User.Message(
+    capitalize(
+      doubledSay(
+        await promise
+          ??: throw new TypeError(
+            `Invalid value from ${promise}`)
+      ), ', '
+    ) + '!'
+  )
 )
 ```
 
@@ -347,6 +356,10 @@ value
   |> # * 3
   |> -#
   |> g(#, x)
+  |> o.unaryMethod
+  |> await asyncFunction
+  |> await o.asyncMethod
+  |> new Constructor
 ```
 This pipeline is a very flat expression, with only one level of indentation, and
 with each transformation step on its own line.
@@ -357,18 +370,26 @@ but the topic reference `#` is unnecessary; it is invisibly, tacitly implied.
 This is the [**smart** part of the smart pipeline operator][smart body syntax],
 which can distinguish between two syntax styles (**bare style** vs. **topic
 style**) by using a simple rule: **bare** style uses only **identifiers, dots,
-and `new`**, and **never parentheses, brackets, braces**, or other
-**operators**. And **topic** style **always** contains at least one **topic
+`new`**, and **await** – and **never parentheses, brackets, braces**, or **other
+operators**. And **topic** style **always** contains at least one **topic
 reference**. For more information, see the reference below about the **[smart
 body syntax][]**.
 
 <td>
 
 ```js
-g(
-  -(f(value) + 2)
-    * 3,
-  x
+new Constructor(
+  await o.asyncMethod(
+    await asyncFunction(
+      o.unaryMethod(
+        g(
+          -(f(value) + 2)
+            * 3,
+          x
+        )
+      )
+    )
+  )
 )
 ```
 In contrast to the version with pipes, this code is deeply nested, not flat.
@@ -420,6 +441,7 @@ promise
   |> doubleSay(#, ', ')
   |> capitalize |> # + '!'
   |> new User.Message
+  |> await stream.write
 ```
 This pipeline is also relatively flat, with only one level of indentation, and
 with each transformation step on its own line.
@@ -440,13 +462,15 @@ function capitalize (str) {
     + str.substring(1)
 }
 
-new User.Message(
-  capitalizedString(
-    doubledSay(
-      await promise
-        ??: throw new TypeError()
-    ), ', '
-  ) + '!'
+await stream.write(
+  new User.Message(
+    capitalizedString(
+      doubledSay(
+        await promise
+          ??: throw new TypeError()
+      ), ', '
+    ) + '!'
+  )
 )
 ```
 This deeply nested expression has four levels of indentation instead of two.
@@ -3613,6 +3637,7 @@ promise
   |> capitalize
   |> # + '!'
   |> new User.Message
+  |> await stream.write
 ```
 
 The introduction to this [motivation][] section already explained much of
