@@ -108,7 +108,7 @@ versions. The original versions have been lightly edited (e.g., breaking up
 lines, removing semicolons), in order to fit their horizontal widths into this
 table. **Examples that use Additional Features** are included **only to
 illustrate** the power of the pipeline/topic concept and are always simply
-**rewritable** into a form that use **only the Core Proposal**.
+**rewritable** into forms that use **only the Core Proposal**.
 
 ## Core Proposal
 
@@ -1281,6 +1281,131 @@ From [jquery/src/core/access.js][].
 
 </table>
 
+## Underscore.js (Core Proposal only)
+[Underscore.js][] is another utility library very widely used since 2009,
+providing numerous functions that manipulate arrays, objects, and other
+functions. It too has a codebase that transforms values through many expressions
+– a codebase whose readability would therefore benefit from smart pipelines.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+function (obj, pred, context) {
+  return obj
+    |> isArrayLike
+    |> # ? _.findIndex : _.findKey
+    |> #(obj, pred, context)
+    |> (# !== void 0 && # !== -1)
+      ? obj[#] : undefined;
+}
+```
+
+<td>
+
+```js
+function (obj, pred, context) {
+  var key;
+  if (isArrayLike(obj)) {
+    key = _.findIndex(obj, pred, context);
+  } else {
+    key = _.findKey(obj, pred, context);
+  }
+  if (key !== void 0 && key !== -1)
+    return obj[key];
+}
+```
+
+<tr>
+<td>
+
+```js
+function (obj, pred, context) {
+  return pred
+    |> cb
+    |> _.negate
+    |> _.filter(obj, #, context)
+}
+```
+
+<td>
+
+```js
+function (obj, pred, context) {
+  return _.filter(obj,
+    _.negate(cb(pred)),
+    context
+  )
+}
+```
+
+<tr>
+<td>
+
+```js
+function (
+  srcFn, boundFn, ctxt, callingCtxt, args
+) {
+  if (!(callingCtxt instanceof boundFn))
+    return srcFn.apply(ctxt, args);
+  var self = srcFn
+    |> #.prototype |> baseCreate;
+  return self
+    |> srcFn.apply(#, args)
+    |> _.isObject(#) ? # : self;
+}
+```
+
+<td>
+
+```js
+function (
+  srcFn, boundFn,
+  ctxt, callingCtxt, args
+) {
+  if (!(callingCtxt instanceof boundFn))
+    return srcFn.apply(ctxt, args);
+  var self = baseCreate(srcFn.prototype);
+  var result = srcFn.apply(self, args);
+  if (_.isObject(result)) return result;
+  return self
+}
+```
+
+<tr>
+<td>
+
+```js
+function (obj) {
+  return obj |> do {
+    if (# == null)
+      0
+    else if (|> isArrayLike)
+      |> #.length
+    else
+      |> _.keys
+      |> #.length
+  }
+}
+```
+Pipelines make parallelism between all three clauses becomes clearer: `0` for
+the `if` clause, `# |> #.length` for the `else if`, and `# |> something |> #.length`
+for the `else`. [This particular example becomes even clearer][Underscore.js +
+CP + UP] when paired with [Additional Feature UP][].
+
+<td>
+
+```js
+function (obj) {
+</table>
+
 ## Additional Feature UP
 The first Additional Feature adds a “headless” tacit unary form of the pipeline
 operator. The tacit, default head is the topic reference `#` itself, which
@@ -1380,7 +1505,7 @@ function () {
 
 </table>
 
-## WHATWG Fetch Standard (Core Proposal + Additional Feature UP)
+## WHATWG Fetch Standard (Core Proposal + Additional Feature UP)
 Revisiting the [examples above from the WHATWG Fetch Standard][WHATWG Fetch +
 Core Proposal] with [Additional Feature UP][] shows how terseness could be
 further improved within inner `do` expressions and inner `if` statements.
@@ -1473,7 +1598,7 @@ fetch('https://pk.example/berlin-calling',
 
 </table>
 
-## jQuery (Core Proposal + Additional Feature UP)
+## jQuery (Core Proposal + Additional Feature UP)
 Similarly, revisiting the [examples above from jQuery][jQuery + Core Proposal]
 with [Additional Feature UP][] shows how terseness could be further improved
 within inner `do` expressions and inner `if` statements.
@@ -1650,7 +1775,7 @@ From [jquery/src/core/access.js][].
 return selector |> do {
   if (typeof # === 'string')
     …
-  else if (|> isFunction)
+  else if (# |> isFunction)
     root.ready !== undefined
       ? root.ready(#)
       : #(jQuery)
@@ -1674,6 +1799,79 @@ if (typeof selector === 'string') {
 return jQuery.makeArray(selector, this)
 ```
 From [jquery/src/core/access.js][].
+
+</table>
+
+## Underscore.js (Core Proposal + Additional Feature UP)
+One of the [examples above from Underscore.js][Underscore.js + Core Proposal]
+with [Additional Feature UP][] improves the visual parallelism of its code.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+function (obj) {
+  return obj |> do {
+    if (# == null)
+      0
+    else if (# |> isArrayLike)
+      # |> #.length
+    else
+      # |> _.keys
+        |> #.length
+  }
+}
+```
+Pipelines make parallelism between all three clauses becomes clearer.
+
+<td>
+
+```js
+function (obj) {
+  if (obj == null) return 0;
+  return isArrayLike(obj)
+    ? obj.length
+    : _.keys(obj).length;
+}
+```
+
+<tr>
+<td>
+
+```js
+function (obj) {
+  return obj |> do {
+    if (# == null)
+      0
+    else if (|> isArrayLike)
+      |> #.length
+    else
+      |> _.keys
+      |> #.length
+  }
+}
+```
+By removing `# |>` noise, [Additional Feature UP][] makes this parallelism even
+clearer: `0` for the `if` clause, `|> #.length` for the `else if` clause, and
+`|> something |> #.length` for the `else` clause.
+
+<td>
+
+```js
+function (obj) {
+  if (obj == null) return 0;
+  return isArrayLike(obj)
+    ? obj.length
+    : _.keys(obj).length;
+}
+```
 
 </table>
 
@@ -1770,138 +1968,6 @@ try {
     Error:
       `Error: ${error.message}`
   }
-}
-```
-
-</table>
-
-## Underscore.js
-[Underscore.js][] is another utility library very widely used since 2009,
-providing numerous functions that manipulate arrays, objects, and other
-functions. It too has a codebase that transforms values through many expressions
-– a codebase whose readability would therefore benefit from smart pipelines.
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-function (obj, pred, context) {
-  return obj
-    |> isArrayLike
-    |> # ? _.findIndex : _.findKey
-    |> #(obj, pred, context)
-    |> (# !== void 0 && # !== -1)
-      ? obj[#] : undefined;
-}
-```
-
-<td>
-
-```js
-function (obj, pred, context) {
-  var key;
-  if (isArrayLike(obj)) {
-    key = _.findIndex(obj, pred, context);
-  } else {
-    key = _.findKey(obj, pred, context);
-  }
-  if (key !== void 0 && key !== -1)
-    return obj[key];
-}
-```
-
-<tr>
-<td>
-
-```js
-function (obj, pred, context) {
-  return pred
-    |> cb
-    |> _.negate
-    |> _.filter(obj, #, context)
-}
-```
-
-<td>
-
-```js
-function (obj, pred, context) {
-  return _.filter(obj,
-    _.negate(cb(pred)),
-    context
-  )
-}
-```
-
-<tr>
-<td>
-
-```js
-function (
-  srcFn, boundFn, ctxt, callingCtxt, args
-) {
-  if (!(callingCtxt instanceof boundFn))
-    return srcFn.apply(ctxt, args);
-  var self = srcFn
-    |> #.prototype |> baseCreate;
-  return self
-    |> srcFn.apply(#, args)
-    |> _.isObject(#) ? # : self;
-}
-```
-
-<td>
-
-```js
-function (
-  srcFn, boundFn,
-  ctxt, callingCtxt, args
-) {
-  if (!(callingCtxt instanceof boundFn))
-    return srcFn.apply(ctxt, args);
-  var self = baseCreate(srcFn.prototype);
-  var result = srcFn.apply(self, args);
-  if (_.isObject(result)) return result;
-  return self
-}
-```
-
-<tr>
-<td>
-
-```js
-function (obj) {
-  return obj |> do {
-    if (# == null)
-      0
-    else if (|> isArrayLike)
-      |> #.length
-    else
-      |> _.keys
-      |> #.length
-  }
-}
-```
-Pipelines make parallelism between all three clauses becomes clearer: `0` for
-the `if` clause, `|> #.length` for the `else if`, and `|> something |> #.length`
-for the `else`. This particular example uses [Additional Feature UP][]: though
-it is not necessary, it makes the parallelism particularly clear.
-
-<td>
-
-```js
-function (obj) {
-  if (obj == null) return 0;
-  return isArrayLike(obj)
-    ? obj.length
-    : _.keys(obj).length;
 }
 ```
 
