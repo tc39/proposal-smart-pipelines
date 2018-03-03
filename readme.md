@@ -20,10 +20,10 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
   - [Additional Feature CT](#additional-feature-ct)
   - [Additional Feature PF](#additional-feature-pf)
     - [Lodash](#lodash)
-    - [Ramda (Core Proposal + Additional Feature PF)](#ramda-core-proposal--additional-feature%C2%A0pf)
+    - [Ramda (Core Proposal + Additional Feature PF)](#ramda-core-proposal--additional-feature-pf)
     - [WHATWG Streams Standard (Core Proposal + Additional Features PP+PF)](#whatwg-streams-standard-core-proposal--additional-features%C2%A0pppf)
   - [Additional Feature MT](#additional-feature-mt)
-    - [Ramda (Core Proposal + Additional Features PF+MT)](#ramda-core-proposal--additional-features%C2%A0pfmt)
+    - [Ramda (Core Proposal + Additional Features PF+MT)](#ramda-core-proposal--additional-features-pfmt)
     - [WHATWG Streams Standard (Core Proposal + Additional Features PP+PF+MT)](#whatwg-streams-standard-core-proposal--additional-features%C2%A0pppfmt)
 - [Goals](#goals)
   - [“Don’t break my code.”](#dont-break-my-code)
@@ -2460,7 +2460,7 @@ function createRound (methodName) {
 
 </table>
 
-### Ramda (Core Proposal + Additional Feature PF)
+### Ramda (Core Proposal + Additional Feature PF)
 [Ramda][] is a utility library focused on [functional programming][] with [pure
 functions][] and [immutable objects][]. Its functions are automatically
 [curried][currying]. Smart pipelines with [Additional Feature PF][]
@@ -2974,7 +2974,7 @@ the other proposal’s code.
 
 </table>
 
-### Ramda (Core Proposal + Additional Features PF+MT)
+### Ramda (Core Proposal + Additional Features PF+MT)
 [Many examples above using Ramda][Ramda + CP + PF] benefited from pipeline
 functions with Additional Feature PF. Even more use cases are covered by
 pipeline functions when [Additional Feature MT][] syntax is supported.
@@ -4551,13 +4551,13 @@ do { do { do { do { 3 * 3 } } }
 [WHATWG Fetch + CP]: #whatwg-fetch-standard-core-proposal-only
 [jQuery + CP]: #jquery-core-proposal-only
 [Underscore.js + CP]: #underscorejs-core-proposal-only
-[Underscore.js + CP + UP]: #underscorejs-core-proposal--additional-feature-up
+[Underscore.js + CP + PP]: #underscorejs-core-proposal--additional-feature-pp
 [Lodash + CP]: #lodash-core-proposal-only
 [Lodash + CP + PF]: #lodash-core-proposal--additional-feature-pf
-[Lodash + CP + PF + MT]: #lodash-core-proposal--additional-features-pf-mt
+[Lodash + CP + PF + MT]: #lodash-core-proposal--additional-features-pfmt
 [Ramda + CP + PF]: #ramda-core-proposal--additional-feature-pf
-[Ramda + CP + PF + MT]: #ramda-core-proposal--additional-features-pf-mt
+[Ramda + CP + PF + MT]: #ramda-core-proposal--additional-features-pfmt
 [WHATWG Streams + CP + PF]: #whatwg-streams-standard-core-proposal--additional-feature-pf
-[WHATWG Streams + CP + PF + MT]: #whatwg-streams-standard-core-proposal--additional-features-pf-mt
+[WHATWG Streams + CP + PF + MT]: #whatwg-streams-standard-core-proposal--additional-features-pfmt
 [identity function]: https://en.wikipedia.org/wiki/Identity_function
 [Clojure compact function]: https://clojure.org/reference/reader#_dispatch
