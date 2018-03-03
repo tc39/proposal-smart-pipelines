@@ -1312,12 +1312,14 @@ with the phrase `# |>`.
 
 ```js
 do {
-  if (x |> predicate)
+  if (predicate(x))
     f(x) ** 2
   else
     g(x) ** 3
 }
 ```
+Note that the topic reference in the repeated `# |>` here all refer to the same
+topic from the same lexical environment: `x`.
 
 <tr>
 <td>
@@ -1338,12 +1340,14 @@ value of their topics.
 
 ```js
 do {
-  if (x |> predicate)
+  if (predicate(x))
     f(x) ** 2
   else
     g(x) ** 3
 }
 ```
+Here, the unary `|>` still pipes in the same tacit topic from the same lexical
+environment: `x`. The result is the same as before.
 
 <tr>
 <td>
