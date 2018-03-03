@@ -1319,7 +1319,7 @@ do {
 }
 ```
 Note that the topic reference in the repeated `# |>` here all refer to the same
-topic from the same lexical environment: `x`.
+topic from the same lexical environment – `x` – into `predicate`, `f`, and `g`.
 
 <tr>
 <td>
@@ -1347,7 +1347,8 @@ do {
 }
 ```
 Here, the unary `|>` still pipes in the same tacit topic from the same lexical
-environment: `x`. The result is the same as before.
+environment – `x` – into `predicate`, `f`, and `g`. The result is still the same
+as before.
 
 <tr>
 <td>
