@@ -1879,6 +1879,8 @@ function (obj) {
     : _.keys(obj).length;
 }
 ```
+The behavior of the code remains the same. All tacit unary pipelines `|>` use the
+outer environment’s topic: `obj`.
 
 </table>
 
