@@ -3296,7 +3296,7 @@ function readInto(buffer, offset = 0) {
 
 # Goals
 
-There are seventeen ordered goals that the smart body syntax tries to fulfill,
+There are sixteen ordered goals that the smart body syntax tries to fulfill,
 which may be summarized,<br>
 “Don’t break my code,”<br>
 “Don’t make me overthink,”<br>
@@ -3319,8 +3319,8 @@ and a few other goals.
 **“Don’t make me overthink.”**
 
  4. [Syntactic locality](#syntactic-locality)
- 5. [Cyclomatic simplicity](#cyclomatic-simplicity)
- 6. [Expressive versatility](#expressive-versatility)
+ 5. [Expressive versatility](#expressive-versatility)
+ 6. [Cyclomatic simplicity](#cyclomatic-simplicity)
 
 <td>
 
@@ -3328,26 +3328,25 @@ and a few other goals.
 
  7. [Simple scoping](#simple-scoping)
  8. [Static analyzability](#static-analyzability)
- 9. [Arbitrary associativity](#arbitrary-associativity)
 
 <tr>
 <td>
 
 **“Make my code easier to read.”**
 
-10. [Untangled flow](#untangled-flow)
-11. [Distinguishability](#distinguishability)
-12. [Terse parentheses](#terse-parentheses)
-13. [Terse variables](#terse-variables)
-14. [Terse function calls](#terse-function-calls)
+ 9. [Untangled flow](#untangled-flow)
+10. [Distinguishability](#distinguishability)
+11. [Terse parentheses](#terse-parentheses)
+12. [Terse variables](#terse-variables)
+13. [Terse function calls](#terse-function-calls)
 
 <td>
 
 **Other**
 
-15. [Conceptual generality](#conceptual-generality)
-16. [Human writability](#human-writability)
-17. [Novice learnability](#novice-learnability)
+14. [Conceptual generality](#conceptual-generality)
+15. [Human writability](#human-writability)
+16. [Novice learnability](#novice-learnability)
 
 </table>
 
@@ -3363,7 +3362,7 @@ which both may cause surprising results to a developer who adopts pipelines
 while also using a globally bound convenience variable. It is a common pattern
 to do this even without a library: `var $ = document.querySelectorAll`”. The
 silent shadowing of such outer-context variables may silently cause bugs, which
-may also be difficult to debug (see [Goal 6][TODO]).
+may also be difficult to debug (see [Expressive Versatility][]).
 
 Nor can it cause previously valid code to become invalid. This includes, to a
 lesser extent, common nonstandard extensions to JavaScript: for instance, using
@@ -3400,18 +3399,43 @@ rewriting of any expression within the current environmental context, including
 inner async functions, and without having to wrap values in unnecessary promises.
 
 ### Forward compatibility
-The syntax should not preclude other proposals: both already-proposed features,
-such as [syntactic partial application][] and [private class fields][] – as well
-as [possible future extensions to the topic concept][], such as topic-binding
-versions of `function`, `for`, and `catch` blocks.
+The syntax should not preclude other proposals: both [already-proposed
+ECMAScript proposals][other ECMAScript proposals], such as [syntactic partial
+application][] and [private class fields][] – as well as the [Additional
+Features][intro] of this proposal. The Core Proposal is forward compatible with
+all of these, especially because of its [early errors][].
 
-This proposal is forward compatible with all these proposals, in both its choice
-of topic reference and in its prohibition of topic references within any block
-(other than arrow functions).
+## “Don’t shoot me in the foot.”
+The syntax should not be a footgun: it should not easy for a developer to
+accidentally shoot themselves in the foot with it.
 
-Forward compatibility is elaborated in the section on [relations to other
-work][]. See also [Goal 9][TODO] below. See also [inner blocks in pipelines][inner
-blocks].
+### Simple scoping
+It should not be easy to accidentally shadow a reference from an outer lexical
+scope. When the developer does so, any use of that reference could result in
+subtle, pernicious bugs.
+
+The rules for when the topic is bound should be simple and consistent. It should
+be clear and obvious when a topic is bound and in what scope it exists. And
+forgetting these rules should result in early, compile-time errors, not subtle
+runtime bugs.
+
+The rules of topic scoping is simple: **Topic references are bound in the bodies
+of pipelines, and they cannot be used within any block other than arrow
+functions.** See the section on [inner blocks][].
+
+### Static analyzability
+[Early errors][] help the editing JavaScript developer avoid common [footguns][]
+at compile time, such as preventing them from accidentally omitting a topic
+reference where they meant to put one. For instance, if `x |> 3` were not an
+error, then it would be a useless operation and almost certainly not what the
+developer intended. Situations like these should be statically detectable and
+cause compile-time [early errors][].
+
+The same preference for strict early errors is used by the class decorators
+proposal: see [tc39/proposal-decorators#30][], [tc39/proposal-decorators#42][],
+and [tc39/proposal-decorators#60][]. Early errors also assist with [forward
+compatibility][], as changing a behavior from “throws” to “does something” is
+generally web compatible, though the reverse is not true.
 
 ## “Don’t make me overthink.”
 The syntax should not make a developer overthink about the syntax, rather than
@@ -3434,19 +3458,6 @@ topic references), the rule minimizes garden-path syntax that would otherwise be
 possible – such as `value |> compose(f, g, h, i, j, k, #)`. Syntax becomes more
 locally readable. It becomes easier to reason about code without thinking about
 code elsewhere.
-
-### Cyclomatic simplicity
-Each edge case of the grammar increases the [cyclomatic complexity][] of parsing
-the new syntax, increasing cognitive burden on both machine compiler and human
-reader in writing and reading code without error. If edge cases and branching
-are minimized, then the resulting syntax will be uniform and consistent. The
-reduced complexity would hopefully reduce the probability that the developer
-will misunderstand the code they read or write.
-
-Similarly, reducing edge cases reduces the amount of trivia that a developer
-must learn and remember in order to use the syntax. The more uniform and
-simple the syntax’s rules, the more the developer may focus on the actual
-meaning of their code.
 
 ### Expressive versatility
 JavaScript is a language rich with [expressions of numerous kinds][MDN
@@ -3538,58 +3549,39 @@ JavaScript functions have never fulfilled the [Tennent correspondence
 principle][]. Several common types of expressions cannot be equivalently used
 within inner functions, particularly `await` and `yield`. In these frequent
 cases, attempting to replacing code with “equivalent” IIFEs may cause different
-behavior, may cause different performance behavior (see example in [Goal 2][TODO]), or
-may require dramatic rearrangement of logic to conserve the old code’s behavior.
+behavior, may cause different performance behavior (see example in [zero runtime
+cost][]), or may require dramatic rearrangement of logic to conserve the old
+code’s behavior.
 
 It would be possible to add ad-hoc handling, for selected other expression
 types, to the operator’s grammar. This would expand its benefits to that type.
-However, this conflicts with [Goal 5][TODO] (adding cyclomatic complexity to the parsing
-process, proportional to the number of ad-hoc handled cases). It also does not
-fulfill this goal well either: excluding, perhaps arbitrarily, whatever classes
-its grammar’s branches do not handle.
+However, this conflicts with the goal of [cyclomatic simplicity][], by adding
+complexity to the parsing process, proportional to the number of ad-hoc handled
+cases. It also does not fulfill this goal well either: excluding, perhaps
+arbitrarily, whatever classes its grammar’s branches do not handle.
 
 Such new [incidental complexity][] makes code less readable and distracts the
 developer from the program’s [essential logic][essential complexity]. A pipeline
 operator that improves readability should be versatile (this goal) but
-conceptually and cyclomatically simple ([Goal 5][TODO]). Such an operator should be able
-to handle **all** expressions, in a **single** manner **uniformly**
-**universally** applicable to **all** expressions. It is the hope of this
-proposal’s authors that its [smart body syntax][] fulfills both criteria.
+[conceptually and cyclomatically simple][cyclomatic simplicity]. Such an
+operator should be able to handle **all** expressions, in a **single** manner
+**uniformly** **universally** applicable to **all** expressions. It is the hope
+of this proposal’s authors that its [smart body syntax][] fulfills both criteria.
 
-## “Don’t shoot me in the foot.”
-The syntax should not be a footgun: it should not easy for a developer to
-accidentally shoot themselves in the foot with it.
+### Cyclomatic simplicity
+Each edge case of the grammar increases the [cyclomatic complexity][] of parsing
+the new syntax, increasing cognitive burden on both machine compiler and human
+reader in writing and reading code without error. If edge cases and branching
+are minimized, then the resulting syntax will be uniform and consistent. The
+reduced complexity would hopefully reduce the probability that the developer
+will misunderstand the code they read or write.
 
-### Simple scoping
-It should not be easy to accidentally shadow a reference from an outer lexical
-scope. When the developer does so, any use of that reference could result in
-subtle, pernicious bugs.
+Similarly, reducing edge cases reduces the amount of trivia that a developer
+must learn and remember in order to use the syntax. The more uniform and
+simple the syntax’s rules, the more the developer may focus on the actual
+meaning of their code.
 
-The rules for when the topic is bound should be simple and consistent. It should
-be clear and obvious when a topic is bound and in what scope it exists. And
-forgetting these rules should result in early, compile-time errors, not subtle
-runtime bugs.
-
-The rules of topic scoping is simple: **Topic references are bound in the bodies
-of pipelines, and they cannot be used within any block other than arrow
-functions.** See the section on [inner blocks][].
-
-### Static analyzability
-[Early errors][] help the editing JavaScript developer avoid common [footguns][]
-at compile time, such as preventing them from accidentally omitting a topic
-reference where they meant to put one. For instance, if `x |> 3` were not an
-error, then it would be a useless operation and almost certainly not what the
-developer intended. Situations like these should be statically detectable and
-cause compile-time [early errors][].
-
-The same preference for strict early errors is used by the class decorators
-proposal: see [tc39/proposal-decorators#30][], [tc39/proposal-decorators#42][],
-and [tc39/proposal-decorators#60][]. Early errors also assist with [forward
-compatibility][], as changing a behavior from “throws” to “does something” is
-generally web compatible, though the reverse is not true.
-
-### ASI safety
-[TODO]
+[TODO: Tradeoff between versatility and simplicity]
 
 ## “Make my code easier to read.”
 The new syntax should increase the human readability and writability of much
@@ -3687,12 +3679,13 @@ its claimed benefits in a 1970 paper as such:
 > – you can sometimes step lightly across the surface of the quagmire.
 
 This sort of terseness, in which the explicit is made tacit and implicit, must
-be balanced with [Goals 4 and 5][TODO]. Excessive implicitness compromises
-comprehensibility, at least without low-level tracing of tacit arguments’
-invisible paths, rather than the actual, high-level meaning of the code. Yet at
-the same time, excessive explicitness generates ritual, verbose boilerplate that
-also interferes with reading comprehension. Therefore, [Goal 10][TODO] must be balanced
-with [Goals 1, 4, and 5][TODO].
+be balanced with [syntactic locality][] and [cyclomatic simplicity][]. Excessive
+implicitness compromises comprehensibility, at least without low-level tracing
+of tacit arguments’ invisible paths, rather than the actual, high-level meaning
+of the code. Yet at the same time, excessive explicitness generates ritual,
+verbose boilerplate that also interferes with reading comprehension. Therefore,
+[untangled flow][] must be balanced with [backward compatibility][], [syntactic
+locality][], and [cyclomatic simplicity][].
 
 [The Zen of Python][PEP 20] famously says, “Explicit is better than implicit,”
 but it also says, “Flat is better than nested,” and, “Sparse is better than
@@ -3702,12 +3695,14 @@ dense.”
 Unary function / constructor calls are a particularly frequent type of
 expression and a good target for especial human optimization. However, such
 extra shortening might dramatically reduce the verbosity of unary function
-calls, but again this must be balanced with [Goals 1, 4, and 5][TODO].
+calls, but again this must be balanced with [backward compatibility][],
+[syntactic locality][], and [cyclomatic simplicity][].
 
 It is the hope of this proposal’s authors that its [smart body syntax][] reaches
-a good balance between this goal and [Goals 4 and 5][TODO], in the same manner that
-[Huffman coding][] optimizes textual symbols’ length for their frequency of use:
-more commonly used symbols are shorter.
+a good balance between this goal and [syntactic locality][] and [cyclomatic
+simplicity][], in the same manner that [Huffman coding][] optimizes textual
+symbols’ length for their frequency of use: more commonly used symbols are
+shorter in written length.
 
 ## Other Goals
 Although these have been prioritized last, they are still important.
@@ -3716,14 +3711,13 @@ Although these have been prioritized last, they are still important.
 If a concept is uniformly generalizable to many other cases, then this
 multiplies its usefulness. The more versatile its concepts, the more it may be
 applied to other syntax, including existing syntax and future syntax (compare
-with [Goal 3][TODO]).
+with [forward compatibility][]).
 
 This proposal’s concept of a **topic reference does not need to be coupled only
-to pipelines**. The [topic concept is **generalizable to many syntactic
-forms**][possible future extensions to the topic concept]. These generalizations
-are **out of scope** of this proposal, which is only for the smart pipe
-operator; they are **deferred** to [other, future proposals][possible future
-extensions to the topic concept].
+to pipelines**. The topic concept is **generalizable to many syntactic forms**,
+as the [Additional Syntaxes][] demonstrate. They together form one unified vision
+of a future in which composition, partial application, method extraction, and
+error handling are all tersely expressible with the same simple concepts.
 
 ### Human writability
 Writability of code is less important a priority than readability of code. Code
@@ -3739,11 +3733,11 @@ indentation, de-indentation, parenthetical grouping, and parenthetical
 flattening of many lines of code; the tedium of these incidental changes is a
 major factor in the general popularity of automatic code formatters.
 
-Achieving [Goal 8][TODO] therefore also improves the ease of composing and editing code.
-By flattening deeply nested expression trees into single threads of postfix
-steps, a step may be added oredited in isolation on a single line, it may be
-rearranged up or down, it may be removed – all without affecting the pipeline’s
-other steps in the lines above or below it.
+Achieving [static analyzability][] therefore also improves the ease of composing
+and editing code. By flattening deeply nested expression trees into single
+threads of postfix steps, a step may be added oredited in isolation on a single
+line, it may be rearranged up or down, it may be removed – all without affecting
+the pipeline’s other steps in the lines above or below it.
 
 ### Novice learnability
 Learnability of the syntax is a desirable goal: the more intuitive the syntax
@@ -4237,7 +4231,7 @@ precedent in prior programming languages’ use of “topic variables”.
 
 The term “**head**” is preferred to “**topic expression**” because, in the
 future, the [topic concept could be extended to other syntaxes such as
-`for`][possible future extensions to the topic concept], not just pipelines.
+`for`][TODO], not just pipelines.
 
 In addition, “head” is preferred to “**LHS**”, because “LHS” in the ECMAScript
 specification usually refers to the [LHS of assignments][ECMAScript LHS expressions],
@@ -4606,7 +4600,6 @@ do { do { do { do { 3 * 3 } } }
 [Perl 6 pipe]: https://docs.perl6.org/language/operators#infix_==&gt;
 [Perl 6 topicization]: https://www.perl.com/pub/2002/10/30/topic.html/
 [pipeline syntax]: #pipeline-syntax
-[possible future extensions to the topic concept]: #possible-future-extensions-to-topic-concept
 [previous pipeline-placeholder discussions]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
 [private class fields]: https://github.com/tc39/proposal-class-fields/
 [Pipeline Proposal 4]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
@@ -4690,3 +4683,5 @@ do { do { do { do { 3 * 3 } } }
 [WHATWG Streams + CP + PF + MT]: #whatwg-streams-standard-core-proposal--additional-features-pfmt
 [identity function]: https://en.wikipedia.org/wiki/Identity_function
 [Clojure compact function]: https://clojure.org/reference/reader#_dispatch
+[intro]: #smart-pipelines
+[Standard Style]: https://standardjs.com/
