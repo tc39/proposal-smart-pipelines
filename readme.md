@@ -2108,22 +2108,6 @@ lexical environment does have a topic binding.
 <td>
 
 ```js
-=|> f(2, #)
-```
-
-<td>
-
-```js
-$ => $ |> f(2, #)
-```
-```js
-$ => f(2, $)
-```
-
-<tr>
-<td>
-
-```js
 =|> f |> g |> h(2, #) |> # + 2
 ```
 **Functional composition** on unary functions is equivalent to piping a value
@@ -2161,13 +2145,31 @@ by [Gilbert “mindeavor”][mindeavor].
 <tr>
 <td>
 
+**Partial application into a unary function** is equivalent to piping a tacit
+parameter into a function-call expression, within which the one parameter is
+resolvable.
+```js
+array.map($ => $ |> f(2, #))
+array.map(=|> f(2, #))
+```
+
+<td>
+
+Pipeline functions look similar to the proposal for [syntactic partial
+application][] by [Ron Buckton][], except that partial-application expressions
+are simply pipeline bodies that are prefixed by a topic arrow.
+```js
+array.map(f(2, ?))
+array.map($ => f(2, $))
+```
+
+<tr>
+<td>
+
 ```js
 const addOne = =|> add(1, #)
 addOne(2) // 3
 ```
-**Partial application into a unary function** is equivalent to piping a tacit
-parameter into a function-call expression, within which the one parameter is
-resolvable.
 
 <td>
 
@@ -2175,9 +2177,6 @@ resolvable.
 const addOne = add(1, ?)
 addOne(2) // 3
 ```
-Pipeline functions look similar to the proposal for [syntactic partial
-application][] by [Ron Buckton][], except that partial-application expressions
-are simply pipeline bodies that are prefixed by a topic arrow.
 
 <tr>
 <td>
@@ -2225,10 +2224,10 @@ bare style. This in turn is `$ => console.log($)`…
 <td>
 
 ```js
+Promise.resolve(123).then(console.log.bind(console))
 Promise.resolve(123).then(::console.log)
 ```
-…and `$ => console.log($)` is just a wordier version of which evaluates into a
-function equivalent to `console.log.bind(console)`.
+And `$ => console.log($)` is equivalent to `console.log.bind(console)`.
 
 <tr>
 <td>
