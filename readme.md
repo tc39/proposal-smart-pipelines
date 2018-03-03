@@ -1885,6 +1885,23 @@ outer environment’s topic: `obj`.
 </table>
 
 ## Additional Feature CT
+With the [Core Proposal][] only, all `try` statements’ `catch` clauses would
+prohibit the use of the topic reference `#` within their bodies, except where
+the topic reference `#` is inside an inner pipeline inside the `catch` clause:
+this is one of the Core Proposal’s [early errors][] mentioned above.
+
+The second Additional Feature makes all `catch` clauses implicitly bind their
+caught errors to the topic reference `#`. This implicit binding would be in
+addition to the explicit binding of a normal variable `error` declared within
+any parenthesized antecedent `try { … } catch (error) { … }`.
+
+An additional bare `catch` form, completely lacking a parenthesized antecedent,
+has already been proposed as [ECMAScript optional catch binding][]. This bare
+form would also support the tacit topic binding from the paragraph above.
+
+This tacit topic binding to caught errors is especially powerful with
+[Additional Feature UP][].
+
 <table>
 <thead>
 <tr>
@@ -1892,30 +1909,6 @@ outer environment’s topic: `obj`.
 <th>Status quo
 
 <tbody>
-<tr>
-<th>
-
-Tacit error capture
-
-<td>
-
-With this smart-pipe proposal only, all `try` statements’ `catch` clauses would
-prohibit the use of the topic reference `#` within their bodies, except where
-`#` is inside an inner pipeline inside the `catch` clause. [TODO: Link to
-sections explaining these inner block rules.]
-
-With another, future proposal, all `catch` causes would implicitly bind
-their caught errors to the topic reference `#`. This implicit binding would be
-in addition to the explicit binding of a normal variable `error` declared within
-the parenthesized antecedent `try { … } catch (error) { … }`.
-
-An additional bare `catch` form, completely lacking a parenthesized antecedent,
-has already been proposed as [ECMAScript optional catch binding][]. This bare
-form would also support implicit topic binding (`#` binding), serving as the
-fully tacit form used in this example. [TODO: Link to section on deep nesting.]
-The bare form, along with the hypothetical headless property syntax from above,
-are demonstrated here.
-
 <tr>
 <td>
 
