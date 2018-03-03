@@ -1963,7 +1963,7 @@ and tacit **method extraction**,\
 …all with a single additional concept.
 
 The precise appearance of the pipeline-function operator does not have to be
-`=|>`. It could also be `=|`, `->`, or something else to be decided after
+`=|>`. It could also be `+>`, `->`, `=|`, or something else to be decided after
 much bikeshedding.
 
 <table>
