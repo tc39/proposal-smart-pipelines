@@ -2965,7 +2965,7 @@ class LipFuzzTransformer {
         =|> this.replaceTag)
       |> partialAtEndRegexp.exec
       |> do {
-        if {
+        if (#) {
           this.partialChunk =
             |> #.index
             |> chunk.substring
