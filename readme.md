@@ -1879,13 +1879,20 @@ function (
 ```js
 function (obj) {
   return obj |> do {
-    if (# == null) 0
-    else if (|> isArrayLike) #.length
-    else |> _.keys |> #.length
+    if (# == null)
+      0
+    else if (|> isArrayLike)
+      |> #.length
+    else
+      |> _.keys
+      |> #.length
   }
 }
 ```
-The parallelism between the two clauses becomes clearer.
+Pipelines make parallelism between all three clauses becomes clearer: `0` for
+the `if` clause, `|> #.length` for the `else if`, and `|> something |> #.length`
+for the `else`. This particular example uses [Additional Feature UP][]: though
+it is not necessary, it makes the parallelism particularly clear.
 
 <td>
 
