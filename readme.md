@@ -12,9 +12,9 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
   - [Core Proposal](#core-proposal)
   - [WHATWG Fetch Standard (Core Proposal only)](#whatwg-fetch-standard-core-proposal-only)
   - [jQuery (Core Proposal only)](#jquery-core-proposal-only)
-  - [Additional Feature UP](#additional-feature%C2%A0up)
-  - [WHATWG Fetch Standard (Core Proposal + Additional Feature UP)](#whatwg-fetch-standard-core-proposal--additional-feature%C2%A0up)
-  - [jQuery (Core Proposal + Additional Feature UP)](#jquery-core-proposal--additional-feature%C2%A0up)
+  - [Additional Feature PP](#additional-feature%C2%A0up)
+  - [WHATWG Fetch Standard (Core Proposal + Additional Feature PP)](#whatwg-fetch-standard-core-proposal--additional-feature%C2%A0up)
+  - [jQuery (Core Proposal + Additional Feature PP)](#jquery-core-proposal--additional-feature%C2%A0up)
   - [Additional Feature CT](#additional-feature%C2%A0ct)
   - [Underscore.js](#underscorejs)
   - [Additional Feature PF](#additional-feature%C2%A0pf)
@@ -70,7 +70,7 @@ Features**:
 |Name                     |Features                                      |Purpose                                                |
 |-------------------------|----------------------------------------------|-------------------------------------------------------|
 |[Core Proposal][]        |Infix pipe `\|>` and lexical topic `#`        |Unary application                                      |
-|[Additional Feature UP][]|Prefix pipe `\|>`                             |Application in `do`/`if`/`try` blocks                  |
+|[Additional Feature PP][]|Prefix pipe `\|>`                             |Application in `do`/`if`/`try` blocks                  |
 |[Additional Feature PF][]|Pipeline functions `=\|>`                     |Partial application<br>Composition<br>Method extraction|
 |[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
 |[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                                  |
@@ -1398,7 +1398,7 @@ function (obj) {
 Pipelines make parallelism between all three clauses becomes clearer: `0` for
 the `if` clause, `# |> #.length` for the `else if`, and `# |> something |> #.length`
 for the `else`. [This particular example becomes even clearer][Underscore.js +
-CP + UP] when paired with [Additional Feature UP][].
+CP + UP] when paired with [Additional Feature PP][].
 
 <td>
 
@@ -1413,7 +1413,7 @@ function (obj) {
 
 </table>
 
-## Additional Feature UP
+## Additional Feature PP
 The first Additional Feature adds a “headless” tacit prefix form of the pipeline
 operator. The tacit, default head is the topic reference `#` itself, which
 must be resolvable within the outer lexical environment. This may occur within
@@ -1464,7 +1464,7 @@ x |> do {
     |> g |> # ** 3
 }
 ```
-In this version, which also uses Additional Feature UP, those pipelines omit the
+In this version, which also uses Additional Feature PP, those pipelines omit the
 phrase `# |>`, using a tacit prefix pipeline `|>`, which is implied to use `#`
 as the value of their topics.
 
@@ -1512,9 +1512,9 @@ function () {
 
 </table>
 
-## WHATWG Fetch Standard (Core Proposal + Additional Feature UP)
+## WHATWG Fetch Standard (Core Proposal + Additional Feature PP)
 Revisiting the [examples above from the WHATWG Fetch Standard][WHATWG Fetch +
-Core Proposal] with [Additional Feature UP][] shows how terseness could be
+Core Proposal] with [Additional Feature PP][] shows how terseness could be
 further improved within inner `do` expressions and inner `if` statements.
 
 <table>
@@ -1584,7 +1584,7 @@ fetch('https://pk.example/berlin-calling',
   }
 }
 ```
-This pipeline version also uses [Additional Feature UP][]. The repeated `# |>`
+This pipeline version also uses [Additional Feature PP][]. The repeated `# |>`
 has been elided, but it is still tacitly there.
 
 <td>
@@ -1605,9 +1605,9 @@ fetch('https://pk.example/berlin-calling',
 
 </table>
 
-## jQuery (Core Proposal + Additional Feature UP)
+## jQuery (Core Proposal + Additional Feature PP)
 Similarly, revisiting the [examples above from jQuery][jQuery + Core Proposal]
-with [Additional Feature UP][] shows how terseness could be further improved
+with [Additional Feature PP][] shows how terseness could be further improved
 within inner `do` expressions and inner `if` statements.
 
 <table>
@@ -1653,7 +1653,7 @@ match |> do {
     |> context[#] |> this.attr(match, #)
 }
 ```
-This pipeline version also uses [Additional Feature UP][]. The repeated `# |>`
+This pipeline version also uses [Additional Feature PP][]. The repeated `# |>`
 has been elided, but it is still tacitly there.
 
 <td>
@@ -1723,7 +1723,7 @@ return context |> do {
     |> #.find(selector)
 }
 ```
-This pipeline version also uses [Additional Feature UP][]. The repeated `# |>`
+This pipeline version also uses [Additional Feature PP][]. The repeated `# |>`
 has been elided, but it is still tacitly there.
 
 <td>
@@ -1790,7 +1790,7 @@ return selector |> do {
     jQuery.makeArray(#, this)
 }
 ```
-This pipeline version also uses [Additional Feature UP][]. The repeated `# |>`
+This pipeline version also uses [Additional Feature PP][]. The repeated `# |>`
 has been elided, but it is still tacitly there.
 
 <td>
@@ -1809,9 +1809,9 @@ From [jquery/src/core/access.js][].
 
 </table>
 
-## Underscore.js (Core Proposal + Additional Feature UP)
+## Underscore.js (Core Proposal + Additional Feature PP)
 One of the [examples above from Underscore.js][Underscore.js + Core Proposal]
-with [Additional Feature UP][] improves the visual parallelism of its code.
+with [Additional Feature PP][] improves the visual parallelism of its code.
 
 <table>
 <thead>
@@ -1865,7 +1865,7 @@ function (obj) {
   }
 }
 ```
-By removing `# |>` noise, [Additional Feature UP][] makes this parallelism even
+By removing `# |>` noise, [Additional Feature PP][] makes this parallelism even
 clearer: `0` for the `if` clause, `|> #.length` for the `else if` clause, and
 `|> something |> #.length` for the `else` clause.
 
@@ -2048,7 +2048,7 @@ array.map($ => $ |> # |> f |> g |> h |> # * 2)
 array.map($ => $ |> f |> g |> h |> # * 2)
 array.map($ =|> f |> g |> h |> # * 2)
 ```
-When coupled with [Additional Feature UP][], the phrase `=|> |>` (that is,
+When coupled with [Additional Feature PP][], the phrase `=|> |>` (that is,
 prefix pipeline function `|=>` immediately followed by prefix pipeline `|>`)
 cancels out into simply the prefix pipeline function `=|>`. All four of these
 expressions here are equivalent.
@@ -4411,7 +4411,7 @@ do { do { do { do { 3 * 3 } } }
 [Additional Feature PF]: #additional-feature-pf
 [Additional Feature MT]: #additional-feature-mt
 [Additional Feature TE]: #additional-feature-te
-[Additional Feature UP]: #additional-feature-up
+[Additional Feature PP]: #additional-feature-pp
 [Additional Feature TC]: #additional-feature-tc
 [Pipeline Proposal 1]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-1-f-sharp-only
 [Node.js `util.promisify`]: https://nodejs.org/api/util.html#util_util_promisify_original
