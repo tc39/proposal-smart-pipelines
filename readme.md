@@ -17,12 +17,13 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [WHATWG Fetch Standard (Core Proposal + Additional Feature PP)](#whatwg-fetch-standard-core-proposal--additional-feature-pp)
     - [jQuery (Core Proposal + Additional Feature PP)](#jquery-core-proposal--additional-feature-pp)
     - [Underscore.js (Core Proposal + Additional Feature PP)](#underscorejs-core-proposal--additional-feature-pp)
+    - [Lodash (Core Proposal + Additional Feature PP)](#lodash-core-proposal--additional-feature-pp)
   - [Additional Feature CT](#additional-feature-ct)
   - [Additional Feature PF](#additional-feature-pf)
-    - [Lodash](#lodash)
     - [Ramda (Core Proposal + Additional Feature PF)](#ramda-core-proposal--additional-feature-pf)
     - [WHATWG Streams Standard (Core Proposal + Additional Features PP+PF)](#whatwg-streams-standard-core-proposal--additional-features-pppf)
   - [Additional Feature MT](#additional-feature-mt)
+    - [Lodash (Core Proposal + Additional Features PF+MT)](#lodash-core-proposal--additional-features-pfmt)
     - [Ramda (Core Proposal + Additional Features PF+MT)](#ramda-core-proposal--additional-features-pfmt)
     - [WHATWG Streams Standard (Core Proposal + Additional Features PP+PF+MT)](#whatwg-streams-standard-core-proposal--additional-features-pppfmt)
 - [Goals](#goals)
@@ -1416,6 +1417,135 @@ function (obj) {
 
 </table>
 
+### Lodash (Core Proposal only)
+[Lodash][] is a fork of [Underscore.js][] that remains under rapid active
+development. Along with Underscore.js’ other utility functions, Lodash provides
+many other high-order functions that attempt to make [functional programming][]
+more ergonomic. Like [jQuery][], Lodash is under the stewardship of the
+[JS Foundation][], a member organization of TC39, through which Lodash’s developers
+also have TC39 representation. And like jQuery and Underscore.js, Lodash’s API
+involves complex data processing that becomes more readable with smart pipelines.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+function hashGet (key) {
+  return this.__data__
+    |> do {
+      if (nativeCreate)
+        #[key]
+          |> # === HASH_UNDEFINED
+            ? undefined
+            : #
+      else if (hashOwnProperty.call(#, key))
+        #[key]
+      else
+        undefined
+    }
+}
+```
+
+<td>
+
+```js
+function hashGet (key) {
+  var data = this.__data__;
+  if (nativeCreate) {
+    var result = data[key];
+    return result === HASH_UNDEFINED
+      ? undefined : result;
+  }
+  return hasOwnProperty.call(data, key)
+    ? data[key] : undefined;
+}
+```
+
+<tr>
+<td>
+
+```js
+function listCacheHas (key) {
+  return this.__data__
+    |> assocIndexOf(#, key)
+    |> # > -1;
+}
+```
+
+<td>
+
+```js
+function listCacheHas (key) {
+  return assocIndexOf(this.__data__, key)
+    > -1;
+}
+```
+
+<tr>
+<td>
+
+```js
+function mapCacheDelete (key) {
+  return key
+    |> getMapData(this, #)
+    |> #['delete']
+    |> #(key)
+    |> do {
+      this.size -= # ? 1 : 0
+      #
+    }
+}
+```
+
+<td>
+
+```js
+function mapCacheDelete (key) {
+  var result =
+    getMapData(this, key)['delete'](key)
+  this.size -= result ? 1 : 0
+  return result
+}
+```
+
+<tr>
+<td>
+
+```js
+function castPath (value, object) {
+  return value |> do {
+    if (# |> isArray)
+      #
+    else if (# |> isKey(#, object))
+      [#]
+    else
+      # |> toString |> stringToPath
+  }
+}
+```
+
+<td>
+
+```js
+function castPath (value, object) {
+  if (isArray(value)) {
+    return value
+  }
+  return isKey(value, object)
+    ? [value]
+    : stringToPath(toString(value))
+}
+```
+
+</table>
+
 ## Additional Feature PP
 The first Additional Feature adds a “headless” tacit prefix form of the pipeline
 operator. The tacit, default head is the topic reference `#` itself, which
@@ -1840,6 +1970,8 @@ function (obj) {
 }
 ```
 Pipelines make parallelism between all three clauses becomes clearer.
+This pipeline version uses [Core Proposal][] syntax only. Note that several
+expressions start with `# |>`.
 
 <td>
 
@@ -1884,6 +2016,85 @@ function (obj) {
 ```
 The behavior of the code remains the same. All tacit prefix pipelines `|>` here
 use the outer environment’s topic: `obj`.
+
+</table>
+
+### Lodash (Core Proposal + Additional Feature PP)
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+function hashGet (key) {
+  return this.__data__
+    |> do {
+      if (nativeCreate)
+        #[key]
+          |> # === HASH_UNDEFINED
+            ? undefined
+            : #
+      else if (hashOwnProperty.call(#, key))
+        #[key]
+      else
+        undefined
+    }
+}
+```
+This pipeline version uses [Core Proposal][] syntax only. Note that several
+expressions start with `# |>`.
+
+<td>
+
+```js
+function hashGet (key) {
+  var data = this.__data__;
+  if (nativeCreate) {
+    var result = data[key];
+    return result === HASH_UNDEFINED
+      ? undefined : result;
+  }
+  return hasOwnProperty.call(data, key)
+    ? data[key] : undefined;
+}
+```
+
+<tr>
+<td>
+
+```js
+function castPath (value, object) {
+  return value |> do {
+    if (|> isArray)
+      #
+    else if (|> isKey(#, object))
+      [#]
+    else
+      |> toString |> stringToPath
+  }
+}
+```
+This pipeline version also uses [Additional Feature PP][]. The repeated `# |>`
+has been elided, but it is still tacitly there.
+
+<td>
+
+```js
+function castPath (value, object) {
+  if (isArray(value)) {
+    return value
+  }
+  return isKey(value, object)
+    ? [value]
+    : stringToPath(toString(value))
+}
+```
 
 </table>
 
@@ -2053,7 +2264,7 @@ array.map($ =|> f |> g |> h |> # * 2)
 ```
 When coupled with [Additional Feature PP][], the phrase `=|> |>` (that is,
 prefix pipeline function `|=>` immediately followed by prefix pipeline `|>`)
-cancels out into simply the prefix pipeline function `=|>`. All four of these
+cancels out into simply the prefix pipeline function `=|>`. All five of these
 expressions here are equivalent.
 
 <td>
@@ -2102,8 +2313,8 @@ expects to always have a parameter antecedent as its head.
 // but has no topic binding.
 ```
 But even if that typo also includes a parameter head for the arrow function
-`=>`, this is would still be an [early error][]…unless the outer
-lexical environment does have a topic binding.
+`=>`, this is would still be an [early error][]…unless the outer lexical
+environment does have its own topic binding.
 
 <td>
 
@@ -2127,14 +2338,23 @@ array.map($ => h(2, g(f($))) + 2)
 <td>
 
 ```js
-const doubleThenSquareThenHalfAsync =
-  =|> double |> await squareAsync # |> half
+const doubleThenSquareThenHalfAsync = async $ =>
+  $ |> double |> await squareAsync |> half
+```
+```js
+const doubleThenSquareThenHalfAsync = async =|>
+  |> double |> await squareAsync |> half
 ```
 Unlike the other version, this syntax does not need to give implicit special
-treatment to async functions.
+treatment to async functions. There is instead an async version of the
+pipe-function operator, within which `await` may be used, just as usual.
 
 <td>
 
+```js
+const doubleThenSquareThenHalfAsync = $ =>
+  half(await squareAsync(double($)))
+```
 ```js
 const doubleThenSquareThenHalfAsync =
   double +> squareAsync +> half
@@ -2263,200 +2483,6 @@ x::hasOwnProperty('key')
 ```
 But the `::` would only need to handle method calls. No operator overloading of
 `::` for method extraction would be needed.
-
-</table>
-
-### Lodash
-[Lodash][] is a fork of [Underscore.js][] that remains under rapid active
-development. Along with Underscore.js’ other utility functions, Lodash provides
-many other high-order functions that attempt to make [functional programming][]
-more ergonomic. Like [jQuery][], Lodash is under the stewardship of the
-[JS Foundation][], a member organization of TC39, through which Lodash’s developers
-also have TC39 representation. And like jQuery and Underscore.js, Lodash’s API
-involves complex data processing that becomes more readable with smart pipelines.
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-function hashGet (key) {
-  return this.__data__
-    |> do {
-      if (nativeCreate)
-        |> #[key]
-        |> # === HASH_UNDEFINED
-          ? undefined : #
-      else
-        |> hashOwnProperty.call(#, key)
-          ? #[key] : undefined
-    }
-}
-```
-
-<td>
-
-```js
-function hashGet (key) {
-  var data = this.__data__;
-  if (nativeCreate) {
-    var result = data[key];
-    return result === HASH_UNDEFINED
-      ? undefined : result;
-  }
-  return hasOwnProperty.call(data, key)
-    ? data[key] : undefined;
-}
-```
-
-<tr>
-<td>
-
-```js
-function listCacheHas (key) {
-  return this.__data__
-    |> assocIndexOf(#, key)
-    |> # > -1;
-}
-```
-
-<td>
-
-```js
-function listCacheHas (key) {
-  return assocIndexOf(this.__data__, key)
-    > -1;
-}
-```
-
-<tr>
-<td>
-
-```js
-function mapCacheDelete (key) {
-  (this, key)
-    |> getMapData
-    |> #['delete']
-    |> #(key)
-    |> do {
-      this.size -= # ? 1 : 0
-      return #
-    }
-}
-```
-
-<td>
-
-```js
-function mapCacheDelete (key) {
-  var result =
-    getMapData(this, key)['delete'](key)
-  this.size -= result ? 1 : 0
-  return result
-}
-```
-
-<tr>
-<td>
-
-```js
-function castPath (value, object) {
-  return value |> do {
-    if (|> isArray)
-      #
-    else if (|> isKey(#, object))
-      [#]
-    else
-      |> toString |> stringToPath
-  }
-}
-```
-
-<td>
-
-```js
-function castPath (value, object) {
-  if (isArray(value)) {
-    return value
-  }
-  return isKey(value, object)
-    ? [value]
-    : stringToPath(toString(value))
-}
-```
-
-<tr>
-<td>
-
-```js
-function createRound (methodName) {
-  var func = Math[methodName]
-  return function (number, precision) {
-    number = number |> toNumber
-    precision = precision |> do {
-      if (# == null)
-        0
-      else
-        |> toInteger |> nativeMin(#, 292)
-    } {
-      if (precision) {
-        // Shift with exponential notation
-        // to avoid floating-point issues.
-        // See https://mdn.io/round#Examples.
-        number
-          |> `${#}e`
-          |> ...#.split('e')
-          |> `${#}e${+## + precision}`
-          |> func
-          |> `${#}e`
-          |> ...#.split('e')
-          |> `${#}e${+## - precision}`
-          |> +#
-      } else
-        number
-          |> func
-    }
-  }
-}
-```
-
-<td>
-
-```js
-function createRound (methodName) {
-  var func = Math[methodName]
-  return function (number, precision) {
-    number = toNumber(number)
-    precision = precision == null
-      ? 0
-      : nativeMin(toInteger(precision), 292)
-    if (precision) {
-      // Shift with exponential notation
-      // to avoid floating-point issues.
-      // See https://mdn.io/round#Examples.
-      var pair = (toString(number) + 'e')
-        .split('e'),
-      value = func(
-        pair[0] + 'e' + (
-          +pair[1] + precision))
-
-      pair = (toString(value) + 'e')
-        .split('e')
-      return +(
-        pair[0] + 'e' + (
-          +pair[1] - precision))
-    }
-    return func(number)
-  }
-}
-
-```
 
 </table>
 
@@ -2971,6 +2997,84 @@ maxGreaterThanZero(-1, -2) // 0
 ```
 In this case, the topic function version looks once again nearly identical to
 the other proposal’s code.
+
+</table>
+
+### Lodash (Core Proposal + Additional Features PF+MT)
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+function createRound (methodName) {
+  var func = Math[methodName]
+  return function (number, precision) {
+    number = number |> toNumber
+    precision = precision |> do {
+      if (# == null)
+        0
+      else
+        |> toInteger |> nativeMin(#, 292)
+    } {
+      if (precision) {
+        // Shift with exponential notation
+        // to avoid floating-point issues.
+        // See https://mdn.io/round#Examples.
+        number
+          |> `${#}e`
+          |> ...#.split('e')
+          |> `${#}e${+## + precision}`
+          |> func
+          |> `${#}e`
+          |> ...#.split('e')
+          |> `${#}e${+## - precision}`
+          |> +#
+      } else
+        number
+          |> func
+    }
+  }
+}
+```
+
+<td>
+
+```js
+function createRound (methodName) {
+  var func = Math[methodName]
+  return function (number, precision) {
+    number = toNumber(number)
+    precision = precision == null
+      ? 0
+      : nativeMin(toInteger(precision), 292)
+    if (precision) {
+      // Shift with exponential notation
+      // to avoid floating-point issues.
+      // See https://mdn.io/round#Examples.
+      var pair = (toString(number) + 'e')
+        .split('e'),
+      value = func(
+        pair[0] + 'e' + (
+          +pair[1] + precision))
+
+      pair = (toString(value) + 'e')
+        .split('e')
+      return +(
+        pair[0] + 'e' + (
+          +pair[1] - precision))
+    }
+    return func(number)
+  }
+}
+
+```
 
 </table>
 
