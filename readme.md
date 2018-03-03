@@ -69,8 +69,8 @@ Features**:
 
 |Name                     |Features                                      |Purpose                                                |
 |-------------------------|----------------------------------------------|-------------------------------------------------------|
-|[Core Proposal][]        |Binary pipe `\|>` and lexical topic `#`       |Unary application                                      |
-|[Additional Feature UP][]|Unary pipe `\|>`                              |Application in `do`/`if`/`try` blocks                  |
+|[Core Proposal][]        |Infix pipe `\|>` and lexical topic `#`        |Unary application                                      |
+|[Additional Feature UP][]|Prefix pipe `\|>`                             |Application in `do`/`if`/`try` blocks                  |
 |[Additional Feature PF][]|Pipeline functions `=\|>`                     |Partial application<br>Composition<br>Method extraction|
 |[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
 |[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                                  |
@@ -1414,7 +1414,7 @@ function (obj) {
 </table>
 
 ## Additional Feature UP
-The first Additional Feature adds a “headless” tacit unary form of the pipeline
+The first Additional Feature adds a “headless” tacit prefix form of the pipeline
 operator. The tacit, default head is the topic reference `#` itself, which
 must be resolvable within the outer lexical environment. This may occur within
 `if` statements, `try` statements, and eventually [`do` expressions][].
@@ -1465,8 +1465,8 @@ x |> do {
 }
 ```
 In this version, which also uses Additional Feature UP, those pipelines omit the
-phrase `# |>`, using a tacit unary `|>`, which is implied to use `#` as the
-value of their topics.
+phrase `# |>`, using a tacit prefix pipeline `|>`, which is implied to use `#`
+as the value of their topics.
 
 <td>
 
@@ -1478,9 +1478,9 @@ do {
     g(x) ** 3
 }
 ```
-Here, the unary `|>` still pipes in the same tacit topic from the same lexical
-environment – `x` – into `predicate`, `f`, and `g`. The result is still the same
-as before.
+The unary pipeline `|>` still piped in the same tacit topic from the same
+lexical environment – `x` – into `predicate`, `f`, and `g`. The result is still
+the same as before.
 
 <tr>
 <td>
@@ -1491,10 +1491,10 @@ function () {
 }
 // 🚫 Syntax Error:
 // Lexical context `function () { |> f |> g }`
-// contains a unary pipeline `|> f`
+// contains a prefix pipeline `|> f`
 // but has no topic binding.
 ```
-If a unary pipeline is used within a context in which the topic is not
+If a prefix pipeline is used within a context in which the topic is not
 resolvable, then this is an [early error][], just like how it is an error to use
 explicit topic references within a context without a topic in general:
 
@@ -1879,8 +1879,8 @@ function (obj) {
     : _.keys(obj).length;
 }
 ```
-The behavior of the code remains the same. All tacit unary pipelines `|>` use the
-outer environment’s topic: `obj`.
+The behavior of the code remains the same. All tacit prefix pipelines `|>` here
+use the outer environment’s topic: `obj`.
 
 </table>
 
@@ -2017,7 +2017,7 @@ $ => $ + 2
 ```
 
 This is an [early error][], as usual. The topic is not used anywhere
-in the pipe function’s body – just like with `… |> x + 2`.
+in the pipeline function’s body – just like with `… |> x + 2`.
 
 <td>
 
@@ -2122,7 +2122,7 @@ resolvable.
 const addOne = add(1, ?)
 addOne(2) // 3
 ```
-Pipe functions look similar to the proposal for [syntactic partial
+pipeline functions look similar to the proposal for [syntactic partial
 application][] by [Ron Buckton][], except that partial-application expressions
 are simply pipeline bodies that are prefixed by a topic arrow.
 
@@ -2166,7 +2166,7 @@ let newScore = player.score
 ```js
 Promise.resolve(123).then(=|> console.log)
 ```
-**Method extraction** can be addressed by pipe functions alone, as a natural
+**Method extraction** can be addressed by pipeline functions alone, as a natural
 result of their pipe-operator-like semantics.\
 `=|> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
 bare style. This in turn is `$ => console.log($)`…
@@ -2425,7 +2425,7 @@ Multiple lexical topics
 <td>
 
 Lexical environments could extended to support multiple topics at once. Regular
-pipelines would still have only one topic at a time. But pipe functions could
+pipelines would still have only one topic at a time. But pipeline functions could
 bind multiple parameters to multiple topic references. `#` (as an alias for
 `#0`) would already represent its first parameters. But then `#1`, `#2`, … would
 represent its second, third, fourth, etc. parameters. Parameters in positions
@@ -2437,7 +2437,7 @@ This would be somewhat akin to Clojure’s compact anonymous functions, which us
 `%` aka `%1`, then `%2`, `%3`, … for its parameters within the compact
 functions’ bodies.
 
-Developers may be expected not to use pipe functions for functions with many
+Developers may be expected not to use pipeline functions for functions with many
 parameters. But an alternative to `#`, `##`, `###`, …, not shown here, would be
 to use `#` or `#0`, then `#1`, `#2`, … for topic references instead.
 
@@ -2512,7 +2512,7 @@ const f = (x, y, z) => [x, y, z]
 const g = f(#, 4, ##)
 g(1, 2) // [1, 4, 2]
 ```
-**Partial application into an n-ary function** is solved by pipe functions with
+**Partial application into an n-ary function** is solved by pipeline functions with
 multiple topics.
 
 <td>
@@ -4399,3 +4399,4 @@ do { do { do { do { 3 * 3 } } }
 [jQuery + Core Proposal]: #jquery-core-proposal
 [Underscore.js + Core Proposal]: #underscorejs--proposal
 [Underscore.js + CP + UP]: #underscorejs-core-proposal-additional-feature-up
+[identity function]: https://en.wikipedia.org/wiki/Identity_function
