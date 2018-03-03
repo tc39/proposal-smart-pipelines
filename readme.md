@@ -1984,7 +1984,7 @@ $ => $ + 2
 // binds topic but contains no topic reference.
 ```
 
-This is an [early error][], as usual.The topic is not used anywhere
+This is an [early error][], as usual. The topic is not used anywhere
 in the pipe function’s body – just like with `… |> x + 2`.
 
 <td>
