@@ -4892,6 +4892,7 @@ do { do { do { do { 3 * 3 } } }
 [Additional Feature TE]: #additional-feature-te
 [Additional Feature PP]: #additional-feature-pp
 [Additional Feature TC]: #additional-feature-tc
+[Additional Feature TF]: #additional-feature-tf
 [Pipeline Proposal 1]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-1-f-sharp-only
 [Node.js `util.promisify`]: https://nodejs.org/api/util.html#util_util_promisify_original
 [don’t break my code]: #dont-break-my-code
