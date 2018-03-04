@@ -626,6 +626,7 @@ requires editing the variable names in the following step.
 
 ```js
 value
+  |> f
   |> x => # + x
 ```
 The body of a pipeline may contain an inner arrow function but no other
@@ -635,7 +636,7 @@ type of block expression. Both versions of this code return an arrow function.
 
 ```js
 do {
-  const $ = value;
+  const $ = f(value);
   x => $ + x
 }
 ```
@@ -647,6 +648,7 @@ and returns the sum of the topic value and the parameter.
 
 ```js
 value
+  |> f
   |> settimeout(() => # * 5)
 ```
 This ability to create arrow functions, which do not lexically shadow the topic,
@@ -656,7 +658,7 @@ can be useful for using callbacks in a pipeline.
 
 ```js
 do {
-  const $ = value;
+  const $ = f(value);
   settimeout(() => $ * 5)
 }
 ```
@@ -668,6 +670,7 @@ accessible within the arrow function’s body in both examples.
 
 ```js
 value
+  |> f
   |> (() => # * 5)
   |> settimeout
 ```
@@ -677,7 +680,7 @@ The arrow function can also be created on a separate pipeline step.
 
 ```js
 do {
-  const $ = value;
+  const $ = f(value);
   settimeout(() => $ * 5)
 }
 ```
@@ -688,6 +691,7 @@ The result here is the same.
 
 ```js
 value
+  |> f
   |> () => # * 5
   |> settimeout
 // 🚫 Syntax Error:
@@ -700,7 +704,7 @@ of its steps’ bodies, then the arrow-function expression must be parenthesized
 (The same applies to assignment and yield operators, which are also looser than
 the pipeline operator.) The example above is being parsed as if it were:
 ```js
-(value |> ()) =>
+(value |> f |> ()) =>
   (# * 5 |> settimeout)
 // 🚫 Syntax Error:
 // Unexpected token `=>`.
