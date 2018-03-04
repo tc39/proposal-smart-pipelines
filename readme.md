@@ -4162,22 +4162,19 @@ potentially multiplying its benefits toward [untangled flow][], [terse
 variables][], and [human writability][], while still preserving [simple
 scoping][] and [static analyzability][].
 
-## Other ECMAScript proposals
-[TODO: `do` expressions]
+## Syntactic partial function application
+[TODO]
 
-[TODO: Partial application: “topic reference” vs. “placeholder”.]
+## Function composition
+[TODO]
 
-[TODO: Private class fields and `#`.]
+## Function binding
+[TODO]
 
-[TODO: Class decorators and `@`.]
+## Private class fields and class decorators
+[TODO]
 
-[TODO: Block params: https://github.com/samuelgoto/proposal-block-params]
-
-[TODO: Function bind: https://github.com/zenparsing/es-function-bind]
-
-[TODO: pattern matching https://github.com/tc39/proposal-pattern-matching]
-
-### `do` expressions
+## `do` expressions
 Because pipeline [topic style][] supports [arbitrary expressions][expressive
 versatility], when [`do` expressions][] are added to JavaScript they too will be
 supported within pipeline bodies. When this occurs, topic references would be
@@ -4185,7 +4182,7 @@ allowed within inner `do` expressions, along with arrow functions and `if` and
 `try` statements. However, pipelines in [topic style][] already support a block
 form that is similar to `do` expressions. See the examples in [Motivation][].
 
-### Pattern matching
+## Pattern matching
 The smart pipelines and topic references of the [Core Proposal][] would be a
 boon to the proposal for [ECMAScript pattern matching][].
 
@@ -5002,3 +4999,4 @@ do { do { do { do { 3 * 3 } } }
 [nullish coalescing proposal]: https://github.com/tc39/proposal-nullish-coalescing/
 [function bind operator `::`]: #function-bind-operator
 [ASI]: https://tc39.github.io/ecma262/#sec-automatic-semicolon-insertion
+[ECMAScript function binding]: https://github.com/zenparsing/es-function-bind
