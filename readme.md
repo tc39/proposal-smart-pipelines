@@ -2197,9 +2197,10 @@ tacit unary-functional **partial application**,\
 and tacit **method extraction**,\
 …all with a single additional concept.
 
-The precise appearance of the pipeline-function operator does not have to be
-`+>`. It could also be `~>`, `->`, `=|`, `=|>` or something else to be decided
-after much bikeshedding.
+`+>` was chosen because of its similarity both to `|>` and to `=>`. The precise
+appearance of the pipeline-function operator does not have to be `+>`. It could
+also be `~>`, `->`, `=|`, `=|>` or something else to be decided after future
+bikeshedding discussion.
 
 <table>
 <thead>
