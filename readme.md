@@ -3055,27 +3055,28 @@ function createRound (methodName) {
         0
       else
         |> toInteger |> nativeMin(#, 292)
-    } {
-      if (precision) {
+    }
+    return number |> do {
+      if (precision)
         // Shift with exponential notation
         // to avoid floating-point issues.
         // See https://mdn.io/round#Examples.
-        number
-          |> `${#}e`
-          |> ...#.split('e')
-          |> `${#}e${+## + precision}`
-          |> func
-          |> `${#}e`
-          |> ...#.split('e')
-          |> `${#}e${+## - precision}`
-          |> +#
-      } else
-        number
-          |> func
+        |> `${#}e`
+        |> ...#.split('e')
+        |> `${#}e${+## + precision}`
+        |> func
+        |> `${#}e`
+        |> ...#.split('e')
+        |> `${#}e${+## - precision}`
+        |> +#
+      else
+        |> func
     }
   }
 }
 ```
+The parallelism between the `if` clause’s `|> shift |> func |> shiftBack` and
+the `else` clause’s `|> func` becomes visually clearer with smart pipelines.
 
 <td>
 
