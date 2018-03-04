@@ -75,7 +75,7 @@ Features**:
 |-------------------------|----------------------------------------------|-------------------------------------------------------|
 |[Core Proposal][]        |Infix pipe `\|>` and lexical topic `#`        |Unary application                                      |
 |[Additional Feature PP][]|Prefix pipe `\|>`                             |Application in `do`/`if`/`try` blocks                  |
-|[Additional Feature PF][]|Pipeline functions `=\|>`                     |Partial application<br>Composition<br>Method extraction|
+|[Additional Feature PF][]|Pipeline functions `+>  `                     |Partial application<br>Composition<br>Method extraction|
 |[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
 |[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                                  |
 
@@ -2178,8 +2178,8 @@ normal variable `error` declared within any parenthesized antecedent.
 </table>
 
 ## Additional Feature PF
-The third Additional Feature introduces a **new prefix operator `=|> …`**, which
-creates a new type of function, the **pipeline function**. `=|> …` interprets
+The third Additional Feature introduces a **new prefix operator `+> …`**, which
+creates a new type of function, the **pipeline function**. `+> …` interprets
 its inner expression as a **pipeline body** but wraps it in a **unary arrow
 function**, which plugs its single parameter into the pipeline body as if it
 were a pipeline head. In other words, a pipeline function would act as if it
@@ -2198,8 +2198,8 @@ and tacit **method extraction**,\
 …all with a single additional concept.
 
 The precise appearance of the pipeline-function operator does not have to be
-`=|>`. It could also be `+>`, `->`, `=|`, or something else to be decided after
-much bikeshedding.
+`+>`. It could also be `~>`, `->`, `=|`, `=|>` or something else to be decided
+after much bikeshedding.
 
 <table>
 <thead>
@@ -2232,7 +2232,7 @@ In other words, they are both [identity function][]s.
 
 ```js
 array.map($ => $ |> # + 2)
-array.map(=|> # + 2)
+array.map(+> # + 2)
 ```
 These functions are also the same with each other. They both pipe a unary
 parameter into a topic-style pipeline whose bodies are the topic plus two.
@@ -2248,7 +2248,7 @@ array.map($ => $ + 2)
 
 ```js
 array.map($ => $ |> f)
-array.map(=|> f)
+array.map(+> f)
 ```
 These functions are also the same as each other. However, their pipelines
 are in **bare mode**, so no topic reference is needed in their bodies.
@@ -2264,10 +2264,10 @@ array.map($ => f($))
 
 ```js
 array.map($ => $ |> f |> g |> h |> # * 2)
-array.map(=|> f |> g |> h |> # * 2)
+array.map(+> f |> g |> h |> # * 2)
 ```
 Pipelines may be chained within a pipeline function. The prefix
-pipeline-function operator `=|>` would have looser precedence than the infix
+pipeline-function operator `+>` would have looser precedence than the infix
 pipeline operator `|>`.
 
 <td>
@@ -2280,15 +2280,15 @@ array.map($ => h(g(f($))) * 2)
 <td>
 
 ```js
-array.map(=|> |> f |> g |> h |> # * 2)
-array.map($ =|> # |> f |> g |> h |> # * 2)
+array.map(+> |> f |> g |> h |> # * 2)
+array.map($ +> # |> f |> g |> h |> # * 2)
 array.map($ => $ |> # |> f |> g |> h |> # * 2)
 array.map($ => $ |> f |> g |> h |> # * 2)
-array.map($ =|> f |> g |> h |> # * 2)
+array.map($ +> f |> g |> h |> # * 2)
 ```
-When coupled with [Additional Feature PP][], the phrase `=|> |>` (that is,
+When coupled with [Additional Feature PP][], the phrase `+> |>` (that is,
 prefix pipeline function `|=>` immediately followed by prefix pipeline `|>`)
-cancels out into simply the prefix pipeline function `=|>`. All five of these
+cancels out into simply the prefix pipeline function `+>`. All five of these
 expressions here are equivalent.
 
 <td>
@@ -2301,9 +2301,9 @@ array.map($ => h(g(f($))) * 2)
 <td>
 
 ```js
-=|> x + 2
++> x + 2
 // 🚫 Syntax Error:
-// Pipeline body `=|> x + 2`
+// Pipeline body `+> x + 2`
 // binds topic but contains no topic reference.
 ```
 
@@ -2320,7 +2320,7 @@ in the pipeline function’s body – just like with `… |> x + 2`.
 // 🚫 Syntax Error:
 // Unexpected token `=>`.
 ```
-If the pipeline-function operator `=|>` is typoed as an arrow function `=>`
+If the pipeline-function operator `+>` is typoed as an arrow function `=>`
 instead, then this is another syntax error, because the arrow function `=>`
 expects to always have a parameter antecedent as its head.
 
@@ -2346,7 +2346,7 @@ environment does have its own topic binding.
 <td>
 
 ```js
-array.map(=|> f |> g |> h(2, #) |> # + 2)
+array.map(+> f |> g |> h(2, #) |> # + 2)
 ```
 **Functional composition** on unary functions is equivalent to piping a value
 through several function calls, within a unary function, starting with the outer
@@ -2366,7 +2366,7 @@ const doubleThenSquareThenHalfAsync = async $ =>
   $ |> double |> await squareAsync |> half
 ```
 ```js
-const doubleThenSquareThenHalfAsync = async =|>
+const doubleThenSquareThenHalfAsync = async +>
   |> double |> await squareAsync |> half
 ```
 Unlike the other version, this syntax does not need to give implicit special
@@ -2394,7 +2394,7 @@ parameter into a function-call expression, within which the one parameter is
 resolvable.
 ```js
 array.map($ => $ |> f(2, #))
-array.map(=|> f(2, #))
+array.map(+> f(2, #))
 ```
 
 <td>
@@ -2411,7 +2411,7 @@ array.map($ => f(2, $))
 <td>
 
 ```js
-const addOne = =|> add(1, #)
+const addOne = +> add(1, #)
 addOne(2) // 3
 ```
 
@@ -2426,7 +2426,7 @@ addOne(2) // 3
 <td>
 
 ```js
-const addTen = =|> add(#, 10)
+const addTen = +> add(#, 10)
 addTen(2) // 12
 ```
 
@@ -2458,11 +2458,11 @@ let newScore = player.score
 <td>
 
 ```js
-Promise.resolve(123).then(=|> console.log)
+Promise.resolve(123).then(+> console.log)
 ```
 **Method extraction** can be addressed by pipeline functions alone, as a natural
 result of their pipeline-operator-like semantics.\
-`=|> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
+`+> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
 bare style. This in turn is `$ => console.log($)`…
 
 <td>
@@ -2477,7 +2477,7 @@ And `$ => console.log($)` is equivalent to `console.log.bind(console)`.
 <td>
 
 ```js
-$('.some-link').on('click', =|> view.reset)
+$('.some-link').on('click', +> view.reset)
 ```
 
 <td>
@@ -2534,7 +2534,7 @@ functions wherever no terse JavaScript equivalent yet exists (such as with
 <td>
 
 ```js
-const pickIndexes = =|> R.values |> R.pickAll
+const pickIndexes = +> R.values |> R.pickAll
 ['a', 'b', 'c'] |> pickIndexes([0, 2], #)
 // ['a', 'c']
 ```
@@ -2552,7 +2552,7 @@ pickIndexes([0, 2], ['a', 'b', 'c'])
 <td>
 
 ```js
-const list = =|> [...]
+const list = +> [...]
 list(1, 2, 3)
 // [1, 2, 3]
 ```
@@ -2569,13 +2569,13 @@ list(1, 2, 3)
 <td>
 
 ```js
-const getNewTitles = async =|>
+const getNewTitles = async +>
   |> await fetch
   |> parseJSON
   |> #.flatten()
-  |> #.map(=|> #.items)
-  |> #.map(=|> #.filter(=|> #))
-  |> #.map(=|> #.title)
+  |> #.map(+> #.items)
+  |> #.map(+> #.filter(+> #))
+  |> #.map(+> #.title)
 
 try {
   '/products.json'
@@ -2585,11 +2585,11 @@ try {
   |> console.error
 }
 
-const fetchDependent = async =|>
+const fetchDependent = async +>
   |> await fetch
   |> JSON.parse
   |> #.flatten()
-  |> #.map(=|> #.url)
+  |> #.map(+> #.url)
   |> #.map(fetch)
   |> #.flatten()
 
@@ -2633,7 +2633,7 @@ fetchDependent('urls.json')
 ```js
 number
   |> R.repeat(Math.random, #)
-  |> #.map(=|> #())
+  |> #.map(+> #())
 ```
 
 <td>
@@ -2652,7 +2652,7 @@ const renameBy = (fn, obj) =>
     |> #.map(R.adjust(fn, 0)),
     |> {...#}
 { A: 1, B: 2, C: 3 }
-  |> renameBy(=|> `a${#}`))
+  |> renameBy(+> `a${#}`))
 // { aA: 1, aB: 2, aC: 3 }
 ```
 
@@ -2709,7 +2709,7 @@ class LipFuzzTransformer {
       |> this.partialChunk + #
       |> #.replace(
         /\{\{([a-zA-Z0-9_-]+)\}\}/g,
-        =|> this.replaceTag)
+        +> this.replaceTag)
       |> partialAtEndRegexp.exec
       |> do {
         if (#) {
@@ -2947,7 +2947,7 @@ f(a) - (a ** c + b)
 <td>
 
 ```js
-array.sort(=|> # - ##)
+array.sort(+> # - ##)
 ```
 
 <td>
@@ -2961,8 +2961,8 @@ array.sort((_0, _1) => _0 - _1)
 
 ```js
 [ { x: 22 }, { x: 42 } ]
-  .map(=|> #.x)
-  .reduce(=|> # - ##, 0)
+  .map(+> #.x)
+  .reduce(+> # - ##, 0)
 ```
 
 <td>
@@ -2988,14 +2988,14 @@ multiple topics.
 
 ```js
 const f = (x, y, z) => [x, y, z]
-const g = =|> f(?, 4, ?)
+const g = +> f(?, 4, ?)
 g(1, 2) // [1, 4, 2]
 ```
 [R. Buckton’s current proposal][syntactic partial application] assumes that each
 use of the same `?` placeholder token represents a different parameter. In contrast,
 each use of `#` within the same scope always refers to the same value. This is
 why additional topic parameters are required. The resulting model is more
-flexible: `=|> f(#, 4, ##)` is different from `=|> f(#, 4, #)`. The latter sensibly
+flexible: `+> f(#, 4, ##)` is different from `+> f(#, 4, #)`. The latter sensibly
 refers to a *unary* function that passes the same *one* argument into both the
 first and third parameters of the original function `f`.
 
@@ -3004,7 +3004,7 @@ first and third parameters of the original function `f`.
 
 ```js
 const maxGreaterThanZero =
-  =|> Math.max(0, ...)
+  +> Math.max(0, ...)
 maxGreaterThanZero(1, 2) // 2
 maxGreaterThanZero(-1, -2) // 0
 ```
@@ -3118,11 +3118,11 @@ pipeline functions when [Additional Feature MT][] syntax is supported.
 <td>
 
 ```js
-const cssQuery = =|> ##.querySelectorAll(#)
-const setStyle = =|> { ##.style = # }
+const cssQuery = +> ##.querySelectorAll(#)
+const setStyle = +> { ##.style = # }
 document
   |> cssQuery('a, p', #)
-  |> #.map(=|> setStyle({ color: 'red' }))
+  |> #.map(+> setStyle({ color: 'red' }))
 ```
 
 <td>
@@ -3141,8 +3141,8 @@ R.pipe(
 <td>
 
 ```js
-const disco = =|>
-  |> R.zipWith(=|> #(##),
+const disco = +>
+  |> R.zipWith(+> #(##),
     [ red, green, blue ])
   |> #.join(' ')
 [ 'foo', 'bar', 'xyz' ]
@@ -3167,10 +3167,10 @@ console.log(
 <td>
 
 ```js
-const dotPath = =|>
+const dotPath = +>
   |> (#.split('.'), ##)
   |> R.path(#, ##)
-const propsDotPath = =|>
+const propsDotPath = +>
   |> (R.map(dotPath), [##])
   |> R.ap
 const obj = {
@@ -3833,7 +3833,7 @@ find the concept useful.
 <tr>
 <th>
 
-`=|>` `=|>>`\
+`+>` `+>>`\
 `as->` `as->>`\
 `some->` `some->>`\
 `cond->` `cond->>`
@@ -4022,7 +4022,7 @@ in this proposal’s rules.)
 
 Note that this would be the same as:
 ```js
-materials.map(=|> f |> .length)
+materials.map(+> f |> .length)
 ```
 
 <td>
@@ -4104,7 +4104,7 @@ match (x) {
   100: x
   Array:
     x.length
-  /(\d)(\d)(\d)/ =|> m:
+  /(\d)(\d)(\d)/ +> m:
     m.groups |> #[0] + #[1] + #[2]
 }
 ```
