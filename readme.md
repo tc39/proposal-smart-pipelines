@@ -3303,6 +3303,83 @@ function readInto(buffer, offset = 0) {
 
 </table>
 
+## Additional Feature FT
+With the [Core Proposal][] only, `for`–`of` statements would prohibit the use
+of `#` within their bodies, except where `#` is inside an inner pipeline inside
+the `for` loop. But this could be changed afterward by an add-on proposal that
+causes `for` loops to bind the topic to useful values, which in turn would make
+`for` loops terser, emphasizing what happens to each item rather than the items’
+variables themselves.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+With Additional Feature FT, all `for`–`of` loops would implicitly bind each
+iterator value to `#`. This implicit binding would be in addition to the
+explicit binding of a normal variable `i` declared within the parenthesized
+antecedent `for (const i of … { … })`.
+```js
+for (range(0, 50)) {
+  log(# ** 2);
+  log(|> Math.sqrt);
+}
+```
+An additional tacit `for` loop form, completely lacking a parenthesized
+antecedent, would also be added. This example uses that tacit form, along with
+[Additional Syntax PP][].
+
+<td>
+
+```js
+for (const i of range(0, 50)) {
+  log(i ** 2);
+  log(Math.sqrt(i));
+}
+```
+
+<tr>
+<td>
+
+Similar additions would be made to the asynchronous `for` loop. All
+`for`–`await`–`of` loops would implicitly bind each iterator value to `#`. This
+implicit binding would be in addition to the explicit binding of a normal
+variable `i` declared within the parenthesized antecedent
+`for await (const i of …) { … }`.
+```js
+for await (stream) {
+  yield |>
+    |> await f
+    |> #.length
+    |> # + 3
+    |> g
+}
+```
+An additional tacit `for await` loop form, completely lacking a parenthesized
+antecedent, would also be added. Note that in this case, a `|>` (or a `#`) must
+be included after `yield` because – as usual – a newline after a `yield` causes
+[automatic semicolon insertion][ASI] after the `yield`.
+
+<td>
+
+```js
+for await (const c of stream) {
+  yield g(
+    (await f(c))
+      .length
+      + 3
+  )
+}
+```
+
+</table>
+
 # Goals
 
 There are sixteen ordered goals that the smart body syntax tries to fulfill,
@@ -4388,95 +4465,6 @@ select ('world') {
 }
 ```
 
-## Possible future extensions to the topic concept
-
-<table>
-<tr>
-
-<th>
-
-Topic `for` loops
-
-<td>
-
-With this smart-pipe proposal only, `for`–`of` statements would prohibit the use
-of `#` within their bodies, except where `#` is inside an inner pipeline inside
-the `for` loop.
-
-With another, future proposal, all `for`–`of` loops would implicitly bind each
-iterator value to `#`. This implicit binding would be in addition to the
-explicit binding of a normal variable `i` declared within the parenthesized
-antecedent `for (const i of … { … })`.
-
-An additional tacit `for` loop form, completely lacking a parenthesized
-antecedent, would also be added. This tacit form is what is used in this example.
-[TODO: Link to section on deep nesting.] This example also uses the hypothetical
-headless pipelining syntax from above.
-
-<tr>
-<td>
-
-```js
-for (range(0, 50)) {
-  log(# ** 2);
-  log(#|> Math.sqrt);
-}
-```
-
-<td>
-
-```js
-for (const i of range(0, 50)) {
-  log(i |> # ** 2);
-  log(i |> Math.sqrt);
-}
-```
-
-<tr>
-<th>
-
-Topic `for`–`await` loops
-
-<td>
-
-This is similar to the tacit topic synchronous `for` loop above. With this
-proposal only, `for`–`await`–`of` statements would prohibit the use of `#`
-within their bodies, except where `#` is inside an inner pipeline inside the
-`for` loop.
-
-With another, future proposal, all `for`–`await`–`of` loops would implicitly bind
-each iterator value to `#`. This implicit binding would be in addition to the
-explicit binding of a normal variable `i` declared within the parenthesized
-antecedent `for await (const i of …) { … }`.
-
-An additional tacit `for await` loop form, completely lacking a parenthesized
-antecedent, would also be added. This tacit form is what is used in this
-example. [TODO: Link to section on deep nesting.] This example also uses the
-hypothetical headless pipelining syntax from above.
-
-<tr>
-<td>
-
-```js
-for await (stream) {
-  yield #
-    |> f
-    |> # + 3
-}
-```
-
-<td>
-
-```js
-for await (const c of stream) {
-  yield c
-    |> f
-    |> # + 3
-}
-```
-
-</table>
-
 ## Alternative solutions explored
 There are a number of other ways of potentially accomplishing the above use
 cases. However, the authors of this proposal believe that the smart pipe
@@ -4945,3 +4933,4 @@ do { do { do { do { 3 * 3 } } }
 [Standard Style]: https://standardjs.com/
 [nullish coalescing proposal]: https://github.com/tc39/proposal-nullish-coalescing/
 [function bind operator `::`]: #function-bind-operator
+[ASI]: https://tc39.github.io/ecma262/#sec-automatic-semicolon-insertion
