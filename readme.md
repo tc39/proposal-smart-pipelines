@@ -170,7 +170,7 @@ promise
   |> await stream.write
 ```
 
-With smart pipelines, the code above could be **terser** and, literally,
+With smart pipelines, the code above becomes **terser** and, literally, more
 **straightforward**. Prefix, infix, and postfix expressions would be less
 tangled together in threads of spaghetti. Instead, data values would be **piped
 from left to right** through a **single flat thread of postfix expressions**,
