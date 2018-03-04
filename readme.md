@@ -2130,7 +2130,7 @@ function castPath (value, object) {
 
 </table>
 
-## Additional Feature CT
+## Additional Feature TC
 With the [Core Proposal][] only, all `try` statements’ `catch` clauses would
 prohibit the use of the topic reference `#` within their bodies, except where
 the topic reference `#` is inside an inner pipeline inside the `catch` clause:
