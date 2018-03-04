@@ -200,7 +200,7 @@ await stream.write(
       ), ', '
     ) + '!'
   )
-);
+)
 ```
 Compared with the pipeline version, the original code requires **additional
 indentation and grouping** on each step. This requires four more levels of
