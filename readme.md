@@ -3812,22 +3812,22 @@ use either `… |> await af` or use topic style: `… |> af |> await #`.
 | ″″                      | ″″                                       | `… \|> (await f())` 🚫
 | ″″                      | ″″                                       | `… \|> await (f)` 🚫
 | ″″                      | ″″                                       | `… \|> await (f())` 🚫
-|`… \|> af |> await #`    |                                          |  `… \|> af |> await` 🚫
+|`… \|> af \|> await #`   |                                          |  `… \|> af |> await` 🚫
 |`… \|> new C(#)`         |`… \|> new C`                             | `… \|> new C()` 🚫
 | ″″                      | ″″                                       | `… \|> (new C)` 🚫
 | ″″                      | ″″                                       | `… \|> (new C())` 🚫
 | ″″                      | ″″                                       | `… \|> new (C)` 🚫
 | ″″                      | ″″                                       | `… \|> new (C())` 🚫
-|`… \|> o.m(#)`           |`… \|> o.m`                               | `… \|> o.m()` 🚫
-|`… \|> await o.m(#)`     |`… \|> await o.m`                         | `… \|> await o.m()` 🚫
-|`… \|> new o.m(#)`       |`… \|> new o.m`                           | `… \|> new o.m()` 🚫
-|`… \|> o.m(arg, #)`      |`const m = $ => o::m(arg, $); … \|> m`    | `… \|> o.m(arg)` 🚫
-|`… \|> new o.m(arg, #)`  |`const m = $ => new o::m(arg, $); … \|> m`| `… \|> new o.m(arg)` 🚫
-|`… \|> o[symbol](#)`     |`const m = o[symbol]; … \|> m`            | `… \|> o[symbol]` 🚫
-|`… \|> new o[symbol](#)` |`const m = new o[symbol]; … \|> m`        | `… \|> new o[symbol]` 🚫
+|`… \|> o.f(#)`           |`… \|> o.f`                               | `… \|> o.f()` 🚫
+|`… \|> await o.f(#)`     |`… \|> await o.f`                         | `… \|> await o.f()` 🚫
+|`… \|> new o.f(#)`       |`… \|> new o.f`                           | `… \|> new o.f()` 🚫
+|`… \|> o.f(arg, #)`      |`const f = $ => o::f(arg, $); … \|> f`    | `… \|> o.f(arg)` 🚫
+|`… \|> new o.C(arg, #)`  |`const f = $ => new o::C(arg, $); … \|> f`| `… \|> new o.C(arg)` 🚫
+|`… \|> o[symbol](#)`     |`const f = o[symbol]; … \|> f`            | `… \|> o[symbol]` 🚫
+|`… \|> new o[symbol](#)` |`const f = new o[symbol]; … \|> f`        | `… \|> new o[symbol]` 🚫
 |`… \|> o.make()(#)`      |`const f = o.make(); … \|> f`             | `… \|> o.make()` 🚫
 |`… \|> new o.make()(#)`  |`const C = o.make(); … \|> new C`         | `… \|> new o.make()` 🚫
-|`… \|> await o.make()(#)`|`const af = o.makeFn(); … \|> await af`   | `… \|> await o.make()` 🚫
+|`… \|> await o.make()(#)`|`const af = o.make(); … \|> await af`     | `… \|> await o.make()` 🚫
 |`… \|> await new o.make()(#)`)|                                     | `… \|> new await o.make()` 🚫
 
 ## Bare style
@@ -3872,6 +3872,17 @@ or **_topic_ `|>` `new` _identifier0_`.`_identifier1_`.`_identifier2_**\
 or so forth,\
 then the pipeline is a bare constructor call.
 
+## Topic style
+**If a pipeline** of the form _topic_ |> _body_ does ***not* match the [bare
+style][]** (that is, it is *not* a bare function call, bare async function call,
+or bare constructor call), then it **must be in topic style**. And topic style
+requires that there be a topic reference in the pipeline body; otherwise it is
+an [early error][].
+
+A topic pipeline body is an expression at the [precedence level once tighter
+than pipeline-level expressions][operator precedence] – that is, it is a
+conditional-level expression.
+
 ### Practical consequences
 Therefore, a pipeline in **[bare style][] *never*** has **parentheses `(…)` or
 brackets `[…]`** in its body. Neither `… |> object.method()` nor
@@ -3880,20 +3891,8 @@ are in bare style (in fact, they all are Syntax Errors, due to their being in
 [topic style][] without any topic references).
 
 **When a body needs parentheses or brackets**, then **don’t use bare style**,
-and instead **use a topic reference** in the body……or **assign the body to a
-variable**, then **use that variable as a bare body**.
-
-The JavaScript developer is encouraged to use topic references and avoid bare
-style wherever bare style may be visually confusing to the reader.
-
-## Topic style
-**If a pipeline** of the form _topic_ |> _body_ does ***not* match the [bare
-style: grammar][]** (that is, it is *not* a bare function call or bare
-constructor call), then it **must be in topic style**.
-
-A topic pipeline body is an expression at the [precedence level once tighter
-than pipeline-level expressions][operator precedence] – that is, it is a
-conditional-level expression.
+and instead **use a topic reference** in the body ([topic style][])…or **assign
+the body to a variable**, then **use that variable as a bare body**.
 
 # Relations to other work
 
