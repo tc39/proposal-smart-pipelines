@@ -624,13 +624,71 @@ requires editing the variable names in the following step.
 <tr>
 <td>
 
+As with arrow functions, a pipeline in [topic style][] may have a block as its
+body. The topic reference `#` is bound to the previous result `value |> f`
+within the scope of the block, and the result of the block becomes the final
+result of that pipeline, which in turn is passed into `|> g`.
+```js
+value
+  |> f
+  |> { sideEffect(); # }
+  |> g
+```
+This can be useful for embedding side effects in pipeline chains.
+
+<td>
+
+```js
+g (
+  do {
+    const $ = f(value);
+    sideEffect();
+    $
+  }
+)
+```
+
+<tr>
+<td>
+
+```js
+value
+  |> f
+  |> {
+    if (typeof # === 'number')
+      # + 1
+    else
+      { data: # }
+  }
+  |> g
+```
+`if`–`else` blocks may also be used within block pipeline bodies.
+
+<td>
+
+```js
+g (
+  do {
+    const $ = f(value);
+    if (typeof $ === 'number')
+      $ + 1
+    else
+      { data: $ }
+  }
+)
+```
+
+<tr>
+<td>
+
 ```js
 value
   |> f
   |> x => # + x
 ```
-The body of a pipeline may contain an inner arrow function but no other
-type of block expression. Both versions of this code return an arrow function.
+The body of a pipeline in topic style may contain an inner arrow function but no
+other type of block expression. Both versions of this example result in an arrow
+function in a closure on the previous pipeline’s result `value |> f`.
 
 <td>
 
@@ -803,7 +861,7 @@ value |> class { m: () { return # }}
 ```js
 value
   |> await f(#, 5)
-  |> do {
+  |> {
     # + 30
   }
   |> g
@@ -828,7 +886,7 @@ g(await f(value, 5) + 30)
 ```js
 value
   |> await f(#, 5)
-  |> do {
+  |> {
     if (# > 20)
       # + 30
     else
@@ -857,7 +915,7 @@ g(do {
 ```js
 value
   |> await f(#, 5)
-  |> do {
+  |> {
     if (x > 20)
       x + 30
     else
@@ -865,7 +923,7 @@ value
   }
   |> g
 // 🚫 Syntax Error:
-// Pipeline body `|> do { … }`
+// Pipeline body `|> { if (…) … else … }`
 // binds topic but contains no topic reference.
 ```
 But the same [early error rules][early errors] that apply to any topical
@@ -984,7 +1042,7 @@ do {
 ```js
 'https://pk.example/berlin-calling'
   |> await fetch(#, { mode: 'cors' })
-  |> do {
+  |> {
     if (
       |> #.headers.get('content-type')
       |> #??.toLowerCase()
@@ -1021,7 +1079,7 @@ fetch('https://pk.example/berlin-calling',
 ```js
 'https://pk.example/berlin-calling'
   |> await fetch(#, { mode: 'cors' })
-  |> do {
+  |> {
     if (
       # |> #.headers.get('content-type')
         |> #??.toLowerCase()
@@ -1063,7 +1121,7 @@ do {
 ```js
 'https://pk.example/berlin-calling'
   |> await fetch(#, { mode: 'cors' })
-  |> do {
+  |> {
     if (
       # |> #.headers.get('content-type')
         |> #??.toLowerCase()
@@ -1213,7 +1271,7 @@ From [jquery/src/core/init.js][]. Used `??.` in both versions for conciseness.
 <td>
 
 ```js
-match |> do {
+match |> {
   if (this[match] |> isFunction)
     # |> context[#] |> this[match](#)
   else
@@ -1255,7 +1313,7 @@ From [jquery/src/core/init.js][].
 <td>
 
 ```js
-return context |> do {
+return context |> {
   // Handle HTML strings
   if (…)
     …
@@ -1293,7 +1351,7 @@ From [jquery/src/core/init.js][]. The parallelism is much less clear here.
 <td>
 
 ```js
-return selector |> do {
+return selector |> {
   if (typeof # === 'string')
     …
   else if (# |> isFunction) {
@@ -1426,7 +1484,7 @@ function (
 
 ```js
 function (obj) {
-  return obj |> do {
+  return obj |> {
     if (# == null)
       0
     else if (|> isArrayLike)
@@ -1477,7 +1535,7 @@ involves complex data processing that becomes more readable with smart pipelines
 ```js
 function hashGet (key) {
   return this.__data__
-    |> do {
+    |> {
       if (nativeCreate)
         #[key]
           |> # === HASH_UNDEFINED
@@ -1535,7 +1593,7 @@ function mapCacheDelete (key) {
     |> getMapData(this, #)
     |> #['delete']
     |> #(key)
-    |> do {
+    |> {
       this.size -= # ? 1 : 0;
       #
     }
@@ -1558,7 +1616,7 @@ function mapCacheDelete (key) {
 
 ```js
 function castPath (value, object) {
-  return value |> do {
+  return value |> {
     if (# |> isArray)
       #
     else if (# |> isKey(#, object))
@@ -1601,7 +1659,7 @@ must be resolvable within the outer lexical environment. This may occur within
 <td>
 
 ```js
-x |> do {
+x |> {
   if (# |> predicate)
     # |> f |> # ** 2
   else
@@ -1628,7 +1686,7 @@ topic from the same lexical environment – `x` – into `predicate`, `f`, and `
 <td>
 
 ```js
-x |> do {
+x |> {
   if (|> predicate)
     |> f |> # ** 2
   else
@@ -1702,7 +1760,7 @@ within inner `do` expressions and inner `if` statements.
 ```js
 'https://pk.example/berlin-calling'
   |> await fetch(#, { mode: 'cors' })
-  |> do {
+  |> {
     if (
       # |> #.headers.get('content-type')
         |> #??.toLowerCase()
@@ -1741,7 +1799,7 @@ fetch('https://pk.example/berlin-calling',
 ```js
 'https://pk.example/berlin-calling'
   |> await fetch(#, { mode: 'cors' })
-  |> do {
+  |> {
     if (
       |> #.headers.get('content-type')
       |> #??.toLowerCase()
@@ -1792,7 +1850,7 @@ within inner `do` expressions and inner `if` statements.
 <td>
 
 ```js
-match |> do {
+match |> {
   if (this[match] |> isFunction)
     # |> context[#] |> this[match](#)
   else
@@ -1817,7 +1875,7 @@ From [jquery/src/core/init.js][].
 <td>
 
 ```js
-match |> do {
+match |> {
   if (this[match] |> isFunction)
     |> context[#] |> this[match](#)
   else
@@ -1842,7 +1900,7 @@ From [jquery/src/core/init.js][].
 <td>
 
 ```js
-return context |> do {
+return context |> {
   // Handle HTML strings
   if (…)
     …
@@ -1880,7 +1938,7 @@ From [jquery/src/core/init.js][].
 <td>
 
 ```js
-return context |> do {
+return context |> {
   // Handle HTML strings
   if (…)
     …
@@ -1918,7 +1976,7 @@ From [jquery/src/core/init.js][].
 <td>
 
 ```js
-return selector |> do {
+return selector |> {
   if (typeof # === 'string')
     …
   else if (# |> isFunction)
@@ -1950,7 +2008,7 @@ From [jquery/src/core/access.js][].
 <td>
 
 ```js
-return selector |> do {
+return selector |> {
   if (typeof # === 'string')
     …
   else if (# |> isFunction)
@@ -1996,7 +2054,7 @@ with [Additional Feature PP][] improves the visual parallelism of its code.
 
 ```js
 function (obj) {
-  return obj |> do {
+  return obj |> {
     if (# == null)
       0
     else if (# |> isArrayLike)
@@ -2027,7 +2085,7 @@ function (obj) {
 
 ```js
 function (obj) {
-  return obj |> do {
+  return obj |> {
     if (# == null)
       0
     else if (|> isArrayLike)
@@ -2072,7 +2130,7 @@ use the outer environment’s topic: `obj`.
 ```js
 function hashGet (key) {
   return this.__data__
-    |> do {
+    |> {
       if (nativeCreate)
         #[key]
           |> # === HASH_UNDEFINED
@@ -2108,7 +2166,7 @@ function hashGet (key) {
 
 ```js
 function castPath (value, object) {
-  return value |> do {
+  return value |> {
     if (|> isArray)
       #
     else if (|> isKey(#, object))
@@ -2726,7 +2784,7 @@ class LipFuzzTransformer {
         /\{\{([a-zA-Z0-9_-]+)\}\}/g,
         +> this.replaceTag)
       |> partialAtEndRegexp.exec
-      |> do {
+      |> {
         if (#) {
           this.partialChunk =
             |> #.index
@@ -2741,7 +2799,7 @@ class LipFuzzTransformer {
   }
 
   flush(controller) {
-    this.partialChunk |> do {
+    this.partialChunk |> {
       if (#.length > 0) {
         |> controller.enqueue
       }
@@ -2752,7 +2810,7 @@ class LipFuzzTransformer {
     return this.substitutions
       |> #[p1]
       |> # === undefined ? '' : #
-      |> do {
+      |> {
         this.lastIndex =
           |> #.length
           |> offset + #;
@@ -3056,13 +3114,13 @@ function createRound (methodName) {
   var func = Math[methodName]
   return function (number, precision) {
     number = number |> toNumber
-    precision = precision |> do {
+    precision = precision |> {
       if (# == null)
         0
       else
         |> toInteger |> nativeMin(#, 292)
     }
-    return number |> do {
+    return number |> {
       if (precision)
         // Shift with exponential notation
         // to avoid floating-point issues.
@@ -3269,7 +3327,7 @@ try {
 }
 
 async function readInto(buffer, offset = 0) {
-  return buffer |> do {
+  return buffer |> {
     if (#.byteLength === offset)
       #
     else
@@ -3965,11 +4023,14 @@ or bare constructor call), then it **must be in topic style**. And topic style
 requires that there be a topic reference in the pipeline body; otherwise it is
 an [early error][].
 
-A topic pipeline body is an expression at the [precedence level once tighter
-than pipeline-level expressions][operator precedence] – that is, it is a
-conditional-level expression.
+A topic pipeline body is either:
 
-### Practical consequences
+* An expression at the [precedence level once tighter than pipeline-level
+  expressions][operator precedence] – that is, a conditional-level expression.
+* A block `{` … `}` containing a list of statements, the last of which is used
+  as the result of the whole pipeline.
+
+## Practical consequences
 Therefore, a pipeline in **[bare style][] *never*** has **parentheses `(…)` or
 brackets `[…]`** in its body. Neither `… |> object.method()` nor
 `… |> object.method(arg)` nor `… |> object[symbol]` nor `… |> object.createFunction()`
@@ -4121,11 +4182,10 @@ Because pipeline [topic style][] supports [arbitrary expressions][expressive
 versatility], when [`do` expressions][] are added to JavaScript they too will be
 supported within pipeline bodies. When this occurs, topic references would be
 allowed within inner `do` expressions, along with arrow functions and `if` and
-`try` statements. This opens the door to embedding arbitrary statements within.
-See [Core Proposal][] for more examples.
+`try` statements. However, pipelines in [topic style][] already support a block
+form that is similar to `do` expressions. See the examples in [Motivation][].
 
 ### Pattern matching
-
 The smart pipelines and topic references of the [Core Proposal][] would be a
 boon to the proposal for [ECMAScript pattern matching][].
 
