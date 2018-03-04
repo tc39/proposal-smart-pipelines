@@ -3741,7 +3741,7 @@ with [forward compatibility][]).
 
 This proposal’s concept of a **topic reference does not need to be coupled only
 to pipelines**. The topic concept is **generalizable to many syntactic forms**,
-as the [Additional Syntaxes][] demonstrate. They together form one unified vision
+as the [Additional Features][] demonstrate. They together form one unified vision
 of a future in which composition, partial application, method extraction, and
 error handling are all tersely expressible with the same simple concepts.
 
@@ -4039,6 +4039,127 @@ supported within pipeline bodies. When this occurs, topic references would be
 allowed within inner `do` expressions, along with arrow functions and `if` and
 `try` statements. This opens the door to embedding arbitrary statements within.
 See [Core Proposal][] for more examples.
+
+### Pattern matching
+
+The smart pipelines and topic references of the [Core Proposal][] would be a
+boon to the proposal for [ECMAScript pattern matching][].
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>With pattern matching only
+
+<tbody>
+<tr>
+<td>
+
+```js
+… |> f
+  |> match (#) {
+    100: #
+    Array:
+      #.length
+    /(\d)(\d)(\d)/:
+      #.groups |> #[0] + #[1] + #[2]
+  }
+```
+The `match` expression would **bind the topic reference** within the scope of a
+successfully matching clause’s scope. The topic value would be the **truthy
+result** of the successful **`Symbol.matches`** call.
+
+<td>
+
+```js
+match (f(…)) {
+  100: x
+  Array -> a:
+    x.length
+  /(\d)(\d)(\d)/ -> m:
+    m.groups |> #[0] + #[1] + #[2]
+}
+```
+With a topic binding, the `-> a` and `-> m` bindings would be unnecessary.
+
+<tr>
+<td>
+
+```js
+… |> f
+  |> match {
+    { x, y }:
+      (x ** 2 + y ** 2)
+        |> Math.sqrt
+    [...]:
+      #.length
+    else:
+      throw new Error(#)
+  }
+```
+[ECMAScript pattern matching][] could also have a **completely tacit version**,
+in which the parenthesized antecedent (`(#)` in `match (#)`) is completely
+omitted in favor of tacitly using the outer context’s topic.
+
+<td>
+
+```js
+match (f(…)) {
+  { x, y }:
+    (x ** 2 + y ** 2)
+      |> Math.sqrt
+  [...] -> a:
+    a.length
+  else:
+    throw new Error(vector)
+  }
+}
+```
+
+<tr>
+<td>
+
+```js
+try {
+  …
+  catch {
+    match {
+      SyntaxError:
+        |> f
+      TypeError:
+        |> g |> h(#, {strict: true})
+      Error:
+        |> throw #
+    }
+  }
+}
+```
+With ECMAScript pattern matching + the [Core Proposal][] + [Additional
+Feature PP][] + [Additional Feature TC][] + [ECMAScript optional catch
+binding][], handling caught errors (and promise rejections) based on error type
+becomes more ergonomic.
+
+<td>
+
+```js
+try {
+  …
+  catch (error) {
+    match (error) {
+      SyntaxError:
+        f(error)
+      TypeError:
+        h(g(error), {strict: true})
+      Error:
+        throw error
+    }
+  }
+}
+```
+The version with pattern matching alone is more verbose with five more `error`
+variables, distracting the reader from how the error is actually handled.
+
+</table>
 
 ## Possible future extensions to the topic concept
 
