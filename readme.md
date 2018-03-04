@@ -2804,7 +2804,7 @@ class LipFuzzTransformer {
     }
     this.lastIndex =
       offset + replacement.length;
-    return replacement;
+    return replacement
   }
 }
 ```
