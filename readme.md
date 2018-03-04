@@ -76,8 +76,8 @@ This document is an **explainer for** the [**formal specification** of a propose
 tentatively at **Stage 0** of the [TC39 process][TC39 process] but and is
 planned to be presented, along with a [competing proposal][Pipeline Proposal 1],
 to TC39 by [Daniel “**littledan**” Ehrenberg of Igalia][littledan]. The proposal
-is divided into **one Stage-0 Core Proposal** plus **five** mutually compatible
-**Additional Features**:
+is divided into **one Stage-0 Core Proposal** plus **five** mutually
+independent-but-compatible **Additional Features**:
 
 |Name                     |Features                                      |Purpose                                                |
 |-------------------------|----------------------------------------------|-------------------------------------------------------|
