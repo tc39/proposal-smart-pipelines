@@ -3955,7 +3955,7 @@ find the concept useful.
 <tr>
 <th>
 
-`+>` `+>>`\
+`->` `->>`\
 `as->` `as->>`\
 `some->` `some->>`\
 `cond->` `cond->>`
