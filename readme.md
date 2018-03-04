@@ -4033,8 +4033,15 @@ scoping][] and [static analyzability][].
 [TODO: pattern matching https://github.com/tc39/proposal-pattern-matching]
 
 ### `do` expressions
+Because pipeline [topic style][] supports [arbitrary expressions][expressive
+versatility], when [`do` expressions][] are added to JavaScript they too will be
+supported within pipeline bodies. When this occurs, topic references would be
+allowed within inner `do` expressions, along with arrow functions and `if` and
+`try` statements. This opens the door to embedding arbitrary statements within.
+See [Core Proposal][] for more examples.
 
 ## Possible future extensions to the topic concept
+
 
 <table>
 <tr>
@@ -4491,7 +4498,7 @@ syntax; likewise, `•` is not a part of the proposal’s syntax. Both forms are
 illustrative purposes here only.
 
 With this notation, no variable autogeneration is required; instead, the nested
-`do` expressions will redeclare the same variables `#` and `•`, shadowing the
+[`do` expressions][] will redeclare the same variables `#` and `•`, shadowing the
 external variables of the same name as needed. The number example above becomes
 the following. Each line is still equivalent to the other lines.
 ```js
