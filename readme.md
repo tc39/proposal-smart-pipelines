@@ -337,8 +337,8 @@ await stream.write(
 <tr>
 <td>
 
-Being able to automatically detect this **“bare style”** is the [**smart** part
-of the “smart pipeline operator”][smart body syntax]. The styles of
+Being able to automatically detect this **“[bare style][]”** is the [**smart**
+part of the “smart pipeline operator”][smart body syntax]. The styles of
 [**functional** programming][functional programming], [**dataflow**
 programming][dataflow programming], and [**tacit** programming][tacit
 programming] may particularly benefit from bare pipelines and their [terse
@@ -368,12 +368,12 @@ Note that `|> f` is a bare unary function call. This is the same as `|> f(#)`,
 but the topic reference `#` is unnecessary; it is invisibly, tacitly implied.
 
 This is the [**smart** part of the smart pipeline operator][smart body syntax],
-which can distinguish between two syntax styles (**bare style** vs. **topic
-style**) by using a simple rule: **bare** style uses only **identifiers, dots,
-`new`**, and **await** – and **never parentheses, brackets, braces**, or **other
-operators**. And **topic** style **always** contains at least one **topic
-reference**. For more information, see the reference below about the **[smart
-body syntax][]**.
+which can distinguish between two syntax styles (**[bare style][]** vs. **[topic
+style][]**) by using a simple rule: **bare** style uses only **identifiers,
+dots, `new`**, and **await** – and **never parentheses, brackets, braces**, or
+**other operators**. And **topic** style **always** contains at least one
+**topic reference**. For more information, see the reference below about the
+**[smart body syntax][]**.
 
 <td>
 
@@ -414,10 +414,10 @@ value |> x + 50 |> f |> g(x, 2)
 // binds topic but contains no topic reference.
 ```
 In order to fulfill the [goal][goals] of [“don’t shoot me in the foot”][],
-when a **pipeline is in topic style** but its **body has no topic reference**,
+when a **pipeline is in [topic style][]** but its **body has no topic reference**,
 that is an **[early error][]**. Such a degenerate pipeline has a very good
 chance of actually being an accidental bug. (Note that the bare-style pipeline
-body `|> f` is *not* an error. The bare style is not supposed to contain any
+body `|> f` is *not* an error. The [bare style][] is not supposed to contain any
 topic references `#`.)
 
 <td>
@@ -2187,7 +2187,7 @@ were `$ => $ |> …`, where `$` is a hygienically unique variable.
 
 A pipe function takes **no** a parameter list; its unary parameter is implicitly
 bound to the tacit pipeline head. And just like with regular pipelines, a
-pipeline function may be in **bare style or topic style**.
+pipeline function may be in **[bare style][] or [topic style][]**.
 
 **More than any other** possible extension in this table, pipeline functions would
 dramatically increase the potential of tacit programming. Just this single
@@ -2464,7 +2464,7 @@ Promise.resolve(123).then(+> console.log)
 **Method extraction** can be addressed by pipeline functions alone, as a natural
 result of their pipeline-operator-like semantics.\
 `+> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
-bare style. This in turn is `$ => console.log($)`…
+[bare style][]. This in turn is `$ => console.log($)`…
 
 <td>
 
@@ -3597,7 +3597,7 @@ with [Additional Feature PF][].
 
 But even with this tradeoff, not too much simplicity should be given up. The
 sacrifice of simplicity for bare style’s alternate mode can be minimized by
-ensuring that [bare style’s parsing rules][smart body syntax] are very simple.
+ensuring that [its parsing rules are very simple][smart body syntax].
 
 ## “Make my code easier to read.”
 The new syntax should increase the human readability and writability of much
@@ -3774,7 +3774,120 @@ learning could be small, particularly in comparison to the large gains in
 readability and comprehensibility that it might bring to code in general.
 
 # Smart body syntax
-[TODO]
+Most pipelines will use the topic reference `#` in their bodies. This style of
+pipeline is called **[topic style][]**.
+
+For three simple cases – unary functions, unary async functions, and unary
+constructors – you may omit the topic reference from the body. This is called
+**[bare style][]**.
+
+When a pipe is in bare style, we refer to the body as a **bare function call**,
+**bare async function call**, or a **bare constructor call**, depending on the
+rules of bare style. The body acts as just a simple reference to a function or
+constructor, such as with `… |> text.capitalize`, with `… |> await DOM.fetch`,
+and with `… |> new User.Message`. The body’s value would then be called as a
+unary function or constructor, without having to use the topic reference as an
+explicit argument.
+
+The two bare-style productions require no parameters, because they can only
+be made up of identifiers and `.`, optionally preceded by `new` or `await`.
+
+Also, `new` and `await` cannot be used on their own with bare style.
+`… |> await` 🚫 and `… |> new` 🚫 are invalid pipelines. For `await`, instead
+use either `… |> await af` or use topic style: `… |> af |> await #`.
+
+| Valid [topic style][]   | Valid [bare style][]                     | Invalid pipeline
+| ----------------------- | ---------------------------------------- | --------------------
+|`… \|> f(#)`             |`… \|> f`                                 |  `… \|> f()` 🚫
+| ″″                      | ″″                                       | `… \|> (f)` 🚫
+| ″″                      | ″″                                       | `… \|> (f())` 🚫
+|`… \|> await af(#)`      |`… \|> await af`                          | `… \|> await af()` 🚫
+| ″″                      | ″″                                       | `… \|> (await f)` 🚫
+| ″″                      | ″″                                       | `… \|> (await f())` 🚫
+| ″″                      | ″″                                       | `… \|> await (f)` 🚫
+| ″″                      | ″″                                       | `… \|> await (f())` 🚫
+|`… \|> af |> await #`    |                                          |  `… \|> af |> await` 🚫
+|`… \|> new C(#)`         |`… \|> new C`                             | `… \|> new C()` 🚫
+| ″″                      | ″″                                       | `… \|> (new C)` 🚫
+| ″″                      | ″″                                       | `… \|> (new C())` 🚫
+| ″″                      | ″″                                       | `… \|> new (C)` 🚫
+| ″″                      | ″″                                       | `… \|> new (C())` 🚫
+|`… \|> o.m(#)`           |`… \|> o.m`                               | `… \|> o.m()` 🚫
+|`… \|> await o.m(#)`     |`… \|> await o.m`                         | `… \|> await o.m()` 🚫
+|`… \|> new o.m(#)`       |`… \|> new o.m`                           | `… \|> new o.m()` 🚫
+|`… \|> o.m(arg, #)`      |`const m = $ => o::m(arg, $); … \|> m`    | `… \|> o.m(arg)` 🚫
+|`… \|> new o.m(arg, #)`  |`const m = $ => new o::m(arg, $); … \|> m`| `… \|> new o.m(arg)` 🚫
+|`… \|> o[symbol](#)`     |`const m = o[symbol]; … \|> m`            | `… \|> o[symbol]` 🚫
+|`… \|> new o[symbol](#)` |`const m = new o[symbol]; … \|> m`        | `… \|> new o[symbol]` 🚫
+|`… \|> o.make()(#)`      |`const f = o.make(); … \|> f`             | `… \|> o.make()` 🚫
+|`… \|> new o.make()(#)`  |`const C = o.make(); … \|> new C`         | `… \|> new o.make()` 🚫
+|`… \|> await o.make()(#)`|`const af = o.makeFn(); … \|> await af`   | `… \|> await o.make()` 🚫
+|`… \|> await new o.make()(#)`)|                                     | `… \|> new await o.make()` 🚫
+
+## Bare style
+The **bare style** supports using simple identifiers, possibly with chains of
+simple property identifiers. If there are any operators, parentheses (including
+for method calls), brackets, or anything other than identifiers and dot
+punctuators, then it is in [topic style][], not in bare style.
+
+### Bare function call
+If the body is a merely a simple reference, then that identifier is interpreted
+to be a **bare function call**. The pipeline’s value will be the result of
+calling the body with the current topic as its argument.
+
+That is: **if a pipeline** is of the form\
+**_topic_ `|>` _identifier_**\
+or **_topic_ `|>` _identifier0_`.`_identifier1_**\
+or **_topic_ `|>` _identifier0_`.`_identifier1_`.`_identifier2_**\
+or so forth,\
+then the pipeline is a bare function call.
+
+### Bare async function call
+If the body starts with `await`, followed by a mere identifier, optionally with
+a chain of properties, and with no parentheses or brackets, then that identifier
+is interpreted to be a **bare async function call**.
+
+That is: **if a pipeline** is of the form\
+**_topic_ `|>` `await` _identifier_**\
+or **_topic_ `|>` `await` _identifier0_`.`_identifier1_**\
+or **_topic_ `|>` `await` _identifier0_`.`_identifier1_`.`_identifier2_**\
+or so forth,\
+then the pipeline is a bare async function call.
+
+### Bare constructor call
+If the body starts with `new`, followed by a mere identifier, optionally with a
+chain of properties, and with no parentheses or brackets, then that identifier
+is interpreted to be a **bare constructor**.
+
+That is: **if a pipeline** is of the form\
+**_topic_ `|>` `new` _identifier_**\
+or **_topic_ `|>` `new` _identifier0_`.`_identifier1_**\
+or **_topic_ `|>` `new` _identifier0_`.`_identifier1_`.`_identifier2_**\
+or so forth,\
+then the pipeline is a bare constructor call.
+
+### Practical consequences
+Therefore, a pipeline in **[bare style][] *never*** has **parentheses `(…)` or
+brackets `[…]`** in its body. Neither `… |> object.method()` nor
+`… |> object.method(arg)` nor `… |> object[symbol]` nor `… |> object.createFunction()`
+are in bare style (in fact, they all are Syntax Errors, due to their being in
+[topic style][] without any topic references).
+
+**When a body needs parentheses or brackets**, then **don’t use bare style**,
+and instead **use a topic reference** in the body……or **assign the body to a
+variable**, then **use that variable as a bare body**.
+
+The JavaScript developer is encouraged to use topic references and avoid bare
+style wherever bare style may be visually confusing to the reader.
+
+## Topic style
+**If a pipeline** of the form _topic_ |> _body_ does ***not* match the [bare
+style: grammar][]** (that is, it is *not* a bare function call or bare
+constructor call), then it **must be in topic style**.
+
+A topic pipeline body is an expression at the [precedence level once tighter
+than pipeline-level expressions][operator precedence] – that is, it is a
+conditional-level expression.
 
 # Relations to other work
 
@@ -4273,7 +4386,7 @@ The term “**body**” is preferred instead of “**RHS**” because “topic�
 preferred to “LHS”. However, “RHS” is still a fine and acceptable name for the
 body of the pipeline operator.
 
-“**Bare style**” can also be called “**tacit style**”, but the former is
+“**[Bare style][]**” can also be called “**tacit style**”, but the former is
 preferred to the latter. Eventually, certain [possible future extensions to the
 topic concept][] may enable [tacit programming][] even without using bare-style
 pipelines.
@@ -4281,7 +4394,7 @@ pipelines.
 <!--
 # Appendix: Term rewriting
 ## Term rewriting topic style
-Pipe bodies in topic style can be rewritten into a nested `do` expression.
+Pipe bodies in [topic style][] can be rewritten into a nested `do` expression.
 There are two ways to illustrate this equivalency. The first way is to [replace
 each pipe expression’s topic references with an autogenerated variable][term
 rewriting with autogenerated variables], which must be guaranteed to be
@@ -4350,7 +4463,7 @@ do {
 ```
 
 In general, for each pipe expression `topic |> body`, assuming that `body` is in
-topic style, that is, assuming that `body` contains an unshadowed topic
+[topic style][], that is, assuming that `body` contains an unshadowed topic
 reference:
 
 * Let _#<sub>n</sub>_ be a [hygienically autogenerated][lexically hygienic] topic
@@ -4364,7 +4477,7 @@ reference:
   This `do` expression would act as at the topic scope.
 
 ### Term rewriting with single dummy variable
-The other way to demonstrate topic style is to use two variables: the topic
+The other way to demonstrate [topic style][] is to use two variables: the topic
 reference `#` and single [lexically hygienic][] dummy variable `•`. It should be
 noted that `const # = …` is not a valid statement under this proposal’s actual
 syntax; likewise, `•` is not a part of the proposal’s syntax. Both forms are for
@@ -4528,7 +4641,8 @@ do { do { do { do { 3 * 3 } } }
 [associative property]: https://en.wikipedia.org/wiki/Associative_property
 [background]: #background
 [backward compatibility]: #backward-compatibility
-[bare style: Grammar]: #bare-style-syntactic-grammar
+[bare style]: #bare-style
+[topic style]: #topic-style
 [binding]: https://en.wikipedia.org/wiki/Binding_(linguistics)
 [Clojure pipe]: https://clojuredocs.org/clojure.core/as-%3E
 [completion records]: https://timothygu.me/es-howto/#completion-records-and-shorthands
