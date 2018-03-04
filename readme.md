@@ -76,16 +76,17 @@ This document is an **explainer for** the [**formal specification** of a propose
 tentatively at **Stage 0** of the [TC39 process][TC39 process] but and is
 planned to be presented, along with a [competing proposal][Pipeline Proposal 1],
 to TC39 by [Daniel “**littledan**” Ehrenberg of Igalia][littledan]. The proposal
-is divided into **one Stage-0 Core Proposal** plus **four compatible Additional
-Features**:
+is divided into **one Stage-0 Core Proposal** plus **five** mutually compatible
+**Additional Features**:
 
 |Name                     |Features                                      |Purpose                                                |
 |-------------------------|----------------------------------------------|-------------------------------------------------------|
 |[Core Proposal][]        |Infix pipe `\|>` and lexical topic `#`        |Unary application                                      |
 |[Additional Feature PP][]|Prefix pipe `\|>`                             |Application in `do`/`if`/`try` blocks                  |
 |[Additional Feature PF][]|Pipeline functions `+>  `                     |Partial application<br>Composition<br>Method extraction|
-|[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
 |[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                                  |
+|[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
+|[Additional Feature TF][]|Topical `for`/`for await` loops               |Application to iterator / async-iterator items         |
 
 The **Core Proposal** is a **variant** of the [first pipeline-operator
 proposal][] also championed by Ehrenberg. This variant is listed as
@@ -3304,7 +3305,7 @@ function readInto(buffer, offset = 0) {
 
 </table>
 
-## Additional Feature FT
+## Additional Feature TF
 With the [Core Proposal][] only, `for`–`of` statements would prohibit the use
 of `#` within their bodies, except where `#` is inside an inner pipeline inside
 the `for` loop. But this could be changed afterward by an add-on proposal that
@@ -3334,7 +3335,7 @@ for (range(0, 50)) {
 ```
 An additional tacit `for` loop form, completely lacking a parenthesized
 antecedent, would also be added. This example uses that tacit form, along with
-[Additional Syntax PP][].
+[Additional Feature PP][].
 
 <td>
 
@@ -4264,7 +4265,7 @@ desired behavior.
 ```js
 materials.map { |> f |> .length }
 ```
-This example uses [Additional Syntax PP][]. The first parameter of the arrow
+This example uses [Additional Feature PP][]. The first parameter of the arrow
 function that the block parameter implicitly creates is bound to the topic,
 which in turn is fed into the pipeline `|> f |> .length`.
 
