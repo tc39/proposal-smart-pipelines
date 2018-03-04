@@ -54,9 +54,11 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [Bare function call](#bare-function-call)
     - [Bare async function call](#bare-async-function-call)
     - [Bare constructor call](#bare-constructor-call)
-    - [Practical consequences](#practical-consequences)
   - [Topic style](#topic-style)
+    - [Practical consequences](#practical-consequences)
 - [Relations to other work](#relations-to-other-work)
+  - [Pipelines in other programming languages](#pipelines-in-other-programming-languages)
+  - [Topic references in other programming languages](#topic-references-in-other-programming-languages)
   - [Other ECMAScript proposals](#other-ecmascript-proposals)
     - [`do` expressions](#do-expressions)
   - [Possible future extensions to the topic concept](#possible-future-extensions-to-the-topic-concept)
@@ -3898,8 +3900,7 @@ the body to a variable**, then **use that variable as a bare body**.
 
 [TODO: https://github.com/gajus/babel-plugin-transform-function-composition]
 
-[TODO: refer to #background list of programming languages]
-
+## Pipelines in other programming languages
 The concept of a pipeline operator appears in numerous other languages, variously
 called “pipeline”, “threading”, and “feed” operators. This is because developers
 find the concept useful.
@@ -3977,25 +3978,7 @@ Factor, Forth, Joy, Onyx, PostScript, RPL
 Pipeline operators are also conceptually similar to [WHATWG-stream piping][] and
 [Node-stream piping][].
 
-
-## Other ECMAScript proposals
-[TODO: `do` expressions]
-
-[TODO: Partial application: “topic reference” vs. “placeholder”.]
-
-[TODO: Private class fields and `#`.]
-
-[TODO: Class decorators and `@`.]
-
-[TODO: Block params: https://github.com/samuelgoto/proposal-block-params]
-
-[TODO: Function bind: https://github.com/zenparsing/es-function-bind]
-
-[TODO: pattern matching https://github.com/tc39/proposal-pattern-matching]
-
-### `do` expressions
-
-## Possible future extensions to the topic concept
+## Topic references in other programming languages
 The [concept of the “topic variable” already exists in many other programming
 languages][topic variables in other languages], commonly named with an
 underscore `_` or `$_`. These languages often integrate their topic variables
@@ -4033,6 +4016,25 @@ with such extensions, which would increase its [expressive versatility][], and
 potentially multiplying its benefits toward [untangled flow][], [terse
 variables][], and [human writability][], while still preserving [simple
 scoping][] and [static analyzability][].
+
+## Other ECMAScript proposals
+[TODO: `do` expressions]
+
+[TODO: Partial application: “topic reference” vs. “placeholder”.]
+
+[TODO: Private class fields and `#`.]
+
+[TODO: Class decorators and `@`.]
+
+[TODO: Block params: https://github.com/samuelgoto/proposal-block-params]
+
+[TODO: Function bind: https://github.com/zenparsing/es-function-bind]
+
+[TODO: pattern matching https://github.com/tc39/proposal-pattern-matching]
+
+### `do` expressions
+
+## Possible future extensions to the topic concept
 
 <table>
 <tr>
