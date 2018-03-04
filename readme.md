@@ -758,10 +758,11 @@ do {
 <tr>
 <td>
 
-**Most statements cannot** use an **outside context’s topic** in their
-expressions. This includes block statements; function, async-function,
-generator, async-generator, and class definitions, `for` and `while` statements;
-and `catch` clauses. (Exceptions include arrow functions and `do`, `if`, `try`,
+**Most nested statements cannot** use an **outside context’s topic** in their
+expressions. This applies to block statements; function, async-function,
+generator, async-generator, and class definitions; `for` and `while` statements
+(but see [Additional Feature TF][]); and `catch` clauses (but see [Additional
+Feature TC][]). (Exceptions include arrow functions and `do`, `if`, `try`,
 `return`, `yield`, and `yield *` statements.)
 
 This behavior is in order to fulfill the [goals][] of [simple scoping][] and of
@@ -803,10 +804,10 @@ value
   }
   |> g
 ```
-The statements that may contain topic references from outer lexical environments
-are **[`do` expressions][]**, **arrow functions, `if` statements**, `try`
-statements (though not `catch` clauses), and `return`, `yield`, and `yield *`
-statements.
+The nested statements that **may** contain topic references from outer lexical
+environments are **[`do` expressions][]**, **arrow functions, `if` statements**,
+`try` statements (though not `catch` clauses), and `return`, `yield`, and
+`yield *` statements.
 
 This example demonstrates how a `do` expression can be a pipeline body if it
 contains an outer topic reference `#`.
@@ -865,8 +866,8 @@ value
 ```
 But the same [early error rules][early errors] that apply to any topical
 pipeline body apply also to topical bodies that are `do` expressions.
-<td>
 
+<td>
 
 </table>
 
