@@ -86,7 +86,7 @@ is divided into **one Stage-0 Core Proposal** plus **five** mutually compatible
 |[Additional Feature PF][]|Pipeline functions `+>  `                     |Partial application<br>Composition<br>Method extraction|
 |[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                                  |
 |[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
-|[Additional Feature TF][]|Topical `for`/`for await` loops               |Application to iterator / async-iterator items         |
+|[Additional Feature TF][]|Topical `for` / `for await` loops             |Application to iterator / async-iterator items         |
 
 The **Core Proposal** is a **variant** of the [first pipeline-operator
 proposal][] also championed by Ehrenberg. This variant is listed as
