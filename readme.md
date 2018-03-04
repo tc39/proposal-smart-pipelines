@@ -4161,8 +4161,234 @@ variables, distracting the reader from how the error is actually handled.
 
 </table>
 
-## Possible future extensions to the topic concept
+<tr>
 
+<th>
+
+## Block parameters
+The proposed syntax of [ECMAScript block parameters][] may greatly benefit from
+the pipeline and topic concepts, which would be able to explain much of their
+desired behavior.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>With block parameters only
+
+<tbody>
+<tr>
+<td>
+
+<tr>
+<td>
+
+```js
+materials.map { |> f |> .length }
+```
+This example uses [Additional Syntax PP][]. The first parameter of the arrow
+function that the block parameter implicitly creates is bound to the topic,
+which in turn is fed into the pipeline `|> f |> .length`.
+
+<td>
+
+```js
+materials.map do (m) { f(m).length }
+```
+
+The block-parameter proposal itself has not yet settled on how to parameterize
+its block parameters. The topic reference may be the key to solving this
+problem, making other, special block parameters unnecessary.
+
+<tr>
+<td>
+
+Note that this would be the same as:
+```js
+materials.map(+> f |> .length)
+```
+
+<td>
+
+```js
+materials.map (m) { f(m).length }
+```
+
+<tr>
+<td>
+
+```js
+a(1) {
+  #::b(2) { … }
+}
+```
+The block-parameter proposal in particular has not settled on how to nest block
+parameters. But the [Core Proposal][]’s simple syntax rules already can handle
+nested block parameters.
+
+<td>
+
+```js
+a(1) {
+  ::b(2) { … }
+}
+```
+The block-parameter proposal’s authors have been exploring using a sygil –
+perhaps related to the [function bind operator `::`][] – in order to refer to
+the parent block param, using some to-be-determined symbolic magic that would be
+unnecessary with topic references.
+
+<tr>
+<td>
+
+This would simply be equivalent to:
+```js
+a(1, +>
+  #::b(2, +> { … })
+)
+```
+
+<td>
+
+```js
+a(1) {
+  ::b(2) { … }
+}
+```
+
+<tr>
+<td>
+
+…and if the [function bind operator `::`][]’s proposal switches its prefix
+form `::function` to mean `#::function`, then this can become even terser,
+without additional magic:
+
+```js
+a(1) do {
+  ::b(2) { … }
+}
+```
+
+<td>
+
+```js
+a(1) {
+  ::b(2) { … }
+}
+```
+
+<tr>
+<td>
+
+```js
+server(app) {
+  #::get('/') do (response) {
+    request()
+      |> .get('param1')
+      |> `hello world ${#}`
+      |> response.send
+  }
+
+  #::listen(3000) {
+    log('hello')
+  }
+}
+```
+And again, if the [function bind operator `::`][]’s proposal switches its prefix
+form `::function` to mean `#::function`, then `#::get` and `#::listen` could
+become simply `::get` and `::listen`.
+
+<td>
+
+```js
+server(app) do (_app) {
+  _app::get('/') do (response) {
+    request()
+      |> #.get('param1')
+      |> `hello world ${#}`
+      |> response.send
+  }
+
+  _app::listen(3000) {
+    log('hello')
+  }
+}
+```
+
+</table>
+
+### Topic metaprogramming references
+In the event that TC39 seriously considers the topic function definitions
+shown above, a **`function.topic`** metaprogramming operator, in the style of
+the [`new.target`][] operator, could be useful in creating topic-aware functions.
+
+This might be especially useful in creating APIs resembling [domain-specific
+languages][DSLs] with [ECMAScript block parameters][]. This example creates
+three functions that form an API resembling [Visual Basic’s `select`
+statement][]. Two of these functions (`when` and `otherwise`) that are expected
+to be called always within the third function (`select`)’s callback block.
+
+An alternate solution without metaprogramming topics is not yet specified by the
+current proposal for [ECMAScript block parameters][].
+
+<tr>
+<td colspan=2>
+
+```js
+class CompletionRecord { [[TODO]] }
+
+function select (value, callback) {
+  const contextTopic =
+    [[TODO: create completion record]]
+  return callback(topic) // TO DO
+}
+
+function otherwise (callback) { [[TODO]] }
+
+function when (testValue, callback) {
+  const contextTopic = function.topic
+  return match (contextTopic) {
+    [TODO]:
+      |> applyWhen(#, testValue, callback)
+    else:
+      throw new Error('when clause was used outside select block')
+  }
+}
+
+function applyWhen (contextTopic, testValue) {
+  match (.value) {
+    [...]: |> applyWhenArray
+    else: |> applyWhenValue
+  }
+}
+
+function applyWhenArray (contextTopic, testArray) {
+  .some(arrayValue =>
+    contextTopic |> when(arrayValue, callback))
+}
+
+function applyWhenValue (contextTopic, testArray) {
+  return #[Symbol.matches](contextValue)
+    ? contextTopic |> callback |> [[TODO]]
+    : [[TODO: Pass to next when]]
+}
+```
+***
+```js
+select ('world') {
+  when ([Boolean, Number]) {
+    log(#)
+  }
+  when (String) {
+    log(`Hello ${#}`)
+  }
+  otherwise {
+    throw new Error(`Error: ${#|> format}`)
+  }
+}
+```
+
+## Possible future extensions to the topic concept
 
 <table>
 <tr>
@@ -4246,241 +4472,6 @@ for await (const c of stream) {
   yield c
     |> f
     |> # + 3
-}
-```
-
-<tr>
-
-<th>
-
-Topic block parameters
-
-<td>
-
-The proposed syntax of [ECMAScript block parameters][] may greatly benefit from
-using the topic concept. As with topic function definitions, making all block
-parameters topic would enable the use of the topic reference as an implicit
-first parameter.
-
-<tr>
-<td>
-
-```js
-materials.map { #|> f |> .length }
-```
-(Here, `#|> f` is just a stylistic variant of `# |> f`, which is already valid
-in this proposal’s rules.)
-
-Note that this would be the same as:
-```js
-materials.map(+> f |> .length)
-```
-
-<td>
-
-```js
-materials.map { f(???).length }
-```
-
-The block-parameter proposal itself has not yet settled on how to parameterize
-its block parameters. The topic reference may be the key to solving this
-problem, making other, special block parameters unnecessary. This example also
-uses the hypothetical headless property syntax and headless pipelining syntax
-from above.
-
-<tr>
-<td>
-
-```js
-server(app) {
-  #.get('/') do (response) {
-    request()
-      |> .get('param1')
-      |> `hello world ${#}`
-      |> response.send
-  }
-
-  #.listen(3000) {
-    log('hello')
-  }
-}
-```
-
-<td>
-
-```js
-server(app) {
-  ???.get('/') do (response) {
-    request()
-      |> #.get('param1')
-      |> `hello world ${#}`
-      |> response.send
-  }
-
-  ???.listen(3000) {
-    log('hello')
-  }
-}
-```
-
-<tr>
-<th>
-
-Topic pattern matching
-
-<td>
-
-The proposed syntax of [ECMAScript pattern matching][] would bind the topic
-reference within the scope of a successful match clause’s scope. The topic value
-would be the truthy result of the successful `Symbol.matches` call. This example
-also uses the hypothetical headless property syntax from above.
-
-<tr>
-<td>
-
-```js
-match (x) {
-  100: #
-  Array:
-    .length
-  /(\d)(\d)(\d)/:
-    #.groups |> #[0] + #[1] + #[2]
-}
-```
-
-<td>
-
-```js
-match (x) {
-  100: x
-  Array:
-    x.length
-  /(\d)(\d)(\d)/ +> m:
-    m.groups |> #[0] + #[1] + #[2]
-}
-```
-
-<tr>
-<th>
-
-Tacit pattern matching
-
-<td>
-
-[ECMAScript pattern matching][] could also have a completely tacit version, in
-which the parenthesized antecedent is completely omitted in favor of tacitly
-using the outer context’s topic. (This would have to somehow be distinguishable
-from a call to a function named `match` with a [bare block argument][ECMAScript
-block parameters].) This example also uses the hypothetical headless pipelining
-syntax from above.
-
-<tr>
-<td>
-
-```js
-… |> f
-  |> match {
-    { x, y }:
-      (x ** 2 + y ** 2)
-        |> Math.sqrt
-    [...]:
-      #.length
-    else:
-      throw new Error(#)
-  }
-}
-```
-
-<td>
-
-```js
-… |> f
-  |> match (#) {
-    { x, y }:
-      (x ** 2 + y ** 2)
-        |> Math.sqrt
-    [...]:
-      #.length
-    else:
-      throw new Error(vector)
-  }
-}
-```
-
-<tr>
-<th>
-
-Topic metaprogramming references
-
-<td>
-
-In the event that TC39 seriously considers the topic function definitions
-shown above, a **`function.topic`** metaprogramming operator, in the style of
-the [`new.target`][] operator, could be useful in creating topic-aware functions.
-
-This might be especially useful in creating APIs resembling [domain-specific
-languages][DSLs] with [ECMAScript block parameters][]. This example creates
-three functions that form an API resembling [Visual Basic’s `select`
-statement][]. Two of these functions (`when` and `otherwise`) that are expected
-to be called always within the third function (`select`)’s callback block.
-
-An alternate solution without metaprogramming topics is not yet specified by the
-current proposal for [ECMAScript block parameters][].
-
-<tr>
-<td colspan=2>
-
-```js
-class CompletionRecord { [[TODO]] }
-
-function select (value, callback) {
-  const contextTopic =
-    [[TODO: create completion record]]
-  return callback(topic) // TO DO
-}
-
-function otherwise (callback) { [[TODO]] }
-
-function when (testValue, callback) {
-  const contextTopic = function.topic
-  return match (contextTopic) {
-    [TODO]:
-      |> applyWhen(#, testValue, callback)
-    else:
-      throw new Error('when clause was used outside select block')
-  }
-}
-
-function applyWhen (contextTopic, testValue) {
-  match (.value) {
-    [...]: |> applyWhenArray
-    else: |> applyWhenValue
-  }
-}
-
-function applyWhenArray (contextTopic, testArray) {
-  .some(arrayValue =>
-    contextTopic |> when(arrayValue, callback))
-}
-
-function applyWhenValue (contextTopic, testArray) {
-  return #[Symbol.matches](contextValue)
-    ? contextTopic |> callback |> [[TODO]]
-    : [[TODO: Pass to next when]]
-}
-```
-***
-```js
-select ('world') {
-  when ([Boolean, Number]) {
-    log(#)
-  }
-  when (String) {
-    log(`Hello ${#}`)
-  }
-  otherwise {
-    throw new Error(`Error: ${#|> format}`)
-  }
 }
 ```
 
@@ -4953,3 +4944,4 @@ do { do { do { do { 3 * 3 } } }
 [intro]: #smart-pipelines
 [Standard Style]: https://standardjs.com/
 [nullish coalescing proposal]: https://github.com/tc39/proposal-nullish-coalescing/
+[function bind operator `::`]: #function-bind-operator
