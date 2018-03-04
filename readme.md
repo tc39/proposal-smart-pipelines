@@ -82,7 +82,7 @@ is divided into **one Stage-0 Core Proposal** plus **five** mutually compatible
 |Name                     |Features                                      |Purpose                                                |
 |-------------------------|----------------------------------------------|-------------------------------------------------------|
 |[Core Proposal][]        |Infix pipe `\|>` and lexical topic `#`        |Unary application                                      |
-|[Additional Feature PP][]|Prefix pipe `\|>`                             |Application in `do`/`if`/`try` blocks                  |
+|[Additional Feature PP][]|Prefix pipe `\|>`                             |Application in `do` / `if` / `try` blocks              |
 |[Additional Feature PF][]|Pipeline functions `+>  `                     |Partial application<br>Composition<br>Method extraction|
 |[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                                  |
 |[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
