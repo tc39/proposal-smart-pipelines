@@ -200,7 +200,7 @@ await stream.write(
       ), ', '
     ) + '!'
   )
-)
+);
 ```
 Compared with the pipeline version, the original code requires **additional
 indentation and grouping** on each step. This requires four more levels of
@@ -239,7 +239,7 @@ For instance, the chained pipeline:
 5 |> # - 3
   |> -#
   |> # * 2
-  |> Math.max(#, 0)
+  |> Math.max(#, 0);
 ```
 
 <td>
@@ -529,7 +529,7 @@ may prefer to inline: trading off self-documentation for localization of code.
 new User.Message(do {
   const value = do {
     const value = await promise
-      ??: throw new TypeError()
+      ??: throw new TypeError();
     `${value}, ${value}`
   }
   value[0].toUpperCase()
@@ -558,14 +558,14 @@ promise
 ```js
 do {
   const promiseValue = await promise
-    ??: throw new TypeError()
+    ??: throw new TypeError();
   const doubledValue =
-    `${promiseValue}, ${promiseValue}`
+    `${promiseValue}, ${promiseValue}`;
   const capitalizedValue
     = doubledValue[0].toUpperCase()
-      + doubledValue.substring(1)
+      + doubledValue.substring(1);
   const exclaimedValue
-    = capitalizedValue + '!'
+    = capitalizedValue + '!';
   new User.Message(exclaimedValue)
 }
 ```
@@ -596,15 +596,15 @@ a call of a function `normalize` was inserted between the second and third steps
 ```js
 do {
   const promiseValue = await promise
-    ??: throw new TypeError()
-  const normalizedValue = normalize()
+    ??: throw new TypeError();
+  const normalizedValue = normalize();
   const doubledValue =
-    `${normalizedValue}, ${normalizedValue}`
+    `${normalizedValue}, ${normalizedValue}`;
   const capitalizedValue
     = doubledValue[0].toUpperCase()
-      + doubledValue.substring(1)
+      + doubledValue.substring(1);
   const exclaimedValue
-    = capitalizedValue + '!'
+    = capitalizedValue + '!';
   new User.Message(exclaimedValue)
 }
 ```
@@ -626,7 +626,7 @@ type of block expression. Both versions of this code return an arrow function.
 
 ```js
 do {
-  const $ = value
+  const $ = value;
   x => $ + x
 }
 ```
@@ -647,7 +647,7 @@ can be useful for using callbacks in a pipeline.
 
 ```js
 do {
-  const $ = value
+  const $ = value;
   settimeout(() => $ * 5)
 }
 ```
@@ -955,11 +955,11 @@ console.log(
 
 ```js
 do {
-  const url = 'https://example.com/'
+  const url = 'https://example.com/';
   const response =
-    await fetch(url, { method: 'HEAD' })
+    await fetch(url, { method: 'HEAD' });
   const contentType =
-    response.headers.get('content-type')
+    response.headers.get('content-type');
   console.log(contentType)
 }
 ```
@@ -1029,7 +1029,7 @@ do {
   const response =
     await fetch('https://pk.example/berlin-calling',
       { mode: 'cors' }
-    )
+    );
   const json = do {
     if (response.headers.get('content-type')
       ??.toLowerCase()
@@ -1038,7 +1038,7 @@ do {
       response.json()
     } else {
       throw new TypeError()
-    }
+    };
   processJSON(json)
 }
 ```
@@ -1071,7 +1071,7 @@ do {
   const response =
     await fetch('https://pk.example/berlin-calling',
       { mode: 'cors' }
-    )
+    );
   const json = do {
     if (response.headers.get('content-type')
       ??.toLowerCase()
@@ -1080,7 +1080,7 @@ do {
       response.json()
     } else {
       throw new TypeError()
-    }
+    };
   processJSON(json)
 }
 ```
@@ -1522,7 +1522,7 @@ function mapCacheDelete (key) {
     |> #['delete']
     |> #(key)
     |> do {
-      this.size -= # ? 1 : 0
+      this.size -= # ? 1 : 0;
       #
     }
 }
@@ -1533,8 +1533,8 @@ function mapCacheDelete (key) {
 ```js
 function mapCacheDelete (key) {
   var result =
-    getMapData(this, key)['delete'](key)
-  this.size -= result ? 1 : 0
+    getMapData(this, key)['delete'](key);
+  this.size -= result ? 1 : 0;
   return result
 }
 ```
@@ -2715,9 +2715,9 @@ class LipFuzzTransformer {
         if (#) {
           this.partialChunk =
             |> #.index
-            |> chunk.substring
-          # |> #.index
-            |> chunk.substring(0, #)
+            |> chunk.substring;
+          |> #.index
+          |> chunk.substring(0, #)
         }
         else
           chunk
@@ -2740,7 +2740,7 @@ class LipFuzzTransformer {
       |> do {
         this.lastIndex =
           |> #.length
-          |> offset + #
+          |> offset + #;
         #
       }
     }
@@ -2895,7 +2895,7 @@ f(a, ...[b, ...c, d])
 
 ```js
 do {
-  const [_2, ..._spread] = c
+  const [_2, ..._spread] = c;
   f(a, _2, x, ...[...c, d])
 }
 ```
