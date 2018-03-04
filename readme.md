@@ -3660,10 +3660,12 @@ of their code.
 Any new punctuator should be easily distinguishable from existing symbols and should
 not be visually confusable with unrelated syntax. This is particularly true for
 choosing the topic-reference token, which would appear often in a wide variety
-of expressions. If the topic reference hypothetically were `?`, and it were used
-anywhere near the visually similar [optional-chaining syntax proposal][], then
-the topic reference might be lost or unnoticed by the developer: for example,
-`?.??m(?)`.
+of expressions. If the topic reference hypothetically were `?` (and `??` and
+`???` with [Additional Feature MT][]), and if the topic reference were used
+anywhere near the visually similar [optional-chaining syntax proposal][] and
+[nullish coalescing proposal][], then the topic reference might be lost or
+unnoticed by the developer: for example, `(?)??.m(??)` is much less readable
+than `#??.m(##)`.
 
 ### Terse parentheses
 Terseness also aids distinguishability by obviating the need for boilerplate
@@ -4701,3 +4703,4 @@ do { do { do { do { 3 * 3 } } }
 [Clojure compact function]: https://clojure.org/reference/reader#_dispatch
 [intro]: #smart-pipelines
 [Standard Style]: https://standardjs.com/
+[nullish coalescing proposal]: https://github.com/tc39/proposal-nullish-coalescing/
