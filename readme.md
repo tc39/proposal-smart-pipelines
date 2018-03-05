@@ -80,29 +80,30 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 
 This document is an **explainer for** the [**formal specification** of a proposed
 **smart pipeline operator `|>`**][formal pipeline specification] in
-**JavaScript**, along with several other additional features. It is currently
-tentatively at **Stage 0** of the [TC39 process][TC39 process] but and is
-planned to be presented, along with a [competing proposal][Pipeline Proposal 1],
-to TC39 by [Daniel “**littledan**” Ehrenberg of Igalia][littledan]. The proposal
+**JavaScript**, along with several other additional features. The specification
 is divided into **one Stage-0 Core Proposal** plus **five** mutually
 independent-but-compatible **Additional Features**:
 
-|Name                     |Features                                      |Purpose                                                |
-|-------------------------|----------------------------------------------|-------------------------------------------------------|
-|[Core Proposal][]        |Infix pipe `\|>` and lexical topic `#`        |Unary application                                      |
-|[Additional Feature PP][]|Prefix pipe `\|>`                             |Application in `do` / `if` / `try` blocks              |
-|[Additional Feature PF][]|Pipeline functions `+>  `                     |Partial application<br>Composition<br>Method extraction|
-|[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                                  |
-|[Additional Feature NP][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
-|[Additional Feature TF][]|Topical `for` / `for await` loops             |Application to iterator / async-iterator items         |
+|Name                     | Status  | Features                                                | Purpose                                                 |
+| ----------------------- | ------- | ------------------------------------------------------- | ------------------------------------------------------- |
+|[Core Proposal][]        | Stage 0 | Infix pipelines `\|>`<br>Lexical topic `#`              | Unary application                                       |
+|[Additional Feature PP][]| None    | Prefix pipelines `\|>`                                  | Application in `do` / `if` / `try` blocks               |
+|[Additional Feature PF][]| None    | Pipeline functions `+>  `                               | Partial application<br>Composition<br>Method extraction |
+|[Additional Feature TC][]| None    | Topical `catch` blocks                                  | Application to errors                                   |
+|[Additional Feature NP][]| None    | N-ary pipelines<br>Lexical topics `##`, `###`, and `...`| N-ary application                                       |
+|[Additional Feature TF][]| None    | Topical `for` / `for await` loops                       | Application to iterator / async-iterator items          |
 
-The **Core Proposal** is a **variant** of the [first pipeline-operator
-proposal][] also championed by Ehrenberg. This variant is listed as
-[**Proposal 4: Smart Mix** on the pipe-proposal wiki][Pipeline Proposal 4]. The
-variant resulted from [previous discussions in the previous pipeline-operator
-proposal][previous pipeline-placeholder discussions], discussions which
-culminated in an [invitation by Ehrenberg to try writing a specification
-draft][littledan invitation]. A **prototype Babel plugin** is also brewing.
+The **Core Proposal** is currently at **Stage 0** of the [TC39 process][TC39
+process] and is planned to be presented, along with a [competing
+proposal][Pipeline Proposal 1], to TC39 by [Daniel “**littledan**” Ehrenberg of
+Igalia][littledan].  The Core Proposal is a **variant** of the [first
+pipeline-operator proposal][] also championed by Ehrenberg; this variant is
+listed as [**Proposal 4: Smart Mix** in the pipe-proposal wiki][Pipeline
+Proposal 4]. The variant resulted from [previous discussions in the previous
+pipeline-operator proposal][previous pipeline-placeholder discussions],
+discussions which culminated in an [invitation by Ehrenberg to try writing a
+specification draft][littledan invitation]. A **prototype Babel plugin** will
+also be written soon.
 
 The **Additional Features** are **not part of the Stage-0 Core Proposal**. They
 are included to illustrate possible **separate follow-up proposals** for the case
@@ -111,7 +112,7 @@ and the Additional Features demonstrate a **unified vision** of a future in
 which composition, partial application, method extraction, and error handling
 are all tersely expressible with the same simple pipeline/topic concept.
 
-You can take part in the discussions on the **[GitHub issue tracker][]**. When you
+You can take part in discussions on the **[GitHub issue tracker][]**. When you
 file an issue, please note in it that you are talking **specifically** about
 **[“Proposal 4: Smart Mix”][Pipeline Proposal 4]**.
 
