@@ -24,7 +24,7 @@ contributors: J. S. Choi
 <h1><ins>Lexical Topics</ins></h1>
 
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-lexical-environments>original Lexical Environments clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-lexical-environments>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-lexical-environments>original Lexical Environments clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-lexical-environments>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <p>The <dfn>topic binding</dfn> of a Lexical Environment immutably binds the topic reference `#` to one value of any ECMAScript language type (called the <dfn>topic value</dfn> or simply the <dfn>topic</dfn>), within that Lexical Environment, at the time of the Lexical Environment's instantiation. The topic of a Lexical Environment conceptually serves as the value that the lexical context is "about".</p>
@@ -49,7 +49,7 @@ contributors: J. S. Choi
 <h1>Environment Records</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-environment-records>original Environment Records clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-environment-records>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-environment-records>original Environment Records clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-environment-records>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <emu-table id=table-15 caption="Abstract Methods of Environment Records">
@@ -79,7 +79,7 @@ Purpose
 <h1>Declarative Environment Records</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-declarative-environment-records>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-declarative-environment-records>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <p>Each declarative Environment Record is associated with an ECMAScript program scope containing variable, constant, let, class, module, import, and/or function declarations. A declarative Environment Record binds the set of identifiers defined by the declarations contained within its scope.</p>
@@ -128,7 +128,7 @@ If the value of [[TopicBindingStatus]] is *true*, [[TopicValues]] is a list cont
 </emu-table>
 
 <emu-note type=editor>
-<p>[[TopicValues]] is a list in order to be <emu-xref href=#sec-additional-feature-np-declarative-environment-records>forward compatible with Additional Feature MT</emu-xref>.</p>
+<p>[[TopicValues]] is a list in order to be <emu-xref href=#sec-additional-feature-np-declarative-environment-records>forward compatible with Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <p>Declarative Environment Records support all of the abstract methods of Environment Records listed in <emu-xref href="#table-15"></emu-xref>. In addition, declarative Environment Records support the methods listed in <emu-xref href="#table-62"></emu-xref>.</p>
@@ -166,7 +166,7 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 </ins>
 
 <emu-note type=editor>
-<p>BindTopicValues() accepts a list argument rather than a single-value argument, and GetPrimaryTopicBinding is named as such instead of merely “GetTopicBinding”, in order to be <emu-xref href=#sec-additional-feature-np-declarative-environment-records>forward compatible with Additional Feature MT</emu-xref>.</p>
+<p>BindTopicValues() accepts a list argument rather than a single-value argument, and GetPrimaryTopicBinding is named as such instead of merely “GetTopicBinding”, in order to be <emu-xref href=#sec-additional-feature-np-declarative-environment-records>forward compatible with Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <p>The behaviour of the concrete <ins>and additional</ins> specification methods for declarative Environment Records is defined by the following algorithms.</p>
@@ -187,7 +187,7 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 <emu-clause id=sec-declarative-environment-records-bindtopicvalues>
 <h1><ins>BindTopicValues ( _V_ )</ins></h1>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-declarative-environment-records-bindtopicvalues>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-declarative-environment-records-bindtopicvalues>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 <p>The method BindTopicValues for declarative Environment Records is guaranteed to be called only when the Environment Records do not yet have established topic bindings.</p>
 <emu-alg>
@@ -204,7 +204,7 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 <emu-clause id=sec-declarative-environment-records-getprimarytopicbinding>
 <h1><ins>GetPrimaryTopicBinding ( )</ins></h1>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-declarative-environment-records-getprimarytopicbinding>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-declarative-environment-records-getprimarytopicbinding>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 <p>The method GetPrimaryTopicBinding for declarative Environment Records returns the value of the record's topic binding (`#` binding). It must not be called when the record's topic binding has not already been established.</p>
 <emu-note>
@@ -263,7 +263,7 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 <h1>Punctuators</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-punctuators>original Punctuators clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-punctuators>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-punctuators>original Punctuators clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-punctuators>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <ins class=block>
@@ -290,7 +290,7 @@ Punctuator :: one of
 <h1>Primary Expression</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-primary-expression>original Primary Expression clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-primary-expression>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-primary-expression>original Primary Expression clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-primary-expression>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
@@ -317,7 +317,7 @@ PrimaryExpression[Yield, Await] :
 <h1>The <ins>Topic Reference</ins></h1>
 
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-this-keyword>original `this` Keyword clause</a> and the <a href=https://tc39.github.io/ecma262/#sec-identifier-reference>original Identifier Reference clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-topic-references>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This section is a wholly new sub-clause to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-this-keyword>original `this` Keyword clause</a> and the <a href=https://tc39.github.io/ecma262/#sec-identifier-reference>original Identifier Reference clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-topic-references>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <emu-note>
@@ -353,7 +353,7 @@ PrimaryExpression[Yield, Await] :
 <emu-clause id=sec-resolveprimarytopicbinding aoid=ResolvePrimaryTopicBinding>
 <h1>Runtime Semantics: ResolvePrimaryTopicBinding</h1>
 <emu-note type=editor>
-<p>This method is named as such instead of merely “ResolveTopicBinding” in order to be forward compatible with <emu-xref href=#sec-additional-feature-pf>Additional Feature MT</emu-xref>.</p>
+<p>This method is named as such instead of merely “ResolveTopicBinding” in order to be forward compatible with <emu-xref href=#sec-additional-feature-pf>Additional Feature NP</emu-xref>.</p>
 </emu-note>
 <emu-note>
 <p>ResolvePrimaryTopicBinding returns the value to which the topic reference `#` is bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment.</p>
@@ -381,7 +381,7 @@ PrimaryExpression[Yield, Await] :
 <emu-clause id=sec-pipeline-operator>
 <h1><ins>Pipeline Operator</ins></h1>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-conditional-operator>original Conditional Operator (`?` `:`) clause</a> and the <a href=https://tc39.github.io/ecma262/#sec-assignment-operators>original Assignment Operators clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This section is a wholly new sub-clause to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-conditional-operator>original Conditional Operator (`?` `:`) clause</a> and the <a href=https://tc39.github.io/ecma262/#sec-assignment-operators>original Assignment Operators clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
@@ -428,7 +428,7 @@ PipelineTopicList[In, Yield, Await] :
 <emu-clause id=sec-pipeline-operator-static-semantics-early-errors>
 <h1>Static Semantics: Early Errors</h1>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>PipelineHead : ConditionalExpression</emu-grammar>
@@ -437,7 +437,7 @@ PipelineTopicList[In, Yield, Await] :
 </emu-alg>
 
 <emu-note type=editor>
-<p>This early error prohibits _PipelineHead_ from covering a comma-separated expression. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This early error prohibits _PipelineHead_ from covering a comma-separated expression. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>PipelineTopicBody : ConditionalExpression</emu-grammar>
@@ -448,7 +448,7 @@ PipelineTopicList[In, Yield, Await] :
 </emu-alg>
 
 <emu-note type=editor>
-<p>This third early error prohibits _PipelineTopicBody_ from covering a comma-separated expression. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This third early error prohibits _PipelineTopicBody_ from covering a comma-separated expression. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 </emu-clause>
 
@@ -457,7 +457,7 @@ PipelineTopicList[In, Yield, Await] :
 <p>With parameter _symbol_.</p>
 <emu-see-also-para op="Contains"></emu-see-also-para>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>PipelineBareFunctionCall : SimpleReference</emu-grammar>
@@ -475,7 +475,7 @@ PipelineTopicList[In, Yield, Await] :
 <emu-clause id=sec-pipeline-operator-runtime-semantics-topicpipelinebodyinstantiation aoid=TopicPipelineBodyInstantiation>
 <h1>Runtime Semantics: TopicPipelineBodyInstantiation</h1>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 <emu-note>
 <p>This abstract operation constructs, instantiates, then returns a new declarative Lexical Environment for a topic pipeline body. It creates an immutable topic binding in that declarative environment using the given _topics_.</p>
@@ -579,7 +579,7 @@ AssignmentExpression[In, Yield, Await] :
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-block-static-semantics-early-errors>original Block, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-block-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-block-static-semantics-early-errors>original Block, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-block-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <ins class=block>
@@ -606,7 +606,7 @@ AssignmentExpression[In, Yield, Await] :
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-if-statement-static-semantics-early-errors>original `if` Statement, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-if-statement-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref> and further modifications by Additional Feature ST. [TODO: Add link to Additional Feature ST once it’s written.]</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-if-statement-static-semantics-early-errors>original `if` Statement, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-if-statement-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref> and further modifications by Additional Feature ST. [TODO: Add link to Additional Feature ST once it’s written.]</p>
 </emu-note>
 
 <emu-grammar>
@@ -633,7 +633,7 @@ IfStatement :
 <h1>Iteration Statements</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-iteration-statements>original Iteration Statements clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-iteration-statements-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref> and further modifications by Additional Feature ST. [TODO: Add link to Additional Feature ST once it’s written.]</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-iteration-statements>original Iteration Statements clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-iteration-statements-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref> and further modifications by Additional Feature ST. [TODO: Add link to Additional Feature ST once it’s written.]</p>
 </emu-note>
 
 <emu-clause id=sec-iteration-statements-static-semantics-early-errors>
@@ -675,7 +675,7 @@ IterationStatement :
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-with-statement-static-semantics-early-errors>original `with` Statement, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-function-definitions-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref>. It is not planned to be removed by other additional syntax.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-with-statement-static-semantics-early-errors>original `with` Statement, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-function-definitions-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>. It is not planned to be removed by other additional syntax.</p>
 </emu-note>
 
 <emu-grammar>WithStatement : `with` `(` Expression `)` Statement</emu-grammar>
@@ -701,7 +701,7 @@ IterationStatement :
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-switch-statement-static-semantics-early-errors>original `switch` Statement, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-switch-statement-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref> and further modifications by Additional Feature ST. [TODO: Add link to Additional Feature ST once it’s written.]</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-switch-statement-static-semantics-early-errors>original `switch` Statement, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-switch-statement-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref> and further modifications by Additional Feature ST. [TODO: Add link to Additional Feature ST once it’s written.]</p>
 </emu-note>
 
 <emu-grammar>SwitchStatement : `switch` Expression StatementList</emu-grammar>
@@ -727,7 +727,7 @@ IterationStatement :
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-try-statement-static-semantics-early-errors>original `try` Statement, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-try-statement-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref> and further modifications by Additional Feature ST. [TODO: Add link to Additional Feature ST once it’s written.]</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-try-statement-static-semantics-early-errors>original `try` Statement, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-try-statement-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref> and further modifications by Additional Feature ST. [TODO: Add link to Additional Feature ST once it’s written.]</p>
 </emu-note>
 
 <emu-grammar>
@@ -768,7 +768,7 @@ Finally : `finally` Block</emu-grammar>
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-function-definitions-static-semantics-early-errors>original Function Definitions, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-function-definitions-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-function-definitions-static-semantics-early-errors>original Function Definitions, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-function-definitions-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>FunctionBody : FunctionStatementList</emu-grammar>
@@ -797,7 +797,7 @@ Finally : `finally` Block</emu-grammar>
 <emu-see-also-para op="Contains"></emu-see-also-para>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-arrow-function-definitions-static-semantics-contains>original Arrow Functions, Static Semantics: Contains clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-arrow-function-definitions-static-semantics-contains>further modifications by Additional Feature MT</emu-xref>.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-arrow-function-definitions-static-semantics-contains>original Arrow Functions, Static Semantics: Contains clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-arrow-function-definitions-static-semantics-contains>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>ArrowFunction : ArrowParameters `=&gt;` ConciseBody</emu-grammar>
@@ -825,7 +825,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-scripts-static-semantics-early-errors>original Scripts, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-function-definitions-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref>. It is not planned to be removed by other additional syntax.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-scripts-static-semantics-early-errors>original Scripts, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-function-definitions-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>. It is not planned to be removed by other additional syntax.</p>
 </emu-note>
 
 <emu-grammar>ScriptBody : StatementList</emu-grammar>
@@ -851,7 +851,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-scripts-static-semantics-early-errors>original Modules, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-function-definitions-static-semantics-early-errors>further modifications by Additional Feature MT</emu-xref>. It is not planned to be removed by other additional syntax.</p>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-scripts-static-semantics-early-errors>original Modules, Static Semantics: Early Errors clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-function-definitions-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>. It is not planned to be removed by other additional syntax.</p>
 </emu-note>
 
 <emu-grammar>ModuleItem : StatementListItem</emu-grammar>
