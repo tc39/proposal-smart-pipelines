@@ -270,14 +270,14 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 <ins class=block>
 <emu-grammar>
 Punctuator :: one of
-  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` `|&gt;` `#` `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
+  `{` `(` `)` `[` `]` `.` `...` `;` `,` `&lt;` `&gt;` `&lt;=` `&gt;=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `&lt;&lt;` `&gt;&gt;` `&gt;&gt;&gt;` `&amp;` `|` `^` `!` `~` `&amp;&amp;` `||` `?` `:` `|&gt;` `#` `=` `+=` `-=` `*=` `%=` `**=` `&lt;&lt;=` `&gt;&gt;=` `&gt;&gt;&gt;=` `&amp;=` `|=` `^=` `=&gt;`
 </emu-grammar>
 </ins>
 
 <del class=block>
 <emu-grammar>
 Punctuator :: one of
-  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
+  `{` `(` `)` `[` `]` `.` `...` `;` `,` `&lt;` `&gt;` `&lt;=` `&gt;=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `&lt;&lt;` `&gt;&gt;` `&gt;&gt;&gt;` `&amp;` `|` `^` `!` `~` `&amp;&amp;` `||` `?` `:` `=` `+=` `-=` `*=` `%=` `**=` `&lt;&lt;=` `&gt;&gt;=` `&gt;&gt;&gt;=` `&amp;=` `|=` `^=` `=&gt;`
 </emu-grammar>
 </del>
 
@@ -801,7 +801,7 @@ Finally : `finally` Block</emu-grammar>
 <p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-arrow-function-definitions-static-semantics-contains>original Arrow Functions, Static Semantics: Contains clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-mt-arrow-function-definitions-static-semantics-contains>further modifications by Additional Feature MT</emu-xref>.</p>
 </emu-note>
 
-<emu-grammar>ArrowFunction : ArrowParameters `=>` ConciseBody</emu-grammar>
+<emu-grammar>ArrowFunction : ArrowParameters `=&gt;` ConciseBody</emu-grammar>
 <emu-alg>
 1. If _symbol_ is not one of |NewTarget|, |SuperProperty|, |SuperCall|, <del>`super` or `this`</del> <ins>`super`, `this`, or `#`</ins>, return *false*.
 2. If _ArrowParameters_ Contains _symbol_ is *true*, return *true*.
@@ -876,45 +876,45 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <emu-annex id=sec-additional-feature-pf>
 <h1>Additional Feature PF</h1>
 
-<p>This annex specifies additional ECMAScript language syntax and semantics for <strong>pipeline functions</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing an additional <strong>pipeline-function operator</strong> `+&gt;`. This new <strong>unary</strong> operator creates arrow functions with an implicit parameter pipelined into a pipeline body, such that `+&gt;` |PipelineBody| is equivalent to `$=>$|&gt;` |PipelineBody|. The operator brings much power: it enables terse <strong>method extraction</strong>, terse <strong>partial application</strong> of functions/expressions (into unary functions), and terse <strong>composition</strong> of functions/expressions.</p>
+<p>This annex specifies additional ECMAScript language syntax and semantics for <strong>pipeline functions</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing an additional <strong>pipeline-function operator</strong> `+&gt;`. This new <strong>unary</strong> operator creates arrow functions with an implicit parameter pipelined into a pipeline body, such that `+&gt;` |PipelineBody| is equivalent to `$=&gt;$|&gt;` |PipelineBody|. The operator brings much power: it enables terse <strong>method extraction</strong>, terse <strong>partial application</strong> of functions/expressions (into unary functions), and terse <strong>composition</strong> of functions/expressions.</p>
 
 <emu-table id=table-additional-feature-pf-examples caption="Examples of Pipeline Functions">
 <table>
 <tr>
 <td><pre><code language=javascript>+&gt; console.log</code></td>
-<td><pre><code language=javascript>$ => $ |&gt; console.log
-$ => console.log($)
+<td><pre><code language=javascript>$ =&gt; $ |&gt; console.log
+$ =&gt; console.log($)
 console.log.bind(console)</code></pre></td>
 </tr>
 <tr>
 <td><pre><code language=javascript>+&gt; f(#, 5)</code></pre></td>
-<td><pre><code language=javascript>$ => $ |&gt; f(#, 5)
-$ => f($, 5)</code></pre></td>
+<td><pre><code language=javascript>$ =&gt; $ |&gt; f(#, 5)
+$ =&gt; f($, 5)</code></pre></td>
 </tr>
 <tr>
 <td><pre><code language=javascript>+&gt; # + 1</code></pre></td>
-<td><pre><code language=javascript>$ => $ |&gt; # + 1
-$ => $ + 1</code></pre></td>
+<td><pre><code language=javascript>$ =&gt; $ |&gt; # + 1
+$ =&gt; $ + 1</code></pre></td>
 </tr>
 <tr>
 <td><pre><code language=javascript>+&gt; f |&gt; g</code></pre></td>
-<td><pre><code language=javascript>$ => $ |&gt; f |&gt; g
-$ => g(f($))</code></pre></td>
+<td><pre><code language=javascript>$ =&gt; $ |&gt; f |&gt; g
+$ =&gt; g(f($))</code></pre></td>
 </tr>
 <tr>
 <td><pre><code language=javascript>+&gt; f |&gt; o.m</code></pre></td>
-<td><pre><code language=javascript>$ => $ |&gt; f |&gt; o.m
-$ => o.m(f($))</code></pre></td>
+<td><pre><code language=javascript>$ =&gt; $ |&gt; f |&gt; o.m
+$ =&gt; o.m(f($))</code></pre></td>
 </tr>
 <tr>
 <td><pre><code language=javascript>+&gt; f |&gt; # + 1 |&gt; o.m</code></pre></td>
-<td><pre><code language=javascript>$ => $ |&gt; f |&gt; # + 1 |&gt; o.m
-$ => o.m(f($) + 1)</code></pre></td>
+<td><pre><code language=javascript>$ =&gt; $ |&gt; f |&gt; # + 1 |&gt; o.m
+$ =&gt; o.m(f($) + 1)</code></pre></td>
 </tr>
 </table>
 </emu-table>
 
-<p>This annex uses a new token `+&gt;`, but this token is merely an <strong>illustrative placeholder</strong> to avoid premature bikeshedding discussion. The actual operator ideally would communicate its status as a combination of `=>` and `|&gt;`. Example replacements of `+&gt;` include `-&gt;` |PipelineBody| (which both resembles the `|&gt;` operator with the `|` rotated sideways and resembles the `=>` operator but with a skinnier arrow body) and `=|` |PipelineBody| (which is a blending of `=>` and `|&gt;` with the `&gt;` removed).</p>
+<p>This annex uses a new token `+&gt;`, but this token is merely an <strong>illustrative placeholder</strong> to avoid premature bikeshedding discussion. The actual operator ideally would communicate its status as a combination of `=&gt;` and `|&gt;`. Example replacements of `+&gt;` include `-&gt;` |PipelineBody| (which both resembles the `|&gt;` operator with the `|` rotated sideways and resembles the `=&gt;` operator but with a skinnier arrow body) and `=|` |PipelineBody| (which is a blending of `=&gt;` and `|&gt;` with the `&gt;` removed).</p>
 
 <emu-annex id=sec-additional-feature-pf-executable-code-and-execution-contexts>
 <h1>Executable Code and Execution Contexts</h1>
@@ -1504,14 +1504,14 @@ Return the value of the <ins>primary </ins>topic binding (`#` binding) of this E
 <ins class=block>
 <emu-grammar>
 Punctuator :: one of
-  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` `|&gt;` `#` `##` `###` `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
+  `{` `(` `)` `[` `]` `.` `...` `;` `,` `&lt;` `&gt;` `&lt;=` `&gt;=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `&lt;&lt;` `&gt;&gt;` `&gt;&gt;&gt;` `&amp;` `|` `^` `!` `~` `&amp;&amp;` `||` `?` `:` `|&gt;` `#` `##` `###` `=` `+=` `-=` `*=` `%=` `**=` `&lt;&lt;=` `&gt;&gt;=` `&gt;&gt;&gt;=` `&amp;=` `|=` `^=` `=&gt;`
 </emu-grammar>
 </ins>
 
 <del class=block>
 <emu-grammar>
 Punctuator :: one of
-  `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~` `&&` `||` `?` `:` `|&gt;` `#` `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=` `&=` `|=` `^=` `=>`
+  `{` `(` `)` `[` `]` `.` `...` `;` `,` `&lt;` `&gt;` `&lt;=` `&gt;=` `==` `!=` `===` `!==` `+` `-` `*` `%` `**` `++` `--` `&lt;&lt;` `&gt;&gt;` `&gt;&gt;&gt;` `&amp;` `|` `^` `!` `~` `&amp;&amp;` `||` `?` `:` `|&gt;` `#` `=` `+=` `-=` `*=` `%=` `**=` `&lt;&lt;=` `&gt;&gt;=` `&gt;&gt;&gt;=` `&amp;=` `|=` `^=` `=&gt;`
 </emu-grammar>
 </del>
 
@@ -2220,7 +2220,7 @@ If |FunctionStatementList| is not the |FunctionBody| of a |ConciseBody|, it is a
 <p>This section adds onto the <emu-xref href=#sec-arrow-function-definitions-static-semantics-contains>these revisions in the core proposal to an existing clause</emu-xref>.</p>
 </emu-note>
 
-<emu-grammar>ArrowFunction : ArrowParameters `=>` ConciseBody</emu-grammar>
+<emu-grammar>ArrowFunction : ArrowParameters `=&gt;` ConciseBody</emu-grammar>
 <emu-alg>
 1. If _symbol_ is not one of |NewTarget|, |SuperProperty|, |SuperCall|, `super`, `this`, or `#`, return *false*.
 2. If _ArrowParameters_ Contains _symbol_ is *true*, return *true*.
