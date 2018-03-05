@@ -392,6 +392,7 @@ PipelineExpression[In, Yield, Await] :
 
 PipelineHead[?In, ?Yield, ?Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
+  PipelineExpression[?In, ?Yield, ?Await]
 
 PipelineBody[In, Yield, Await] :
   PipelineBareFunctionCall
@@ -409,7 +410,7 @@ SimpleReference :
   SimpleReference `.` IdentifierName
 
 PipelineTopicBody[In, Yield, Await] :
-  AssignmentExpression[?In, ?Yield, ?Await]
+  ConditionalExpression[?In, ?Yield, ?Await]
 </emu-grammar>
 
 <h2>Supplemental Syntax</h2>
@@ -1885,9 +1886,10 @@ PipelineExpression[In, Yield, Await] :
 PipelineHead[?In, ?Yield, ?Await] :
   <del class=block>ConditionalExpression[?In, ?Yield, ?Await]</del>
   <ins class=block>
-  PipelineTopicListHead[?Yield, ?Await]
   [lookahead &lt;! {`(`}] ConditionalExpression[?In, ?Yield, ?Await]
+  PipelineTopicListHead[?Yield, ?Await]
   </ins>
+  PipelineExpression[?In, ?Yield, ?Await]
 
 PipelineTopicListHead[Yield, Await]:
   CoverPipelineTopicListAndArrowParameterList[?Yield, ?Await] `)`
@@ -1908,7 +1910,7 @@ SimpleReference :
   SimpleReference `.` IdentifierName
 
 PipelineTopicBody[In, Yield, Await] :
-  AssignmentExpression[?In, ?Yield, ?Await]
+  ConditionalExpression[?In, ?Yield, ?Await]
 </emu-grammar>
 
 <h2>Supplemental Syntax</h2>
