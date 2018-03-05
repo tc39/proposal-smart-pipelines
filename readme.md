@@ -2530,21 +2530,21 @@ let newScore = player.score
 <tr>
 <td>
 
-```js
-Promise.resolve(123).then(+> console.log)
-```
 **Method extraction** can be addressed by pipeline functions alone, as a natural
 result of their pipeline-operator-like semantics.\
 `+> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
 [bare style][]. This in turn is `$ => console.log($)`…
+```js
+Promise.resolve(123).then(+> console.log)
+```
 
 <td>
 
+…and `$ => console.log($)` is equivalent to `console.log.bind(console)`.
 ```js
 Promise.resolve(123).then(console.log.bind(console))
 Promise.resolve(123).then(::console.log)
 ```
-And `$ => console.log($)` is equivalent to `console.log.bind(console)`.
 
 <tr>
 <td>
@@ -4162,25 +4162,114 @@ potentially multiplying its benefits toward [untangled flow][], [terse
 variables][], and [human writability][], while still preserving [simple
 scoping][] and [static analyzability][].
 
-## Syntactic partial function application
-[TODO]
+## Function binding
+An existing proposal for [ECMAScript function binding][] has two use cases:
+
+1. Extracting a method from an object as a standalone function:
+   `o.method.bind(object)` as `::object.method`.
+2. Calling a function as if it were a method call on an object:
+   `func.call(object, ...args)` as `object::func(...args)`
+3. Creating a function by binding an object to it:
+   `func.bind(object)` as `object::func`.
+
+The smart-pipelines [Core Proposal][] + [Additional Feature PF][] **subsumes**
+the [ECMAScript function binding][] proposal in the **first use case** (prefix
+`::`). But the other two use cases (infix `::`) are not addressed by smart
+pipelines. Smart pipelines and infix function binding `::` can and should
+coexist. In fact, infix function binding could be made more ergonomic in many
+cases by replacing prefix `::function` with a shortcut for infix `#::function`.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>
+
+With [existing proposal][ECMAScript function binding]
+
+<tbody>
+<tr>
+<td>
+
+**Method extraction** can be addressed by pipeline functions alone, as a natural
+result of their pipeline-operator-like semantics.\
+`+> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
+[bare style][]. This in turn is `$ => console.log($)`…
+```js
+Promise.resolve(123).then(+> console.log)
+```
+
+<td>
+
+…and `$ => console.log($)` is equivalent to `console.log.bind(console)`.
+```js
+Promise.resolve(123).then(console.log.bind(console))
+Promise.resolve(123).then(::console.log)
+```
+
+<tr>
+<td>
+
+```js
+$('.some-link').on('click', +> view.reset)
+```
+
+<td>
+
+```js
+$('.some-link').on('click', ::view.reset)
+```
+
+<tr>
+<td>
+
+```js
+const { hasOwnProperty } = Object.prototype
+const x = { key: 5 }
+x::hasOwnProperty
+x::hasOwnProperty('key')
+```
+To do terse **method calling/binding**, the `::` operator would still be required.
+
+<td>
+
+```js
+const { hasOwnProperty } = Object.prototype
+const x = { key: 5 }
+x::hasOwnProperty
+x::hasOwnProperty('key')
+```
+But the `::` would only need to handle method calls. No operator overloading of
+`::` for method extraction would be needed.
+
+<tr>
+<td>
+
+The [function bind operator `::`][]’s proposal switches its prefix form
+`::function` to mean `#::function` instead of `object.bind(object)`, then many
+nested functions would become even terser.
+```js
+a(1, +>
+  ::b(2, +> …)
+)
+```
+See [block parameters][] for further examples.
+
+<td>
+
+```js
+a(1, $ =>
+  $::b(2, $ => …)
+)
+```
+
+</table>
 
 ## Function composition
 [TODO]
 
-## Function binding
+## Syntactic partial function application
 [TODO]
-
-## Private class fields and class decorators
-[TODO]
-
-## `do` expressions
-Because pipeline [topic style][] supports [arbitrary expressions][expressive
-versatility], when [`do` expressions][] are added to JavaScript they too will be
-supported within pipeline bodies. When this occurs, topic references would be
-allowed within inner `do` expressions, along with arrow functions and `if` and
-`try` statements. However, pipelines in [topic style][] already support a block
-form that is similar to `do` expressions. See the examples in [Motivation][].
 
 ## Pattern matching
 The smart pipelines and topic references of the [Core Proposal][] would be a
@@ -4375,9 +4464,9 @@ a(1) {
 }
 ```
 The block-parameter proposal’s authors have been exploring using a sygil –
-perhaps related to the [function bind operator `::`][] – in order to refer to
-the parent block param, using some to-be-determined symbolic magic that would be
-unnecessary with topic references.
+perhaps related to the [function bind operator `::`][function binding] – in
+order to refer to the parent block param, using some to-be-determined symbolic
+magic that would be unnecessary with topic references.
 
 <tr>
 <td>
@@ -4400,9 +4489,9 @@ a(1) {
 <tr>
 <td>
 
-…and if the [function bind operator `::`][]’s proposal switches its prefix
-form `::function` to mean `#::function`, then this can become even terser,
-without additional magic:
+…and if the [function bind operator `::`][function binding]’s proposal switches
+its prefix form `::function` to mean `#::function`, then this can become even
+terser, without additional magic:
 
 ```js
 a(1) do {
@@ -4435,9 +4524,9 @@ server(app) {
   }
 }
 ```
-And again, if the [function bind operator `::`][]’s proposal switches its prefix
-form `::function` to mean `#::function`, then `#::get` and `#::listen` could
-become simply `::get` and `::listen`.
+And again, if the [function bind operator `::`][function binding]’s proposal
+switches its prefix form `::function` to mean `#::function`, then `#::get` and
+`#::listen` could become simply `::get` and `::listen`.
 
 <td>
 
@@ -4528,6 +4617,17 @@ select ('world') {
   }
 }
 ```
+
+## `do` expressions
+Because pipeline [topic style][] supports [arbitrary expressions][expressive
+versatility], when [`do` expressions][] are added to JavaScript they too will be
+supported within pipeline bodies. When this occurs, topic references would be
+allowed within inner `do` expressions, along with arrow functions and `if` and
+`try` statements. However, pipelines in [topic style][] already support a block
+form that is similar to `do` expressions. See the examples in [Motivation][].
+
+## Private class fields and class decorators
+[TODO]
 
 ## Alternative solutions explored
 There are a number of other ways of potentially accomplishing the above use
@@ -5000,3 +5100,4 @@ do { do { do { do { 3 * 3 } } }
 [function bind operator `::`]: #function-bind-operator
 [ASI]: https://tc39.github.io/ecma262/#sec-automatic-semicolon-insertion
 [ECMAScript function binding]: https://github.com/zenparsing/es-function-bind
+[block parameters]: #block-parameters
