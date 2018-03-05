@@ -87,11 +87,11 @@ independent-but-compatible **Additional Features**:
 |Name                     | Status  | Features                                                | Purpose                                                 |
 | ----------------------- | ------- | ------------------------------------------------------- | ------------------------------------------------------- |
 |[Core Proposal][]        | Stage 0 | Infix pipelines `\|>`<br>Lexical topic `#`              | Unary application                                       |
-|[Additional Feature PP][]| None    | Prefix pipelines `\|>`                                  | Application in `do` / `if` / `try` blocks               |
+|[Additional Feature PP][]| None    | Prefix pipelines `\|>`                                  | Application within blocks                               |
 |[Additional Feature PF][]| None    | Pipeline functions `+>  `                               | Partial application<br>Composition<br>Method extraction |
 |[Additional Feature TC][]| None    | Topical `catch` blocks                                  | Application to errors                                   |
 |[Additional Feature NP][]| None    | N-ary pipelines<br>Lexical topics `##`, `###`, and `...`| N-ary application                                       |
-|[Additional Feature TF][]| None    | Topical `for` / `for await` loops                       | Application to iterator / async-iterator items          |
+|[Additional Feature TF][]| None    | Topical `for` / `for await` loops                       | Application to iteration-loop items                     |
 
 The **Core Proposal** is currently at **Stage 0** of the [TC39 process][TC39
 process] and is planned to be presented, along with a [competing
