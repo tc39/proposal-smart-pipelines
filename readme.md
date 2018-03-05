@@ -1504,7 +1504,7 @@ function (obj) {
 Pipelines make parallelism between all three clauses becomes clearer: `0` for
 the `if` clause, `# |> #.length` for the `else if`, and `# |> something |> #.length`
 for the `else`. [This particular example becomes even clearer][Underscore.js +
-CP + UP] when paired with [Additional Feature PP][].
+CP + PP] when paired with [Additional Feature PP][].
 
 <td>
 
