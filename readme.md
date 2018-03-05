@@ -19,14 +19,15 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [jQuery (Core Proposal + Additional Feature PP)](#jquery-core-proposal--additional-feature-pp)
     - [Underscore.js (Core Proposal + Additional Feature PP)](#underscorejs-core-proposal--additional-feature-pp)
     - [Lodash (Core Proposal + Additional Feature PP)](#lodash-core-proposal--additional-feature-pp)
-  - [Additional Feature CT](#additional-feature-ct)
+  - [Additional Feature TC](#additional-feature-tc)
   - [Additional Feature PF](#additional-feature-pf)
     - [Ramda (Core Proposal + Additional Feature PF)](#ramda-core-proposal--additional-feature-pf)
     - [WHATWG Streams Standard (Core Proposal + Additional Features PP+PF)](#whatwg-streams-standard-core-proposal--additional-features-pppf)
-  - [Additional Feature MT](#additional-feature-mt)
-    - [Lodash (Core Proposal + Additional Features PF+MT)](#lodash-core-proposal--additional-features-pfmt)
-    - [Ramda (Core Proposal + Additional Features PF+MT)](#ramda-core-proposal--additional-features-pfmt)
-    - [WHATWG Streams Standard (Core Proposal + Additional Features PP+PF+MT)](#whatwg-streams-standard-core-proposal--additional-features-pppfmt)
+  - [Additional Feature NP](#additional-feature-np)
+    - [Lodash (Core Proposal + Additional Features PF+NP)](#lodash-core-proposal--additional-features-pfnp)
+    - [Ramda (Core Proposal + Additional Features PF+NP)](#ramda-core-proposal--additional-features-pfnp)
+    - [WHATWG Streams Standard (Core Proposal + Additional Features PP+PF+NP)](#whatwg-streams-standard-core-proposal--additional-features-pppfnp)
+  - [Additional Feature TF](#additional-feature-tf)
 - [Goals](#goals)
   - [“Don’t break my code.”](#dont-break-my-code)
     - [Backward compatibility](#backward-compatibility)
@@ -55,13 +56,18 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [Bare async function call](#bare-async-function-call)
     - [Bare constructor call](#bare-constructor-call)
   - [Topic style](#topic-style)
-    - [Practical consequences](#practical-consequences)
+  - [Practical consequences](#practical-consequences)
 - [Relations to other work](#relations-to-other-work)
   - [Pipelines in other programming languages](#pipelines-in-other-programming-languages)
   - [Topic references in other programming languages](#topic-references-in-other-programming-languages)
-  - [Other ECMAScript proposals](#other-ecmascript-proposals)
-    - [`do` expressions](#do-expressions)
-  - [Possible future extensions to the topic concept](#possible-future-extensions-to-the-topic-concept)
+  - [Function binding](#function-binding)
+  - [Function composition](#function-composition)
+  - [Syntactic partial function application](#syntactic-partial-function-application)
+  - [Pattern matching](#pattern-matching)
+  - [Block parameters](#block-parameters)
+    - [Topic metaprogramming references](#topic-metaprogramming-references)
+  - [`do` expressions](#do-expressions)
+  - [Private class fields and class decorators](#private-class-fields-and-class-decorators)
   - [Alternative solutions explored](#alternative-solutions-explored)
 - [Appendix: Explanation of nomenclature](#appendix-explanation-of-nomenclature)
 
@@ -85,7 +91,7 @@ independent-but-compatible **Additional Features**:
 |[Additional Feature PP][]|Prefix pipe `\|>`                             |Application in `do` / `if` / `try` blocks              |
 |[Additional Feature PF][]|Pipeline functions `+>  `                     |Partial application<br>Composition<br>Method extraction|
 |[Additional Feature TC][]|Topical `catch` blocks                        |Application to errors                                  |
-|[Additional Feature MT][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
+|[Additional Feature NP][]|Multiple lexical topics `##`, `###`, and `...`|N-ary application                                      |
 |[Additional Feature TF][]|Topical `for` / `for await` loops             |Application to iterator / async-iterator items         |
 
 The **Core Proposal** is a **variant** of the [first pipeline-operator
@@ -2596,8 +2602,8 @@ cookbook][]. They use smart pipelines with vanilla JavaScript APIs when possible
 functions wherever no terse JavaScript equivalent yet exists (such as with
 `R.zipWith` and `R.adjust`).
 
-[Even more of Ramda’s use cases are covered][Ramda + CP + PF + MT] when
-[Additional Feature MT][] syntax is supported.
+[Even more of Ramda’s use cases are covered][Ramda + CP + PF + NP] when
+[Additional Feature NP][] syntax is supported.
 
 <table>
 <thead>
@@ -2878,15 +2884,18 @@ class LipFuzzTransformer {
 
 </table>
 
-## Additional Feature MT
-Another Additional Feature – **Multi Topics** – introduces **multiple lexical
-topics** at once: not only the **primary** topic reference `#`, but also the
-**secondary** `##`, **tertiary** `###`, and **rest** `...` **topic references**.
-It also enables both **n-ary application** and **n-ary partial application**.
+## Additional Feature NP
+Another Additional Feature – **n-ary pipelines** – enables the passing of
+multiple arguments from each pipeline’s head into its body. `(a, b) |> f` is
+equivalent to `f(a, b)`.
 
-This would be somewhat akin to [Clojure’s compact anonymous functions][Clojure
-compact function], which use `%` aka `%1`, then `%2`, `%3`, … for its parameters
-within the compact functions’ bodies.
+For [topic style][], Additional Feature NP introduces **multiple lexical
+topics**: not only the **primary** topic reference `#`, but also **secondary**
+`##`, **tertiary** `###`, and **rest** `...` **topic references**. It also
+enables both **n-ary application** and **n-ary partial application**.
+This is somewhat akin to [Clojure’s compact anonymous functions][Clojure compact
+function], which use `%` aka `%1`, then `%2`, `%3`, … for its parameters within
+the compact functions’ bodies.
 
 This explainer limits this Additional Feature to three topic references plus a
 rest topic reference. This limit could theoretically be lifted, but readability
@@ -2910,6 +2919,8 @@ not have to be `##`, `###`, and `...`. For instance, they could instead be `#1`,
 (a, b)
   |> f
 ```
+Pipeline heads would become reinterpreted as argument lists, which would then be
+applied to the pipeline bodies.
 
 <td>
 
@@ -2924,6 +2935,8 @@ f(a, b)
 (a, b, ...c, d)
   |> f
 ```
+Spread elements are permitted within pipeline heads, with the same meaning as in
+regular argument lists.
 
 <td>
 
@@ -2935,9 +2948,31 @@ f(a, b, ...c, d)
 <td>
 
 ```js
+...a
+  |> f
+```
+When a pipeline head only consists of one item, its parentheses may be omitted,
+which is the usual syntax from the [Core Proposal][]. But this now goes for
+spread elements too.
+
+<td>
+
+```js
+f(...a)
+```
+
+<tr>
+<td>
+
+```js
 (a, b)
   |> f(#, x, ##)
 ```
+When a pipeline’s body is in [topic style][], the first element in the argument
+list is bound to the primary topic reference `#`, the second element is bound to
+the secondary topic reference `##`, and the third element is bound to the
+tertiary topic reference `###`. These are resolvable as usual within the
+pipeline body.
 
 <td>
 
@@ -2952,27 +2987,92 @@ f(a, x, b)
 (a, b, ...c, d)
   |> f(#, x, ...)
 ```
+The pipeline also binds an array to a rest topic reference `...` within the
+pipeline body. The array contains the arguments of the pipeline head that were
+not bound to any other topic reference.
 
 <td>
 
 ```js
-f(a, ...[b, ...c, d])
+f(a, x, ...[b, ...c, d])
 ```
 
 <tr>
 <td>
 
 ```js
-(a, b, ...c, d)
+(a, b, c, d, e)
+  |> f(##, x, ...)
+```
+The rest topic reference `...` starts from beyond the furthest topic reference
+that is used within the pipeline body. Here, the furthest topic reference is the
+secondary topic reference `##`: the second argument item. So `[c, d, e]` is
+bound to the rest topic reference. The rest topic reference `...` may only be
+used where the spread operator `...expression` would also be valid (that is,
+argument lists, array literals, and object literals), and it automatically
+spreads its elements into whatever expression surrounds it.
+
+<td>
+
+```js
+do {
+  const [_tertiaryTopic, ..._restTopics] = [c, d, e];
+  f(a, _secondaryTopic, x, ..._restTopics)
+}
+```
+
+<tr>
+<td>
+
+```js
+(a, b, c, ...d, e)
   |> f(#, ###, x, ...)
+```
+Here, the furthest topic reference is the tertiary topic reference `###`: the
+third argument item. So only the rest topic reference `...` contains `d`’s
+spread elements as well as `e`. The second argument, `b`, is skipped entirely,
+because `##` is not used at all in the pipeline body.
+
+<td>
+
+```js
+do {
+  const _restTopics = [...d, e];
+  f(a, _tertiaryTopic, x, ..._restTopics)
+}
+```
+
+<tr>
+<td>
+
+```js
+(a, ...b, c, ...d, e)
+  |> f(#, ##, ###, x, ...)
 ```
 
 <td>
 
 ```js
 do {
-  const [_2, ..._spread] = c;
-  f(a, _2, x, ...[...c, d])
+  const [_secondaryTopic, _tertiaryTopic, ..._restTopics] = [...b, c, ...d, e];
+  f(a, _secondaryTopic, _tertiaryTopic, x, ..._restTopics)
+}
+```
+
+<tr>
+<td>
+
+```js
+(a, ...b, c, ...d, e)
+  |> f(#, ##, x, ...)
+```
+
+<td>
+
+```js
+do {
+  const [_secondaryTopic, ..._restTopics] = [...b, c, ...d, e];
+  f(a, _secondaryTopic, x, ..._restTopics)
 }
 ```
 
@@ -2993,11 +3093,32 @@ a - b
 <tr>
 <td>
 
+N-ary pipelines may be chained by using comma expressions to make their pipeline
+bodies also n-ary.
+```js
+(a, b)
+  |> (f, g)
+  |> h
+```
+Each element in an N-ary pipeline body is independently applied to each
+consecutive argument from the pipeline head.
+
+<td>
+
+```js
+h(f(a), g(b))
+```
+
+<tr>
+<td>
+
 ```js
 (a, b)
   |> (f, # ** c + ##)
   |> # - ##
 ```
+The elements in an N-ary pipeline body may be either in bare style (like the `f`
+here) or in topic style (like the `# ** c + ##` here).
 
 <td>
 
@@ -3009,14 +3130,77 @@ f(a) - (a ** c + b)
 <td>
 
 ```js
-...a
-  |> #.toString()
+(a, b)
+  |> (f, g)
+  |> h
+  |> (i, # + 1, k)
+  |> l
 ```
+
 
 <td>
 
 ```js
-[...a].toString()
+do {
+  const $ = h(f(a), g(b));
+  l(i($), $ + 1, k($))
+}
+```
+
+<tr>
+<td>
+
+```js
+(a, b)
+  |> (f, g)
+  |> (h, i)
+// 🚫 Syntax Error:
+// A pipeline chain terminates
+// with a 2-ary pipeline body
+// but must terminate with a
+// unary pipeline body.
+```
+It is an [early error][] for a pipeline head to end with an n-ary pipeline body,
+where n > 1. Such a comma expression would almost certainly be an accidental
+mistake by the developer.
+
+<td>
+
+<tr>
+<td>
+
+```js
+number
+  |> ...createRange
+  |> [#, ###, ...]
+```
+As a result of these rules, `|> ... |>` collects the previous
+
+<td>
+
+```js
+do {
+  const [_primary, , _tertiary, ..._rest] = createRange(number);
+  [_primary, _tertiary, _rest]
+}
+```
+
+<tr>
+<td>
+
+```js
+x
+  |> (f, ...g, h)
+  |> [...].length
+```
+As a result of the rules, `|> [...]` collects its pipeline head’s n-ary
+arguments into a single flattened array, to which the rest topic reference `...`
+is then bound.
+
+<td>
+
+```js
+[f(x), ...g(x), h(x)].length
 ```
 
 <tr>
@@ -3025,6 +3209,8 @@ f(a) - (a ** c + b)
 ```js
 array.sort(+> # - ##)
 ```
+Additional Feature NP, when coupled with [Additional Feature PF][], would
+enable very terse callback functions.
 
 <td>
 
@@ -3054,26 +3240,35 @@ array.sort((_0, _1) => _0 - _1)
 
 ```js
 const f = (x, y, z) => [x, y, z]
-const g = f(#, 4, ##)
+const g = +> f(#, 4, ##)
 g(1, 2) // [1, 4, 2]
 ```
-**Partial application into an n-ary function** is solved by pipeline functions with
-multiple topics.
+Additional Feature NP, when coupled with [Additional Feature PF][], would also
+solve **partial application into n-ary functions**. (Additional Feature PF would
+only address partial application into unary functions.)
 
 <td>
 
 ```js
 const f = (x, y, z) => [x, y, z]
-const g = +> f(?, 4, ?)
+const g = f(?, 4, ?)
 g(1, 2) // [1, 4, 2]
 ```
-[R. Buckton’s current proposal][syntactic partial application] assumes that each
+The current proposal for [syntactic partial function application][] assumes that each
 use of the same `?` placeholder token represents a different parameter. In contrast,
 each use of `#` within the same scope always refers to the same value. This is
-why additional topic parameters are required. The resulting model is more
-flexible: `+> f(#, 4, ##)` is different from `+> f(#, 4, #)`. The latter sensibly
-refers to a *unary* function that passes the same *one* argument into both the
-first and third parameters of the original function `f`.
+why additional topic parameters are required.
+
+<tr>
+<td>
+
+The resulting model is more flexible: with Additional Feature NP with
+[Additional Feature PF][], `+> f(#, 4, ##)` is different from `+> f(#, 4, #)`.
+The former refers to a **binary function**: a function with two parameters,
+essentially `(x, y) => f(x, 4, y)`. The latter sensibly refers to a **unary**
+function that passes the same one argument into both the first and third
+parameters of the original function `f`: `x => f(x, 4, x)`. The same symbol
+refers to the same value in the same lexical environment.
 
 <tr>
 <td>
@@ -3084,8 +3279,8 @@ const maxGreaterThanZero =
 maxGreaterThanZero(1, 2) // 2
 maxGreaterThanZero(-1, -2) // 0
 ```
-Partial application into a variadic function requires a multi-topic environment
-and a rest-topic reference `...`.
+Partial application into a variadic function is also naturally handled by
+Additional Feature NP with [Additional Feature PF][].
 
 <td>
 
@@ -3100,7 +3295,7 @@ the other proposal’s code.
 
 </table>
 
-### Lodash (Core Proposal + Additional Features PF+MT)
+### Lodash (Core Proposal + Additional Features PF+NP)
 
 <table>
 <thead>
@@ -3179,10 +3374,10 @@ function createRound (methodName) {
 
 </table>
 
-### Ramda (Core Proposal + Additional Features PF+MT)
+### Ramda (Core Proposal + Additional Features PF+NP)
 [Many examples above using Ramda][Ramda + CP + PF] benefited from pipeline
 functions with Additional Feature PF. Even more use cases are covered by
-pipeline functions when [Additional Feature MT][] syntax is supported.
+pipeline functions when [Additional Feature NP][] syntax is supported.
 
 <table>
 <thead>
@@ -3277,10 +3472,10 @@ propsDotPath(['a.b.c', 'x'], obj)
 
 </table>
 
-### WHATWG Streams Standard (Core Proposal + Additional Features PP+PF+MT)
+### WHATWG Streams Standard (Core Proposal + Additional Features PP+PF+NP)
 [Many examples above using WHATWG Streams][WHATWG Streams + CP + PF] benefited
 from pipeline functions with Additional Features CP + PF. Even more use cases
-are covered by pipeline functions when [Additional Feature MT][] is added.
+are covered by pipeline functions when [Additional Feature NP][] is added.
 
 <table>
 <thead>
@@ -3814,7 +4009,7 @@ Any new punctuator should be easily distinguishable from existing symbols and sh
 not be visually confusable with unrelated syntax. This is particularly true for
 choosing the topic-reference token, which would appear often in a wide variety
 of expressions. If the topic reference hypothetically were `?` (and `??` and
-`???` with [Additional Feature MT][]), and if the topic reference were used
+`???` with [Additional Feature NP][]), and if the topic reference were used
 anywhere near the visually similar [optional-chaining syntax proposal][] and
 [nullish coalescing proposal][], then the topic reference might be lost or
 unnoticed by the developer: for example, `(?)??.m(??)` is much less readable
@@ -4272,7 +4467,7 @@ a(1, $ =>
 [TODO]
 
 ## Syntactic partial function application
-[TODO]
+The current proposal for [ECMAScript partial application][]… [TODO]
 
 ## Pattern matching
 The smart pipelines and topic references of the [Core Proposal][] would be a
@@ -5030,7 +5225,7 @@ do { do { do { do { 3 * 3 } } }
 [static analyzability]: #static-analyzability
 [syntactic functional composition]: https://github.com/TheNavigateur/proposal-pipeline-operator-for-function-composition
 [syntactic locality]: #syntactic-locality
-[syntactic partial application]: https://github.com/tc39/proposal-partial-application
+[ECMAScript partial application]: https://github.com/tc39/proposal-partial-application
 [tacit programming]: https://en.wikipedia.org/wiki/Tacit_programming
 [TC39 process]: https://tc39.github.io/process-document/
 [Tennent correspondence principle]: http://gafter.blogspot.com/2006/08/tennents-correspondence-principle-and.html
@@ -5053,7 +5248,7 @@ do { do { do { do { 3 * 3 } } }
 [formal pipeline specification]: https://jschoi.org/18/es-smart-pipelines/spec
 [Core Proposal]: #core-proposal
 [Additional Feature PF]: #additional-feature-pf
-[Additional Feature MT]: #additional-feature-mt
+[Additional Feature NP]: #additional-feature-np
 [Additional Feature TE]: #additional-feature-te
 [Additional Feature PP]: #additional-feature-pp
 [Additional Feature TC]: #additional-feature-tc
@@ -5090,11 +5285,11 @@ do { do { do { do { 3 * 3 } } }
 [Underscore.js + CP + PP]: #underscorejs-core-proposal--additional-feature-pp
 [Lodash + CP]: #lodash-core-proposal-only
 [Lodash + CP + PF]: #lodash-core-proposal--additional-feature-pf
-[Lodash + CP + PF + MT]: #lodash-core-proposal--additional-features-pfmt
+[Lodash + CP + PF + NP]: #lodash-core-proposal--additional-features-pfmt
 [Ramda + CP + PF]: #ramda-core-proposal--additional-feature-pf
-[Ramda + CP + PF + MT]: #ramda-core-proposal--additional-features-pfmt
+[Ramda + CP + PF + NP]: #ramda-core-proposal--additional-features-pfmt
 [WHATWG Streams + CP + PF]: #whatwg-streams-standard-core-proposal--additional-feature-pf
-[WHATWG Streams + CP + PF + MT]: #whatwg-streams-standard-core-proposal--additional-features-pfmt
+[WHATWG Streams + CP + PF + NP]: #whatwg-streams-standard-core-proposal--additional-features-pfmt
 [identity function]: https://en.wikipedia.org/wiki/Identity_function
 [Clojure compact function]: https://clojure.org/reference/reader#_dispatch
 [intro]: #smart-pipelines
@@ -5104,3 +5299,5 @@ do { do { do { do { 3 * 3 } } }
 [ASI]: https://tc39.github.io/ecma262/#sec-automatic-semicolon-insertion
 [ECMAScript function binding]: https://github.com/zenparsing/es-function-bind
 [block parameters]: #block-parameters
+[syntactic partial function application]: #syntactic-partial-function-application
+[Additional Features]: #smart-pipelines
