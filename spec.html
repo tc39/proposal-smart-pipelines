@@ -876,45 +876,45 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <emu-annex id=sec-additional-feature-pf>
 <h1>Additional Feature PF</h1>
 
-<p>This annex specifies additional ECMAScript language syntax and semantics for <strong>pipeline functions</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing an additional <strong>pipeline-function operator</strong> `•`. This new <strong>unary</strong> operator creates arrow functions with an implicit parameter pipelined into a pipeline body, such that `•` |PipelineBody| is equivalent to `$=>$|&gt;` |PipelineBody|. The operator brings much power: it enables terse <strong>method extraction</strong>, terse <strong>partial application</strong> of functions/expressions (into unary functions), and terse <strong>composition</strong> of functions/expressions.</p>
+<p>This annex specifies additional ECMAScript language syntax and semantics for <strong>pipeline functions</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing an additional <strong>pipeline-function operator</strong> `+&gt;`. This new <strong>unary</strong> operator creates arrow functions with an implicit parameter pipelined into a pipeline body, such that `+&gt;` |PipelineBody| is equivalent to `$=>$|&gt;` |PipelineBody|. The operator brings much power: it enables terse <strong>method extraction</strong>, terse <strong>partial application</strong> of functions/expressions (into unary functions), and terse <strong>composition</strong> of functions/expressions.</p>
 
 <emu-table id=table-additional-feature-pf-examples caption="Examples of Pipeline Functions">
 <table>
 <tr>
-<td><pre><code language=javascript>• console.log</code></td>
+<td><pre><code language=javascript>+&gt; console.log</code></td>
 <td><pre><code language=javascript>$ => $ |&gt; console.log
 $ => console.log($)
 console.log.bind(console)</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>• f(#, 5)</code></pre></td>
+<td><pre><code language=javascript>+&gt; f(#, 5)</code></pre></td>
 <td><pre><code language=javascript>$ => $ |&gt; f(#, 5)
 $ => f($, 5)</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>• # + 1</code></pre></td>
+<td><pre><code language=javascript>+&gt; # + 1</code></pre></td>
 <td><pre><code language=javascript>$ => $ |&gt; # + 1
 $ => $ + 1</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>• f |&gt; g</code></pre></td>
+<td><pre><code language=javascript>+&gt; f |&gt; g</code></pre></td>
 <td><pre><code language=javascript>$ => $ |&gt; f |&gt; g
 $ => g(f($))</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>• f |&gt; o.m</code></pre></td>
+<td><pre><code language=javascript>+&gt; f |&gt; o.m</code></pre></td>
 <td><pre><code language=javascript>$ => $ |&gt; f |&gt; o.m
 $ => o.m(f($))</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>• f |&gt; # + 1 |&gt; o.m</code></pre></td>
+<td><pre><code language=javascript>+&gt; f |&gt; # + 1 |&gt; o.m</code></pre></td>
 <td><pre><code language=javascript>$ => $ |&gt; f |&gt; # + 1 |&gt; o.m
 $ => o.m(f($) + 1)</code></pre></td>
 </tr>
 </table>
 </emu-table>
 
-<p>This annex uses a new token `•`, but this token is merely an <strong>illustrative placeholder</strong> to avoid premature bikeshedding discussion. The actual operator ideally would communicate its status as a combination of `=>` and `|&gt;`. Example replacements of `•` include `-&gt;` |PipelineBody| (which both resembles the `|&gt;` operator with the `|` rotated sideways and resembles the `=>` operator but with a skinnier arrow body) and `=|` |PipelineBody| (which is a blending of `=>` and `|&gt;` with the `&gt;` removed).</p>
+<p>This annex uses a new token `+&gt;`, but this token is merely an <strong>illustrative placeholder</strong> to avoid premature bikeshedding discussion. The actual operator ideally would communicate its status as a combination of `=>` and `|&gt;`. Example replacements of `+&gt;` include `-&gt;` |PipelineBody| (which both resembles the `|&gt;` operator with the `|` rotated sideways and resembles the `=>` operator but with a skinnier arrow body) and `=|` |PipelineBody| (which is a blending of `=>` and `|&gt;` with the `&gt;` removed).</p>
 
 <emu-annex id=sec-additional-feature-pf-executable-code-and-execution-contexts>
 <h1>Executable Code and Execution Contexts</h1>
@@ -979,7 +979,7 @@ AssignmentExpression[In, Yield, Await] :
 <h2>Syntax</h2>
 <emu-grammar type=definition>
 PipelineFunction[In, Yield, Await] :
-  `•` PipelineBody[?In, ?Yield, ?Await]
+  `+&gt;` PipelineBody[?In, ?Yield, ?Await]
 </emu-grammar>
 
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-boundnames>
@@ -1001,7 +1001,7 @@ PipelineBody :
 <p>With parameter _symbol_.</p>
 <emu-see-also-para op="Contains"></emu-see-also-para>
 
-<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` PipelineBody</emu-grammar>
 <emu-alg>
 1. If _symbol_ is not one of |NewTarget|, |SuperProperty|, |SuperCall|, <del>`super` or `this`</del> <ins>`super`, `this`, or `#`</ins>, return *false*.
 2. Return |PipelineBody| Contains _symbol_.
@@ -1029,7 +1029,7 @@ PipelineBody :
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-containsusestrict>
 <h1>Static Semantics: ContainsUseStrict</h1>
 <emu-see-also-para op="ContainsUseStrict"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` PipelineBody</emu-grammar>
 <emu-alg>
 1. Return *false*.
 </emu-alg>
@@ -1052,7 +1052,7 @@ PipelineBody :
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-hasname>
 <h1>Static Semantics: HasName</h1>
 <emu-see-also-para op="HasName"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` PipelineBody</emu-grammar>
 <emu-alg>
 1. Return *false*.
 </emu-alg>
@@ -1099,7 +1099,7 @@ PipelineBody : PipelineTopicBody
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-lexicallydeclarednames>
 <h1>Static Semantics: LexicallyDeclaredNames</h1>
 <emu-see-also-para op="LexicallyDeclaredNames"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` PipelineBody</emu-grammar>
 <emu-alg>
 1. Return a new empty List.
 </emu-alg>
@@ -1108,7 +1108,7 @@ PipelineBody : PipelineTopicBody
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-lexicallyscopeddeclarations>
 <h1>Static Semantics: LexicallyScopedDeclarations</h1>
 <emu-see-also-para op="LexicallyScopedDeclarations"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` PipelineBody</emu-grammar>
 <emu-alg>
 1. Return a new empty List.
 </emu-alg>
@@ -1117,7 +1117,7 @@ PipelineBody : PipelineTopicBody
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-vardeclarednames>
 <h1>Static Semantics: VarDeclaredNames</h1>
 <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` PipelineBody</emu-grammar>
 <emu-alg>
 1. Return a new empty List.
 </emu-alg>
@@ -1126,7 +1126,7 @@ PipelineBody : PipelineTopicBody
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-varscopeddeclarations>
 <h1>Static Semantics: VarScopedDeclarations</h1>
 <emu-see-also-para op="VarScopedDeclarations"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` PipelineBody</emu-grammar>
 <emu-alg>
 1. Return a new empty List.
 </emu-alg>
@@ -1136,7 +1136,7 @@ PipelineBody : PipelineTopicBody
 <h1>Runtime Semantics: EvaluateBody</h1>
 <p>With parameters _functionObject_ and List _argumentsList_.</p>
 <emu-see-also-para op="EvaluateBody"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` PipelineBody</emu-grammar>
 <emu-alg>
 1. Perform ? FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
 2. Let _exprRef_ be PipelineBodyEvaluation of |PipelineBody| with argument _argumentsList_.
@@ -1147,7 +1147,7 @@ PipelineBody : PipelineTopicBody
 
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-runtime-semantics-evaluation>
 <h1>Runtime Semantics: Evaluation</h1>
-<emu-grammar>PipelineFunction : `•` PipelineBody</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` PipelineBody</emu-grammar>
 <emu-alg>
 1. If the |PipelineFunction| is declared in strict mode code then let _strict_ be *true*. Otherwise let _strict_ be *false*. [TODO: Make this more formal.]
 2. Let _scope_ be the LexicalEnvironment of the running execution context.
