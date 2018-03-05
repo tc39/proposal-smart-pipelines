@@ -4121,126 +4121,7 @@ most of all, readable – could well be easier to learn. Its up-front cost in
 learning could be small, particularly in comparison to the large gains in
 readability and comprehensibility that it might bring to code in general.
 
-# Smart body syntax
-Most pipelines will use the topic reference `#` in their bodies. This style of
-pipeline is called **[topic style][]**.
-
-For three simple cases – unary functions, unary async functions, and unary
-constructors – you may omit the topic reference from the body. This is called
-**[bare style][]**.
-
-When a pipe is in bare style, we refer to the body as a **bare function call**,
-**bare async function call**, or a **bare constructor call**, depending on the
-rules of bare style. The body acts as just a simple reference to a function or
-constructor, such as with `… |> text.capitalize`, with `… |> await DOM.fetch`,
-and with `… |> new User.Message`. The body’s value would then be called as a
-unary function or constructor, without having to use the topic reference as an
-explicit argument.
-
-The two bare-style productions require no parameters, because they can only
-be made up of identifiers and `.`, optionally preceded by `new` or `await`.
-
-Also, `new` and `await` cannot be used on their own with bare style.
-`… |> await` 🚫 and `… |> new` 🚫 are invalid pipelines. For `await`, instead
-use either `… |> await af` or use topic style: `… |> af |> await #`.
-
-| Valid [topic style][]   | Valid [bare style][]                     | Invalid pipeline
-| ----------------------- | ---------------------------------------- | --------------------
-|`… \|> f(#)`             |`… \|> f`                                 |  `… \|> f()` 🚫
-| ″″                      | ″″                                       | `… \|> (f)` 🚫
-| ″″                      | ″″                                       | `… \|> (f())` 🚫
-|`… \|> await af(#)`      |`… \|> await af`                          | `… \|> await af()` 🚫
-| ″″                      | ″″                                       | `… \|> (await f)` 🚫
-| ″″                      | ″″                                       | `… \|> (await f())` 🚫
-| ″″                      | ″″                                       | `… \|> await (f)` 🚫
-| ″″                      | ″″                                       | `… \|> await (f())` 🚫
-|`… \|> af \|> await #`   |                                          |  `… \|> af |> await` 🚫
-|`… \|> new C(#)`         |`… \|> new C`                             | `… \|> new C()` 🚫
-| ″″                      | ″″                                       | `… \|> (new C)` 🚫
-| ″″                      | ″″                                       | `… \|> (new C())` 🚫
-| ″″                      | ″″                                       | `… \|> new (C)` 🚫
-| ″″                      | ″″                                       | `… \|> new (C())` 🚫
-|`… \|> o.f(#)`           |`… \|> o.f`                               | `… \|> o.f()` 🚫
-|`… \|> await o.f(#)`     |`… \|> await o.f`                         | `… \|> await o.f()` 🚫
-|`… \|> new o.f(#)`       |`… \|> new o.f`                           | `… \|> new o.f()` 🚫
-|`… \|> o.f(arg, #)`      |`const f = $ => o::f(arg, $); … \|> f`    | `… \|> o.f(arg)` 🚫
-|`… \|> new o.C(arg, #)`  |`const f = $ => new o::C(arg, $); … \|> f`| `… \|> new o.C(arg)` 🚫
-|`… \|> o[symbol](#)`     |`const f = o[symbol]; … \|> f`            | `… \|> o[symbol]` 🚫
-|`… \|> new o[symbol](#)` |`const f = new o[symbol]; … \|> f`        | `… \|> new o[symbol]` 🚫
-|`… \|> o.make()(#)`      |`const f = o.make(); … \|> f`             | `… \|> o.make()` 🚫
-|`… \|> new o.make()(#)`  |`const C = o.make(); … \|> new C`         | `… \|> new o.make()` 🚫
-|`… \|> await o.make()(#)`|`const af = o.make(); … \|> await af`     | `… \|> await o.make()` 🚫
-|`… \|> await new o.make()(#)`)|                                     | `… \|> new await o.make()` 🚫
-
-## Bare style
-The **bare style** supports using simple identifiers, possibly with chains of
-simple property identifiers. If there are any operators, parentheses (including
-for method calls), brackets, or anything other than identifiers and dot
-punctuators, then it is in [topic style][], not in bare style.
-
-### Bare function call
-If the body is a merely a simple reference, then that identifier is interpreted
-to be a **bare function call**. The pipeline’s value will be the result of
-calling the body with the current topic as its argument.
-
-That is: **if a pipeline** is of the form\
-**_topic_ `|>` _identifier_**\
-or **_topic_ `|>` _identifier0_`.`_identifier1_**\
-or **_topic_ `|>` _identifier0_`.`_identifier1_`.`_identifier2_**\
-or so forth,\
-then the pipeline is a bare function call.
-
-### Bare async function call
-If the body starts with `await`, followed by a mere identifier, optionally with
-a chain of properties, and with no parentheses or brackets, then that identifier
-is interpreted to be a **bare async function call**.
-
-That is: **if a pipeline** is of the form\
-**_topic_ `|>` `await` _identifier_**\
-or **_topic_ `|>` `await` _identifier0_`.`_identifier1_**\
-or **_topic_ `|>` `await` _identifier0_`.`_identifier1_`.`_identifier2_**\
-or so forth,\
-then the pipeline is a bare async function call.
-
-### Bare constructor call
-If the body starts with `new`, followed by a mere identifier, optionally with a
-chain of properties, and with no parentheses or brackets, then that identifier
-is interpreted to be a **bare constructor**.
-
-That is: **if a pipeline** is of the form\
-**_topic_ `|>` `new` _identifier_**\
-or **_topic_ `|>` `new` _identifier0_`.`_identifier1_**\
-or **_topic_ `|>` `new` _identifier0_`.`_identifier1_`.`_identifier2_**\
-or so forth,\
-then the pipeline is a bare constructor call.
-
-## Topic style
-**If a pipeline** of the form _topic_ |> _body_ does ***not* match the [bare
-style][]** (that is, it is *not* a bare function call, bare async function call,
-or bare constructor call), then it **must be in topic style**. And topic style
-requires that there be a topic reference in the pipeline body; otherwise it is
-an [early error][].
-
-A topic pipeline body is either:
-
-* An expression at the [precedence level once tighter than pipeline-level
-  expressions][operator precedence] – that is, a conditional-level expression.
-* A block `{` … `}` containing a list of statements, the last of which is used
-  as the result of the whole pipeline.
-
-## Practical consequences
-Therefore, a pipeline in **[bare style][] *never*** has **parentheses `(…)` or
-brackets `[…]`** in its body. Neither `… |> object.method()` nor
-`… |> object.method(arg)` nor `… |> object[symbol]` nor `… |> object.createFunction()`
-are in bare style (in fact, they all are Syntax Errors, due to their being in
-[topic style][] without any topic references).
-
-**When a body needs parentheses or brackets**, then **don’t use bare style**,
-and instead **use a topic reference** in the body ([topic style][])…or **assign
-the body to a variable**, then **use that variable as a bare body**.
-
 # Relations to other work
-
 [TODO: https://github.com/gajus/babel-plugin-transform-function-composition]
 
 ## Pipelines in other programming languages
@@ -4832,7 +4713,254 @@ There are a number of other ways of potentially accomplishing the above use
 cases. However, the authors of this proposal believe that the smart pipe
 operator may be the best choice. [TODO]
 
-# Appendix: Explanation of nomenclature
+# Appendices
+## Smart body syntax
+Most pipelines will use the topic reference `#` in their bodies. This style of
+pipeline is called **[topic style][]**.
+
+For three simple cases – unary functions, unary async functions, and unary
+constructors – you may omit the topic reference from the body. This is called
+**[bare style][]**.
+
+When a pipe is in bare style, we refer to the body as a **bare function call**,
+**bare async function call**, or a **bare constructor call**, depending on the
+rules of bare style. The body acts as just a simple reference to a function or
+constructor, such as with `… |> text.capitalize`, with `… |> await DOM.fetch`,
+and with `… |> new User.Message`. The body’s value would then be called as a
+unary function or constructor, without having to use the topic reference as an
+explicit argument.
+
+The two bare-style productions require no parameters, because they can only
+be made up of identifiers and `.`, optionally preceded by `new` or `await`.
+
+Also, `new` and `await` cannot be used on their own with bare style.
+`… |> await` 🚫 and `… |> new` 🚫 are invalid pipelines. For `await`, instead
+use either `… |> await af` or use topic style: `… |> af |> await #`.
+
+| Valid [topic style][]   | Valid [bare style][]                     | Invalid pipeline
+| ----------------------- | ---------------------------------------- | --------------------
+|`… \|> f(#)`             |`… \|> f`                                 |  `… \|> f()` 🚫
+| ″″                      | ″″                                       | `… \|> (f)` 🚫
+| ″″                      | ″″                                       | `… \|> (f())` 🚫
+|`… \|> await af(#)`      |`… \|> await af`                          | `… \|> await af()` 🚫
+| ″″                      | ″″                                       | `… \|> (await f)` 🚫
+| ″″                      | ″″                                       | `… \|> (await f())` 🚫
+| ″″                      | ″″                                       | `… \|> await (f)` 🚫
+| ″″                      | ″″                                       | `… \|> await (f())` 🚫
+|`… \|> af \|> await #`   |                                          |  `… \|> af |> await` 🚫
+|`… \|> new C(#)`         |`… \|> new C`                             | `… \|> new C()` 🚫
+| ″″                      | ″″                                       | `… \|> (new C)` 🚫
+| ″″                      | ″″                                       | `… \|> (new C())` 🚫
+| ″″                      | ″″                                       | `… \|> new (C)` 🚫
+| ″″                      | ″″                                       | `… \|> new (C())` 🚫
+|`… \|> o.f(#)`           |`… \|> o.f`                               | `… \|> o.f()` 🚫
+|`… \|> await o.f(#)`     |`… \|> await o.f`                         | `… \|> await o.f()` 🚫
+|`… \|> new o.f(#)`       |`… \|> new o.f`                           | `… \|> new o.f()` 🚫
+|`… \|> o.f(arg, #)`      |`const f = $ => o::f(arg, $); … \|> f`    | `… \|> o.f(arg)` 🚫
+|`… \|> new o.C(arg, #)`  |`const f = $ => new o::C(arg, $); … \|> f`| `… \|> new o.C(arg)` 🚫
+|`… \|> o[symbol](#)`     |`const f = o[symbol]; … \|> f`            | `… \|> o[symbol]` 🚫
+|`… \|> new o[symbol](#)` |`const f = new o[symbol]; … \|> f`        | `… \|> new o[symbol]` 🚫
+|`… \|> o.make()(#)`      |`const f = o.make(); … \|> f`             | `… \|> o.make()` 🚫
+|`… \|> new o.make()(#)`  |`const C = o.make(); … \|> new C`         | `… \|> new o.make()` 🚫
+|`… \|> await o.make()(#)`|`const af = o.make(); … \|> await af`     | `… \|> await o.make()` 🚫
+|`… \|> await new o.make()(#)`)|                                     | `… \|> new await o.make()` 🚫
+
+### Bare style
+The **bare style** supports using simple identifiers, possibly with chains of
+simple property identifiers. If there are any operators, parentheses (including
+for method calls), brackets, or anything other than identifiers and dot
+punctuators, then it is in [topic style][], not in bare style.
+
+#### Bare function call
+If the body is a merely a simple reference, then that identifier is interpreted
+to be a **bare function call**. The pipeline’s value will be the result of
+calling the body with the current topic as its argument.
+
+That is: **if a pipeline** is of the form\
+**_topic_ `|>` _identifier_**\
+or **_topic_ `|>` _identifier0_`.`_identifier1_**\
+or **_topic_ `|>` _identifier0_`.`_identifier1_`.`_identifier2_**\
+or so forth,\
+then the pipeline is a bare function call.
+
+#### Bare async function call
+If the body starts with `await`, followed by a mere identifier, optionally with
+a chain of properties, and with no parentheses or brackets, then that identifier
+is interpreted to be a **bare async function call**.
+
+That is: **if a pipeline** is of the form\
+**_topic_ `|>` `await` _identifier_**\
+or **_topic_ `|>` `await` _identifier0_`.`_identifier1_**\
+or **_topic_ `|>` `await` _identifier0_`.`_identifier1_`.`_identifier2_**\
+or so forth,\
+then the pipeline is a bare async function call.
+
+#### Bare constructor call
+If the body starts with `new`, followed by a mere identifier, optionally with a
+chain of properties, and with no parentheses or brackets, then that identifier
+is interpreted to be a **bare constructor**.
+
+That is: **if a pipeline** is of the form\
+**_topic_ `|>` `new` _identifier_**\
+or **_topic_ `|>` `new` _identifier0_`.`_identifier1_**\
+or **_topic_ `|>` `new` _identifier0_`.`_identifier1_`.`_identifier2_**\
+or so forth,\
+then the pipeline is a bare constructor call.
+
+### Topic style
+**If a pipeline** of the form _topic_ |> _body_ does ***not* match the [bare
+style][]** (that is, it is *not* a bare function call, bare async function call,
+or bare constructor call), then it **must be in topic style**. And topic style
+requires that there be a topic reference in the pipeline body; otherwise it is
+an [early error][].
+
+A topic pipeline body is either:
+
+* An expression at the [precedence level once tighter than pipeline-level
+  expressions][operator precedence] – that is, a conditional-level expression.
+* A block `{` … `}` containing a list of statements, the last of which is used
+  as the result of the whole pipeline.
+
+### Practical consequences
+Therefore, a pipeline in **[bare style][] *never*** has **parentheses `(…)` or
+brackets `[…]`** in its body. Neither `… |> object.method()` nor
+`… |> object.method(arg)` nor `… |> object[symbol]` nor `… |> object.createFunction()`
+are in bare style (in fact, they all are Syntax Errors, due to their being in
+[topic style][] without any topic references).
+
+**When a body needs parentheses or brackets**, then **don’t use bare style**,
+and instead **use a topic reference** in the body ([topic style][])…or **assign
+the body to a variable**, then **use that variable as a bare body**.
+
+## Operator precedence and associativity
+As a binary operation forming compound expressions, the [operator precedence and
+associativity][MDN operator precedence] of pipelining must be determined, relative
+to other operations.
+
+Precedence is tighter than arrow functions (`=>`), assignment (`=`, `+=`, …),
+generator `yield` and `yield *`, and sequence `,`; and it is looser than every
+other type of expression. If the pipe operation were any tighter than this
+level, its body would have to be parenthesized for many frequent types of
+expressions. However, the result of a pipeline is also expected to often serve
+as the body of an arrow function or a variable assignment, so it is tighter than
+both types of expressions.
+
+All operation-precedence levels in JavaScript are listed here, from **tightest
+to loosest**. Each level may contain the parse types listed for that level –
+**as well as** any expression types from any precedence level that is listed
+**above** it.
+
+| Level          | Type                    | Form           | Associativity / fixity   |
+| -------------- | ----------------------- | -------------- | ------------------------ |
+| Primary        | This                    |`this`          | Nullary                  |
+| ″″             | **[Primary topic][]**   |**`#`**         | ″″                       |
+| ″″             | **[Secondary topic][]** |**`##`**        | ″″                       |
+| ″″             | **[Tertiary topic][]**  |**`###`**       | ″″                       |
+| ″″             | **[Rest topic][]**      |**`...`**       | ″″                       |
+| ″″             | Identifiers             |`a` …           | ″″                       |
+| ″″             | Null                    |`null`          | ″″                       |
+| ″″             | Booleans                |`true` `false`  | ″″                       |
+| ″″             | Numerics                |`0` …           | ″″                       |
+| ″″             | Arrays                  |`[…]`           | Circumfix                |
+| ″″             | Object                  |`{…}`           | ″″                       |
+| ″″             | Function                |`function (…) {…}`| ″″                     |
+| ″″             | Classes                 |`class … {…}`   | ″″                       |
+| ″″             | Generators              |`function * (…) {…}`| ″″                   |
+| ″″             | Async functions         |`async function (…) {…}`| ″″               |
+| ″″             | Regular expression      |`/…/…`          | ″″                       |
+| ″″             | Templates               |`` …`…` ``      | Unchainable infix with circumfix|
+| ″″             | Parentheses             |`(…)`           | Circumfix                |
+| ″″             | [`do` expressions][]    |`do { … }`      | ″″                       |
+| LHS            | Dynamic properties      |`…[…]`          | LTR infix with circumfix |
+| ″″             | Static properties       |`….…`           | ″″                       |
+| ″″             | Tagged templates        |`` …`…` ``      | ″″                       |
+| ″″             | Super properties        |`super.…`       | ″″                       |
+| ″″             | Meta properties         |`meta.…`        | Unchainable prefix       |
+| ″″             | Super call op.s         |`super(…)`      | ″″                       |
+| ″″             | Object construction     |`new …`         | Prefix                   |
+| ″″             | Function call           |`…(…)`          | LTR infix with circumfix |
+| Postfix unary  | Postfix incrementing    |`…++`           | Postfix                  |
+| ″″             | Postfix decrementing    |`…--`           | ″″                       |
+| Prefix unary   | Prefix incrementing     |`++…`           | RTL prefix               |
+| Prefix unary   | Prefix decrementing     |`--…`           | ″″                       |
+| ″″             | Deletes                 |`delete …`      | ″″                       |
+| ″″             | Voids                   |`void …`        | ″″                       |
+| ″″             | Unary `+`/`-`           |`+…`            | ″″                       |
+| ″″             | Bitwise NOT `~…`        |`~…`            | ″″                       |
+| ″″             | Logical NOT `!…`        |`!…`            | ″″                       |
+| ″″             | Awaiting                |`await …`       | ″″                       |
+| Exponentiation | Exponentiation          |`… ** …`        | RTL infix                |
+| Multiplicative | Multiplication          |`… * …`         | LTR infix                |
+| ″″             | Division                |`… / …`         | ″″                       |
+| ″″             | Modulus                 |`… % …`         | ″″                       |
+| Additive       | Addition                |`… + …`         | ″″                       |
+| ″″             | Subtraction             |`… - …`         | ″″                       |
+| Bitwise shift  | Left shift              |`… << …`        | ″″                       |
+| ″″             | Right shift             |`… >> …`        | ″″                       |
+| ″″             | Signed right shift      |`… >> …`        | ″″                       |
+| Relational     | Greater than            |`… < …`         | ″″                       |
+| ″″             | Less than               |`… > …`         | ″″                       |
+| ″″             | Greater than / equal to |`… >= …`        | ″″                       |
+| ″″             | Less than / equal to    |`… <= …`        | ″″                       |
+| ″″             | Containment             |`… in …`        | ″″                       |
+| ″″             | Instance-of             |`… instanceof …`| ″″                       |
+| Equality       | Abstract equality       |`… == …`        | ″″                       |
+| ″″             | Abstract inequality     |`… != …`        | ″″                       |
+| ″″             | Strict equality         |`… === …`       | ″″                       |
+| ″″             | Strict inequality       |`… !== …`       | ″″                       |
+| Bitwise AND    |                         |`… & …`         | ″″                       |
+| Bitwise XOR    |                         |`… ^ …`         | ″″                       |
+| Bitwise OR     |                         |`… \| …`        | ″″                       |
+| Logical AND    |                         |`… ^^ …`        | ″″                       |
+| Logical OR     |                         |`… \|\| …`      | ″″                       |
+| Conditional    |                         |`… ? … : …`     | RTL ternary infix        |
+| Pipeline       | **[Pipelines][]**       |**`… \|> …`**   | LTR infix                |
+| Assignment     | **[Pipeline functions][]**|**`+> …`**    | Prefix                   |
+| ″″             | **[Async pipeline functions][]**|**`async +> …`**| Prefix                   |
+| ″″             | Arrow functions         |`… => …`        | RTL infix                |
+| ″″             | Async arrow functions   |`async … => …`  | RTL infix                |
+| ″″             | Assignment              |`… = …`         | ″″                       |
+| ″″             |                         |`… += …`        | ″″                       |
+| ″″             |                         |`… -= …`        | ″″                       |
+| ″″             |                         |`… *= …`        | ″″                       |
+| ″″             |                         |`… %= …`        | ″″                       |
+| ″″             |                         |`… **= …`       | ″″                       |
+| ″″             |                         |`… <<= …`       | ″″                       |
+| ″″             |                         |`… >>= …`       | ″″                       |
+| ″″             |                         |`… >>>= …`      | ″″                       |
+| ″″             |                         |`… &= …`        | ″″                       |
+| ″″             |                         |`… \|= …`       | ″″                       |
+| Yield          | Yielding                |`yield …`       | Prefix                   |
+| ″″             | Flat yielding           |`yield * …`     | ″″                       |
+| ″″             | Spreading               |`...…`          | ″″                       |
+| Comma level    | Comma                   |`…, …`          | LTR infix                |
+| Base statements| Expression statements   |`…;`            | Postfix with [ASI][]     |
+| ″″             | Empty statements        |`;`             | Nullary with [ASI][]     |
+| ″″             | Debugger statements     |`debugger;`     | ″″                       |
+| ″″             | Block statements        |`{…}`           | Circumfix                |
+| ″″             | Labelled statements     |`…: …`          | Prefix                   |
+| ″″             | Continue statements     |`continue …;`   | Circumfix with [ASI][]   |
+| ″″             | Break statements        |`break …;`      | ″″                       |
+| ″″             | Return statements       |`return …;`     | ″″                       |
+| ″″             | Throw statements        |`throw …;`      | ″″                       |
+| ″″             | Variable statements     |`var …;`        | ″″                       |
+| ″″             | Lexical declarations    |`let …;`        | ″″                       |
+| ″″             | ″″                      |`const …;`      | ″″                       |
+| ″″             | Hoistable declarations  |`function … (…) {…}`| Circumfix with prefix|
+| ″″             | ″″                      |`async function … (…) {…}`| ″″             |
+| ″″             | ″″                      |`function * … (…) {…}`| ″″                 |
+| ″″             | ″″                      |`async function * … (…) {…}`| ″″           |
+| ″″             | Class declarations      |`class … {…}`   | ″″                       |
+| Compound statements| If statements       |`if (…) … else …`| Circumfix with prefix   |
+| ″″             | Switch statements       |`switch (…) …`  | ″″                       |
+| ″″             | Iteration statements    |                | ″″                       |
+| ″″             | With statements         |`with (…) {…}`  | ″″                       |
+| ″″             | Try statements          |`try {… catch (…) {…} finally {…}}` | ″″   |
+| Statement list | Case clause             |`case: …`       | Unchainable prefix       |
+| Root           | Script                  |                | Root                     |
+| ″″             | Module                  |                | ″″                       |
+
+## Explanation of nomenclature
 The term [“**topic**” comes from linguistics][topic and comment] and have
 precedent in prior programming languages’ use of “topic variables”.
 
