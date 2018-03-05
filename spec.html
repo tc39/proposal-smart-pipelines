@@ -880,7 +880,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <emu-table id=table-additional-feature-pf-examples caption="Examples of Pipeline Functions">
 <table>
 <tr>
-<td><pre><code language=javascript>+&gt; console.log</code></td>
+<td><pre><code language=javascript>+&gt; console.log</code></pre></td>
 <td><pre><code language=javascript>$ =&gt; $ |&gt; console.log
 $ =&gt; console.log($)
 console.log.bind(console)</code></pre></td>
@@ -972,7 +972,7 @@ AssignmentExpression[In, Yield, Await] :
 <h1><ins>Pipeline Function Definitions</ins></h1>
 
 <emu-note type=editor>
-<p>This section would be a wholly new sub-clause to the <emu-xref href=#sec-ecmascript-language-functions-and-classes>ECMAScript Language: Functions and Classes clause</a>.</p>
+<p>This section would be a wholly new sub-clause to the <emu-xref href=#sec-ecmascript-language-functions-and-classes>ECMAScript Language: Functions and Classes clause</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
@@ -1356,7 +1356,7 @@ Purpose
 BindTopicValues(V<ins>, VRest</ins>)
 </td>
 <td>
-<ins>Establish the immutable topic binding<ins>s</ins> <del>(that is, the `#` binding) </del>of this Environment Record and set the topic binding<del>s'</del><ins>'s</ins> value<ins>s</ins>. <del>_V_ is the value for the binding and is a value of any ECMAScript language type.</del><ins>_V_ is a list with elements of any ECMAScript language type. _VRest_ is either ~empty~ or an Array whose elements are of any ECMAScript language type.</ins> Afterward, the value returned by the Environment Record's HasTopicBinding method is *true*. This method cannot be called more than once on any single Environment Record.
+Establish the immutable topic binding<ins>s</ins> <del>(that is, the `#` binding) </del>of this Environment Record and set the topic binding<del>s'</del><ins>'s</ins> value<ins>s</ins>. <del>_V_ is the value for the binding and is a value of any ECMAScript language type.</del><ins>_V_ is a list with elements of any ECMAScript language type. _VRest_ is either ~empty~ or an Array whose elements are of any ECMAScript language type.</ins> Afterward, the value returned by the Environment Record's HasTopicBinding method is *true*. This method cannot be called more than once on any single Environment Record.
 </td>
 </tr>
 <tr>
@@ -1914,7 +1914,7 @@ PipelineTopicBody[In, Yield, Await] :
 <h2>Supplemental Syntax</h2>
 <p>[TODO: spread ... in (...array) |> # + ##]</p>
 
-<p>When the production <emu-grammar>ArrowParameters : ConditionalExpression</emu-grammar> is recognized the following grammar is used to refine the interpretation of |ConditionalExpression|:
+<p>When the production <emu-grammar>ArrowParameters : ConditionalExpression</emu-grammar> is recognized the following grammar is used to refine the interpretation of |ConditionalExpression|:</p>
 
 <emu-grammar type=definition>
 PipelineTopicListHead[In, Yield, Await] :
@@ -2288,3 +2288,4 @@ Normally, Contains does not look inside most function forms. However, Contains i
 
 </emu-annex>
 
+</emu-annex>
