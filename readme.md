@@ -1643,10 +1643,11 @@ function castPath (value, object) {
 </table>
 
 ## Additional Feature PP
-The first Additional Feature adds a “headless” tacit prefix form of the pipeline
-operator. The tacit, default head is the topic reference `#` itself, which
-must be resolvable within the outer lexical environment. This may occur within
-`if` statements, `try` statements, and eventually [`do` expressions][].
+The first Additional Feature – **Prefix Pipelines** – adds a “headless” tacit
+prefix form of the pipeline operator. The tacit, default head is the topic
+reference `#` itself, which must be resolvable within the outer lexical
+environment. This may occur within `if` statements, `try` statements, and
+eventually [`do` expressions][].
 
 <table>
 <thead>
@@ -2200,10 +2201,11 @@ prohibit the use of the topic reference `#` within their bodies, except where
 the topic reference `#` is inside an inner pipeline inside the `catch` clause:
 this is one of the Core Proposal’s [early errors][] mentioned above.
 
-The second Additional Feature makes all `catch` clauses implicitly bind their
-caught errors to the topic reference `#`. This implicit binding would be in
-addition to the explicit binding of a normal variable `error` declared within
-any parenthesized antecedent `try { … } catch (error) { … }`.
+The second Additional Feature – **Topical `catch`es** – makes all `catch`
+clauses implicitly bind their caught errors to the topic reference `#`. This
+implicit binding would be in addition to the explicit binding of a normal
+variable `error` declared within any parenthesized antecedent `(error)` in
+`try { … } catch (error) { … }`.
 
 <table>
 <thead>
@@ -2250,12 +2252,13 @@ normal variable `error` declared within any parenthesized antecedent.
 </table>
 
 ## Additional Feature PF
-The third Additional Feature introduces a **new prefix operator `+> …`**, which
-creates a new type of function, the **pipeline function**. `+> …` interprets
-its inner expression as a **pipeline body** but wraps it in a **unary arrow
-function**, which plugs its single parameter into the pipeline body as if it
-were a pipeline head. In other words, a pipeline function would act as if it
-were `$ => $ |> …`, where `$` is a hygienically unique variable.
+The third Additional Feature – **Pipeline Functions** – introduces a **new
+prefix operator `+> …`**, which creates a new type of function, the **pipeline
+function**. `+> …` interprets its inner expression as a **pipeline body** but
+wraps it in a **unary arrow function**, which plugs its single parameter into
+the pipeline body as if it were a pipeline head. In other words, a pipeline
+function would act as if it were `$ => $ |> …`, where `$` is a hygienically
+unique variable.
 
 A pipe function takes **no** a parameter list; its unary parameter is implicitly
 bound to the tacit pipeline head. And just like with regular pipelines, a
@@ -2876,10 +2879,10 @@ class LipFuzzTransformer {
 </table>
 
 ## Additional Feature MT
-Another Additional Feature introduces **multiple lexical topics** at once: not
-only the **primary** topic reference `#`, but also the **secondary** `##`,
-**tertiary** `###`, and **rest** `...` **topic references**. It also enables
-both **n-ary application** and **n-ary partial application**.
+Another Additional Feature – **Multi Topics** – introduces **multiple lexical
+topics** at once: not only the **primary** topic reference `#`, but also the
+**secondary** `##`, **tertiary** `###`, and **rest** `...` **topic references**.
+It also enables both **n-ary application** and **n-ary partial application**.
 
 This would be somewhat akin to [Clojure’s compact anonymous functions][Clojure
 compact function], which use `%` aka `%1`, then `%2`, `%3`, … for its parameters
@@ -3371,10 +3374,10 @@ function readInto(buffer, offset = 0) {
 ## Additional Feature TF
 With the [Core Proposal][] only, `for`–`of` statements would prohibit the use
 of `#` within their bodies, except where `#` is inside an inner pipeline inside
-the `for` loop. But this could be changed afterward by an add-on proposal that
-causes `for` loops to bind the topic to useful values, which in turn would make
-`for` loops terser, emphasizing what happens to each item rather than the items’
-variables themselves.
+the `for` loop. But this could be changed afterward with Additional Feature TF –
+**Topical `for`s** – which would cause `for` loops to bind the topic to useful
+values, which in turn would make `for` loops terser, emphasizing what happens to
+each item rather than the items’ variables themselves.
 
 <table>
 <thead>
