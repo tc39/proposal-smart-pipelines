@@ -3456,7 +3456,7 @@ the other proposal’s code.
 
 </table>
 
-### Lodash (Core Proposal + Additional Features BP+PF+NP)
+### Lodash (Core Proposal + Additional Features BP+PP+PF+NP)
 
 <table>
 <thead>
@@ -5625,7 +5625,7 @@ do { do { do { do { 3 * 3 } } }
 [Underscore.js + CP + BP + PP]: #underscorejs-core-proposal--additional-feature-bppp
 [Lodash + CP]: #lodash-core-proposal-only
 [Lodash + CP + BP + PF]: #lodash-core-proposal--additional-feature-bppf
-[Lodash + CP + BP + PF + NP]: #lodash-core-proposal--additional-features-bppfmt
+[Lodash + CP + BP + PP + PF + NP]: #lodash-core-proposal--additional-features-bppppfmt
 [Ramda + CP + BP + PF]: #ramda-core-proposal--additional-feature-bppf
 [Ramda + CP + BP + PF + NP]: #ramda-core-proposal--additional-features-bppfmt
 [WHATWG Streams + CP + BP + PF]: #whatwg-streams-standard-core-proposal--additional-feature-bppf
