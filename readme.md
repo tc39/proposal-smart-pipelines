@@ -87,6 +87,7 @@ independent-but-compatible **Additional Features**:
 |Name                     | Status  | Features                                                               | Purpose                                                 |
 | ----------------------- | ------- | ---------------------------------------------------------------------- | ------------------------------------------------------- |
 |[Core Proposal][]        | Stage 0 | Infix pipelines `… \|> …`<br>Lexical topic `#`                         | Unary application                                       |
+|[Additional Feature BP][]| None    | Block pipeline bodies `… \|> {…}`                                      | Application within blocks                               |
 |[Additional Feature PP][]| None    | Prefix pipelines `\|> …`                                               | Application within blocks                               |
 |[Additional Feature PF][]| None    | Pipeline functions `+>  `                                              | Partial application<br>Composition<br>Method extraction |
 |[Additional Feature TC][]| None    | Topical `catch` blocks                                                 | Application to errors                                   |
@@ -382,7 +383,7 @@ value
 This pipeline is a very flat expression, with only one level of indentation, and
 with each transformation step on its own line.
 
-Note that `|> f` is a bare unary function call. This is the same as `|> f(#)`,
+Note that `… |> f` is a bare unary function call. This is the same as `… |> f(#)`,
 but the topic reference `#` is unnecessary; it is invisibly, tacitly implied.
 
 This is the [**smart** part of the smart pipeline operator][smart body syntax],
@@ -464,9 +465,9 @@ promise
 This pipeline is also relatively flat, with only one level of indentation, and
 with each transformation step on its own line.
 
-(`|> capitalize` is a bare unary function call equivalent to `|> capitalize(#)`.
-Similarly, `|> new User.Message` is a bare unary constructor call, abbreviated
-from `|> new User.Message(#)`.)
+(`… |> capitalize` is a bare unary function call equivalent to `… |> capitalize(#)`.
+Similarly, `… |> new User.Message` is a bare unary constructor call, abbreviated
+from `… |> new User.Message(#)`.)
 
 <td>
 
@@ -633,17 +634,21 @@ requires editing the variable names in the following step.
 <tr>
 <td>
 
-As with arrow functions, a pipeline in [topic style][] may have a block as its
-body. The topic reference `#` is bound to the previous result `value |> f`
-within the scope of the block, and the result of the block becomes the final
-result of that pipeline, which in turn is passed into `|> g`.
+As with any other expression, a pipeline in [topic style][] may use a [`do`
+block][`do` expressions] as its body, as long as the `do` expression contains the
+topic reference `#`. The topic reference `#` is bound to the previous result
+`value |> f` within the scope of the block, and the result of the `do` block
+becomes the final result of that pipeline, which in turn is passed into `|> g`.
 ```js
 value
   |> f
-  |> { sideEffect(); # }
+  |> do { sideEffect(); # }
   |> g
 ```
-This can be useful for embedding side effects in pipeline chains.
+This can be useful for embedding side effects in pipeline chains, as in the example
+above, and `if` `else` statements such as with the example in the row below.
+
+This may be made even more pithier with [Additional Feature BP][], explained later.
 
 <td>
 
@@ -663,7 +668,7 @@ g (
 ```js
 value
   |> f
-  |> {
+  |> do {
     if (typeof # === 'number')
       # + 1
     else
@@ -671,7 +676,8 @@ value
   }
   |> g
 ```
-`if`–`else` blocks may also be used within block pipeline bodies.
+`if` `else` statements may also be used within `do`-block pipeline bodies, as an
+alternative to the ternary conditional operator `?` `:`.
 
 <td>
 
@@ -1051,86 +1057,7 @@ do {
 ```js
 'https://pk.example/berlin-calling'
   |> await fetch(#, { mode: 'cors' })
-  |> {
-    if (
-      |> #.headers.get('content-type')
-      |> #??.toLowerCase()
-      |> #.indexOf('application/json')
-      |> # >= 0
-    )
-      throw new new TypeError()
-    else
-      |> await #.json()
-      |> processJSON
-  }
-}
-```
-
-<td>
-
-```js
-fetch('https://pk.example/berlin-calling',
-  { mode: 'cors' }
-).then(response => {
-  if (response.headers.get('content-type')
-    ??.toLowerCase()
-    .indexOf('application/json') >= 0
-  )
-    return response.json()
-  else
-    throw new TypeError()
-}).then(processJSON)
-```
-
-<tr>
-<td>
-
-```js
-'https://pk.example/berlin-calling'
-  |> await fetch(#, { mode: 'cors' })
-  |> {
-    if (
-      # |> #.headers.get('content-type')
-        |> #??.toLowerCase()
-        |> #.indexOf('application/json')
-        |> # >= 0
-    )
-      throw new new TypeError()
-    else
-      # |> await #.json()
-        |> processJSON
-  }
-}
-```
-
-<td>
-
-```js
-do {
-  const response =
-    await fetch('https://pk.example/berlin-calling',
-      { mode: 'cors' }
-    );
-  const json = do {
-    if (response.headers.get('content-type')
-      ??.toLowerCase()
-      .indexOf('application/json') >= 0
-    ) {
-      response.json()
-    } else {
-      throw new TypeError()
-    };
-  processJSON(json)
-}
-```
-
-<tr>
-<td>
-
-```js
-'https://pk.example/berlin-calling'
-  |> await fetch(#, { mode: 'cors' })
-  |> {
+  |> do {
     if (
       # |> #.headers.get('content-type')
         |> #??.toLowerCase()
@@ -1280,7 +1207,7 @@ From [jquery/src/core/init.js][]. Used `??.` in both versions for conciseness.
 <td>
 
 ```js
-match |> {
+match |> do {
   if (this[match] |> isFunction)
     # |> context[#] |> this[match](#)
   else
@@ -1322,7 +1249,7 @@ From [jquery/src/core/init.js][].
 <td>
 
 ```js
-return context |> {
+return context |> do {
   // Handle HTML strings
   if (…)
     …
@@ -1360,7 +1287,7 @@ From [jquery/src/core/init.js][]. The parallelism is much less clear here.
 <td>
 
 ```js
-return selector |> {
+return selector |> do {
   if (typeof # === 'string')
     …
   else if (# |> isFunction) {
@@ -1493,7 +1420,7 @@ function (
 
 ```js
 function (obj) {
-  return obj |> {
+  return obj |> do {
     if (# == null)
       0
     else if (|> isArrayLike)
@@ -1507,7 +1434,8 @@ function (obj) {
 Pipelines make parallelism between all three clauses becomes clearer: `0` for
 the `if` clause, `# |> #.length` for the `else if`, and `# |> something |> #.length`
 for the `else`. [This particular example becomes even clearer][Underscore.js +
-CP + PP] when paired with [Additional Feature PP][].
+CP + BP + PP] when paired with [Additional Feature BP][] and [Additional
+Feature PP][].
 
 <td>
 
@@ -1544,7 +1472,7 @@ involves complex data processing that becomes more readable with smart pipelines
 ```js
 function hashGet (key) {
   return this.__data__
-    |> {
+    |> do {
       if (nativeCreate)
         #[key]
           |> # === HASH_UNDEFINED
@@ -1602,7 +1530,7 @@ function mapCacheDelete (key) {
     |> getMapData(this, #)
     |> #['delete']
     |> #(key)
-    |> {
+    |> do {
       this.size -= # ? 1 : 0;
       #
     }
@@ -1625,7 +1553,7 @@ function mapCacheDelete (key) {
 
 ```js
 function castPath (value, object) {
-  return value |> {
+  return value |> do {
     if (# |> isArray)
       #
     else if (# |> isKey(#, object))
@@ -1651,12 +1579,84 @@ function castPath (value, object) {
 
 </table>
 
+## Additional Feature BP
+In the [Core Proposal][], [`do` expressions][] are permitted as
+[topic-style][topic style] pipeline bodies as long as they contain the topic
+reference `#`. They might be so useful, in fact, that it might be worth building
+them into the pipeline operator `|>` itself.
+
+This first Additional Feature – **block pipelines** – adds an additional
+[topic-style pipeline body syntax][smart body syntax], using blocks to stand for
+`do` expressions.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+value
+  |> f
+  |> { sideEffect(); # }
+  |> g
+```
+Instead of using [`do` expressions][] (that is, `|> do { sideEffect(); # }`), a
+block body is used with the same meaning: `|> { sideEffect(); # }`.
+
+<td>
+
+```js
+g (
+  do {
+    const $ = f(value);
+    sideEffect();
+    $
+  }
+)
+```
+
+<tr>
+<td>
+
+```js
+value
+  |> f
+  |> {
+    if (typeof # === 'number')
+      # + 1
+    else
+      { data: # }
+  }
+  |> g
+```
+
+<td>
+
+```js
+g (
+  do {
+    const $ = f(value);
+    if (typeof $ === 'number')
+      $ + 1
+    else
+      { data: $ }
+  }
+)
+```
+
+</table>
+
 ## Additional Feature PP
-The first Additional Feature – **Prefix Pipelines** – adds a “headless” tacit
+The next Additional Feature – **Prefix Pipelines** – adds a “headless” tacit
 prefix form of the pipeline operator. The tacit, default head is the topic
 reference `#` itself, which must be resolvable within the outer lexical
-environment. This may occur within `if` statements, `try` statements, and
-eventually [`do` expressions][].
+environment. This may occur within `if` statements, `try` statements, and [`do`
+expressions][], as well as block pipeline bodies with [Additional Feature BP][].
 
 <table>
 <thead>
@@ -1751,10 +1751,10 @@ function () {
 
 </table>
 
-### WHATWG Fetch Standard (Core Proposal + Additional Feature PP)
+### WHATWG Fetch Standard (Core Proposal + Additional Feature BP+PP)
 Revisiting the [examples above from the WHATWG Fetch Standard][WHATWG Fetch +
-CP] with [Additional Feature PP][] shows how terseness could be further improved
-within inner `do` expressions and inner `if` statements.
+CP] with [Additional Feature BP][] and [Additional Feature PP][] shows how
+terseness could be further improved.
 
 <table>
 <thead>
@@ -1770,7 +1770,7 @@ within inner `do` expressions and inner `if` statements.
 ```js
 'https://pk.example/berlin-calling'
   |> await fetch(#, { mode: 'cors' })
-  |> {
+  |> do {
     if (
       # |> #.headers.get('content-type')
         |> #??.toLowerCase()
@@ -1784,8 +1784,9 @@ within inner `do` expressions and inner `if` statements.
   }
 }
 ```
-This pipeline version uses [Core Proposal][] syntax only. Note that several
-expressions start with `# |>`.
+This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
+only. Note that several expressions start with `# |>`. There is also a `|> do {
+… }` block being used as a pipeline body.
 
 <td>
 
@@ -1823,8 +1824,9 @@ fetch('https://pk.example/berlin-calling',
   }
 }
 ```
-This pipeline version also uses [Additional Feature PP][]. The repeated `# |>`
-has been elided, but it is still tacitly there.
+This pipeline version also uses [Additional Feature BP][] and [Additional
+Feature PP][]. The `|> do { … }` has simply become `|> { … }`. And the repeated
+`# |>` has been elided, but it is still tacitly there.
 
 <td>
 
@@ -1844,10 +1846,10 @@ fetch('https://pk.example/berlin-calling',
 
 </table>
 
-### jQuery (Core Proposal + Additional Feature PP)
-Similarly, revisiting the [examples above from jQuery][jQuery + CP]
-with [Additional Feature PP][] shows how terseness could be further improved
-within inner `do` expressions and inner `if` statements.
+### jQuery (Core Proposal + Additional Feature BP+PP)
+Similarly, revisiting the [examples above from jQuery][jQuery + CP] with
+[Additional Feature BP][] and [Additional Feature PP][] shows how terseness
+could be further improved.
 
 <table>
 <thead>
@@ -1860,15 +1862,16 @@ within inner `do` expressions and inner `if` statements.
 <td>
 
 ```js
-match |> {
+match |> do {
   if (this[match] |> isFunction)
     # |> context[#] |> this[match](#)
   else
     # |> context[#] |> this.attr(match, #)
 }
 ```
-This pipeline version uses [Core Proposal][] syntax only. Note that several
-expressions start with `# |>`.
+This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
+only. Note that several expressions start with `# |>`. There is also a `|> do {
+… }` block being used as a pipeline body.
 
 <td>
 
@@ -1892,8 +1895,9 @@ match |> {
     |> context[#] |> this.attr(match, #)
 }
 ```
-This pipeline version also uses [Additional Feature PP][]. The repeated `# |>`
-has been elided, but it is still tacitly there.
+This pipeline version also uses [Additional Feature BP][] and [Additional
+Feature PP][]. The `|> do { … }` has simply become `|> { … }`. And the repeated
+`# |>` has been elided, but it is still tacitly there.
 
 <td>
 
@@ -1910,7 +1914,7 @@ From [jquery/src/core/init.js][].
 <td>
 
 ```js
-return context |> {
+return context |> do {
   // Handle HTML strings
   if (…)
     …
@@ -1924,8 +1928,9 @@ return context |> {
       |> #.find(selector)
 }
 ```
-This pipeline version uses [Core Proposal][] syntax only. Note that several
-expressions start with `# |>`.
+This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
+only. Note that several expressions start with `# |>`. There is also a `|> do {
+… }` block being used as a pipeline body.
 
 <td>
 
@@ -1962,8 +1967,9 @@ return context |> {
     |> #.find(selector)
 }
 ```
-This pipeline version also uses [Additional Feature PP][]. The repeated `# |>`
-has been elided, but it is still tacitly there.
+This pipeline version also uses [Additional Feature BP][] and [Additional
+Feature PP][]. The `|> do { … }` has simply become `|> { … }`. And the repeated
+`# |>` has been elided, but it is still tacitly there.
 
 <td>
 
@@ -1986,7 +1992,7 @@ From [jquery/src/core/init.js][].
 <td>
 
 ```js
-return selector |> {
+return selector |> do {
   if (typeof # === 'string')
     …
   else if (# |> isFunction)
@@ -1997,8 +2003,9 @@ return selector |> {
     jQuery.makeArray(#, this)
 }
 ```
-This pipeline version uses [Core Proposal][] syntax only. Note that several
-expressions start with `# |>`.
+This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
+only. Note that several expressions start with `# |>`. There is also a `|> do {
+… }` block being used as a pipeline body.
 
 <td>
 
@@ -2029,8 +2036,9 @@ return selector |> {
     jQuery.makeArray(#, this)
 }
 ```
-This pipeline version also uses [Additional Feature PP][]. The repeated `# |>`
-has been elided, but it is still tacitly there.
+This pipeline version also uses [Additional Feature BP][] and [Additional
+Feature PP][]. The `|> do { … }` has simply become `|> { … }`. And the repeated
+`# |>` has been elided, but it is still tacitly there.
 
 <td>
 
@@ -2048,7 +2056,7 @@ From [jquery/src/core/access.js][].
 
 </table>
 
-### Underscore.js (Core Proposal + Additional Feature PP)
+### Underscore.js (Core Proposal + Additional Feature BP+PP)
 One of the [examples above from Underscore.js][Underscore.js + CP]
 with [Additional Feature PP][] improves the visual parallelism of its code.
 
@@ -2064,7 +2072,7 @@ with [Additional Feature PP][] improves the visual parallelism of its code.
 
 ```js
 function (obj) {
-  return obj |> {
+  return obj |> do {
     if (# == null)
       0
     else if (# |> isArrayLike)
@@ -2076,8 +2084,9 @@ function (obj) {
 }
 ```
 Pipelines make parallelism between all three clauses becomes clearer.
-This pipeline version uses [Core Proposal][] syntax only. Note that several
-expressions start with `# |>`.
+This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
+only. Note that several expressions start with `# |>`. There is also a `|> do {
+… }` block being used as a pipeline body.
 
 <td>
 
@@ -2125,7 +2134,7 @@ use the outer environment’s topic: `obj`.
 
 </table>
 
-### Lodash (Core Proposal + Additional Feature PP)
+### Lodash (Core Proposal + Additional Feature BP+PP)
 
 <table>
 <thead>
@@ -2140,7 +2149,7 @@ use the outer environment’s topic: `obj`.
 ```js
 function hashGet (key) {
   return this.__data__
-    |> {
+    |> do {
       if (nativeCreate)
         #[key]
           |> # === HASH_UNDEFINED
@@ -2153,8 +2162,9 @@ function hashGet (key) {
     }
 }
 ```
-This pipeline version uses [Core Proposal][] syntax only. Note that several
-expressions start with `# |>`.
+This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
+only. Note that several expressions start with `# |>`. There is also a `|> do {
+… }` block being used as a pipeline body.
 
 <td>
 
@@ -2186,8 +2196,9 @@ function castPath (value, object) {
   }
 }
 ```
-This pipeline version also uses [Additional Feature PP][]. The repeated `# |>`
-has been elided, but it is still tacitly there.
+This pipeline version also uses [Additional Feature BP][] and [Additional
+Feature PP][]. The `|> do { … }` has simply become `|> { … }`. And the repeated
+`# |>` has been elided, but it is still tacitly there.
 
 <td>
 
@@ -2210,10 +2221,10 @@ prohibit the use of the topic reference `#` within their bodies, except where
 the topic reference `#` is inside an inner pipeline inside the `catch` clause:
 this is one of the Core Proposal’s [early errors][] mentioned above.
 
-The second Additional Feature – **Topical `catch`es** – makes all `catch`
-clauses implicitly bind their caught errors to the topic reference `#`. This
-implicit binding would be in addition to the explicit binding of a normal
-variable `error` declared within any parenthesized antecedent `(error)` in
+The next Additional Feature – **Topical `catch`es** – makes all `catch` clauses
+implicitly bind their caught errors to the topic reference `#`. This implicit
+binding would be in addition to the explicit binding of a normal variable
+`error` declared within any parenthesized antecedent `(error)` in
 `try { … } catch (error) { … }`.
 
 <table>
@@ -2484,7 +2495,7 @@ array.map(+> f(2, #))
 
 <td>
 
-Pipeline functions look similar to the proposal for [syntactic partial
+Pipeline functions look similar to the proposal for [syntactic partial function
 application][] by [Ron Buckton][], except that partial-application expressions
 are simply pipeline bodies that are prefixed by a topic arrow.
 ```js
@@ -2595,7 +2606,7 @@ But the `::` would only need to handle method calls. No operator overloading of
 
 </table>
 
-### Ramda (Core Proposal + Additional Feature PF)
+### Ramda (Core Proposal + Additional Feature BP+PF)
 [Ramda][] is a utility library focused on [functional programming][] with [pure
 functions][] and [immutable objects][]. Its functions are automatically
 [curried][currying]. Smart pipelines with [Additional Feature PF][]
@@ -2605,7 +2616,7 @@ cookbook][]. They use smart pipelines with vanilla JavaScript APIs when possible
 functions wherever no terse JavaScript equivalent yet exists (such as with
 `R.zipWith` and `R.adjust`).
 
-[Even more of Ramda’s use cases are covered][Ramda + CP + PF + NP] when
+[Even more of Ramda’s use cases are covered][Ramda + CP + BP + PF + NP] when
 [Additional Feature NP][] syntax is supported.
 
 <table>
@@ -2757,7 +2768,7 @@ renameBy(R.concat('a'), { A: 1, B: 2, C: 3 })
 
 </table>
 
-### WHATWG Streams Standard (Core Proposal + Additional Features PP+PF)
+### WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF)
 The [WHATWG Streams Standard][] provides an efficient, standardized stream API,
 inspired by Node.js’s Streams API, but also applicable to the DOM. The
 specification contains numerous usage examples that would become more readable
@@ -3298,7 +3309,7 @@ the other proposal’s code.
 
 </table>
 
-### Lodash (Core Proposal + Additional Features PF+NP)
+### Lodash (Core Proposal + Additional Features BP+PF+NP)
 
 <table>
 <thead>
@@ -3377,8 +3388,8 @@ function createRound (methodName) {
 
 </table>
 
-### Ramda (Core Proposal + Additional Features PF+NP)
-[Many examples above using Ramda][Ramda + CP + PF] benefited from pipeline
+### Ramda (Core Proposal + Additional Features BP+PF+NP)
+[Many examples above using Ramda][Ramda + CP + BP + PF] benefited from pipeline
 functions with Additional Feature PF. Even more use cases are covered by
 pipeline functions when [Additional Feature NP][] syntax is supported.
 
@@ -3475,10 +3486,10 @@ propsDotPath(['a.b.c', 'x'], obj)
 
 </table>
 
-### WHATWG Streams Standard (Core Proposal + Additional Features PP+PF+NP)
-[Many examples above using WHATWG Streams][WHATWG Streams + CP + PF] benefited
-from pipeline functions with Additional Features CP + PF. Even more use cases
-are covered by pipeline functions when [Additional Feature NP][] is added.
+### WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF+NP)
+[Many examples above using WHATWG Streams][WHATWG Streams + CP + BP + PF]
+benefited from pipeline functions with Additional Features CP + PF. Even more
+use cases are covered by pipeline functions with [Additional Feature NP][].
 
 <table>
 <thead>
