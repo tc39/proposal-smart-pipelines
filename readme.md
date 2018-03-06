@@ -4876,8 +4876,8 @@ function applyWhen (selectBlockTopic, caseValue, block) {
 function applyWhenArray (selectBlockTopic, testArray, block) {
   testArray.some(arrayValue =>
     contextTopic |> {
-      when(arrayValue, block);
-      #
+      if (when(arrayValue, block))
+        #
     }
 }
 
