@@ -3030,8 +3030,8 @@ spreads its elements into whatever expression surrounds it.
 
 ```js
 do {
-  const [_tertiaryTopic, ..._restTopics] = [c, d, e];
-  f(a, _secondaryTopic, x, ..._restTopics)
+  const [_tertiary, ..._rest] = [c, d, e];
+  f(a, _secondary, x, ..._rest)
 }
 ```
 
@@ -3051,8 +3051,8 @@ because `##` is not used at all in the pipeline body.
 
 ```js
 do {
-  const _restTopics = [...d, e];
-  f(a, _tertiaryTopic, x, ..._restTopics)
+  const _rest = [...d, e];
+  f(a, _tertiary, x, ..._rest)
 }
 ```
 
@@ -3068,8 +3068,8 @@ do {
 
 ```js
 do {
-  const [_secondaryTopic, _tertiaryTopic, ..._restTopics] = [...b, c, ...d, e];
-  f(a, _secondaryTopic, _tertiaryTopic, x, ..._restTopics)
+  const [_secondary, _tertiary, ..._rest] = [...b, c, ...d, e];
+  f(a, _secondary, _tertiary, x, ..._rest)
 }
 ```
 
@@ -3085,8 +3085,8 @@ do {
 
 ```js
 do {
-  const [_secondaryTopic, ..._restTopics] = [...b, c, ...d, e];
-  f(a, _secondaryTopic, x, ..._restTopics)
+  const [_secondary, ..._rest] = [...b, c, ...d, e];
+  f(a, _secondary, x, ..._rest)
 }
 ```
 
