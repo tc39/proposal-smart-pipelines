@@ -2585,12 +2585,16 @@ environment does have its own topic binding.
 <tr>
 <td>
 
+**[Terse composition][]** of unary functions is a goal of this proposal. It is
+equivalent to piping a value through several function calls, within a unary
+function, starting with the outer function’s tacit unary parameter.
 ```js
 array.map(+> f |> g |> h(2, #) |> # + 2)
 ```
-**Functional composition** on unary functions is equivalent to piping a value
-through several function calls, within a unary function, starting with the outer
-function’s single tacit parameter.
+There are [several existing proposals for unary functional composition][function
+composition], which Additional Feature PF would all subsume. And with
+[Additional Feature NP][], even n-ary functional composition would be supported,
+which no current proposal yet addresses.
 
 <td>
 
@@ -2602,36 +2606,156 @@ array.map($ => h(2, g(f($))) + 2)
 <td>
 
 ```js
-const doubleThenSquareThenHalfAsync = async $ =>
-  $ |> double |> await squareAsync |> half
+const doubleThenSquareThenHalfAsync =
+  async $ => $ |> double |> await squareAsync |> half
 ```
 ```js
-const doubleThenSquareThenHalfAsync = async +>
-|> double |> await squareAsync |> half
+const doubleThenSquareThenHalfAsync =
+  async +> double |> await squareAsync |> half
 ```
-Unlike the other version, this syntax does not need to give implicit special
-treatment to async functions. There is instead an async version of the
-pipe-function operator, within which `await` may be used, just as usual.
+When compared to the proposal for [syntactic functional composition by
+TheNavigateur][TheNavigateur functional composition], this syntax does not need
+to give implicit special treatment to async functions. There is instead an async
+version of the pipe-function operator, within which `await` may be used, simply
+as usual.
 
 <td>
 
 ```js
-const doubleThenSquareThenHalfAsync = $ =>
-  half(await squareAsync(double($)))
+const doubleThenSquareThenHalfAsync =
+  async $ => half(await squareAsync(double($)))
 ```
 ```js
 const doubleThenSquareThenHalfAsync =
   double +> squareAsync +> half
 ```
-From the proposal for [syntactic functional composition][]
-by [Gilbert “mindeavor”][mindeavor].
+From the proposal for [syntactic functional composition by
+TheNavigateur][TheNavigateur functional composition].
 
 <tr>
 <td>
 
-**Partial application into a unary function** is equivalent to piping a tacit
-parameter into a function-call expression, within which the one parameter is
-resolvable.
+```js
+const toSlug =
+  $ => $
+    |> #.split(' ')
+    |> #.map($ => $.toLowerCase())
+    |> #.join('-')
+    |> encodeURIComponent
+```
+This example also uses [Additional Syntax PP][] for its second line:
+```js
+const toSlug = +>
+  |> #.split(' ')
+  |> #.map(+> #.toLowerCase())
+  |> #.join('-')
+  |> encodeURIComponent
+```
+When compared to the proposal for [syntactic functional composition by Isiah
+Meadows][isiahmeadows functional composition], this syntax does not need to
+surround each non-function expression with an arrow function. The [smart body
+syntax][] has more powerful [expressive versatility][], improving the
+readability of the code.
+
+<td>
+
+```js
+const toSlug = $ =>
+  encodeURIComponent(
+    $.split(' ')
+      .map(str => str.toLowerCase())
+      .join('-'))
+```
+```js
+const toSlug =
+    _ => _.split(" ")
+    :> _ => _.map(str => str.toLowerCase())
+    :> _ => _.join("-")
+    :> encodeURIComponent
+```
+From the proposal for [syntactic functional composition by Isiah
+Meadows][isiahmeadows functional composition].
+
+<tr>
+<td>
+
+```js
+```js
+const getTemperatureFromServerInLocalUnits = async +>
+  |> await getTemperatureKelvinFromServerAsync
+  |> convertTemperatureKelvinToLocalUnits
+```
+Lifting of non-sync-function expressions into function expressions is
+unnecessary for composition with Additional Feature PF.
+
+<td>
+
+```js
+Promise.prototype[Symbol.lift] = f => x => x.then(f)
+const getTemperatureFromServerInLocalUnits =
+  getTemperatureKelvinFromServerAsync
+  :> convertTemperatureKelvinToLocalUnits
+```
+From the proposal for [syntactic functional composition by Isiah
+Meadows][isiahmeadows functional composition].
+
+<tr>
+<td>
+
+```js
+// Functional Building Blocks
+const car = +> startMotor |> useFuel |> turnKey;
+const electricCar = +> startMotor |> usePower |> turnKey;
+
+// Control Flow Management
+const getData = +> truncate |> sort |> filter |> request;
+
+// Argument Assignment
+const sortBy = 'date';
+const getData = +> truncate |> sort |> #::filter(sortBy) |> request);
+```
+This example also uses [function binding][].
+
+<td>
+
+```js
+// Functional Building Blocks
+const car = startMotor.compose(useFuel, turnKey);
+const electricCar = startMotor.compose(usePower, turnKey);
+
+// Control Flow Management
+const getData = truncate.compose(sort, filter, request);
+
+// Argument Assignment
+const sortBy = 'date';
+const getData = truncate.compose(sort, filter.bind(data, sortBy), request);
+```
+From the proposal for [syntactic functional composition by Simon
+Staton][simonstaton functional composition].
+
+<tr>
+<td>
+
+```js
+//+ pluck :: String -> [StrMap a] -> [a]
+const pluck = +> map |> prop
+```
+
+<td>
+
+```js
+//+ pluck :: String -> [StrMap a] -> [a]
+const pluck = compose(map)(prop)
+```
+From a [comment about syntactic functional composition by Tom Harding][i-am-tom
+functional composition].
+
+<tr>
+<td>
+
+**[Terse partial application][] into a unary function** is equivalent to piping
+a tacit parameter into a function-call expression, within which the one
+parameter is resolvable.
 ```js
 array.map($ => $ |> f(2, #))
 array.map(+> f(2, #))
@@ -2693,6 +2817,32 @@ let newScore = player.score
 |> add(7, ?)
 |> clamp(0, 100, ?)
 ```
+
+<tr>
+<td>
+
+```js
+```js
+const toSlug = +>
+  |> encodeURIComponent
+  |> _.split(#, " ")
+  |> _.map(#, _.toLower)
+  |> _.join(#, "-")
+```
+Additional Feature PF simultaneously handles function composition and
+partial application into unary functions.
+
+<td>
+
+```js
+const toSlug =
+  encodeURIComponent
+  :> _.split(?, " ")
+  :> _.map(?, _.toLower)
+  :> _.join(?, "-")
+```
+From the proposal for [syntactic functional composition by Isiah
+Meadows][isiahmeadows functional composition].
 
 <tr>
 <td>
@@ -4047,6 +4197,8 @@ form to another. There is **no single type** of expression that forms a
 34. Unary-function composition?
 35. Function binding?
 
+[TODO]
+
 </table>
 
 The goal of the pipeline operator is to untangle deeply nested expressions into flat
@@ -4102,8 +4254,8 @@ programming], one of the impetuses for the [first pipeline-operator proposal][].
 The pipeline operator could be designed to support only [topic style][]: that
 would require `x |> f` to be `x |> f(#)`. But adding a [bare style][] brings
 many expressive benefits for tacit functional programming: not just [terse
-function calls][] but also the possibility of [terse function composition][]
-with [Additional Feature PF][].
+function calls][] but also the possibility of [terse composition][] with
+[Additional Feature PF][].
 
 But even with this tradeoff, not too much simplicity should be given up. The
 sacrifice of simplicity for bare style’s alternate mode can be minimized by
@@ -4232,12 +4384,19 @@ simplicity][], in the same manner that [Huffman coding][] optimizes textual
 symbols’ length for their frequency of use: more commonly used symbols are
 shorter in written length.
 
-### Terse function composition
-[TODO]
+Furthermore, calls are not only unary; they are also [TODO]
+
+### Terse composition
+Terse composition of all expressions – [not only unary functions][expressive
+versatility] but also n-ary functions, object methods, async functions,
+generators, `if` `else` statements, and so forth – is a goal of this proposal.
+It is addressed by [Additional Feature PF][].
 
 ### Terse partial function application
+[TODO]
 
 ### Terse method extraction
+[TODO]
 
 ## Other Goals
 Although these have been prioritized last, they are still important.
@@ -4514,7 +4673,186 @@ a(1, $ =>
 </table>
 
 ## Function composition
-[TODO]
+**[Terse composition][]** on unary functions is a goal of this proposal.
+It is equivalent to piping a value through several function calls, within a
+unary function, starting with the outer function’s tacit unary parameter.
+
+There are several existing proposals for unary functional composition, which
+[Additional Feature PF][] would all subsume. Additional Feature PF can compose
+not only unary functions but [expressions of any type][expressive versatility],
+including object methods, async functions, and `if` `else` statements. And with
+[Additional Feature NP][], even n-ary functional composition would be supported,
+which no current proposal yet addresses.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>With pattern matching only
+
+<tbody>
+<tr>
+<td>
+
+```js
+array.map(+> f |> g |> h(2, #) |> # + 2)
+```
+
+<td>
+
+```js
+array.map($ => h(2, g(f($))) + 2)
+```
+
+<tr>
+<td>
+
+```js
+const doubleThenSquareThenHalfAsync =
+  async $ => $ |> double |> await squareAsync |> half
+```
+```js
+const doubleThenSquareThenHalfAsync =
+  async +> double |> await squareAsync |> half
+```
+When compared to the proposal for [syntactic functional composition by
+TheNavigateur][TheNavigateur functional composition], this syntax does not need
+to give implicit special treatment to async functions. There is instead an async
+version of the pipe-function operator, within which `await` may be used, simply
+as usual.
+
+<td>
+
+```js
+const doubleThenSquareThenHalfAsync =
+  async $ => half(await squareAsync(double($)))
+```
+```js
+const doubleThenSquareThenHalfAsync =
+  double +> squareAsync +> half
+```
+From the proposal for [syntactic functional composition by
+TheNavigateur][TheNavigateur functional composition].
+
+<tr>
+<td>
+
+```js
+const toSlug =
+  $ => $
+    |> #.split(' ')
+    |> #.map($ => $.toLowerCase())
+    |> #.join('-')
+    |> encodeURIComponent
+```
+This example also uses [Additional Syntax PP][] for its second line:
+```js
+const toSlug = +>
+  |> #.split(' ')
+  |> #.map(+> #.toLowerCase())
+  |> #.join('-')
+  |> encodeURIComponent
+```
+When compared to the proposal for [syntactic functional composition by Isiah
+Meadows][isiahmeadows functional composition], this syntax does not need to
+surround each non-function expression with an arrow function. The [smart body
+syntax][] has more powerful [expressive versatility][], improving the
+readability of the code.
+
+<td>
+
+```js
+const toSlug = $ =>
+  encodeURIComponent(
+    $.split(' ')
+      .map(str => str.toLowerCase())
+      .join('-'))
+```
+```js
+const toSlug =
+    _ => _.split(" ")
+    :> _ => _.map(str => str.toLowerCase())
+    :> _ => _.join("-")
+    :> encodeURIComponent
+```
+From the proposal for [syntactic functional composition by Isiah
+Meadows][isiahmeadows functional composition].
+
+<tr>
+<td>
+
+```js
+```js
+const getTemperatureFromServerInLocalUnits = async +>
+  |> await getTemperatureKelvinFromServerAsync
+  |> convertTemperatureKelvinToLocalUnits
+```
+Lifting of non-sync-function expressions into function expressions is
+unnecessary for composition with Additional Feature PF.
+
+<td>
+
+```js
+Promise.prototype[Symbol.lift] = f => x => x.then(f)
+const getTemperatureFromServerInLocalUnits =
+  getTemperatureKelvinFromServerAsync
+  :> convertTemperatureKelvinToLocalUnits
+```
+From the proposal for [syntactic functional composition by Isiah
+Meadows][isiahmeadows functional composition].
+
+<tr>
+<td>
+
+```js
+// Functional Building Blocks
+const car = +> startMotor |> useFuel |> turnKey;
+const electricCar = +> startMotor |> usePower |> turnKey;
+
+// Control Flow Management
+const getData = +> truncate |> sort |> filter |> request;
+
+// Argument Assignment
+const sortBy = 'date';
+const getData = +> truncate |> sort |> #::filter(sortBy) |> request);
+```
+This example also uses [function binding][].
+
+<td>
+
+```js
+// Functional Building Blocks
+const car = startMotor.compose(useFuel, turnKey);
+const electricCar = startMotor.compose(usePower, turnKey);
+
+// Control Flow Management
+const getData = truncate.compose(sort, filter, request);
+
+// Argument Assignment
+const sortBy = 'date';
+const getData = truncate.compose(sort, filter.bind(data, sortBy), request);
+```
+From the proposal for [syntactic functional composition by Simon
+Staton][simonstaton functional composition].
+
+<tr>
+<td>
+
+```js
+//+ pluck :: String -> [StrMap a] -> [a]
+const pluck = +> map |> prop
+```
+
+<td>
+
+```js
+//+ pluck :: String -> [StrMap a] -> [a]
+const pluck = compose(map)(prop)
+```
+From a [comment about syntactic functional composition by Tom Harding][i-am-tom
+functional composition].
+
+</table>
 
 ## Syntactic partial function application
 The current proposal for [ECMAScript partial application][]… [TODO]
@@ -5562,7 +5900,6 @@ do { do { do { do { 3 * 3 } } }
 [smart body syntax]: #smart-body-syntax
 [smart pipelines]: #smart-pipelines
 [static analyzability]: #static-analyzability
-[syntactic functional composition]: https://github.com/TheNavigateur/proposal-pipeline-operator-for-function-composition
 [syntactic locality]: #syntactic-locality
 [ECMAScript partial application]: https://github.com/tc39/proposal-partial-application
 [tacit programming]: https://en.wikipedia.org/wiki/Tacit_programming
@@ -5642,7 +5979,8 @@ do { do { do { do { 3 * 3 } } }
 [syntactic partial function application]: #syntactic-partial-function-application
 [Additional Features]: #smart-pipelines
 [terse function application]: #terse-function-application
-[terse function composition]: #terse-function-composition
+[terse partial application]: #terse-partial-application
+[terse composition]: #terse-composition
 [function binding]: #function-binding
 [primary topic]: #core-proposal
 [secondary topic]: #additional-feature-np
@@ -5651,3 +5989,7 @@ do { do { do { do { 3 * 3 } } }
 [pipeline functions]: #additional-feature-pf
 [async pipeline functions]: #additional-feature-pf
 [pipelines]: #core-proposal
+[TheNavigateur functional composition]: https://github.com/TheNavigateur/proposal-pipeline-operator-for-function-composition
+[isiahmeadows functional composition]: https://github.com/isiahmeadows/function-composition-proposal
+[simonstaton functional composition]: https://github.com/simonstaton/Function.prototype.compose-TC39-Proposal
+[i-am-tom functional composition]: https://github.com/fantasyland/ECMAScript-proposals/issues/1#issuecomment-306243513
