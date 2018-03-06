@@ -2589,7 +2589,7 @@ environment does have its own topic binding.
 <tr>
 <td>
 
-**[Terse composition][]** of unary functions is a goal of this proposal. It is
+**[Terse composition][]** of unary functions is a goal of smart pipelines. It is
 equivalent to piping a value through several function calls, within a unary
 function, starting with the outer function’s tacit unary parameter.
 ```js
@@ -2642,18 +2642,18 @@ TheNavigateur][TheNavigateur functional composition].
 ```js
 const toSlug =
   $ => $
-    |> #.split(' ')
-    |> #.map($ => $.toLowerCase())
-    |> #.join('-')
-    |> encodeURIComponent
-```
-This example also uses [Additional Syntax PP][] for its second line:
-```js
-const toSlug = +>
   |> #.split(' ')
-  |> #.map(+> #.toLowerCase())
+  |> #.map($ => $.toLowerCase())
   |> #.join('-')
   |> encodeURIComponent
+```
+This example also uses [Additional Feature PP][] for its second line:
+```js
+const toSlug = +>
+|> #.split(' ')
+|> #.map(+> #.toLowerCase())
+|> #.join('-')
+|> encodeURIComponent
 ```
 When compared to the proposal for [syntactic functional composition by Isiah
 Meadows][isiahmeadows functional composition], this syntax does not need to
@@ -2686,8 +2686,8 @@ Meadows][isiahmeadows functional composition].
 ```js
 ```js
 const getTemperatureFromServerInLocalUnits = async +>
-  |> await getTemperatureKelvinFromServerAsync
-  |> convertTemperatureKelvinToLocalUnits
+|> await getTemperatureKelvinFromServerAsync
+|> convertTemperatureKelvinToLocalUnits
 ```
 Lifting of non-sync-function expressions into function expressions is
 unnecessary for composition with Additional Feature PF.
@@ -2697,8 +2697,8 @@ unnecessary for composition with Additional Feature PF.
 ```js
 Promise.prototype[Symbol.lift] = f => x => x.then(f)
 const getTemperatureFromServerInLocalUnits =
-  getTemperatureKelvinFromServerAsync
-  :> convertTemperatureKelvinToLocalUnits
+getTemperatureKelvinFromServerAsync
+:> convertTemperatureKelvinToLocalUnits
 ```
 From the proposal for [syntactic functional composition by Isiah
 Meadows][isiahmeadows functional composition].
@@ -2724,15 +2724,19 @@ This example also uses [function binding][].
 
 ```js
 // Functional Building Blocks
-const car = startMotor.compose(useFuel, turnKey);
-const electricCar = startMotor.compose(usePower, turnKey);
+const car = startMotor.compose(
+  useFuel, turnKey);
+const electricCar = startMotor.compose(
+  usePower, turnKey);
 
 // Control Flow Management
-const getData = truncate.compose(sort, filter, request);
+const getData = truncate.compose(
+  sort, filter, request);
 
 // Argument Assignment
 const sortBy = 'date';
-const getData = truncate.compose(sort, filter.bind(data, sortBy), request);
+const getData = truncate.compose(
+  sort, $ => filter.bind($, sortBy), request);
 ```
 From the proposal for [syntactic functional composition by Simon
 Staton][simonstaton functional composition].
@@ -2767,9 +2771,9 @@ array.map(+> f(2, #))
 
 <td>
 
-Pipeline functions look similar to the proposal for [syntactic partial function
+Pipeline functions look similar to the proposal for [partial function
 application][] by [Ron Buckton][], except that partial-application expressions
-are simply pipeline bodies that are prefixed by a topic arrow.
+are simply pipeline bodies that are prefixed by the pipeline-function operator.
 ```js
 array.map(f(2, ?))
 array.map($ => f(2, $))
@@ -2828,10 +2832,10 @@ let newScore = player.score
 ```js
 ```js
 const toSlug = +>
-  |> encodeURIComponent
-  |> _.split(#, " ")
-  |> _.map(#, _.toLower)
-  |> _.join(#, "-")
+|> encodeURIComponent
+|> _.split(#, " ")
+|> _.map(#, _.toLower)
+|> _.join(#, "-")
 ```
 Additional Feature PF simultaneously handles function composition and
 partial application into unary functions.
@@ -3569,8 +3573,8 @@ const f = (x, y, z) => [x, y, z]
 const g = f(?, 4, ?)
 g(1, 2) // [1, 4, 2]
 ```
-The current proposal for [syntactic partial function application][] assumes that each
-use of the same `?` placeholder token represents a different parameter. In contrast,
+The current proposal for [partial function application][] assumes that each use
+of the same `?` placeholder token represents a different parameter. In contrast,
 each use of `#` within the same scope always refers to the same value. This is
 why additional topic parameters are required.
 
@@ -4065,10 +4069,10 @@ inner async functions, and without having to wrap values in unnecessary promises
 
 ### Forward compatibility
 The syntax should not preclude other proposals: both [already-proposed
-ECMAScript proposals][other ECMAScript proposals], such as [syntactic partial
-function application][] and [private class fields][] – as well as the
-[Additional Features][intro] of this proposal. The Core Proposal is forward
-compatible with all of these, especially because of its [early errors][].
+ECMAScript proposals][other ECMAScript proposals], such as [partial function
+application][] and [private class fields][] – as well as the [Additional
+Features][intro] of this proposal. The Core Proposal is forward compatible with
+all of these, especially because of its [early errors][].
 
 ## “Don’t shoot me in the foot.”
 The syntax should not be a footgun: it should not easy for a developer to
@@ -4393,8 +4397,8 @@ Furthermore, calls are not only unary; they are also [TODO]
 ### Terse composition
 Terse composition of all expressions – [not only unary functions][expressive
 versatility] but also n-ary functions, object methods, async functions,
-generators, `if` `else` statements, and so forth – is a goal of this proposal.
-It is addressed by [Additional Feature PF][].
+generators, `if` `else` statements, and so forth – is a goal of smart pipelines.
+Terse composition is addressed by [Additional Feature PF][].
 
 ### Terse partial function application
 [TODO]
@@ -4677,7 +4681,7 @@ a(1, $ =>
 </table>
 
 ## Function composition
-**[Terse composition][]** on unary functions is a goal of this proposal.
+**[Terse composition][]** on unary functions is a goal of smart pipelines.
 It is equivalent to piping a value through several function calls, within a
 unary function, starting with the outer function’s tacit unary parameter.
 
@@ -4692,7 +4696,7 @@ which no current proposal yet addresses.
 <thead>
 <tr>
 <th>With smart pipelines
-<th>With pattern matching only
+<th>With alternative proposals
 
 <tbody>
 <tr>
@@ -4744,18 +4748,18 @@ TheNavigateur][TheNavigateur functional composition].
 ```js
 const toSlug =
   $ => $
-    |> #.split(' ')
-    |> #.map($ => $.toLowerCase())
-    |> #.join('-')
-    |> encodeURIComponent
-```
-This example also uses [Additional Syntax PP][] for its second line:
-```js
-const toSlug = +>
   |> #.split(' ')
-  |> #.map(+> #.toLowerCase())
+  |> #.map($ => $.toLowerCase())
   |> #.join('-')
   |> encodeURIComponent
+```
+This example also uses [Additional Feature PP][] for its second line:
+```js
+const toSlug = +>
+|> #.split(' ')
+|> #.map(+> #.toLowerCase())
+|> #.join('-')
+|> encodeURIComponent
 ```
 When compared to the proposal for [syntactic functional composition by Isiah
 Meadows][isiahmeadows functional composition], this syntax does not need to
@@ -4774,10 +4778,10 @@ const toSlug = $ =>
 ```
 ```js
 const toSlug =
-    _ => _.split(" ")
-    :> _ => _.map(str => str.toLowerCase())
-    :> _ => _.join("-")
-    :> encodeURIComponent
+  _ => _.split(" ")
+  :> _ => _.map(str => str.toLowerCase())
+  :> _ => _.join("-")
+  :> encodeURIComponent
 ```
 From the proposal for [syntactic functional composition by Isiah
 Meadows][isiahmeadows functional composition].
@@ -4858,8 +4862,187 @@ functional composition].
 
 </table>
 
-## Syntactic partial function application
-The current proposal for [ECMAScript partial application][]… [TODO]
+## Partial function application
+[Terse partial application][] is a goal of smart pipelines. The current proposal
+for syntactic [ECMAScript partial application][] by [Ron Buckton][] would be
+subsumed by [Additional Feature PF][] and [Additional Feature NP][]. Terse
+partial application into an N-ary function is equivalent to piping N tacit
+parameters into an N-ary function-call expression, within which the parameters
+are resolvable topic references. (Additional Feature PF alone would only address
+partial application into unary functions.)
+
+Pipeline functions look similar to the alternative proposal, except that
+partial-application expressions are simply pipeline bodies that are prefixed by
+the pipeline-function operator, and consecutive `?` placeholders are instead
+consecutive topic references `#`, `##`, `###`.
+
+The current proposal for [partial function application][] assumes that each use
+of the same `?` placeholder token represents a different parameter. In contrast,
+each use of `#` within the same scope always refers to the same value. This is
+why additional topic parameters are required.
+
+The resulting model is more flexible: with Additional Feature NP with
+[Additional Feature PF][], `+> f(#, 4, ##)` is different from `+> f(#, 4, #)`.
+The former refers to a **binary function**: a function with two parameters,
+essentially `(x, y) => f(x, 4, y)`. The latter sensibly refers to a **unary**
+function that passes the same one argument into both the first and third
+parameters of the original function `f`: `x => f(x, 4, x)`. The same symbol
+refers to the same value in the same lexical environment.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>With alternative proposals
+
+<tbody>
+<tr>
+<td>
+
+```js
+array.map($ => $ |> f(2, #))
+array.map(+> f(2, #))
+```
+
+<td>
+
+```js
+array.map(f(2, ?))
+array.map($ => f(2, $))
+```
+
+<tr>
+<td>
+
+```js
+const addOne = +> add(1, #)
+addOne(2) // 3
+```
+
+<td>
+
+```js
+const addOne = add(1, ?)
+addOne(2) // 3
+```
+
+<tr>
+<td>
+
+```js
+const addTen = +> add(#, 10)
+addTen(2) // 12
+```
+
+<td>
+
+```js
+const addTen = add(?, 10)
+addTen(2) // 12
+```
+
+<tr>
+<td>
+
+```js
+let newScore = player.score
+|> add(7, #)
+|> clamp(0, 100, #)
+```
+
+<td>
+
+```js
+let newScore = player.score
+|> add(7, ?)
+|> clamp(0, 100, ?)
+```
+
+<tr>
+<td>
+
+```js
+```js
+const toSlug = +>
+|> encodeURIComponent
+|> _.split(#, " ")
+|> _.map(#, _.toLower)
+|> _.join(#, "-")
+```
+Additional Feature PF simultaneously handles function composition and
+partial application into unary functions.
+
+<td>
+
+```js
+const toSlug =
+encodeURIComponent
+:> _.split(?, " ")
+:> _.map(?, _.toLower)
+:> _.join(?, "-")
+```
+From the proposal for [syntactic functional composition by Isiah
+Meadows][isiahmeadows functional composition].
+
+<tr>
+<td>
+
+```js
+[ { x: 22 }, { x: 42 } ]
+  .map(+> #.x)
+  .reduce(+> # - ##, 0)
+```
+
+<td>
+
+```js
+[ { x: 22 }, { x: 42 } ]
+  .map(el => el.x)
+  .reduce((_0, _1) => _0 - _1, 0)
+```
+
+<tr>
+<td>
+
+```js
+const f = (x, y, z) => [x, y, z]
+const g = +> f(#, 4, ##)
+g(1, 2) // [1, 4, 2]
+```
+
+<td>
+
+```js
+const f = (x, y, z) => [x, y, z]
+const g = f(?, 4, ?)
+g(1, 2) // [1, 4, 2]
+```
+
+<tr>
+<td>
+
+```js
+const maxGreaterThanZero =
+  +> Math.max(0, ...)
+maxGreaterThanZero(1, 2) // 2
+maxGreaterThanZero(-1, -2) // 0
+```
+
+Partial application into a variadic function is also naturally handled by
+Additional Feature NP with [Additional Feature PF][].
+
+<td>
+
+```js
+const maxGreaterThanZero =
+  Math.max(0, ...)
+maxGreaterThanZero(1, 2) // 2
+maxGreaterThanZero(-1, -2) // 0
+```
+In this case, the topic function version looks once again nearly identical to
+the other proposal’s code.
+
+</table>
 
 ## Pattern matching
 The smart pipelines and topic references of the [Core Proposal][] would be a
@@ -5532,10 +5715,10 @@ identifier. Unlike variables, it cannot be manually declared (`const #` is a
 syntax error), nor can it be assigned with a value (`# = 3` is a syntax error).
 
 “Topic reference” is also preferred to “**topic placeholder**”, to avoid
-confusion with the placeholders of another TC39 proposal – [syntactic partial
-function application][]. These placeholders (currently denoted by nullary `?`)
-are of a different nature than topic references. Instead of referring to a
-single value bound earlier in the surrounding lexical context, these **parameter
+confusion with the placeholders of another TC39 proposal – [partial function
+application][]. These placeholders (currently denoted by nullary `?`) are of a
+different nature than topic references. Instead of referring to a single value
+bound earlier in the surrounding lexical context, these **parameter
 placeholders** act as the parameter to a new function. When this new function is
 called, those parameter placeholders will be bound to multiple argument values.
 
@@ -5980,7 +6163,7 @@ do { do { do { do { 3 * 3 } } }
 [ASI]: https://tc39.github.io/ecma262/#sec-automatic-semicolon-insertion
 [ECMAScript function binding]: https://github.com/zenparsing/es-function-bind
 [block parameters]: #block-parameters
-[syntactic partial function application]: #syntactic-partial-function-application
+[partial function application]: #partial-function-application
 [Additional Features]: #smart-pipelines
 [terse function application]: #terse-function-application
 [terse partial application]: #terse-partial-application
@@ -5997,3 +6180,4 @@ do { do { do { do { 3 * 3 } } }
 [isiahmeadows functional composition]: https://github.com/isiahmeadows/function-composition-proposal
 [simonstaton functional composition]: https://github.com/simonstaton/Function.prototype.compose-TC39-Proposal
 [i-am-tom functional composition]: https://github.com/fantasyland/ECMAScript-proposals/issues/1#issuecomment-306243513
+[function composition]: #function-composition
