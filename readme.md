@@ -3764,9 +3764,9 @@ inner async functions, and without having to wrap values in unnecessary promises
 ### Forward compatibility
 The syntax should not preclude other proposals: both [already-proposed
 ECMAScript proposals][other ECMAScript proposals], such as [syntactic partial
-application][] and [private class fields][] – as well as the [Additional
-Features][intro] of this proposal. The Core Proposal is forward compatible with
-all of these, especially because of its [early errors][].
+function application][] and [private class fields][] – as well as the
+[Additional Features][intro] of this proposal. The Core Proposal is forward
+compatible with all of these, especially because of its [early errors][].
 
 ## “Don’t shoot me in the foot.”
 The syntax should not be a footgun: it should not easy for a developer to
@@ -4083,6 +4083,13 @@ a good balance between this goal and [syntactic locality][] and [cyclomatic
 simplicity][], in the same manner that [Huffman coding][] optimizes textual
 symbols’ length for their frequency of use: more commonly used symbols are
 shorter in written length.
+
+### Terse function composition
+[TODO]
+
+### Terse partial function application
+
+### Terse method extraction
 
 ## Other Goals
 Although these have been prioritized last, they are still important.
@@ -4979,8 +4986,8 @@ The term [“**topic**” comes from linguistics][topic and comment] and have
 precedent in prior programming languages’ use of “topic variables”.
 
 The term “**head**” is preferred to “**topic expression**” because, in the
-future, the [topic concept could be extended to other syntaxes such as
-`for`][TODO], not just pipelines.
+future, the topic concept could be extended to other syntaxes, as with
+[Additional Feature TC][] and [Additional Feature TF][], not just pipelines.
 
 In addition, “head” is preferred to “**LHS**”, because “LHS” in the ECMAScript
 specification usually refers to the [LHS of assignments][ECMAScript LHS expressions],
@@ -4994,9 +5001,9 @@ syntax error), nor can it be assigned with a value (`# = 3` is a syntax error).
 
 “Topic reference” is also preferred to “**topic placeholder**”, to avoid
 confusion with the placeholders of another TC39 proposal – [syntactic partial
-application][]. These placeholders (currently denoted by nullary `?`) are of a
-different nature than topic references. Instead of referring to a single value
-bound earlier in the surrounding lexical context, these **parameter
+function application][]. These placeholders (currently denoted by nullary `?`)
+are of a different nature than topic references. Instead of referring to a
+single value bound earlier in the surrounding lexical context, these **parameter
 placeholders** act as the parameter to a new function. When this new function is
 called, those parameter placeholders will be bound to multiple argument values.
 
@@ -5005,9 +5012,9 @@ preferred to “LHS”. However, “RHS” is still a fine and acceptable name f
 body of the pipeline operator.
 
 “**[Bare style][]**” can also be called “**tacit style**”, but the former is
-preferred to the latter. Eventually, certain [possible future extensions to the
-topic concept][] may enable [tacit programming][] even without using bare-style
-pipelines.
+preferred to the latter. Eventually, certain possible future extensions to the
+topic concept, such as [Additional Feature TC][] and [Additional Feature TF][],
+would enable [tacit programming][] even without using bare-style pipelines.
 
 <!--
 # Appendix: Term rewriting
@@ -5395,6 +5402,7 @@ do { do { do { do { 3 * 3 } } }
 [Additional Feature PP]: #additional-feature-pp
 [Additional Feature TC]: #additional-feature-tc
 [Additional Feature TF]: #additional-feature-tf
+[Additional Feature BP]: #additional-feature-bp
 [Pipeline Proposal 1]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-1-f-sharp-only
 [Node.js `util.promisify`]: https://nodejs.org/api/util.html#util_util_promisify_original
 [don’t break my code]: #dont-break-my-code
@@ -5424,14 +5432,14 @@ do { do { do { do { 3 * 3 } } }
 [WHATWG Fetch + CP]: #whatwg-fetch-standard-core-proposal-only
 [jQuery + CP]: #jquery-core-proposal-only
 [Underscore.js + CP]: #underscorejs-core-proposal-only
-[Underscore.js + CP + PP]: #underscorejs-core-proposal--additional-feature-pp
+[Underscore.js + CP + BP + PP]: #underscorejs-core-proposal--additional-feature-bppp
 [Lodash + CP]: #lodash-core-proposal-only
-[Lodash + CP + PF]: #lodash-core-proposal--additional-feature-pf
-[Lodash + CP + PF + NP]: #lodash-core-proposal--additional-features-pfmt
-[Ramda + CP + PF]: #ramda-core-proposal--additional-feature-pf
-[Ramda + CP + PF + NP]: #ramda-core-proposal--additional-features-pfmt
-[WHATWG Streams + CP + PF]: #whatwg-streams-standard-core-proposal--additional-feature-pf
-[WHATWG Streams + CP + PF + NP]: #whatwg-streams-standard-core-proposal--additional-features-pfmt
+[Lodash + CP + BP + PF]: #lodash-core-proposal--additional-feature-bppf
+[Lodash + CP + BP + PF + NP]: #lodash-core-proposal--additional-features-bppfmt
+[Ramda + CP + BP + PF]: #ramda-core-proposal--additional-feature-bppf
+[Ramda + CP + BP + PF + NP]: #ramda-core-proposal--additional-features-bppfmt
+[WHATWG Streams + CP + BP + PF]: #whatwg-streams-standard-core-proposal--additional-feature-bppf
+[WHATWG Streams + CP + BP + PF + NP]: #whatwg-streams-standard-core-proposal--additional-features-bppfmt
 [identity function]: https://en.wikipedia.org/wiki/Identity_function
 [Clojure compact function]: https://clojure.org/reference/reader#_dispatch
 [intro]: #smart-pipelines
@@ -5443,3 +5451,13 @@ do { do { do { do { 3 * 3 } } }
 [block parameters]: #block-parameters
 [syntactic partial function application]: #syntactic-partial-function-application
 [Additional Features]: #smart-pipelines
+[terse function application]: #terse-function-application
+[terse function composition]: #terse-function-composition
+[function binding]: #function-binding
+[primary topic]: #core-proposal
+[secondary topic]: #additional-feature-np
+[tertiary topic]: #additional-feature-np
+[rest topic]: #additional-feature-np
+[pipeline functions]: #additional-feature-pf
+[async pipeline functions]: #additional-feature-pf
+[pipelines]: #core-proposal
