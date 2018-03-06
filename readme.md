@@ -1130,11 +1130,11 @@ do {
     if (response.headers.get('content-type')
       ??.toLowerCase()
       .indexOf('application/json') >= 0
-    ) {
+    )
       response.json()
-    } else {
+    else
       throw new TypeError()
-    };
+  };
   processJSON(json)
 }
 ```
