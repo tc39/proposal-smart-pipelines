@@ -712,13 +712,13 @@ g (
 value
 |> f
 |> do {
-    try {
-      JSON.parse(#);
-      catch (error) {
-        { message: error.message }
-      }
+  try {
+    JSON.parse(#);
+    catch (error) {
+      { message: error.message }
     }
   }
+}
 |> g
 ```
 `try` statements are also useful to embed in pipelines with `do`-block bodies.
