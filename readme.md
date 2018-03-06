@@ -5531,7 +5531,7 @@ use either `… |> await af` or use topic style: `… |> af |> await #`.
 | ″″                      | ″″                                       | `… \|> (await f())` 🚫
 | ″″                      | ″″                                       | `… \|> await (f)` 🚫
 | ″″                      | ″″                                       | `… \|> await (f())` 🚫
-|`… \|> af \|> await #`   |                                          |  `… \|> af |> await` 🚫
+|`… \|> af \|> await #`   |                                          |  `… \|> af \|> await` 🚫
 |`… \|> new C(#)`         |`… \|> new C`                             | `… \|> new C()` 🚫
 | ″″                      | ″″                                       | `… \|> (new C)` 🚫
 | ″″                      | ″″                                       | `… \|> (new C())` 🚫
@@ -5547,7 +5547,7 @@ use either `… |> await af` or use topic style: `… |> af |> await #`.
 |`… \|> o.make()(#)`      |`const f = o.make(); … \|> f`             | `… \|> o.make()` 🚫
 |`… \|> new o.make()(#)`  |`const C = o.make(); … \|> new C`         | `… \|> new o.make()` 🚫
 |`… \|> await o.make()(#)`|`const af = o.make(); … \|> await af`     | `… \|> await o.make()` 🚫
-|`… \|> await new o.make()(#)`)|                                     | `… \|> new await o.make()` 🚫
+|`… \|> await new o.make()(#)`|                                      | `… \|> new await o.make()` 🚫
 
 ### Bare style
 The **bare style** supports using simple identifiers, possibly with chains of
