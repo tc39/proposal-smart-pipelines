@@ -682,9 +682,9 @@ value
 |> f
 |> do {
     if (typeof # === 'number')
-      # + 1
+      # + 1;
     else
-      { data: # }
+      { data: # };
   }
 |> g
 ```
@@ -698,9 +698,9 @@ g (
   do {
     const $ = f(value);
     if (typeof $ === 'number')
-      $ + 1
+      $ + 1;
     else
-      { data: $ }
+      { data: $ };
   }
 )
 ```
@@ -873,7 +873,7 @@ do {
   const $ = value ** 2;
   f(x => {
     const _$ = g($, x);
-    return [_$ * 3, _$ * 5]
+    return [_$ * 3, _$ * 5];
   })
 }
 ```
@@ -893,9 +893,9 @@ This behavior is in order to fulfill the [goals][] of [simple scoping][] and of
 difficult to find.
 
 ```js
-value |> function () { return # }
+value |> function () { return #; }
 // 🚫 Syntax Error:
-// Lexical context `function () { return # }`
+// Lexical context `function () { return #; }`
 // contains a topic reference
 // but has no topic binding.
 // 🚫 Syntax Error:
@@ -908,7 +908,7 @@ value |> function () { return # }
 <td>
 
 ```js
-value |> class { m: () { return # }}
+value |> class { m: () { return #; }}
 // 🚫 Syntax Error:
 // Pipeline body `|> class { … }`
 // binds topic but contains no topic reference.
@@ -949,9 +949,9 @@ value
 |> await f(#, 5)
 |> {
     if (# > 20)
-      # + 30
+      # + 30;
     else
-      # - 10
+      # - 10;
   }
 |> g
 ```
@@ -964,9 +964,9 @@ Using `do` expressions then allows the embedding of arbitrary statements such as
 g(do {
   const value_ = await f(value, 5)
   if (value_ > 20)
-    value_ + 30
+    value_ + 30;
   else
-    value_ - 10
+    value_ - 10;
 })
 ```
 
@@ -978,9 +978,9 @@ value
 |> await f(#, 5)
 |> {
     if (x > 20)
-      x + 30
+      x + 30;
     else
-      x - 10
+      x - 10;
   }
 |> g
 // 🚫 Syntax Error:
@@ -1110,7 +1110,7 @@ do {
         |> #.indexOf('application/json')
         |> # >= 0
     )
-      throw new TypeError()
+      throw new TypeError();
     else
       # |> await #.json()
         |> processJSON
@@ -1131,9 +1131,9 @@ do {
       ??.toLowerCase()
       .indexOf('application/json') >= 0
     )
-      response.json()
+      response.json();
     else
-      throw new TypeError()
+      throw new TypeError();
   };
   processJSON(json)
 }
@@ -1162,7 +1162,7 @@ processing that becomes more readable with smart pipelines.
 return data
 |> buildFragment([#], context, scripts)
 |> #.childNodes
-|> jQuery.merge([], #)
+|> jQuery.merge([], #);
 ```
 The path that a reader’s eyes must trace while reading this pipeline moves
 straight down, with some movement toward the right then back: from `data` to
@@ -1174,10 +1174,10 @@ Here, no one-off-variable assignment is necessary.
 ```js
 parsed = buildFragment(
   [ data ], context, scripts
-)
+);
 return jQuery.merge(
   [], parsed.childNodes
-)
+);
 ```
 From [jquery/src/core/parseHTML.js][]. In this code, the eyes first must look
 for `data` – then upwards to `parsed = buildFragment` (and then back for
@@ -1255,9 +1255,9 @@ From [jquery/src/core/init.js][]. Used `??.` in both versions for conciseness.
 ```js
 match |> do {
   if (this[match] |> isFunction)
-    # |> context[#] |> this[match](#)
+    # |> context[#] |> this[match](#);
   else
-    # |> context[#] |> this.attr(match, #)
+    # |> context[#] |> this.attr(match, #);
 }
 ```
 Note how, in this version, the parallelism between the two clauses is very
@@ -1267,9 +1267,9 @@ clear: they both share the form `match |> context[#] |> something(match, #)`.
 
 ```js
 if (isFunction(this[match])) {
-  this[match](context[match])
+  this[match](context[match]);
 } else
-  this.attr(match, context[match])
+  this.attr(match, context[match]);
 }
 ```
 From [jquery/src/core/init.js][]. Here, the parallelism between the clauses
@@ -1302,12 +1302,12 @@ return context |> do {
   // Handle $(expr, $(...))
   else if (!# || #.jquery)
     # |> # || root
-      |> #.find(selector)
+      |> #.find(selector);
   // Handle $(expr, context)
   else
     # |> this.constructor
-      |> #.find(selector)
-}
+      |> #.find(selector);
+};
 ```
 The parallelism between the final two clauses becomes clearer here too.
 They both are of the form `# |> something |> #.find(selector)`.
@@ -1316,16 +1316,15 @@ They both are of the form `# |> something |> #.find(selector)`.
 
 ```js
 // Handle HTML strings
-if (…) {
+if (…)
   …
 // Handle $(expr, $(...))
-} else if (!context || context.jquery) {
-  return (context || root).find(selector)
+else if (!context || context.jquery)
+  return (context || root).find(selector);
 // Handle $(expr, context)
-} else {
+else
   return this.constructor(context)
     .find(selector);
-}
 ```
 From [jquery/src/core/init.js][]. The parallelism is much less clear here.
 
@@ -1338,26 +1337,25 @@ return selector |> do {
     …
   else if (# |> isFunction) {
     if (root.ready !== undefined)
-      root.ready(#)
+      root.ready(#);
     else
-      #(jQuery)
+      #(jQuery);
   }
   else
-    jQuery.makeArray(#, this)
-}
+    jQuery.makeArray(#, this);
+};
 ```
 
 <td>
 
 ```js
-if (typeof selector === 'string') {
+if (typeof selector === 'string')
   …
-} else if (isFunction(selector)) {
+else if (isFunction(selector))
   return root.ready !== undefined
     ? root.ready(selector)
-    : selector(jQuery)
-}
-return jQuery.makeArray(selector, this)
+    : selector(jQuery);
+return jQuery.makeArray(selector, this);
 ```
 From [jquery/src/core/access.js][].
 
@@ -1413,7 +1411,7 @@ function (obj, pred, context) {
   return pred
   |> cb
   |> _.negate
-  |> _.filter(obj, #, context)
+  |> _.filter(obj, #, context);
 }
 ```
 
@@ -1424,7 +1422,7 @@ function (obj, pred, context) {
   return _.filter(obj,
     _.negate(cb(pred)),
     context
-  )
+  );
 }
 ```
 
@@ -1457,7 +1455,7 @@ function (
   var self = baseCreate(srcFn.prototype);
   var result = srcFn.apply(self, args);
   if (_.isObject(result)) return result;
-  return self
+  return self;
 }
 ```
 
@@ -1468,13 +1466,13 @@ function (
 function (obj) {
   return obj |> do {
     if (# == null)
-      0
+      0;
     else if (|> isArrayLike)
-    |> #.length
+    |> #.length;
     else
     |> _.keys
-    |> #.length
-  }
+    |> #.length;
+  };
 }
 ```
 Pipelines make parallelism between all three clauses becomes clearer: `0` for
@@ -1520,15 +1518,13 @@ function hashGet (key) {
   return this.__data__
   |> do {
       if (nativeCreate)
-        #[key]
-        |> # === HASH_UNDEFINED
-            ? undefined
-            : #
+        #[key] |> do {
+          if (# !== HASH_UNDEFINED)
+            #;
+        };
       else if (hashOwnProperty.call(#, key))
-        #[key]
-      else
-        undefined
-    }
+        #[key];
+    };
 }
 ```
 
@@ -1577,9 +1573,9 @@ function mapCacheDelete (key) {
   |> #['delete']
   |> #(key)
   |> do {
-      this.size -= # ? 1 : 0;
-      #
-    }
+    this.size -= # ? 1 : 0;
+    #
+  };
 }
 ```
 
@@ -1590,7 +1586,7 @@ function mapCacheDelete (key) {
   var result =
     getMapData(this, key)['delete'](key);
   this.size -= result ? 1 : 0;
-  return result
+  return result;
 }
 ```
 
@@ -1601,12 +1597,12 @@ function mapCacheDelete (key) {
 function castPath (value, object) {
   return value |> do {
     if (# |> isArray)
-      #
+      #;
     else if (# |> isKey(#, object))
-      [#]
+      [#];
     else
-      # |> toString |> stringToPath
-  }
+      # |> toString |> stringToPath;
+  };
 }
 ```
 
@@ -1615,11 +1611,11 @@ function castPath (value, object) {
 ```js
 function castPath (value, object) {
   if (isArray(value)) {
-    return value
+    return value;
   }
   return isKey(value, object)
     ? [value]
-    : stringToPath(toString(value))
+    : stringToPath(toString(value));
 }
 ```
 
@@ -1674,9 +1670,9 @@ value
 |> f
 |> {
     if (typeof # === 'number')
-      # + 1
+      # + 1;
     else
-      { data: # }
+      { data: # };
   }
 |> g
 ```
@@ -1688,9 +1684,9 @@ g (
   do {
     const $ = f(value);
     if (typeof $ === 'number')
-      $ + 1
+      $ + 1;
     else
-      { data: $ }
+      { data: $ };
   }
 )
 ```
@@ -1752,9 +1748,9 @@ expressions][], as well as block pipeline bodies with [Additional Feature BP][]
 ```js
 x |> {
   if (# |> predicate)
-    # |> f |> # ** 2
+    # |> f |> # ** 2;
   else
-    # |> g |> # ** 3
+    # |> g |> # ** 3;
 }
 ```
 In this version, which uses Core Proposal syntax only, several pipelines start
@@ -1765,9 +1761,9 @@ with the phrase `# |>`.
 ```js
 do {
   if (predicate(x))
-    f(x) ** 2
+    f(x) ** 2;
   else
-    g(x) ** 3
+    g(x) ** 3;
 }
 ```
 Note that the topic reference in the repeated `# |>` here all refer to the same
@@ -1779,9 +1775,9 @@ topic from the same lexical environment – `x` – into `predicate`, `f`, and `
 ```js
 x |> {
   if (|> predicate)
-  |> f |> # ** 2
+  |> f |> # ** 2;
   else
-  |> g |> # ** 3
+  |> g |> # ** 3;
 }
 ```
 In this version, which also uses Additional Feature PP, those pipelines omit the
@@ -1793,9 +1789,9 @@ as the value of their topics.
 ```js
 do {
   if (predicate(x))
-    f(x) ** 2
+    f(x) ** 2;
   else
-    g(x) ** 3
+    g(x) ** 3;
 }
 ```
 The unary pipeline `|>` still piped in the same tacit topic from the same
@@ -1892,10 +1888,10 @@ terseness could be further improved.
         |> #.indexOf('application/json')
         |> # >= 0
     )
-      throw new new TypeError()
+      throw new new TypeError();
     else
       # |> await #.json()
-        |> processJSON
+        |> processJSON;
   }
 }
 ```
@@ -1913,10 +1909,10 @@ fetch('https://pk.example/berlin-calling',
     ??.toLowerCase()
     .indexOf('application/json') >= 0
   )
-    return response.json()
+    return response.json();
   else
-    throw new TypeError()
-}).then(processJSON)
+    throw new TypeError();
+}).then(processJSON);
 ```
 
 <tr>
@@ -1932,10 +1928,10 @@ fetch('https://pk.example/berlin-calling',
     |> #.indexOf('application/json')
     |> # >= 0
     )
-      throw new new TypeError()
+      throw new new TypeError();
     else
     |> await #.json()
-    |> processJSON
+    |> processJSON;
   }
 }
 ```
@@ -1953,10 +1949,10 @@ fetch('https://pk.example/berlin-calling',
     ??.toLowerCase()
     .indexOf('application/json') >= 0
   )
-    return response.json()
+    return response.json();
   else
-    throw new TypeError()
-}).then(processJSON)
+    throw new TypeError();
+}).then(processJSON);
 ```
 
 </table>
@@ -1979,9 +1975,9 @@ could be further improved.
 ```js
 match |> do {
   if (this[match] |> isFunction)
-    # |> context[#] |> this[match](#)
+    # |> context[#] |> this[match](#);
   else
-    # |> context[#] |> this.attr(match, #)
+    # |> context[#] |> this.attr(match, #);
 }
 ```
 This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
@@ -1992,9 +1988,9 @@ only. Note that several expressions start with `# |>`. There is also a `|> do {
 
 ```js
 if (isFunction(this[match])) {
-  this[match](context[match])
+  this[match](context[match]);
 } else
-  this.attr(match, context[match])
+  this.attr(match, context[match]);
 }
 ```
 From [jquery/src/core/init.js][].
@@ -2005,9 +2001,9 @@ From [jquery/src/core/init.js][].
 ```js
 match |> {
   if (this[match] |> isFunction)
-  |> context[#] |> this[match](#)
+  |> context[#] |> this[match](#);
   else
-  |> context[#] |> this.attr(match, #)
+  |> context[#] |> this.attr(match, #);
 }
 ```
 This pipeline version also uses [Additional Feature BP][] and [Additional
@@ -2018,9 +2014,9 @@ Feature PP][]. The `|> do { … }` has simply become `|> { … }`. And the repe
 
 ```js
 if (isFunction(this[match])) {
-  this[match](context[match])
+  this[match](context[match]);
 } else
-  this.attr(match, context[match])
+  this.attr(match, context[match]);
 }
 ```
 From [jquery/src/core/init.js][].
@@ -2036,12 +2032,12 @@ return context |> do {
   // Handle $(expr, $(...))
   else if (!# || #.jquery)
     # |> # || root
-      |> #.find(selector)
+      |> #.find(selector);
   // Handle $(expr, context)
   else
     # |> this.constructor
-      |> #.find(selector)
-}
+      |> #.find(selector);
+};
 ```
 This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
 only. Note that several expressions start with `# |>`. There is also a `|> do {
@@ -2055,7 +2051,7 @@ if (…) {
   …
 // Handle $(expr, $(...))
 } else if (!context || context.jquery) {
-  return (context || root).find(selector)
+  return (context || root).find(selector);
 // Handle $(expr, context)
 } else {
   return this.constructor(context)
@@ -2075,12 +2071,12 @@ return context |> {
   // Handle $(expr, $(...))
   else if (!# || #.jquery)
   |> # || root
-  |> #.find(selector)
+  |> #.find(selector);
   // Handle $(expr, context)
   else
   |> this.constructor
-  |> #.find(selector)
-}
+  |> #.find(selector);
+};
 ```
 This pipeline version also uses [Additional Feature BP][] and [Additional
 Feature PP][]. The `|> do { … }` has simply become `|> { … }`. And the repeated
@@ -2094,7 +2090,7 @@ if (…) {
   …
 // Handle $(expr, $(...))
 } else if (!context || context.jquery) {
-  return (context || root).find(selector)
+  return (context || root).find(selector);
 // Handle $(expr, context)
 } else {
   return this.constructor(context)
@@ -2113,9 +2109,9 @@ return selector |> do {
   else if (# |> isFunction)
     root.ready !== undefined
       ? root.ready(#)
-      : #(jQuery)
+      : #(jQuery);
   else
-    jQuery.makeArray(#, this)
+    jQuery.makeArray(#, this);
 }
 ```
 This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
@@ -2130,9 +2126,9 @@ if (typeof selector === 'string') {
 } else if (isFunction(selector)) {
   return root.ready !== undefined
     ? root.ready(selector)
-    : selector(jQuery)
+    : selector(jQuery);
 }
-return jQuery.makeArray(selector, this)
+return jQuery.makeArray(selector, this);
 ```
 From [jquery/src/core/access.js][].
 
@@ -2146,10 +2142,10 @@ return selector |> {
   else if (|> isFunction)
     root.ready !== undefined
       ? root.ready(#)
-      : #(jQuery)
+      : #(jQuery);
   else
-    jQuery.makeArray(#, this)
-}
+    jQuery.makeArray(#, this);
+};
 ```
 This pipeline version also uses [Additional Feature BP][] and [Additional
 Feature PP][]. The `|> do { … }` has simply become `|> { … }`. And the repeated
@@ -2163,9 +2159,9 @@ if (typeof selector === 'string') {
 } else if (isFunction(selector)) {
   return root.ready !== undefined
     ? root.ready(selector)
-    : selector(jQuery)
+    : selector(jQuery);
 }
-return jQuery.makeArray(selector, this)
+return jQuery.makeArray(selector, this);
 ```
 From [jquery/src/core/access.js][].
 
@@ -2189,13 +2185,13 @@ with [Additional Feature PP][] improves the visual parallelism of its code.
 function (obj) {
   return obj |> do {
     if (# == null)
-      0
+      0;
     else if (# |> isArrayLike)
-      # |> #.length
+      # |> #.length;
     else
       # |> _.keys
-      |> #.length
-  }
+        |> #.length;
+  };
 }
 ```
 Pipelines make parallelism between all three clauses becomes clearer.
@@ -2221,18 +2217,19 @@ function (obj) {
 function (obj) {
   return obj |> {
     if (# == null)
-      0
+      0;
     else if (|> isArrayLike)
-    |> #.length
+    |> #.length;
     else
     |> _.keys
-    |> #.length
-  }
+    |> #.length;
+  };
 }
 ```
 By removing `# |>` noise, [Additional Feature PP][] makes this parallelism even
 clearer: `0` for the `if` clause, `|> #.length` for the `else if` clause, and
-`|> something |> #.length` for the `else` clause.
+`|> something |> #.length` for the `else` clause. [Additional Feature BP][] also
+makes the `do` unnecessary.
 
 <td>
 
@@ -2263,18 +2260,17 @@ use the outer environment’s topic: `obj`.
 
 ```js
 function hashGet (key) {
-  return this.__data__
-  |> do {
-      if (nativeCreate)
-        #[key]
-        |> # === HASH_UNDEFINED
-            ? undefined
-            : #
-      else if (hashOwnProperty.call(#, key))
-        #[key]
-      else
-        undefined
-    }
+  return this.__data__ |> do {
+    if (nativeCreate)
+      #[key] |> {
+        if # !== HASH_UNDEFINED
+          #;
+      };
+    else if (hashOwnProperty.call(#, key))
+      #[key];
+    else
+      undefined;
+  };
 }
 ```
 This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
@@ -2303,12 +2299,12 @@ function hashGet (key) {
 function castPath (value, object) {
   return value |> {
     if (|> isArray)
-      #
+      #;
     else if (|> isKey(#, object))
-      [#]
+      [#];
     else
-    |> toString |> stringToPath
-  }
+    |> toString |> stringToPath;
+  };
 }
 ```
 This pipeline version also uses [Additional Feature BP][] and [Additional
@@ -2320,11 +2316,11 @@ Feature PP][]. The `|> do { … }` has simply become `|> { … }`. And the repe
 ```js
 function castPath (value, object) {
   if (isArray(value)) {
-    return value
+    return value;
   }
   return isKey(value, object)
     ? [value]
-    : stringToPath(toString(value))
+    : stringToPath(toString(value));
 }
 ```
 
@@ -2941,7 +2937,7 @@ class LipFuzzTransformer {
     this.lastIndex = undefined;
   }
 
-  transform(chunk, controller) {
+  transform (chunk, controller) {
     this.partialChunk = ""
     this.lastIndex = 0
     const partialAtEndRegexp =
@@ -2960,24 +2956,25 @@ class LipFuzzTransformer {
           this.partialChunk =
           |> #.index
           |> chunk.substring;
-        |> #.index
-        |> chunk.substring(0, #)
+          #
+          |> #.index
+          |> chunk.substring(0, #);
         }
         else
-          chunk
+          chunk;
       }
-    |> controller.enqueue
+    |> controller.enqueue;
   }
 
-  flush(controller) {
+  flush (controller) {
     this.partialChunk |> {
       if (#.length > 0) {
-      |> controller.enqueue
+      |> controller.enqueue;
       }
-    }
+    };
   }
 
-  replaceTag(match, p1, offset) {
+  replaceTag (match, p1, offset) {
     return this.substitutions
     |> #[p1]
     |> # === undefined ? '' : #
@@ -2985,9 +2982,8 @@ class LipFuzzTransformer {
         this.lastIndex =
         |> #.length
         |> offset + #;
-        #
-      }
-    }
+        #;
+    };
   }
 }
 ```
@@ -2996,13 +2992,13 @@ class LipFuzzTransformer {
 
 ```js
 class LipFuzzTransformer {
-  constructor(substitutions) {
+  constructor (substitutions) {
     this.substitutions = substitutions;
     this.partialChunk = "";
     this.lastIndex = undefined;
   }
 
-  transform(chunk, controller) {
+  transform (chunk, controller) {
     chunk = this.partialChunk + chunk;
     this.partialChunk = "";
     this.lastIndex = 0;
@@ -3025,21 +3021,21 @@ class LipFuzzTransformer {
     controller.enqueue(chunk);
   }
 
-  flush(controller) {
+  flush (controller) {
     if (this.partialChunk.length > 0) {
       controller.enqueue(
         this.partialChunk);
     }
   }
 
-  replaceTag(match, p1, offset) {
+  replaceTag (match, p1, offset) {
     let replacement = this.substitutions[p1];
     if (replacement === undefined) {
       replacement = "";
     }
     this.lastIndex =
       offset + replacement.length;
-    return replacement
+    return replacement;
   }
 }
 ```
@@ -3474,14 +3470,14 @@ the other proposal’s code.
 
 ```js
 function createRound (methodName) {
-  var func = Math[methodName]
+  var func = Math[methodName];
   return function (number, precision) {
-    number = number |> toNumber
+    number = number |> toNumber;
     precision = precision |> {
       if (# == null)
-        0
+        0;
       else
-      |> toInteger |> nativeMin(#, 292)
+      |> toInteger |> nativeMin(#, 292);
     }
     return number |> {
       if (precision)
@@ -3495,11 +3491,11 @@ function createRound (methodName) {
       |> `${#}e`
       |> ...#.split('e')
       |> `${#}e${+## - precision}`
-      |> +#
+      |> +#;
       else
-      |> func
-    }
-  }
+      |> func;
+    };
+  };
 }
 ```
 The parallelism between the `if` clause’s `|> shift |> func |> shiftBack` and
@@ -3509,7 +3505,7 @@ the `else` clause’s `|> func` becomes visually clearer with smart pipelines.
 
 ```js
 function createRound (methodName) {
-  var func = Math[methodName]
+  var func = Math[methodName];
   return function (number, precision) {
     number = toNumber(number)
     precision = precision == null
@@ -3519,19 +3515,20 @@ function createRound (methodName) {
       // Shift with exponential notation
       // to avoid floating-point issues.
       // See https://mdn.io/round#Examples.
-      var pair = (toString(number) + 'e')
-        .split('e'),
-      value = func(
-        pair[0] + 'e' + (
-          +pair[1] + precision))
+      var
+        pair = (toString(number) + 'e')
+          .split('e'),
+        value = func(
+          pair[0] + 'e' + (
+            +pair[1] + precision));
 
       pair = (toString(value) + 'e')
-        .split('e')
+        .split('e');
       return +(
         pair[0] + 'e' + (
-          +pair[1] - precision))
+          +pair[1] - precision));
     }
-    return func(number)
+    return func(number);
   }
 }
 
@@ -3692,14 +3689,14 @@ try {
 async function readInto(buffer, offset = 0) {
   return buffer |> {
     if (#.byteLength === offset)
-      #
+      #;
     else
     |> (#, offset, #.byteLength - offset)
     |> new Uint8Array
     |> await reader.read
     |> (#.buffer, #.byteLength)
-    |> readInto(#, offset + ##)
-  }
+    |> readInto(#, offset + ##);
+  };
 }
 ```
 
@@ -3725,7 +3722,7 @@ function readInto(buffer, offset = 0) {
   return reader.read(view).then(newView => {
     return readInto(newView.buffer,
       offset + newView.byteLength);
-  })
+  });
 }
 ```
 
@@ -4828,57 +4825,57 @@ export function select (value, block) {
   const selectBlockTopic = new CompletionRecord();
   return block(topic)
   |> match {
-      CompletionRecord:
-        #.value
-      else:
-        throw 'Invalid clause was used in select block'
-        |> new Error
-    }
+    CompletionRecord:
+      #.value;
+    else:
+      throw 'Invalid clause was used in select block'
+      |> new Error;
+  };
 }
 
 export function otherwise (block) {
   return function.topic
   |> match (selectBlockTopic) {
-      CompletionRecord:
-        if (#.type === undefined) {
-          #.type = 'normal';
-          #.value = {};
-        }
-        #
-      else:
-        throw 'Invalid otherwise clause was used outside select block'
-        |> new Error
-    }
+    CompletionRecord:
+      if (#.type === undefined) {
+        #.type = 'normal';
+        #.value = {};
+      }
+      #;
+    else:
+      throw 'Invalid otherwise clause was used outside select block'
+      |> new Error;
+  };
 }
 
 export function when (caseValue, block) {
   return function.topic
   |> match (selectBlockTopic) {
-      CompletionRecord:
-      |> applyWhen(#, caseValue, block)
-      else:
-        throw 'Invalid when clause used was outside select block'
-        |> new Error
-    }
+    CompletionRecord:
+    |> applyWhen(#, caseValue, block);
+    else:
+      throw 'Invalid when clause used was outside select block'
+      |> new Error;
+  };
 }
 
 function applyWhen (selectBlockTopic, caseValue, block) {
-  match (#.value) {
+  return match (#.value) {
     [...]:
       (selectBlockTopic, caseValue, block)
-      |> applyWhenArray
+      |> applyWhenArray;
     else:
       (selectBlockTopic, caseValue, block)
-      |> applyWhenValue
+      |> applyWhenValue;
   }
 }
 
 function applyWhenArray (selectBlockTopic, testArray, block) {
-  testArray.some(arrayValue =>
+  return testArray.some(arrayValue =>
     contextTopic |> {
       if (when(arrayValue, block))
-        #
-    }
+        #;
+    });
 }
 
 function applyWhenValue (contextTopic, testValue, block) {
@@ -4890,23 +4887,23 @@ function applyWhenValue (contextTopic, testValue, block) {
       #.type = 'normal';
       #.value = match |> block;
     }
-    #
-  }
+    #;
+  };
 }
 ```
 ***
 ```js
 select ('world') {
   when ([Boolean, Number]) {
-  |> log
+  |> log;
   }
   when (String) {
   |> `Hello ${#}`
-  |> log
+  |> log;
   }
   otherwise {
     throw `Error: ${|> format}`
-    |> new Error
+    |> new Error;
   }
 }
 ```
