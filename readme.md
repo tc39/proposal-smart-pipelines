@@ -5547,7 +5547,7 @@ use either `… |> await af` or use topic style: `… |> af |> await #`.
 |`… \|> o.make()(#)`      |`const f = o.make(); … \|> f`             | `… \|> o.make()` 🚫
 |`… \|> new o.make()(#)`  |`const C = o.make(); … \|> new C`         | `… \|> new o.make()` 🚫
 |`… \|> await o.make()(#)`|`const af = o.make(); … \|> await af`     | `… \|> await o.make()` 🚫
-|`… \|> await new o.make()(#)`|`const AC = new o.make(); … \|> await AC`| `… \|> new await o.make()` 🚫
+|`… \|> await new o.make()(#)`|`const af = new o.make(); … \|> await af`| `… \|> new await o.make()` 🚫
 
 ### Bare style
 The **bare style** supports using simple identifiers, possibly with chains of
