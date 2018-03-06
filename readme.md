@@ -1110,7 +1110,7 @@ do {
         |> #.indexOf('application/json')
         |> # >= 0
     )
-      throw new new TypeError()
+      throw new TypeError()
     else
       # |> await #.json()
         |> processJSON
