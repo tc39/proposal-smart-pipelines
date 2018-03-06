@@ -2611,7 +2611,8 @@ array.map($ => h(2, g(f($))) + 2)
 
 ```js
 const doubleThenSquareThenHalfAsync =
-  async $ => $ |> double |> await squareAsync |> half
+  async $ => $
+    |> double |> await squareAsync |> half
 ```
 ```js
 const doubleThenSquareThenHalfAsync =
@@ -2627,7 +2628,8 @@ as usual.
 
 ```js
 const doubleThenSquareThenHalfAsync =
-  async $ => half(await squareAsync(double($)))
+  async $ =>
+    half(await squareAsync(double($)))
 ```
 ```js
 const doubleThenSquareThenHalfAsync =
@@ -2667,13 +2669,15 @@ readability of the code.
 const toSlug = $ =>
   encodeURIComponent(
     $.split(' ')
-      .map(str => str.toLowerCase())
+      .map(str =>
+        str.toLowerCase())
       .join('-'))
 ```
 ```js
 const toSlug =
     _ => _.split(" ")
-    :> _ => _.map(str => str.toLowerCase())
+    :> _ => _.map(str =>
+      str.toLowerCase())
     :> _ => _.join("-")
     :> encodeURIComponent
 ```
@@ -2684,10 +2688,10 @@ Meadows][isiahmeadows functional composition].
 <td>
 
 ```js
-```js
-const getTemperatureFromServerInLocalUnits = async +>
-|> await getTemperatureKelvinFromServerAsync
-|> convertTemperatureKelvinToLocalUnits
+const getTemperatureFromServerInLocalUnits =
+  async +>
+  |> await getTemperatureKelvinFromServerAsync
+  |> convertTemperatureKelvinToLocalUnits
 ```
 Lifting of non-sync-function expressions into function expressions is
 unnecessary for composition with Additional Feature PF.
@@ -2695,10 +2699,11 @@ unnecessary for composition with Additional Feature PF.
 <td>
 
 ```js
-Promise.prototype[Symbol.lift] = f => x => x.then(f)
+Promise.prototype[Symbol.lift] =
+  f => x => x.then(f)
 const getTemperatureFromServerInLocalUnits =
-getTemperatureKelvinFromServerAsync
-:> convertTemperatureKelvinToLocalUnits
+  getTemperatureKelvinFromServerAsync
+  :> convertTemperatureKelvinToLocalUnits
 ```
 From the proposal for [syntactic functional composition by Isiah
 Meadows][isiahmeadows functional composition].
@@ -2708,15 +2713,29 @@ Meadows][isiahmeadows functional composition].
 
 ```js
 // Functional Building Blocks
-const car = +> startMotor |> useFuel |> turnKey;
-const electricCar = +> startMotor |> usePower |> turnKey;
+const car = +>
+|> startMotor
+|> useFuel
+|> turnKey;
+const electricCar = +>
+|> startMotor
+|> usePower
+|> turnKey;
 
 // Control Flow Management
-const getData = +> truncate |> sort |> filter |> request;
+const getData = +>
+|> truncate
+|> sort
+|> filter
+|> request;
 
 // Argument Assignment
 const sortBy = 'date';
-const getData = +> truncate |> sort |> #::filter(sortBy) |> request);
+const getData = +>
+  |> truncate
+  |> sort
+  |> #::filter(sortBy)
+  |> request;
 ```
 This example also uses [function binding][].
 
@@ -2736,7 +2755,9 @@ const getData = truncate.compose(
 // Argument Assignment
 const sortBy = 'date';
 const getData = truncate.compose(
-  sort, $ => filter.bind($, sortBy), request);
+  sort,
+  $ => filter.bind($, sortBy),
+  request);
 ```
 From the proposal for [syntactic functional composition by Simon
 Staton][simonstaton functional composition].
@@ -2745,14 +2766,12 @@ Staton][simonstaton functional composition].
 <td>
 
 ```js
-//+ pluck :: String -> [StrMap a] -> [a]
 const pluck = +> map |> prop
 ```
 
 <td>
 
 ```js
-//+ pluck :: String -> [StrMap a] -> [a]
 const pluck = compose(map)(prop)
 ```
 From a [comment about syntactic functional composition by Tom Harding][i-am-tom
@@ -2830,7 +2849,6 @@ let newScore = player.score
 <td>
 
 ```js
-```js
 const toSlug = +>
 |> encodeURIComponent
 |> _.split(#, " ")
@@ -2860,15 +2878,18 @@ result of their pipeline-operator-like semantics.\
 `+> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
 [bare style][]. This in turn is `$ => console.log($)`…
 ```js
-Promise.resolve(123).then(+> console.log)
+Promise.resolve(123)
+  .then(+> console.log)
 ```
 
 <td>
 
 …and `$ => console.log($)` is equivalent to `console.log.bind(console)`.
 ```js
-Promise.resolve(123).then(console.log.bind(console))
-Promise.resolve(123).then(::console.log)
+Promise.resolve(123)
+  .then(console.log.bind(console))
+Promise.resolve(123)
+  .then(::console.log)
 ```
 
 <tr>
@@ -2888,7 +2909,8 @@ $('.some-link').on('click', ::view.reset)
 <td>
 
 ```js
-const { hasOwnProperty } = Object.prototype
+const { hasOwnProperty } =
+  Object.prototype
 const x = { key: 5 }
 x::hasOwnProperty
 x::hasOwnProperty('key')
@@ -2898,7 +2920,8 @@ To do terse **method calling/binding**, the `::` operator would still be require
 <td>
 
 ```js
-const { hasOwnProperty } = Object.prototype
+const { hasOwnProperty } =
+  Object.prototype
 const x = { key: 5 }
 x::hasOwnProperty
 x::hasOwnProperty('key')
@@ -4717,11 +4740,10 @@ array.map($ => h(2, g(f($))) + 2)
 
 ```js
 const doubleThenSquareThenHalfAsync =
-  async $ => $ |> double |> await squareAsync |> half
-```
-```js
-const doubleThenSquareThenHalfAsync =
-  async +> double |> await squareAsync |> half
+  async +>
+    |> double
+    |> await squareAsync
+    |> half
 ```
 When compared to the proposal for [syntactic functional composition by
 TheNavigateur][TheNavigateur functional composition], this syntax does not need
@@ -4733,7 +4755,8 @@ as usual.
 
 ```js
 const doubleThenSquareThenHalfAsync =
-  async $ => half(await squareAsync(double($)))
+  async $ =>
+    half(await squareAsync(double($)))
 ```
 ```js
 const doubleThenSquareThenHalfAsync =
@@ -4773,13 +4796,15 @@ readability of the code.
 const toSlug = $ =>
   encodeURIComponent(
     $.split(' ')
-      .map(str => str.toLowerCase())
+      .map(str =>
+        str.toLowerCase())
       .join('-'))
 ```
 ```js
 const toSlug =
   _ => _.split(" ")
-  :> _ => _.map(str => str.toLowerCase())
+  :> _ => _.map(str =>
+    str.toLowerCase())
   :> _ => _.join("-")
   :> encodeURIComponent
 ```
@@ -4790,8 +4815,8 @@ Meadows][isiahmeadows functional composition].
 <td>
 
 ```js
-```js
-const getTemperatureFromServerInLocalUnits = async +>
+const getTemperatureFromServerInLocalUnits =
+  async +>
   |> await getTemperatureKelvinFromServerAsync
   |> convertTemperatureKelvinToLocalUnits
 ```
@@ -4801,7 +4826,8 @@ unnecessary for composition with Additional Feature PF.
 <td>
 
 ```js
-Promise.prototype[Symbol.lift] = f => x => x.then(f)
+Promise.prototype[Symbol.lift] = f => x =>
+  x.then(f)
 const getTemperatureFromServerInLocalUnits =
   getTemperatureKelvinFromServerAsync
   :> convertTemperatureKelvinToLocalUnits
@@ -4814,15 +4840,29 @@ Meadows][isiahmeadows functional composition].
 
 ```js
 // Functional Building Blocks
-const car = +> startMotor |> useFuel |> turnKey;
-const electricCar = +> startMotor |> usePower |> turnKey;
+const car = +>
+|> startMotor
+|> useFuel
+|> turnKey;
+const electricCar = +>
+|> startMotor
+|> usePower
+|> turnKey;
 
 // Control Flow Management
-const getData = +> truncate |> sort |> filter |> request;
+const getData = +>
+|> truncate
+|> sort
+|> filter
+|> request;
 
 // Argument Assignment
 const sortBy = 'date';
-const getData = +> truncate |> sort |> #::filter(sortBy) |> request);
+const getData = +>
+|> truncate
+|> sort
+|> #::filter(sortBy)
+|> request;
 ```
 This example also uses [function binding][].
 
@@ -4830,15 +4870,22 @@ This example also uses [function binding][].
 
 ```js
 // Functional Building Blocks
-const car = startMotor.compose(useFuel, turnKey);
-const electricCar = startMotor.compose(usePower, turnKey);
+const car = startMotor.compose(
+  useFuel, turnKey);
+const electricCar = startMotor.compose(
+  usePower, turnKey);
 
 // Control Flow Management
-const getData = truncate.compose(sort, filter, request);
+const getData = truncate.compose(
+  sort, filter, request);
 
 // Argument Assignment
 const sortBy = 'date';
-const getData = truncate.compose(sort, filter.bind(data, sortBy), request);
+const getData = truncate.compose(
+  sort,
+  $ => filter.bind($, sortBy),
+  request
+);
 ```
 From the proposal for [syntactic functional composition by Simon
 Staton][simonstaton functional composition].
@@ -4847,14 +4894,12 @@ Staton][simonstaton functional composition].
 <td>
 
 ```js
-//+ pluck :: String -> [StrMap a] -> [a]
 const pluck = +> map |> prop
 ```
 
 <td>
 
 ```js
-//+ pluck :: String -> [StrMap a] -> [a]
 const pluck = compose(map)(prop)
 ```
 From a [comment about syntactic functional composition by Tom Harding][i-am-tom
@@ -4961,7 +5006,6 @@ let newScore = player.score
 <tr>
 <td>
 
-```js
 ```js
 const toSlug = +>
 |> encodeURIComponent
