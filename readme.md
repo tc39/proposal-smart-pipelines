@@ -4425,13 +4425,29 @@ Furthermore, calls are not only unary; they are also [TODO]
 Terse composition of all expressions – [not only unary functions][expressive
 versatility] but also n-ary functions, object methods, async functions,
 generators, `if` `else` statements, and so forth – is a goal of smart pipelines.
-Terse composition is addressed by [Additional Feature PF][].
+[Several alternative proposals also address function composition][function
+composition], but [Additional Feature PF][] holistically addresses it with
+application, partial application, and method extraction, and not only for unary
+functions but also for expressions of any type.
 
-### Terse partial function application
-[TODO]
+### Terse partial application
+Terse partial application of all expressions – [not only functions][expressive
+versatility] but also object methods, async functions, generators, `if` `else`
+statements, and so forth – is a goal of smart pipelines. [An existing alternative
+proposals also address partial function application][partial application], but
+[Additional Feature PF][] holistically addresses it with application, partial
+application, and method extraction, and not only for unary functions but also
+for expressions of any type. [Additional Feature NP][] extends this ability to
+N-ary expressions, including variadic expressions.
 
 ### Terse method extraction
-[TODO]
+Terse method extraction – being able to use a method as a function without
+relying on `Function.prototype.bind`, such as using `console.log` as a callback
+function – is another goal of smart pipelines. Method extraction is also
+addressed by [Additional Feature PF][]. [An existing alternative proposal
+already addresses method extraction][method extraction], but [Additional
+Feature PF][] holistically addresses it with composition, application, and
+partial application.
 
 ## Other Goals
 Although these have been prioritized last, they are still important.
