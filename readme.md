@@ -179,14 +179,14 @@ left and right of each subexpression** to understand its data flow.
 
 ```js
 promise
-  |> await #
-  |> # ??: throw new TypeError(
+|> await #
+|> # ??: throw new TypeError(
     `Invalid value from ${promise}`)
-  |> doubleSay(#, ', ')
-  |> capitalize
-  |> # + '!'
-  |> new User.Message
-  |> await stream.write
+|> doubleSay(#, ', ')
+|> capitalize
+|> # + '!'
+|> new User.Message
+|> await stream.write
 ```
 
 With smart pipelines, the code above becomes **terser** and, literally, more
@@ -267,9 +267,9 @@ outside a pipeline body.
 For instance, the chained pipeline:
 ```js
 5 |> # - 3
-  |> -#
-  |> # * 2
-  |> Math.max(#, 0);
+|> -#
+|> # * 2
+|> Math.max(#, 0);
 ```
 
 <td>
@@ -300,13 +300,13 @@ operations, logical operations, bitwise operations, `typeof`, `instanceof`,
 
 ```js
 promise
-  |> await #
-  |> # ??: throw new TypeError()
-  |> doubleSay(#, ', ')
-  |> capitalize
-  |> # + '!'
-  |> new User.Message
-  |> await stream.write
+|> await #
+|> # ??: throw new TypeError()
+|> doubleSay(#, ', ')
+|> capitalize
+|> # + '!'
+|> new User.Message
+|> await stream.write
 ```
 Note that, in the example above, it is **not necessary** to include
 **parentheses** for `capitalize` or `new User.Message`; they were **tacitly
@@ -335,14 +335,14 @@ await stream.write(
 
 ```js
 promise
-  |> await #
-  |> # ??: throw new TypeError(
+|> await #
+|> # ??: throw new TypeError(
     `Invalid value from ${#}`)
-  |> doubleSay(#, ', ')
-  |> capitalize(#)
-  |> # + '!'
-  |> new User.Message(#)
-  |> await stream.write(#)
+|> doubleSay(#, ', ')
+|> capitalize(#)
+|> # + '!'
+|> new User.Message(#)
+|> await stream.write(#)
 ```
 This version is equivalent to the version above, except that the `capitalize`
 and `new User.Message` pipeline bodies explicitly include optional topic
@@ -381,15 +381,15 @@ function application][].
 
 ```js
 value
-  |> f
-  |> # + 2
-  |> # * 3
-  |> -#
-  |> g(#, x)
-  |> o.unaryMethod
-  |> await asyncFunction
-  |> await o.asyncMethod
-  |> new Constructor
+|> f
+|> # + 2
+|> # * 3
+|> -#
+|> g(#, x)
+|> o.unaryMethod
+|> await asyncFunction
+|> await o.asyncMethod
+|> new Constructor
 ```
 This pipeline is a very flat expression, with only one level of indentation, and
 with each transformation step on its own line.
@@ -466,12 +466,12 @@ function capitalize (str) {
 }
 
 promise
-  |> await #
-  |> # ??: throw new TypeError()
-  |> doubleSay(#, ', ')
-  |> capitalize |> # + '!'
-  |> new User.Message
-  |> await stream.write
+|> await #
+|> # ??: throw new TypeError()
+|> doubleSay(#, ', ')
+|> capitalize |> # + '!'
+|> new User.Message
+|> await stream.write
 ```
 This pipeline is also relatively flat, with only one level of indentation, and
 with each transformation step on its own line.
@@ -542,12 +542,12 @@ expressions that are embeddable in other expressions.
 
 ```js
 promise
-  |> await #
-  |> # ??: throw new TypeError()
-  |> `${#}, ${#}`
-  |> #[0].toUpperCase() + #.substring(1)
-  |> # + '!'
-  |> new User.Message
+|> await #
+|> # ??: throw new TypeError()
+|> `${#}, ${#}`
+|> #[0].toUpperCase() + #.substring(1)
+|> # + '!'
+|> new User.Message
 ```
 When tiny functions are only used once, and when their bodies would be obvious and
 self-documenting in meaning, then they might be ritual boilerplate that a developer
@@ -575,12 +575,12 @@ writability and in readability.
 
 ```js
 promise
-  |> await #
-  |> # ??: throw new TypeError()
-  |> `${#}, ${#}`
-  |> #[0].toUpperCase() + #.substring(1)
-  |> # + '!'
-  |> new User.Message
+|> await #
+|> # ??: throw new TypeError()
+|> `${#}, ${#}`
+|> #[0].toUpperCase() + #.substring(1)
+|> # + '!'
+|> new User.Message
 ```
 
 <td>
@@ -609,13 +609,13 @@ nouns over their verbs), and it is easy to typo their names.
 
 ```js
 promise
-  |> await #
-  |> # ??: throw new TypeError()
-  |> normalize
-  |> `${#}, ${#}`
-  |> #[0].toUpperCase() + #.substring(1)
-  |> # + '!'
-  |> new User.Message
+|> await #
+|> # ??: throw new TypeError()
+|> normalize
+|> `${#}, ${#}`
+|> #[0].toUpperCase() + #.substring(1)
+|> # + '!'
+|> new User.Message
 ```
 With a pipeline, there are no unnecessary variable identifiers. Inserting a new
 step in between two steps (or deleting a step) only touches one new line. Here,
@@ -652,9 +652,9 @@ topic reference `#`. The topic reference `#` is bound to the previous result
 becomes the final result of that pipeline, which in turn is passed into `|> g`.
 ```js
 value
-  |> f
-  |> do { sideEffect(); # }
-  |> g
+|> f
+|> do { sideEffect(); # }
+|> g
 ```
 This can be useful for embedding side effects in pipeline chains, as in the example
 above, and `if` `else` statements and `try` statements, such as with the
@@ -679,14 +679,14 @@ g (
 
 ```js
 value
-  |> f
-  |> do {
+|> f
+|> do {
     if (typeof # === 'number')
       # + 1
     else
       { data: # }
   }
-  |> g
+|> g
 ```
 `if` `else` statements may also be used within `do`-block pipeline bodies, as an
 alternative to the ternary conditional operator `?` `:`.
@@ -710,8 +710,8 @@ g (
 
 ```js
 value
-  |> f
-  |> do {
+|> f
+|> do {
     try {
       JSON.parse(#);
       catch (error) {
@@ -719,7 +719,7 @@ value
       }
     }
   }
-  |> g
+|> g
 ```
 `try` statements are also useful to embed in pipelines with `do`-block bodies.
 
@@ -744,8 +744,8 @@ g (
 
 ```js
 value
-  |> f
-  |> x => # + x
+|> f
+|> x => # + x
 ```
 The body of a pipeline in topic style may contain an inner arrow function but no
 other type of block expression. Both versions of this example result in an arrow
@@ -767,8 +767,8 @@ and returns the sum of the topic value and the parameter.
 
 ```js
 value
-  |> f
-  |> settimeout(() => # * 5)
+|> f
+|> settimeout(() => # * 5)
 ```
 This ability to create arrow functions, which do not lexically shadow the topic,
 can be useful for using callbacks in a pipeline.
@@ -789,9 +789,9 @@ accessible within the arrow function’s body in both examples.
 
 ```js
 value
-  |> f
-  |> (() => # * 5)
-  |> settimeout
+|> f
+|> (() => # * 5)
+|> settimeout
 ```
 The arrow function can also be created on a separate pipeline step.
 
@@ -810,9 +810,9 @@ The result here is the same.
 
 ```js
 value
-  |> f
-  |> () => # * 5
-  |> settimeout
+|> f
+|> () => # * 5
+|> settimeout
 // 🚫 Syntax Error:
 // Unexpected token `=>`.
 // Cannot parse base expression.
@@ -838,9 +838,9 @@ the pipeline operator.) The example above is being parsed as if it were:
 Both the head and the body of a pipeline may contain nested inner pipelines.
 ```js
 value
-  |> f(x =>
+|> f(x =>
     # + x |> g |> # * 2)
-  |> #.toString()
+|> #.toString()
 ```
 
 <td>
@@ -860,10 +860,10 @@ do {
 
 ```js
 value
-  |> # ** 2
-  |> f(x => #
-      |> g(#, x)
-      |> [# * 3, # * 5])
+|> # ** 2
+|> f(x => #
+  |> g(#, x)
+  |> [# * 3, # * 5])
 ```
 
 <td>
@@ -921,11 +921,11 @@ value |> class { m: () { return # }}
 
 ```js
 value
-  |> await f(#, 5)
-  |> {
+|> await f(#, 5)
+|> {
     # + 30
   }
-  |> g
+|> g
 ```
 The nested statements that **may** contain topic references from outer lexical
 environments are **[`do` expressions][]**, **arrow functions, `if` statements**,
@@ -946,14 +946,14 @@ g(await f(value, 5) + 30)
 
 ```js
 value
-  |> await f(#, 5)
-  |> {
+|> await f(#, 5)
+|> {
     if (# > 20)
       # + 30
     else
       # - 10
   }
-  |> g
+|> g
 ```
 Using `do` expressions then allows the embedding of arbitrary statements such as
 `if` statements inside pipeline bodies, greatly increasing their expressiveness.
@@ -975,14 +975,14 @@ g(do {
 
 ```js
 value
-  |> await f(#, 5)
-  |> {
+|> await f(#, 5)
+|> {
     if (x > 20)
       x + 30
     else
       x - 10
   }
-  |> g
+|> g
 // 🚫 Syntax Error:
 // Pipeline body `|> { if (…) … else … }`
 // binds topic but contains no topic reference.
@@ -1011,9 +1011,9 @@ various ways. These examples may become more easily readable with smart pipeline
 
 ```js
 '/music/pk/altes-kamuffel'
-  |> await fetch(#)
-  |> await #.blob()
-  |> playBlob
+|> await fetch(#)
+|> await #.blob()
+|> playBlob
 ```
 
 <td>
@@ -1036,9 +1036,9 @@ playBlob(
 
 ```js
 'https://example.com/'
-  |> await fetch(#, { method: 'HEAD' })
-  |> #.headers.get('content-type')
-  |> console.log
+|> await fetch(#, { method: 'HEAD' })
+|> #.headers.get('content-type')
+|> console.log
 ```
 
 <td>
@@ -1057,9 +1057,9 @@ fetch('https://example.com/',
 
 ```js
 'https://example.com/'
-  |> await fetch(#, { method: 'HEAD' })
-  |> #.headers.get('content-type')
-  |> console.log
+|> await fetch(#, { method: 'HEAD' })
+|> #.headers.get('content-type')
+|> console.log
 ```
 
 <td>
@@ -1079,9 +1079,9 @@ console.log(
 
 ```js
 'https://example.com/'
-  |> await fetch(#, { method: 'HEAD' })
-  |> #.headers.get('content-type')
-  |> console.log
+|> await fetch(#, { method: 'HEAD' })
+|> #.headers.get('content-type')
+|> console.log
 ```
 
 <td>
@@ -1102,8 +1102,8 @@ do {
 
 ```js
 'https://pk.example/berlin-calling'
-  |> await fetch(#, { mode: 'cors' })
-  |> do {
+|> await fetch(#, { mode: 'cors' })
+|> do {
     if (
       # |> #.headers.get('content-type')
         |> #??.toLowerCase()
@@ -1160,9 +1160,9 @@ processing that becomes more readable with smart pipelines.
 
 ```js
 return data
-  |> buildFragment([#], context, scripts)
-  |> #.childNodes
-  |> jQuery.merge([], #)
+|> buildFragment([#], context, scripts)
+|> #.childNodes
+|> jQuery.merge([], #)
 ```
 The path that a reader’s eyes must trace while reading this pipeline moves
 straight down, with some movement toward the right then back: from `data` to
@@ -1208,7 +1208,7 @@ From [jquery/src/core/access.js][].
 
 ```js
 context = context
-  |> # instanceof jQuery
+|> # instanceof jQuery
     ? #[0] : #
 ```
 
@@ -1226,11 +1226,11 @@ From [jquery/src/core/access.js][].
 
 ```js
 context
-  |> #??.nodeType
+|> #??.nodeType
       ? #.ownerDocument || #
       : document
-  |> jQuery.parseHTML(match[1], #, true)
-  |> jQuery.merge
+|> jQuery.parseHTML(match[1], #, true)
+|> jQuery.merge
 ```
 
 <td>
@@ -1281,7 +1281,7 @@ of both clauses, at a different offset from the margin.
 
 ```js
 elem = match[2]
-  |> document.getElementById
+|> document.getElementById
 ```
 
 <td>
@@ -1382,10 +1382,10 @@ functions. It too has a codebase that transforms values through many expressions
 ```js
 function (obj, pred, context) {
   return obj
-    |> isArrayLike
-    |> # ? _.findIndex : _.findKey
-    |> #(obj, pred, context)
-    |> (# !== void 0 && # !== -1)
+  |> isArrayLike
+  |> # ? _.findIndex : _.findKey
+  |> #(obj, pred, context)
+  |> (# !== void 0 && # !== -1)
       ? obj[#] : undefined;
 }
 ```
@@ -1411,9 +1411,9 @@ function (obj, pred, context) {
 ```js
 function (obj, pred, context) {
   return pred
-    |> cb
-    |> _.negate
-    |> _.filter(obj, #, context)
+  |> cb
+  |> _.negate
+  |> _.filter(obj, #, context)
 }
 ```
 
@@ -1438,10 +1438,10 @@ function (
   if (!(callingCtxt instanceof boundFn))
     return srcFn.apply(ctxt, args);
   var self = srcFn
-    |> #.prototype |> baseCreate;
+  |> #.prototype |> baseCreate;
   return self
-    |> srcFn.apply(#, args)
-    |> _.isObject(#) ? # : self;
+  |> srcFn.apply(#, args)
+  |> _.isObject(#) ? # : self;
 }
 ```
 
@@ -1470,10 +1470,10 @@ function (obj) {
     if (# == null)
       0
     else if (|> isArrayLike)
-      |> #.length
+    |> #.length
     else
-      |> _.keys
-      |> #.length
+    |> _.keys
+    |> #.length
   }
 }
 ```
@@ -1518,10 +1518,10 @@ involves complex data processing that becomes more readable with smart pipelines
 ```js
 function hashGet (key) {
   return this.__data__
-    |> do {
+  |> do {
       if (nativeCreate)
         #[key]
-          |> # === HASH_UNDEFINED
+        |> # === HASH_UNDEFINED
             ? undefined
             : #
       else if (hashOwnProperty.call(#, key))
@@ -1553,8 +1553,8 @@ function hashGet (key) {
 ```js
 function listCacheHas (key) {
   return this.__data__
-    |> assocIndexOf(#, key)
-    |> # > -1;
+  |> assocIndexOf(#, key)
+  |> # > -1;
 }
 ```
 
@@ -1573,10 +1573,10 @@ function listCacheHas (key) {
 ```js
 function mapCacheDelete (key) {
   return key
-    |> getMapData(this, #)
-    |> #['delete']
-    |> #(key)
-    |> do {
+  |> getMapData(this, #)
+  |> #['delete']
+  |> #(key)
+  |> do {
       this.size -= # ? 1 : 0;
       #
     }
@@ -1647,9 +1647,9 @@ This first Additional Feature – **block pipelines** – adds an additional
 
 ```js
 value
-  |> f
-  |> { sideEffect(); # }
-  |> g
+|> f
+|> { sideEffect(); # }
+|> g
 ```
 Instead of using [`do` expressions][] (that is, `|> do { sideEffect(); # }`), a
 block body is used with the same meaning: `|> { sideEffect(); # }`.
@@ -1671,14 +1671,14 @@ g (
 
 ```js
 value
-  |> f
-  |> {
+|> f
+|> {
     if (typeof # === 'number')
       # + 1
     else
       { data: # }
   }
-  |> g
+|> g
 ```
 
 <td>
@@ -1700,8 +1700,8 @@ g (
 
 ```js
 value
-  |> f
-  |> {
+|> f
+|> {
     try {
       JSON.parse($);
       catch (error) {
@@ -1709,7 +1709,7 @@ value
       }
     }
   }
-  |> g
+|> g
 ```
 This example becomes even pithier with [Additional Feature PP][] and [Additional
 Feature TC][].
@@ -1779,9 +1779,9 @@ topic from the same lexical environment – `x` – into `predicate`, `f`, and `
 ```js
 x |> {
   if (|> predicate)
-    |> f |> # ** 2
+  |> f |> # ** 2
   else
-    |> g |> # ** 3
+  |> g |> # ** 3
 }
 ```
 In this version, which also uses Additional Feature PP, those pipelines omit the
@@ -1807,16 +1807,16 @@ the same as before.
 
 ```js
 value
-  |> f
-  |> {
+|> f
+|> {
     try {
-      |> JSON.parse;
+    |> JSON.parse;
       catch (error) {
         { message: error.message }
       }
     }
   }
-  |> g
+|> g
 ```
 This example becomes even pithier with [Additional Feature TC][].
 
@@ -1841,7 +1841,7 @@ g (
 
 ```js
 function () {
-  |> f |> g
+|> f |> g
 }
 // 🚫 Syntax Error:
 // Lexical context `function () { |> f |> g }`
@@ -1884,8 +1884,8 @@ terseness could be further improved.
 
 ```js
 'https://pk.example/berlin-calling'
-  |> await fetch(#, { mode: 'cors' })
-  |> do {
+|> await fetch(#, { mode: 'cors' })
+|> do {
     if (
       # |> #.headers.get('content-type')
         |> #??.toLowerCase()
@@ -1924,18 +1924,18 @@ fetch('https://pk.example/berlin-calling',
 
 ```js
 'https://pk.example/berlin-calling'
-  |> await fetch(#, { mode: 'cors' })
-  |> {
+|> await fetch(#, { mode: 'cors' })
+|> {
     if (
-      |> #.headers.get('content-type')
-      |> #??.toLowerCase()
-      |> #.indexOf('application/json')
-      |> # >= 0
+    |> #.headers.get('content-type')
+    |> #??.toLowerCase()
+    |> #.indexOf('application/json')
+    |> # >= 0
     )
       throw new new TypeError()
     else
-      |> await #.json()
-      |> processJSON
+    |> await #.json()
+    |> processJSON
   }
 }
 ```
@@ -2005,9 +2005,9 @@ From [jquery/src/core/init.js][].
 ```js
 match |> {
   if (this[match] |> isFunction)
-    |> context[#] |> this[match](#)
+  |> context[#] |> this[match](#)
   else
-    |> context[#] |> this.attr(match, #)
+  |> context[#] |> this.attr(match, #)
 }
 ```
 This pipeline version also uses [Additional Feature BP][] and [Additional
@@ -2074,12 +2074,12 @@ return context |> {
     …
   // Handle $(expr, $(...))
   else if (!# || #.jquery)
-    |> # || root
-    |> #.find(selector)
+  |> # || root
+  |> #.find(selector)
   // Handle $(expr, context)
   else
-    |> this.constructor
-    |> #.find(selector)
+  |> this.constructor
+  |> #.find(selector)
 }
 ```
 This pipeline version also uses [Additional Feature BP][] and [Additional
@@ -2143,7 +2143,7 @@ From [jquery/src/core/access.js][].
 return selector |> {
   if (typeof # === 'string')
     …
-  else if (# |> isFunction)
+  else if (|> isFunction)
     root.ready !== undefined
       ? root.ready(#)
       : #(jQuery)
@@ -2194,7 +2194,7 @@ function (obj) {
       # |> #.length
     else
       # |> _.keys
-        |> #.length
+      |> #.length
   }
 }
 ```
@@ -2223,10 +2223,10 @@ function (obj) {
     if (# == null)
       0
     else if (|> isArrayLike)
-      |> #.length
+    |> #.length
     else
-      |> _.keys
-      |> #.length
+    |> _.keys
+    |> #.length
   }
 }
 ```
@@ -2264,10 +2264,10 @@ use the outer environment’s topic: `obj`.
 ```js
 function hashGet (key) {
   return this.__data__
-    |> do {
+  |> do {
       if (nativeCreate)
         #[key]
-          |> # === HASH_UNDEFINED
+        |> # === HASH_UNDEFINED
             ? undefined
             : #
       else if (hashOwnProperty.call(#, key))
@@ -2307,7 +2307,7 @@ function castPath (value, object) {
     else if (|> isKey(#, object))
       [#]
     else
-      |> toString |> stringToPath
+    |> toString |> stringToPath
   }
 }
 ```
@@ -2389,16 +2389,16 @@ normal variable `error` declared within any parenthesized antecedent.
 
 ```js
 value
-  |> f
-  |> {
+|> f
+|> {
     try {
-      |> JSON.parse;
+    |> JSON.parse;
       catch {
         { message: #.message }
       }
     }
   }
-  |> g
+|> g
 ```
 
 <td>
@@ -2611,7 +2611,7 @@ const doubleThenSquareThenHalfAsync = async $ =>
 ```
 ```js
 const doubleThenSquareThenHalfAsync = async +>
-  |> double |> await squareAsync |> half
+|> double |> await squareAsync |> half
 ```
 Unlike the other version, this syntax does not need to give implicit special
 treatment to async functions. There is instead an async version of the
@@ -2686,16 +2686,16 @@ addTen(2) // 12
 
 ```js
 let newScore = player.score
-  |> add(7, #)
-  |> clamp(0, 100, #)
+|> add(7, #)
+|> clamp(0, 100, #)
 ```
 
 <td>
 
 ```js
 let newScore = player.score
-  |> add(7, ?)
-  |> clamp(0, 100, ?)
+|> add(7, ?)
+|> clamp(0, 100, ?)
 ```
 
 <tr>
@@ -2814,35 +2814,35 @@ list(1, 2, 3)
 
 ```js
 const getNewTitles = async +>
-  |> await fetch
-  |> parseJSON
-  |> #.flatten()
-  |> #.map(+> #.items)
-  |> #.map(+> #.filter(+> #))
-  |> #.map(+> #.title)
+|> await fetch
+|> parseJSON
+|> #.flatten()
+|> #.map(+> #.items)
+|> #.map(+> #.filter(+> #))
+|> #.map(+> #.title)
 
 try {
   '/products.json'
-    |> getNewTitles
-    |> console.log
+  |> getNewTitles
+  |> console.log
 } catch {
-  |> console.error
+|> console.error
 }
 
 const fetchDependent = async +>
-  |> await fetch
-  |> JSON.parse
-  |> #.flatten()
-  |> #.map(+> #.url)
-  |> #.map(fetch)
-  |> #.flatten()
+|> await fetch
+|> JSON.parse
+|> #.flatten()
+|> #.map(+> #.url)
+|> #.map(fetch)
+|> #.flatten()
 
 try {
   'urls.json'
-    |> fetchDependent
-    |> console.log
+  |> fetchDependent
+  |> console.log
 } catch {
-  |> console.error
+|> console.error
 }
 ```
 
@@ -2876,8 +2876,8 @@ fetchDependent('urls.json')
 
 ```js
 number
-  |> R.repeat(Math.random, #)
-  |> #.map(+> #())
+|> R.repeat(Math.random, #)
+|> #.map(+> #())
 ```
 
 <td>
@@ -2893,10 +2893,10 @@ R.map(R.call,
 ```js
 const renameBy = (fn, obj) =>
   [...obj]
-    |> #.map(R.adjust(fn, 0)),
-    |> {...#}
+  |> #.map(R.adjust(fn, 0)),
+  |> {...#}
 { A: 1, B: 2, C: 3 }
-  |> renameBy(+> `a${#}`))
+|> renameBy(+> `a${#}`))
 // { aA: 1, aB: 2, aC: 3 }
 ```
 
@@ -2950,41 +2950,41 @@ class LipFuzzTransformer {
       this.lastIndex
     this.lastIndex = undefined
     chunk
-      |> this.partialChunk + #
-      |> #.replace(
+    |> this.partialChunk + #
+    |> #.replace(
         /\{\{([a-zA-Z0-9_-]+)\}\}/g,
         +> this.replaceTag)
-      |> partialAtEndRegexp.exec
-      |> {
+    |> partialAtEndRegexp.exec
+    |> {
         if (#) {
           this.partialChunk =
-            |> #.index
-            |> chunk.substring;
           |> #.index
-          |> chunk.substring(0, #)
+          |> chunk.substring;
+        |> #.index
+        |> chunk.substring(0, #)
         }
         else
           chunk
       }
-      |> controller.enqueue
+    |> controller.enqueue
   }
 
   flush(controller) {
     this.partialChunk |> {
       if (#.length > 0) {
-        |> controller.enqueue
+      |> controller.enqueue
       }
     }
   }
 
   replaceTag(match, p1, offset) {
     return this.substitutions
-      |> #[p1]
-      |> # === undefined ? '' : #
-      |> {
+    |> #[p1]
+    |> # === undefined ? '' : #
+    |> {
         this.lastIndex =
-          |> #.length
-          |> offset + #;
+        |> #.length
+        |> offset + #;
         #
       }
     }
@@ -3079,7 +3079,7 @@ not have to be `##`, `###`, and `...`. For instance, they could instead be `#1`,
 
 ```js
 (a, b)
-  |> f
+|> f
 ```
 Pipeline heads would become reinterpreted as argument lists, which would then be
 applied to the pipeline bodies.
@@ -3095,7 +3095,7 @@ f(a, b)
 
 ```js
 (a, b, ...c, d)
-  |> f
+|> f
 ```
 Spread elements are permitted within pipeline heads, with the same meaning as in
 regular argument lists.
@@ -3111,7 +3111,7 @@ f(a, b, ...c, d)
 
 ```js
 ...a
-  |> f
+|> f
 ```
 When a pipeline head only consists of one item, its parentheses may be omitted,
 which is the usual syntax from the [Core Proposal][]. But this now goes for
@@ -3128,7 +3128,7 @@ f(...a)
 
 ```js
 (a, b)
-  |> f(#, x, ##)
+|> f(#, x, ##)
 ```
 When a pipeline’s body is in [topic style][], the first element in the argument
 list is bound to the primary topic reference `#`, the second element is bound to
@@ -3147,7 +3147,7 @@ f(a, x, b)
 
 ```js
 (a, b, ...c, d)
-  |> f(#, x, ...)
+|> f(#, x, ...)
 ```
 The pipeline also binds an array to a rest topic reference `...` within the
 pipeline body. The array contains the arguments of the pipeline head that were
@@ -3164,7 +3164,7 @@ f(a, x, ...[b, ...c, d])
 
 ```js
 (a, b, c, d, e)
-  |> f(##, x, ...)
+|> f(##, x, ...)
 ```
 The rest topic reference `...` starts from beyond the furthest topic reference
 that is used within the pipeline body. Here, the furthest topic reference is the
@@ -3188,7 +3188,7 @@ do {
 
 ```js
 (a, b, c, ...d, e)
-  |> f(#, ###, x, ...)
+|> f(#, ###, x, ...)
 ```
 Here, the furthest topic reference is the tertiary topic reference `###`: the
 third argument item. So only the rest topic reference `...` contains `d`’s
@@ -3209,7 +3209,7 @@ do {
 
 ```js
 (a, ...b, c, ...d, e)
-  |> f(#, ##, ###, x, ...)
+|> f(#, ##, ###, x, ...)
 ```
 
 <td>
@@ -3227,7 +3227,7 @@ do {
 
 ```js
 (a, ...b, c, ...d, e)
-  |> f(#, ##, x, ...)
+|> f(#, ##, x, ...)
 ```
 
 <td>
@@ -3245,7 +3245,7 @@ do {
 
 ```js
 (a, b)
-  |> # - ##
+|> # - ##
 ```
 
 <td>
@@ -3261,8 +3261,8 @@ N-ary pipelines may be chained by using comma expressions to make their pipeline
 bodies also n-ary.
 ```js
 (a, b)
-  |> (f, g)
-  |> h
+|> (f, g)
+|> h
 ```
 Each element in an N-ary pipeline body is independently applied to each
 consecutive argument from the pipeline head.
@@ -3278,8 +3278,8 @@ h(f(a), g(b))
 
 ```js
 (a, b)
-  |> (f, # ** c + ##)
-  |> # - ##
+|> (f, # ** c + ##)
+|> # - ##
 ```
 The elements in an N-ary pipeline body may be either in bare style (like the `f`
 here) or in topic style (like the `# ** c + ##` here).
@@ -3295,10 +3295,10 @@ f(a) - (a ** c + b)
 
 ```js
 (a, b)
-  |> (f, g)
-  |> h
-  |> (i, # + 1, k)
-  |> l
+|> (f, g)
+|> h
+|> (i, # + 1, k)
+|> l
 ```
 
 
@@ -3316,8 +3316,8 @@ do {
 
 ```js
 (a, b)
-  |> (f, g)
-  |> (h, i)
+|> (f, g)
+|> (h, i)
 // 🚫 Syntax Error:
 // A pipeline chain terminates
 // with a 2-ary pipeline body
@@ -3335,8 +3335,8 @@ mistake by the developer.
 
 ```js
 number
-  |> ...createRange
-  |> [#, ###, ...]
+|> ...createRange
+|> [#, ###, ...]
 ```
 As a result of these rules, `|> ... |>` collects the previous
 
@@ -3355,8 +3355,8 @@ do {
 
 ```js
 x
-  |> (f, ...g, h)
-  |> [...].length
+|> (f, ...g, h)
+|> [...].length
 ```
 As a result of the rules, `|> [...]` collects its pipeline head’s n-ary
 arguments into a single flattened array, to which the rest topic reference `...`
@@ -3481,23 +3481,23 @@ function createRound (methodName) {
       if (# == null)
         0
       else
-        |> toInteger |> nativeMin(#, 292)
+      |> toInteger |> nativeMin(#, 292)
     }
     return number |> {
       if (precision)
         // Shift with exponential notation
         // to avoid floating-point issues.
         // See https://mdn.io/round#Examples.
-        |> `${#}e`
-        |> ...#.split('e')
-        |> `${#}e${+## + precision}`
-        |> func
-        |> `${#}e`
-        |> ...#.split('e')
-        |> `${#}e${+## - precision}`
-        |> +#
+      |> `${#}e`
+      |> ...#.split('e')
+      |> `${#}e${+## + precision}`
+      |> func
+      |> `${#}e`
+      |> ...#.split('e')
+      |> `${#}e${+## - precision}`
+      |> +#
       else
-        |> func
+      |> func
     }
   }
 }
@@ -3558,8 +3558,8 @@ pipeline functions when [Additional Feature NP][] syntax is supported.
 const cssQuery = +> ##.querySelectorAll(#)
 const setStyle = +> { ##.style = # }
 document
-  |> cssQuery('a, p', #)
-  |> #.map(+> setStyle({ color: 'red' }))
+|> cssQuery('a, p', #)
+|> #.map(+> setStyle({ color: 'red' }))
 ```
 
 <td>
@@ -3579,12 +3579,12 @@ R.pipe(
 
 ```js
 const disco = +>
-  |> R.zipWith(+> #(##),
+|> R.zipWith(+> #(##),
     [ red, green, blue ])
-  |> #.join(' ')
+|> #.join(' ')
 [ 'foo', 'bar', 'xyz' ]
-  |> disco
-  |> console.log
+|> disco
+|> console.log
 ```
 
 <td>
@@ -3605,11 +3605,11 @@ console.log(
 
 ```js
 const dotPath = +>
-  |> (#.split('.'), ##)
-  |> R.path(#, ##)
+|> (#.split('.'), ##)
+|> R.path(#, ##)
 const propsDotPath = +>
-  |> (R.map(dotPath), [##])
-  |> R.ap
+|> (R.map(dotPath), [##])
+|> R.ap
 const obj = {
   a: { b: { c: 1 } },
   x: 2
@@ -3655,12 +3655,12 @@ use cases are covered by pipeline functions with [Additional Feature NP][].
 ```js
 try {
   readableStream
-    |> await #.pipeTo(writableStream);
+  |> await #.pipeTo(writableStream);
   "Success"
-    |> console.log
+  |> console.log
 } catch {
   ("Error", #)
-    |> console.error
+  |> console.error
 }
 ```
 
@@ -3681,12 +3681,12 @@ const reader = readableStream
 
 try {
   new ArrayBuffer(1024)
-    |> await readInto
-    |> ("The first 1024 bytes:", #)
-    |> console.log
+  |> await readInto
+  |> ("The first 1024 bytes:", #)
+  |> console.log
 } catch {
   ("Something went wrong!", #)
-    |> console.error
+  |> console.error
 }
 
 async function readInto(buffer, offset = 0) {
@@ -3694,11 +3694,11 @@ async function readInto(buffer, offset = 0) {
     if (#.byteLength === offset)
       #
     else
-      |> (#, offset, #.byteLength - offset)
-      |> new Uint8Array
-      |> await reader.read
-      |> (#.buffer, #.byteLength)
-      |> readInto(#, offset + ##)
+    |> (#, offset, #.byteLength - offset)
+    |> new Uint8Array
+    |> await reader.read
+    |> (#.buffer, #.byteLength)
+    |> readInto(#, offset + ##)
   }
 }
 ```
@@ -3783,10 +3783,10 @@ variable `i` declared within the parenthesized antecedent
 ```js
 for await (stream) {
   yield |>
-    |> await f
-    |> #.length
-    |> # + 3
-    |> g
+  |> await f
+  |> #.length
+  |> # + 3
+  |> g
 }
 ```
 An additional tacit `for await` loop form, completely lacking a parenthesized
@@ -4152,13 +4152,13 @@ tree would require. To read the whole thing, a reader may simply follow
 along left to right, not back and forth.
 ```js
 promise
-  |> await #
-  |> # ??: throw new TypeError()
-  |> doubleSay(#, ', ')
-  |> capitalize
-  |> # + '!'
-  |> new User.Message
-  |> await stream.write
+|> await #
+|> # ??: throw new TypeError()
+|> doubleSay(#, ', ')
+|> capitalize
+|> # + '!'
+|> new User.Message
+|> await stream.write
 ```
 
 The introduction to this [motivation][] section already explained much of
@@ -4538,7 +4538,7 @@ boon to the proposal for [ECMAScript pattern matching][].
 
 ```js
 … |> f
-  |> match (#) {
+|> match (#) {
     100: #
     Array:
       #.length
@@ -4568,10 +4568,10 @@ With a topic binding, the `-> a` and `-> m` bindings would be unnecessary.
 
 ```js
 … |> f
-  |> match {
+|> match {
     { x, y }:
       (x ** 2 + y ** 2)
-        |> Math.sqrt
+      |> Math.sqrt
     [...]:
       #.length
     else:
@@ -4588,7 +4588,7 @@ omitted in favor of tacitly using the outer context’s topic.
 match (f(…)) {
   { x, y }:
     (x ** 2 + y ** 2)
-      |> Math.sqrt
+    |> Math.sqrt
   [...] -> a:
     a.length
   else:
@@ -4606,11 +4606,11 @@ try {
   catch {
     match {
       SyntaxError:
-        |> f
+      |> f
       TypeError:
-        |> g |> h(#, {strict: true})
+      |> g |> h(#, {strict: true})
       Error:
-        |> throw #
+      |> throw #
     }
   }
 }
@@ -4765,9 +4765,9 @@ a(1) {
 server(app) {
   #::get('/') do (response) {
     request()
-      |> .get('param1')
-      |> `hello world ${#}`
-      |> response.send
+    |> .get('param1')
+    |> `hello world ${#}`
+    |> response.send
   }
 
   #::listen(3000) {
@@ -4785,9 +4785,9 @@ switches its prefix form `::function` to mean `#::function`, then `#::get` and
 server(app) do (_app) {
   _app::get('/') do (response) {
     request()
-      |> #.get('param1')
-      |> `hello world ${#}`
-      |> response.send
+    |> #.get('param1')
+    |> `hello world ${#}`
+    |> response.send
   }
 
   _app::listen(3000) {
@@ -4827,18 +4827,18 @@ class CompletionRecord {
 export function select (value, block) {
   const selectBlockTopic = new CompletionRecord();
   return block(topic)
-    |> match {
+  |> match {
       CompletionRecord:
         #.value
       else:
         throw 'Invalid clause was used in select block'
-          |> new Error
+        |> new Error
     }
 }
 
 export function otherwise (block) {
   return function.topic
-    |> match (selectBlockTopic) {
+  |> match (selectBlockTopic) {
       CompletionRecord:
         if (#.type === undefined) {
           #.type = 'normal';
@@ -4847,18 +4847,18 @@ export function otherwise (block) {
         #
       else:
         throw 'Invalid otherwise clause was used outside select block'
-          |> new Error
+        |> new Error
     }
 }
 
 export function when (caseValue, block) {
   return function.topic
-    |> match (selectBlockTopic) {
+  |> match (selectBlockTopic) {
       CompletionRecord:
-        |> applyWhen(#, caseValue, block)
+      |> applyWhen(#, caseValue, block)
       else:
         throw 'Invalid when clause used was outside select block'
-          |> new Error
+        |> new Error
     }
 }
 
@@ -4866,10 +4866,10 @@ function applyWhen (selectBlockTopic, caseValue, block) {
   match (#.value) {
     [...]:
       (selectBlockTopic, caseValue, block)
-        |> applyWhenArray
+      |> applyWhenArray
     else:
       (selectBlockTopic, caseValue, block)
-        |> applyWhenValue
+      |> applyWhenValue
   }
 }
 
@@ -4898,15 +4898,15 @@ function applyWhenValue (contextTopic, testValue, block) {
 ```js
 select ('world') {
   when ([Boolean, Number]) {
-    |> log
+  |> log
   }
   when (String) {
-    |> `Hello ${#}`
-    |> log
+  |> `Hello ${#}`
+  |> log
   }
   otherwise {
     throw `Error: ${|> format}`
-      |> new Error
+    |> new Error
   }
 }
 ```
@@ -5255,11 +5255,11 @@ Consider also the motivating first example above:
 
 ```js
 promise
-  |> await #
-  |> # ??: throw new TypeError()
-  |> doubleSay // a bare unary function call
-  |> capitalize // also a bare unary function call
-  |> # + '!'
+|> await #
+|> # ??: throw new TypeError()
+|> doubleSay // a bare unary function call
+|> capitalize // also a bare unary function call
+|> # + '!'
 ```
 
 Under left associativity, this would be statically equivalent to the following:
@@ -5325,11 +5325,11 @@ do { do { 3 * 3 } }
 Consider also the motivating first example above:
 ```js
 promise
-  |> await #
-  |> # ??: throw new TypeError()
-  |> doubleSay // a bare unary function call
-  |> capitalize // also a bare unary function call
-  |> # + '!'
+|> await #
+|> # ??: throw new TypeError()
+|> doubleSay // a bare unary function call
+|> capitalize // also a bare unary function call
+|> # + '!'
 ```
 
 Under left associativity, this would be statically equivalent to the following:
