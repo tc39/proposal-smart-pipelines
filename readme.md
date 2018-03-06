@@ -4809,62 +4809,104 @@ three functions that form an API resembling [Visual Basic’s `select`
 statement][]. Two of these functions (`when` and `otherwise`) that are expected
 to be called always within the third function (`select`)’s callback block.
 
-An alternate solution without metaprogramming topics is not yet specified by the
-current proposal for [ECMAScript block parameters][].
+Such a solution is not yet specified by the current proposal for [ECMAScript
+block parameters][]. Lexical topics can fill in that gap.
 
 <tr>
 <td colspan=2>
 
 ```js
-class CompletionRecord { [[TODO]] }
+class CompletionRecord {
+  type, value;
 
-function select (value, callback) {
-  const contextTopic =
-    [[TODO: create completion record]]
-  return callback(topic) // TO DO
+  constructor (testValue) {
+    this.testValue = testValue;
+  }
 }
 
-function otherwise (callback) { [[TODO]] }
+export function select (value, block) {
+  const selectBlockTopic = new CompletionRecord();
+  return block(topic)
+    |> match {
+      CompletionRecord:
+        #.value
+      else:
+        throw 'Invalid clause was used in select block'
+          |> new Error
+    }
+}
 
-function when (testValue, callback) {
-  const contextTopic = function.topic
-  return match (contextTopic) {
-    [TODO]:
-      |> applyWhen(#, testValue, callback)
+export function otherwise (block) {
+  return function.topic
+    |> match (selectBlockTopic) {
+      CompletionRecord:
+        if (#.type === undefined) {
+          #.type = 'normal';
+          #.value = {};
+        }
+        #
+      else:
+        throw 'Invalid otherwise clause was used outside select block'
+          |> new Error
+    }
+}
+
+export function when (caseValue, block) {
+  return function.topic
+    |> match (selectBlockTopic) {
+      CompletionRecord:
+        |> applyWhen(#, caseValue, block)
+      else:
+        throw 'Invalid when clause used was outside select block'
+          |> new Error
+    }
+}
+
+function applyWhen (selectBlockTopic, caseValue, block) {
+  match (#.value) {
+    [...]:
+      (selectBlockTopic, caseValue, block)
+        |> applyWhenArray
     else:
-      throw new Error('when clause was used outside select block')
+      (selectBlockTopic, caseValue, block)
+        |> applyWhenValue
   }
 }
 
-function applyWhen (contextTopic, testValue) {
-  match (.value) {
-    [...]: |> applyWhenArray
-    else: |> applyWhenValue
+function applyWhenArray (selectBlockTopic, testArray, block) {
+  testArray.some(arrayValue =>
+    contextTopic |> {
+      when(arrayValue, block);
+      #
+    }
+}
+
+function applyWhenValue (contextTopic, testValue, block) {
+  return contextTopic |> {
+    let match
+    if (#.type !== undefined
+      && (match = #[Symbol.matches](testValue))
+    ) {
+      #.type = 'normal';
+      #.value = match |> block;
+    }
+    #
   }
-}
-
-function applyWhenArray (contextTopic, testArray) {
-  .some(arrayValue =>
-    contextTopic |> when(arrayValue, callback))
-}
-
-function applyWhenValue (contextTopic, testArray) {
-  return #[Symbol.matches](contextValue)
-    ? contextTopic |> callback |> [[TODO]]
-    : [[TODO: Pass to next when]]
 }
 ```
 ***
 ```js
 select ('world') {
   when ([Boolean, Number]) {
-    log(#)
+    |> log
   }
   when (String) {
-    log(`Hello ${#}`)
+    |> `Hello ${#}`
+    |> log
   }
   otherwise {
-    throw new Error(`Error: ${#|> format}`)
+    throw `Error: ${|> format}`
+      |> new Error
   }
 }
 ```
