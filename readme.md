@@ -84,15 +84,15 @@ This document is an **explainer for** the [**formal specification** of a propose
 is divided into **one Stage-0 Core Proposal** plus **five** mutually
 independent-but-compatible **Additional Features**:
 
-|Name                     | Status  | Features                                                               | Purpose                                                 |
-| ----------------------- | ------- | ---------------------------------------------------------------------- | ------------------------------------------------------- |
-|[Core Proposal][]        | Stage 0 | Infix pipelines `… \|> …`<br>Lexical topic `#`                         | Unary application                                       |
-|[Additional Feature BP][]| None    | Block pipeline bodies `… \|> {…}`                                      | Application within blocks                               |
-|[Additional Feature PP][]| None    | Prefix pipelines `\|> …`                                               | Application within blocks                               |
-|[Additional Feature PF][]| None    | Pipeline functions `+>  `                                              | Partial application<br>Composition<br>Method extraction |
-|[Additional Feature TC][]| None    | Topical `catch` blocks                                                 | Application to errors                                   |
-|[Additional Feature NP][]| None    | N-ary pipelines `(…, …) \|> …`<br>Lexical topics `##`, `###`, and `...`| N-ary application                                       |
-|[Additional Feature TF][]| None    | Topical `for` / `for await` loops                                      | Application to iteration-loop items                     |
+|Name                     | Status  | Features                                                               | Purpose                                                                                     |
+| ----------------------- | ------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+|[Core Proposal][]        | Stage 0 | Infix pipelines `… \|> …`<br>Lexical topic `#`                         | **Unary** function/expression **application**                                               |
+|[Additional Feature BP][]| None    | Block pipeline bodies `… \|> {…}`                                      | Application of **blocks**                                                                   |
+|[Additional Feature PP][]| None    | Prefix pipelines `\|> …`                                               | Application **within blocks**                                                               |
+|[Additional Feature PF][]| None    | Pipeline functions `+>  `                                              | **Partial** function/expression **application**<br>**Composition**<br>**Method extraction** |
+|[Additional Feature TC][]| None    | Topical `catch` blocks                                                 | Application to **errors**                                                                   |
+|[Additional Feature NP][]| None    | N-ary pipelines `(…, …) \|> …`<br>Lexical topics `##`, `###`, and `...`| **N-ary** function/expression **application**                                               |
+|[Additional Feature TF][]| None    | Topical `for` / `for await` loops                                      | Application within **iteration loops**                                                      |
 
 The **Core Proposal** is currently at **Stage 0** of the [TC39 process][TC39
 process] and is planned to be presented, along with a [competing
