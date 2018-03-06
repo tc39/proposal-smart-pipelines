@@ -2430,11 +2430,15 @@ pipeline function may be in **[bare style][] or [topic style][]**.
 
 **More than any other** possible extension in this table, pipeline functions would
 dramatically increase the potential of tacit programming. Just this single
-additional operator seems to solve:\
-tacit unary-**functional composition**,\
-tacit unary-functional **partial application**,\
+additional operator seems to solve\
+tacit unary **functional composition**,\
+tacit unary functional **partial application**,\
 and tacit **method extraction**,\
 …all with a single additional concept.
+
+With [Additional Feature NP][], this versatility would also solve\
+tacit **N-ary** functional partial application\
+and **N-ary** functional composition.
 
 `+>` was chosen because of its similarity both to `|>` and to `=>`. The precise
 appearance of the pipeline-function operator does not have to be `+>`. It could
