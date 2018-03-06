@@ -247,6 +247,17 @@ which `#` is immutably **bound to the topic**, and with which the pipeline’s
 body is then evaluated, using that **topic binding**. In the end, the whole
 pipeline expression’s value is the end result into which the pipeline body
 evaluated with the topic binding.
+```js
+5 |> do {
+  # = 50;
+  # + 1
+}
+// 🚫 Reference Error:
+// Cannot assign to topic reference.
+```
+The topic binding is immutable, established only once per lexical environment.
+It is an error to attempt to assign a value to it using `=`, whether inside or
+outside a pipeline body.
 
 <td>
 
