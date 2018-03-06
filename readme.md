@@ -87,7 +87,7 @@ independent-but-compatible **Additional Features**:
 |Name                     | Status  | Features                                                               | Purpose                                                                                     |
 | ----------------------- | ------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 |[Core Proposal][]        | Stage 0 | Infix pipelines `… \|> …`<br>Lexical topic `#`                         | **Unary** function/expression **application**                                               |
-|[Additional Feature BP][]| None    | Block pipeline bodies `… \|> {…}`                                      | Application of **blocks**                                                                   |
+|[Additional Feature BP][]| None    | Block pipeline bodies `… \|> {…}`                                      | Application of **block expressions**                                                        |
 |[Additional Feature PP][]| None    | Prefix pipelines `\|> …`                                               | Application **within blocks**                                                               |
 |[Additional Feature PF][]| None    | Pipeline functions `+>  `                                              | **Partial** function/expression **application**<br>**Composition**<br>**Method extraction** |
 |[Additional Feature TC][]| None    | Topical `catch` blocks                                                 | Application to **caught errors**                                                            |
