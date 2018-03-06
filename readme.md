@@ -833,6 +833,14 @@ the pipeline operator.) The example above is being parsed as if it were:
 // Unexpected token `=>`.
 // Cannot parse base expression.
 ```
+The arrow function must be parenthesized, simply as with any other
+looser-precedence expression:
+```js
+value
+|> (f, g)
+|> (() => # * 5)
+|> settimeout
+```
 
 <td>
 
@@ -3508,6 +3516,39 @@ do {
 It is an [early error][] for a pipeline head to end with an n-ary pipeline body,
 where n > 1. Such a comma expression would almost certainly be an accidental
 mistake by the developer.
+
+<td>
+
+<tr>
+<td>
+
+```js
+value
+|> (f, g)
+|> (x, y) => # * x + ## * y
+|> settimeout
+// 🚫 Syntax Error:
+// Unexpected token `=>`.
+// Cannot parse base expression.
+```
+Because arrow functions have looser precedence than the pipe operator `|>`, it
+is never ambiguous with the parenthesized-list pipeline-head syntax. The above
+code is being interpreted as if it were the below:
+```js
+(value |> (f, g) |> (x, y)) =>
+  (# * 5 |> settimeout)
+// 🚫 Syntax Error:
+// Unexpected token `=>`.
+// Cannot parse base expression.
+```
+The arrow function must be parenthesized, simply as with any other
+looser-precedence expression:
+```js
+value
+|> (f, g)
+|> ((x, y) => # * x + ## * y)
+|> settimeout
+```
 
 <td>
 
