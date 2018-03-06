@@ -90,7 +90,7 @@ independent-but-compatible **Additional Features**:
 |[Additional Feature BP][]| None    | Block pipeline bodies `… \|> {…}`                                      | Application of **blocks**                                                                   |
 |[Additional Feature PP][]| None    | Prefix pipelines `\|> …`                                               | Application **within blocks**                                                               |
 |[Additional Feature PF][]| None    | Pipeline functions `+>  `                                              | **Partial** function/expression **application**<br>**Composition**<br>**Method extraction** |
-|[Additional Feature TC][]| None    | Topical `catch` blocks                                                 | Application to **errors**                                                                   |
+|[Additional Feature TC][]| None    | Topical `catch` blocks                                                 | Application to **caught errors**                                                            |
 |[Additional Feature NP][]| None    | N-ary pipelines `(…, …) \|> …`<br>Lexical topics `##`, `###`, and `...`| **N-ary** function/expression **application**                                               |
 |[Additional Feature TF][]| None    | Topical `for` / `for await` loops                                      | Application within **iteration loops**                                                      |
 
