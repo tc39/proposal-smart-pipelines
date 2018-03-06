@@ -522,9 +522,9 @@ do {
 }
 ```
 This is equivalent to storing the topic value in a unique variable, then using
-that variable multiple times in an expression. `do` expressions are used here to
-remain equivalent to the pipeline versions, which are themselves expressions that
-are embeddable in other expressions.
+that variable multiple times in an expression. [`do` expressions][] are used
+here to remain equivalent to the pipeline versions, which are themselves
+expressions that are embeddable in other expressions.
 
 <tr>
 <td>
@@ -646,7 +646,8 @@ value
   |> g
 ```
 This can be useful for embedding side effects in pipeline chains, as in the example
-above, and `if` `else` statements such as with the example in the row below.
+above, and `if` `else` statements and `try` statements, such as with the
+examples in the rows below.
 
 This may be made even more pithier with [Additional Feature BP][], explained later.
 
@@ -689,6 +690,40 @@ g (
       $ + 1
     else
       { data: $ }
+  }
+)
+```
+
+<tr>
+<td>
+
+```js
+value
+  |> f
+  |> do {
+    try {
+      JSON.parse(#);
+      catch (error) {
+        { message: error.message }
+      }
+    }
+  }
+  |> g
+```
+`try` statements are also useful to embed in pipelines with `do`-block bodies.
+
+<td>
+
+```js
+g (
+  do {
+    const $ = f(value);
+    try {
+      JSON.parse($);
+      catch (error) {
+        { message: error.message }
+      }
+    }
   }
 )
 ```
@@ -1649,6 +1684,41 @@ g (
 )
 ```
 
+<tr>
+<td>
+
+```js
+value
+  |> f
+  |> {
+    try {
+      JSON.parse($);
+      catch (error) {
+        { message: error.message }
+      }
+    }
+  }
+  |> g
+```
+This example becomes even pithier with [Additional Feature PP][] and [Additional
+Feature TC][].
+
+<td>
+
+```js
+g (
+  do {
+    const $ = f(value);
+    try {
+      JSON.parse(#);
+      catch (error) {
+        { message: error.message }
+      }
+    }
+  }
+)
+```
+
 </table>
 
 ## Additional Feature PP
@@ -1720,6 +1790,40 @@ do {
 The unary pipeline `|>` still piped in the same tacit topic from the same
 lexical environment – `x` – into `predicate`, `f`, and `g`. The result is still
 the same as before.
+
+<tr>
+<td>
+
+```js
+value
+  |> f
+  |> {
+    try {
+      |> JSON.parse;
+      catch (error) {
+        { message: error.message }
+      }
+    }
+  }
+  |> g
+```
+This example becomes even pithier with [Additional Feature TC][].
+
+<td>
+
+```js
+g (
+  do {
+    const $ = f(value);
+    try {
+      JSON.parse(#);
+      catch (error) {
+        { message: error.message }
+      }
+    }
+  }
+)
+```
 
 <tr>
 <td>
@@ -2268,6 +2372,39 @@ try {
 
 The implicit topic binding would be in addition to the explicit binding of a
 normal variable `error` declared within any parenthesized antecedent.
+
+<tr>
+<td>
+
+```js
+value
+  |> f
+  |> {
+    try {
+      |> JSON.parse;
+      catch {
+        { message: #.message }
+      }
+    }
+  }
+  |> g
+```
+
+<td>
+
+```js
+g (
+  do {
+    const $ = f(value);
+    try {
+      JSON.parse(#);
+      catch (error) {
+        { message: error.message }
+      }
+    }
+  }
+)
+```
 
 </table>
 
