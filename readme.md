@@ -3068,7 +3068,8 @@ do {
 
 ```js
 do {
-  const [_secondary, _tertiary, ..._rest] = [...b, c, ...d, e];
+  const [_secondary, _tertiary, ..._rest] =
+    [...b, c, ...d, e];
   f(a, _secondary, _tertiary, x, ..._rest)
 }
 ```
@@ -3085,7 +3086,8 @@ do {
 
 ```js
 do {
-  const [_secondary, ..._rest] = [...b, c, ...d, e];
+  const [_secondary, ..._rest] =
+    [...b, c, ...d, e];
   f(a, _secondary, x, ..._rest)
 }
 ```
@@ -3194,7 +3196,8 @@ As a result of these rules, `|> ... |>` collects the previous
 
 ```js
 do {
-  const [_primary, , _tertiary, ..._rest] = createRange(number);
+  const [_primary, , _tertiary, ..._rest] =
+    createRange(number);
   [_primary, _tertiary, _rest]
 }
 ```
