@@ -5992,9 +5992,7 @@ Let us pretend that each pipe expression autogenerates a new, [lexically
 hygienic][] variable (`#₀`, `#₁`, `#₂`, `#₃`, …), which in turn replaces each
 topic reference `#` in each pipeline body. (These `#ₙ` variables are not true
 syntax; it is merely for illustrative purposes. You cannot actually assign or
-use `#ₙ` variables.) Let us also group the expressions with left associativity
-(although this is arbitrary, because [right associativity would also
-work][arbitrary associativity]).
+use `#ₙ` variables.) Let us also group the expressions with left associativity.
 
 With this notation, each line in this example would be equivalent to the other lines.
 
@@ -6024,7 +6022,7 @@ promise
 |> # + '!'
 ```
 
-Under left associativity, this would be statically equivalent to the following:
+This would be statically equivalent to the following:
 
 ```js
 do {
