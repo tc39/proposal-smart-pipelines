@@ -536,7 +536,7 @@ PipelineTopicList[In, Yield, Await] :
 4. Return ? Await(_value_).
 </emu-alg>
 
-<emu-grammar>PipelineTopicBody : AssignmentExpression</emu-grammar>
+<emu-grammar>PipelineTopicBody : ConditionalExpression</emu-grammar>
 <emu-alg>
 1. Let _oldEnv_ be the running execution context's Lexical Environment.
 2. Let _pipelineBodyEnv_ be New Declarative Environment(_oldEnv_).
