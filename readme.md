@@ -5994,16 +5994,18 @@ do { 3 * 3 }
 9
 ```
 
-Consider also the motivating first example above:
+Consider also the [motivating first example above][Core Proposal]:
 
 ```js
 promise
 |> await #
 |> # ??: throw new TypeError(
   `Invalid value from ${promise}`)
-|> doubleSay // a bare unary function call
-|> capitalize // also a bare unary function call
+|> doubleSay(#, ', ')
+|> capitalize
 |> # + '!'
+|> new User.Message
+|> await stream.write
 ```
 
 This would be statically equivalent to the following:
@@ -6016,7 +6018,9 @@ do {
       `Invalid value from ${promise}`),
     _3 = doubleSay(_2),
     _4 = capitalize(_3);
-  _4 + '!';
+    _5 = _4 + '!',
+    _6 = new User.Message(_5);
+  await stream.write(_6);
 }
 ```
 Suppose that we can generate a series of new [lexically hygienic][] variables
@@ -6041,8 +6045,8 @@ such that substitute topic(𝐸ₓ, #ₓ) is defined to be:\
 if 𝐸 is a [bare function call][] – then 𝐸ₓ(#ₓ),\
 if 𝐸 is a [bare awaited function call][] – then `await` 𝐸ₓ(#ₓ),\
 if 𝐸 is a [bare constructor call][] – then `new` 𝐸ₓ(#ₓ),\
-if 𝐸 is in [topic style][] – then 𝐸, except all unshadowed instances of the
-topic reference `#` are replaced by #.
+if 𝐸 is in [topic style][] – then 𝐸ₓ, except all unshadowed instances of the
+topic reference `#` are replaced by #ₓ.
 
 ### Additional Feature NP
 [TODO]
