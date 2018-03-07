@@ -3673,11 +3673,11 @@ why additional topic parameters are required.
 
 The resulting model is more flexible: with Additional Feature NP with
 [Additional Feature PF][], `+> f(#, 4, ##)` is different from `+> f(#, 4, #)`.
-The former refers to a **binary function**: a function with two parameters,
-essentially `(x, y) => f(x, 4, y)`. The latter sensibly refers to a **unary**
-function that passes the same one argument into both the first and third
-parameters of the original function `f`: `x => f(x, 4, x)`. The same symbol
-refers to the same value in the same lexical environment.
+The former refers to a **binary** function: a function with two parameters,
+essentially `(x, y) => f(x, 4, y)`. The latter refers to a **unary** function
+that passes the same one argument into both the first and third parameters of
+the original function `f`: `x => f(x, 4, x)`. The same symbol refers to the same
+value in the same lexical environment.
 
 <tr>
 <td>
@@ -5011,11 +5011,11 @@ why additional topic parameters are required.
 
 The resulting model is more flexible: with Additional Feature NP with
 [Additional Feature PF][], `+> f(#, 4, ##)` is different from `+> f(#, 4, #)`.
-The former refers to a **binary function**: a function with two parameters,
-essentially `(x, y) => f(x, 4, y)`. The latter sensibly refers to a **unary**
-function that passes the same one argument into both the first and third
-parameters of the original function `f`: `x => f(x, 4, x)`. The same symbol
-refers to the same value in the same lexical environment.
+The former refers to a **binary** function: a function with two parameters,
+essentially `(x, y) => f(x, 4, y)`. The latter refers to a **unary** function
+that passes the same one argument into both the first and third parameters of
+the original function `f`: `x => f(x, 4, x)`. The same symbol refers to the same
+value in the same lexical environment.
 
 <table>
 <thead>
