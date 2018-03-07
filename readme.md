@@ -4671,11 +4671,14 @@ Another disadvantage arises from the ability to clobber or overwrite the value o
 topic variable, which may affect code in surprising ways.
 
 However, JavaScript’s topic reference `#` is different than this prior art. It
-is lexically bound and statically analyzable. It is also cannot be accidentally
-bound; the developer must opt into binding it by using the pipeline operator.
-
-The topic also cannot be accidentally used; it is a syntax error when `#` is used
-outside of a pipeline body. [TODO: Link to pertinent grammar sections.]
+is lexically bound, with [simple scoping][], and it is [statically
+analyzable][]. It also cannot be accidentally bound; the developer must opt into
+binding it by using the pipeline operator (although [Additional Feature TC][]
+and [Additional Feature TF][] are limited exceptions that do not extend into
+inner blocks). The topic also cannot be accidentally used; it is an [early
+error][] when `#` is used outside of a pipeline body (see [Core Proposal][] and
+[static analyzability][]). The proposal is as a whole designed to [prevent
+footguns][“don’t shoot me in the foot”].
 
 The topic is [conceptually general][conceptual generality] and could be extended
 to other forms. This proposal is [forward compatible][forward compatibility]
