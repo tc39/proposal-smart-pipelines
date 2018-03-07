@@ -6167,8 +6167,8 @@ the steps of the computation would be:
 [distinguishable punctuators]: #distinguishable-punctuators
 [don’t break my code]: #dont-break-my-code
 [DSLs]: https://en.wikipedia.org/wiki/Domain-specific_language
-[early error]: #static-early-errors
-[early errors]: #static-early-errors
+[early error]: #static-analyzability
+[early errors]: #static-analyzability
 [ECMAScript _Identifier Name_]: https://tc39.github.io/ecma262/#prod-IdentifierName
 [ECMAScript _Identifier Reference_]: https://tc39.github.io/ecma262/#prod-IdentifierReference
 [ECMAScript _Member Expression_]: https://tc39.github.io/ecma262/#prod-MemberExpression
@@ -6311,7 +6311,7 @@ the steps of the computation would be:
 [Standard Style]: https://standardjs.com/
 [static analyzability]: #static-analyzability
 [statically analyzable]: #static-analyzability
-[statically detectable early errors]: #static-early-errors
+[statically detectable early errors]: #static-analyzability
 [syntactic locality]: #syntactic-locality
 [tacit programming]: https://en.wikipedia.org/wiki/Tacit_programming
 [TC39 60th meeting, pipelines]: https://tc39.github.io/tc39-notes/2017-09_sep-26.html#11iia-pipeline-operator
