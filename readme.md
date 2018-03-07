@@ -2946,7 +2946,8 @@ const x = { key: 5 }
 x::hasOwnProperty
 x::hasOwnProperty('key')
 ```
-To do terse **method calling/binding**, the `::` operator would still be required.
+For terse **method calling/binding**, the infix `::` operator would still be
+required.
 
 <td>
 
@@ -2957,8 +2958,9 @@ const x = { key: 5 }
 x::hasOwnProperty
 x::hasOwnProperty('key')
 ```
-But the `::` would only need to handle method calls. No operator overloading of
-`::` for method extraction would be needed.
+But the `::` operator would only need to handle method calls. No operator
+overloading of `::` for method extraction (that is, `::` as a prefix operator)
+would be needed.
 
 </table>
 
@@ -4684,7 +4686,7 @@ variables][], and [human writability][], while still preserving [simple
 scoping][] and [static analyzability][].
 
 ## Function binding
-An existing proposal for [ECMAScript function binding][] has two use cases:
+An existing proposal for [ECMAScript function binding][] has three use cases:
 
 1. Extracting a method from an object as a standalone function:
    `o.method.bind(object)` as `::object.method`.
@@ -4750,7 +4752,8 @@ const x = { key: 5 }
 x::hasOwnProperty
 x::hasOwnProperty('key')
 ```
-To do terse **method calling/binding**, the `::` operator would still be required.
+For terse **method calling/binding**, the infix `::` operator would still be
+required.
 
 <td>
 
@@ -4760,8 +4763,9 @@ const x = { key: 5 }
 x::hasOwnProperty
 x::hasOwnProperty('key')
 ```
-But the `::` would only need to handle method calls. No operator overloading of
-`::` for method extraction would be needed.
+But the `::` operator would only need to handle method calls. No operator
+overloading of `::` for method extraction (that is, `::` as a prefix operator)
+would be needed.
 
 <tr>
 <td>
@@ -5571,10 +5575,53 @@ supporting pipeline-body blocks that act nearly identically to `do` expressions.
 ## Private class fields and class decorators
 [TODO]
 
-## Alternative solutions explored
-There are a number of other ways of potentially accomplishing the above use
-cases. However, the authors of this proposal believe that the smart pipe
-operator may be the best choice. [TODO]
+## Alternative pipeline proposals
+There are several other alternative pipeline-operator proposals competing with
+the smart-pipeline Core Proposal. The Core Proposal is only one variant of the
+[first pipeline-operator proposal][] also championed by Ehrenberg; this variant
+is listed as [**Proposal 4: Smart Mix** in the pipe-proposal wiki][Pipeline
+Proposal 4]. The variant resulted from [previous discussions in the previous
+pipeline-operator proposal][previous pipeline-placeholder discussions],
+discussions which culminated in an [invitation by Ehrenberg to try writing a
+specification draft][littledan invitation].
+
+All variants attempt to address the goals of [untangled flow][],
+[distinguishable punctuators][], [terse function calls][], and [human
+writability][]. But the authors of this proposal believe that the smart pipeline
+operator may be the best choice among these competing proposals at fulfilling
+all the [goals][] listed above.
+
+Only the smart pipeline operator does not need to create unnecessary one-off
+arrow functions for non-function-call expressions, which better fulfills the
+goal of [zero runtime cost][]. Only the smart pipeline operator has the [forward
+compatibility][] and [conceptual generality][] to support not only [terse unary
+function application][terse function calls] but also [terse N-ary function
+application][terse function calls], [terse expression application][terse
+function calls], [terse function composition][terse composition], [terse
+expression composition][terse composition], [terse partial function
+application][], and [terse method extraction][] – all with a single [cyclomatic
+simplicity][] and unified [general concept][conceptual generality].
+
+Indeed, the original pipeline proposal was blocked from Stage 2 by TC39 during
+its [60th meeting, on September 2017][TC39 60th meeting, pipelines]. At that
+time, several members expressed concern that it could be coordinated more with
+the proposals for [function binding][] and [partial function application][] in a
+more coherent approach. Smart pipelines open the door to such a coherent
+approach with these and other use cases.
+
+Smart pipelines and their [smart body syntax][] sacrifice a small amount of
+[simplicity][cyclomatic simplicity] in return for a vast amount of [expressive
+versatility][] and [conceptual generality][]. And because it makes many of the
+other operator proposals above either unnecessary or possibly simpler, it may
+result in less complexity on average anyway. And thanks to its [syntactic
+locality][] and [numerous statically detectable early errors][], the mental
+burden on the developer in remembering [smart body syntax][] is light.
+
+The benefits of smart pipelines on many real-world examples are well
+demonstrated above, and many of them are not possible with the other pipeline
+proposals. It is hoped that the Core Proposal is strongly considered by TC39,
+keeping in mind that it simple but versatile syntax would open the door to
+addressing the use cases of many other proposals in a uniform manner.
 
 # Appendices
 ## Smart body syntax
@@ -6229,3 +6276,4 @@ the steps of the computation would be:
 [formal TC]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-tc
 [formal NP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-np
 [formal TF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-tf
+[TC39 60th meeting, pipelines]: https://tc39.github.io/tc39-notes/2017-09_sep-26.html#11iia-pipeline-operator
