@@ -542,7 +542,7 @@ PipelineTopicList[In, Yield, Await] :
 2. Let _pipelineBodyEnv_ be New Declarative Environment(_oldEnv_).
 3. Perform TopicPipelineBodyInstantiation(_headValues_, _pipelineBodyEnv_).
 4. Set the running execution context's Lexical Environment to _pipelineBodyEnv_.
-5. Let _pipelineValue_ be the result of evaluating _AssignmentExpression_.
+5. Let _pipelineValue_ be the result of evaluating _ConditionalExpression_.
 6. Set the running execution context's Lexical Environment to _oldEnv_.
 7. Return _pipelineValue_.
 </emu-alg>
