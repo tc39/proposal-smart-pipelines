@@ -106,7 +106,7 @@ independent-but-compatible **Additional Features**:
 The **Core Proposal** is currently at **Stage 0** of the [TC39 process][TC39
 process] and is planned to be presented, along with a [competing
 proposal][Pipeline Proposal 1], to TC39 by [Daniel “**littledan**” Ehrenberg of
-Igalia][littledan].  The Core Proposal is a **variant** of the [first
+Igalia][littledan]. The Core Proposal is a **variant** of the [first
 pipeline-operator proposal][] also championed by Ehrenberg; this variant is
 listed as [**Proposal 4: Smart Mix** in the pipe-proposal wiki][Pipeline
 Proposal 4]. The variant resulted from [previous discussions in the previous
