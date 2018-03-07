@@ -1830,14 +1830,52 @@ ArgumentList[Yield, Await] :
 
 <emu-annex id=sec-additional-feature-np-argument-lists>
 <h1>Argument Lists</h1>
-<emu-note>
-  <p>The evaluation of an argument list produces a List of values.</p>
+
+<emu-annex id=sec-additional-feature-np-argument-lists-runtime-semantics-argumentlistmaxwidth>
+<h1><ins>Static Semantics: ArgumentListMaxWidth</ins></h1>
+<emu-see-also-para op="ArgumentListMaxWidth"></emu-see-also-para>
+
+<emu-note type=editor>
+<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-argument-lists>original Argument Lists clause</a>.</p>
 </emu-note>
+
+<emu-grammar>Arguments : `(` `)`</emu-grammar>
+<emu-alg>
+1. Return the numeric value *0*.
+</emu-alg>
+
+<emu-grammar>ArgumentList : ArgumentExpression</emu-grammar>
+<emu-alg>
+1. Return the numeric value *1*.
+</emu-alg>
+
+<emu-grammar>ArgumentList : `...` AssignmentExpression</emu-grammar>
+<emu-alg>
+1. Return the numeric value *Infinity*.
+</emu-alg>
+
+<emu-grammar>ArgumentList : ArgumentList `,` ArgumentExpression</emu-grammar>
+<emu-alg>
+1. Let _preceding_ be the ArgumentListMaxWidth of _ArgumentList_.
+2. Return _preceding_ + *1*.
+</emu-alg>
+
+<emu-grammar>ArgumentList : ArgumentList `,` `...` AssignmentExpression</emu-grammar>
+<emu-alg>
+1. Return the numeric value *Infinity*.
+</emu-alg>
+
+</emu-annex>
 
 <emu-annex id=sec-additional-feature-np-argument-lists-runtime-semantics-argumentlistevaluation>
 <h1>Runtime Semantics: ArgumentListEvaluation</h1>
 <emu-see-also-para op="ArgumentListEvaluation"></emu-see-also-para>
 <emu-grammar>ArgumentList : `...` AssignmentExpression</emu-grammar>
+
+<emu-note type=editor>
+<p>This section amends the <a href=https://tc39.github.io/ecma262/#sec-argument-lists-runtime-semantics-argumentlistevaluation>original ArgumentListEvaluation clause</a>.</p>
+</emu-note>
+
 <emu-alg>
 1. Let _list_ be a new empty List.
 2. Let _spreadRef_ be the result of evaluating |AssignmentExpression|.
@@ -1920,6 +1958,7 @@ PipelineBody[In, Yield, Await] :
   PipelineBareConstructorCall
   PipelineBareAwaitedFunctionCall[?Await]
   PipelineTopicBody[?In, ?Yield, ?Await]
+  Arguments[?Yield, ?Await]
 
 PipelineBareFunctionCall :
   SimpleReference
