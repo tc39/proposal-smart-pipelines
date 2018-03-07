@@ -6129,33 +6129,46 @@ the steps of the computation would be:
 [“don’t make me overthink”]: #dont-make-me-overthink
 [“don’t shoot me in the foot”]: #dont-shoot-me-in-the-foot
 [“make my code easier to read”]: #make-my-code-easier-to-read
+[`do` expressions]: #do-expressions
 [`for` iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
 [`in` relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
 [`new.target`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target
 [Abstract: Get Topic Environment]: #abstract-get-topic-environment
+[Additional Feature BP]: #additional-feature-bp
+[Additional Feature NP]: #additional-feature-np
+[Additional Feature PF]: #additional-feature-pf
+[Additional Feature PP]: #additional-feature-pp
+[Additional Feature TC]: #additional-feature-tc
+[Additional Feature TE]: #additional-feature-te
+[Additional Feature TF]: #additional-feature-tf
+[Additional Features]: #smart-pipelines
 [annevk]: https://github.com/annevk
 [antecedent]: https://en.wikipedia.org/wiki/Antecedent_(grammar)
 [arbitrary associativity]: #arbitrary-associativity
+[ASI]: https://tc39.github.io/ecma262/#sec-automatic-semicolon-insertion
 [associative property]: https://en.wikipedia.org/wiki/Associative_property
+[async pipeline functions]: #additional-feature-pf
 [background]: #background
 [backward compatibility]: #backward-compatibility
 [bare style]: #bare-style
-[topic style]: #topic-style
 [binding]: https://en.wikipedia.org/wiki/Binding_(linguistics)
+[block parameters]: #block-parameters
+[Clojure compact function]: https://clojure.org/reference/reader#_dispatch
 [Clojure pipe]: https://clojuredocs.org/clojure.core/as-%3E
 [completion records]: https://timothygu.me/es-howto/#completion-records-and-shorthands
 [concatenative programming]: https://en.wikipedia.org/wiki/Concatenative_programming_language
 [conceptual generality]: #conceptual-generality
 [Contains]: #static-contains
+[Core Proposal]: #core-proposal
+[currying]: https://en.wikipedia.org/wiki/Currying
 [cyclomatic complexity]: https://en.wikipedia.org/wiki/Cyclomatic_complexity#Applications
 [cyclomatic simplicity]: #cyclomatic-simplicity
-[littledan]: https://github.com/littledan
 [dataflow programming]: https://en.wikipedia.org/wiki/Dataflow_programming
 [distinguishable punctuators]: #distinguishable-punctuators
+[don’t break my code]: #dont-break-my-code
 [DSLs]: https://en.wikipedia.org/wiki/Domain-specific_language
 [early error]: #static-early-errors
 [early errors]: #static-early-errors
-[statically detectable early errors]: #static-early-errors
 [ECMAScript _Identifier Name_]: https://tc39.github.io/ecma262/#prod-IdentifierName
 [ECMAScript _Identifier Reference_]: https://tc39.github.io/ecma262/#prod-IdentifierReference
 [ECMAScript _Member Expression_]: https://tc39.github.io/ecma262/#prod-MemberExpression
@@ -6167,6 +6180,7 @@ the steps of the computation would be:
 [ECMAScript Blocks, § RS: Block Declaration Instantiation]: https://tc39.github.io/ecma262/#sec-blockdeclarationinstantiation
 [ECMAScript Blocks, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-block-runtime-semantics-evaluation
 [ECMAScript Declarative Environment Records]: https://tc39.github.io/ecma262/#sec-declarative-environment-records
+[ECMAScript function binding]: https://github.com/zenparsing/es-function-bind
 [ECMAScript Function Calls, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-function-calls-runtime-semantics-evaluation
 [ECMAScript Function Environment Records]: https://tc39.github.io/ecma262/#sec-function-environment-records
 [ECMAScript Functions and Classes § Generator Function Definitions]: https://tc39.github.io/ecma262/#sec-generator-function-definitions
@@ -6181,6 +6195,7 @@ the steps of the computation would be:
 [ECMAScript Notational Conventions, § Lexical Grammar]: https://tc39.github.io/ecma262/#sec-lexical-and-regexp-grammars
 [ECMAScript Notational Conventions, § Runtime Semantics]: https://tc39.github.io/ecma262/#sec-runtime-semantics
 [ECMAScript optional catch binding]: https://github.com/tc39/proposal-optional-catch-binding
+[ECMAScript partial application]: https://github.com/tc39/proposal-partial-application
 [ECMAScript pattern matching]: https://github.com/tc39/proposal-pattern-matching
 [ECMAScript Primary Expressions]: https://tc39.github.io/ecma262/#prod-PrimaryExpression
 [ECMAScript Property Accessors, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-property-accessors-runtime-semantics-evaluation
@@ -6193,12 +6208,23 @@ the steps of the computation would be:
 [expressions and operators (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
 [expressive versatility]: #expressive-versatility
 [F# pipe]: https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining
-[WHATWG Fetch Standard]: https://fetch.spec.whatwg.org/
 [first pipeline-operator proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
 [footguns]: https://en.wiktionary.org/wiki/footgun
+[formal BP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-bp
+[formal CP]: https://jschoi.org/18/es-smart-pipelines/spec
 [formal grammar]: #grammar
+[formal NP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-np
+[formal PF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pf
+[formal pipeline specification]: https://jschoi.org/18/es-smart-pipelines/spec
+[formal PP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pp
+[formal TC]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-tc
+[formal TF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-tf
 [forward compatibility]: #forward-compatibility
+[function bind operator `::`]: #function-bind-operator
+[function binding]: #function-binding
+[function composition]: #function-composition
 [functional programming]: https://en.wikipedia.org/wiki/Functional_programming
+[gajus functional composition]: https://github.com/gajus/babel-plugin-transform-function-composition
 [garden-path syntax]: https://en.wikipedia.org/wiki/Garden_path_sentence
 [GitHub issue tracker]: https://github.com/tc39/proposal-pipeline-operator/issues
 [goals]: #goals
@@ -6206,149 +6232,122 @@ the steps of the computation would be:
 [Hack pipe]: https://docs.hhvm.com/hack/operators/pipeline-operator
 [Huffman coding]: https://en.wikipedia.org/wiki/Huffman_coding
 [human writability]: #human-writability
+[i-am-tom functional composition]: https://github.com/fantasyland/ECMAScript-proposals/issues/1#issuecomment-306243513
+[identity function]: https://en.wikipedia.org/wiki/Identity_function
 [IIFEs]: https://en.wikipedia.org/wiki/Immediately-invoked_function_expression
+[immutable objects]: https://en.wikipedia.org/wiki/Immutable_object
 [incidental complexity]: https://en.wikipedia.org/wiki/Incidental_complexity
 [inner blocks]: #inner-blocks
+[intro]: #smart-pipelines
+[isiahmeadows functional composition]: https://github.com/isiahmeadows/function-composition-proposal
 [jashkenas]: https://github.com/jashkenas
+[jQuery + CP]: #jquery-core-proposal-only
+[jQuery]: https://jquery.com/
+[jquery/src/core/access.js]: https://github.com/jquery/jquery/blob/2.2-stable/src/core/access.js
+[jquery/src/core/init.js]: https://github.com/jquery/jquery/blob/2.2-stable/src/core/init.js
+[jquery/src/core/parseHTML.js]: https://github.com/jquery/jquery/blob/2.2-stable/src/core/parseHTML.js
+[JS Foundation]: https://js.foundation/
 [Julia pipe]: https://docs.julialang.org/en/stable/stdlib/base/#Base.:|>
 [lexical grammar]: #lexical-grammar
+[lexical topic]: https://jschoi.org/18/es-smart-pipelines/spec#sec-lexical-topics
 [lexically hygienic]: https://en.wikipedia.org/wiki/Hygienic_macro
 [littledan invitation]: https://github.com/tc39/proposal-pipeline-operator/issues/89#issuecomment-363853394
+[littledan]: https://github.com/littledan
 [LiveScript pipe]: http://livescript.net/#operators-piping
+[Lodash + CP + BP + PF]: #lodash-core-proposal--additional-feature-bppf
+[Lodash + CP + BP + PP + PF + NP]: #lodash-core-proposal--additional-features-bppppfmt
+[Lodash + CP]: #lodash-core-proposal-only
+[Lodash]: https://lodash.com/
+[make my code easier to read]: #make-my-code-easier-to-read
 [MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
+[MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
 [mindeavor]: https://github.com/gilbert
 [motivation]: #motivation
 [Node-stream piping]: https://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
+[Node.js `util.promisify`]: https://nodejs.org/api/util.html#util_util_promisify_original
 [nomenclature]: #nomenclature
 [novice learnability]: #novice-learnability
+[nullish coalescing proposal]: https://github.com/tc39/proposal-nullish-coalescing/
 [object initializers’ Computed Property Contains rule]: https://tc39.github.io/ecma262/#sec-object-initializer-static-semantics-computedpropertycontains
 [OCaml pipe]: http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html
 [operator precedence]: #operator-precedence
 [optional-chaining syntax proposal]: https://github.com/tc39/proposal-optional-chaining
+[other browsers’ console variables]: https://www.andismith.com/blogs/2011/11/25-dev-tool-secrets/
 [other ECMAScript proposals]: #other-ecmascript-proposals
 [other goals]: #other-goals
+[partial function application]: #partial-function-application
 [PEP 20]: https://www.python.org/dev/peps/pep-0020/
 [Perl 6 pipe]: https://docs.perl6.org/language/operators#infix_==&gt;
 [Perl 6 topicization]: https://www.perl.com/pub/2002/10/30/topic.html/
-[pipeline syntax]: #pipeline-syntax
-[previous pipeline-placeholder discussions]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
-[private class fields]: https://github.com/tc39/proposal-class-fields/
+[pipeline body]: https://jschoi.org/18/es-smart-pipelines/spec#prod-PipelineBody
+[pipeline functions]: #additional-feature-pf
+[pipeline head]: https://jschoi.org/18/es-smart-pipelines/spec#prod-PipelineHead
+[Pipeline Proposal 1]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-1-f-sharp-only
 [Pipeline Proposal 4]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
+[pipeline syntax]: #pipeline-syntax
+[pipelines]: #core-proposal
+[previous pipeline-placeholder discussions]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
+[primary topic]: #core-proposal
+[private class fields]: https://github.com/tc39/proposal-class-fields/
+[pure functions]: https://en.wikipedia.org/wiki/Pure_function
 [R pipe]: https://cran.r-project.org/web/packages/magrittr/index.html
+[Ramda + CP + BP + PF + NP]: #ramda-core-proposal--additional-features-bppfmt
+[Ramda + CP + BP + PF]: #ramda-core-proposal--additional-feature-bppf
+[Ramda wiki cookbook]: https://github.com/ramda/ramda/wiki/Cookbook
+[Ramda]: http://ramdajs.com/
 [relations to other work]: #relations-to-other-work
 [REPLs]: https://en.wikipedia.org/wiki/Read–eval–print_loop
 [resolving topics]: #resolve-topic
+[rest topic]: #additional-feature-np
 [reverse Polish notation]: https://en.wikipedia.org/wiki/Reverse_Polish_notation
 [Ron Buckton]: https://github.com/rbuckton
 [runtime semantics]: #runtime-semantics
+[secondary topic]: #additional-feature-np
+[simonstaton functional composition]: https://github.com/simonstaton/Function.prototype.compose-TC39-Proposal
 [simple scoping]: #simple-scoping
 [sindresorhus]: https://github.com/sindresorhus
 [smart body syntax]: #smart-body-syntax
 [smart pipelines]: #smart-pipelines
+[Standard Style]: https://standardjs.com/
 [static analyzability]: #static-analyzability
+[statically analyzable]: #static-analyzability
+[statically detectable early errors]: #static-early-errors
 [syntactic locality]: #syntactic-locality
-[ECMAScript partial application]: https://github.com/tc39/proposal-partial-application
 [tacit programming]: https://en.wikipedia.org/wiki/Tacit_programming
+[TC39 60th meeting, pipelines]: https://tc39.github.io/tc39-notes/2017-09_sep-26.html#11iia-pipeline-operator
 [TC39 process]: https://tc39.github.io/process-document/
-[Tennent correspondence principle]: http://gafter.blogspot.com/2006/08/tennents-correspondence-principle-and.html
-[term rewriting]: #term-rewriting
-[Wikipedia: term rewriting]: https://en.wikipedia.org/wiki/Term_rewriting
-[terse function calls]: #terse-function-calls
-[terse parentheses]: #terse-parentheses
-[terse variables]: #terse-variables
-[topic and comment]: https://en.wikipedia.org/wiki/Topic_and_comment
-[topic variables in other languages]: https://rosettacode.org/wiki/Topic_variable
-[topic-token bikeshedding]: https://github.com/tc39/proposal-pipeline-operator/issues/91
-[Underscore.js]: http://underscorejs.org
-[Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
-[untangled flow]: #untangled-flow
-[WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
-[zero runtime cost]: #zero-runtime-cost
-[formal pipeline specification]: https://jschoi.org/18/es-smart-pipelines/spec
-[Core Proposal]: #core-proposal
-[Additional Feature PF]: #additional-feature-pf
-[Additional Feature NP]: #additional-feature-np
-[Additional Feature TE]: #additional-feature-te
-[Additional Feature PP]: #additional-feature-pp
-[Additional Feature TC]: #additional-feature-tc
-[Additional Feature TF]: #additional-feature-tf
-[Additional Feature BP]: #additional-feature-bp
-[Pipeline Proposal 1]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-1-f-sharp-only
-[Node.js `util.promisify`]: https://nodejs.org/api/util.html#util_util_promisify_original
-[don’t break my code]: #dont-break-my-code
-[make my code easier to read]: #make-my-code-easier-to-read
-[lexical topic]: https://jschoi.org/18/es-smart-pipelines/spec#sec-lexical-topics
-[pipeline head]: https://jschoi.org/18/es-smart-pipelines/spec#prod-PipelineHead
-[pipeline body]: https://jschoi.org/18/es-smart-pipelines/spec#prod-PipelineBody
-[terse function application]: #terse-function-application
-[`do` expressions]: #do-expressions
-[jQuery]: https://jquery.com/
-[JS Foundation]: https://js.foundation/
-[jquery/src/core/parseHTML.js]: https://github.com/jquery/jquery/blob/2.2-stable/src/core/parseHTML.js
-[jquery/src/core/access.js]: https://github.com/jquery/jquery/blob/2.2-stable/src/core/access.js
-[jquery/src/core/init.js]: https://github.com/jquery/jquery/blob/2.2-stable/src/core/init.js
-[Lodash]: https://lodash.com/
-[Ramda]: http://ramdajs.com/
-[Ramda wiki cookbook]: https://github.com/ramda/ramda/wiki/Cookbook
-[pure functions]: https://en.wikipedia.org/wiki/Pure_function
-[immutable objects]: https://en.wikipedia.org/wiki/Immutable_object
-[currying]: https://en.wikipedia.org/wiki/Currying
-[WHATWG Streams Standard]: https://stream.spec.whatwg.org/
-[MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
 [tc39/proposal-decorators#30]: tc39/proposal-decorators#30
 [tc39/proposal-decorators#42]: tc39/proposal-decorators#42
 [tc39/proposal-decorators#60]: tc39/proposal-decorators#60
-[Visual Basic’s `select` statement]: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/select-case-statement
-[WHATWG Fetch + CP]: #whatwg-fetch-standard-core-proposal-only
-[jQuery + CP]: #jquery-core-proposal-only
-[Underscore.js + CP]: #underscorejs-core-proposal-only
-[Underscore.js + CP + BP + PP]: #underscorejs-core-proposal--additional-feature-bppp
-[Lodash + CP]: #lodash-core-proposal-only
-[Lodash + CP + BP + PF]: #lodash-core-proposal--additional-feature-bppf
-[Lodash + CP + BP + PP + PF + NP]: #lodash-core-proposal--additional-features-bppppfmt
-[Ramda + CP + BP + PF]: #ramda-core-proposal--additional-feature-bppf
-[Ramda + CP + BP + PF + NP]: #ramda-core-proposal--additional-features-bppfmt
-[WHATWG Streams + CP + BP + PF]: #whatwg-streams-standard-core-proposal--additional-feature-bppf
-[WHATWG Streams + CP + BP + PF + NP]: #whatwg-streams-standard-core-proposal--additional-features-bppfmt
-[identity function]: https://en.wikipedia.org/wiki/Identity_function
-[Clojure compact function]: https://clojure.org/reference/reader#_dispatch
-[intro]: #smart-pipelines
-[Standard Style]: https://standardjs.com/
-[nullish coalescing proposal]: https://github.com/tc39/proposal-nullish-coalescing/
-[function bind operator `::`]: #function-bind-operator
-[ASI]: https://tc39.github.io/ecma262/#sec-automatic-semicolon-insertion
-[ECMAScript function binding]: https://github.com/zenparsing/es-function-bind
-[block parameters]: #block-parameters
-[partial function application]: #partial-function-application
-[Additional Features]: #smart-pipelines
-[terse function application]: #terse-function-application
-[terse partial application]: #terse-partial-application
-[terse composition]: #terse-composition
-[function binding]: #function-binding
-[primary topic]: #core-proposal
-[secondary topic]: #additional-feature-np
-[tertiary topic]: #additional-feature-np
-[rest topic]: #additional-feature-np
-[pipeline functions]: #additional-feature-pf
-[async pipeline functions]: #additional-feature-pf
-[pipelines]: #core-proposal
-[TheNavigateur functional composition]: https://github.com/TheNavigateur/proposal-pipeline-operator-for-function-composition
-[isiahmeadows functional composition]: https://github.com/isiahmeadows/function-composition-proposal
-[simonstaton functional composition]: https://github.com/simonstaton/Function.prototype.compose-TC39-Proposal
-[i-am-tom functional composition]: https://github.com/fantasyland/ECMAScript-proposals/issues/1#issuecomment-306243513
-[gajus functional composition]: https://github.com/gajus/babel-plugin-transform-function-composition
-[function composition]: #function-composition
-[formal CP]: https://jschoi.org/18/es-smart-pipelines/spec
-[formal BP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-bp
-[formal PP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pp
-[formal PF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pf
-[formal TC]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-tc
-[formal NP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-np
-[formal TF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-tf
-[TC39 60th meeting, pipelines]: https://tc39.github.io/tc39-notes/2017-09_sep-26.html#11iia-pipeline-operator
-[WebKit console variables]: https://webkit.org/blog/829/web-inspector-updates/
-[other browsers’ console variables]: https://www.andismith.com/blogs/2011/11/25-dev-tool-secrets/
-[statically analyzable]: #static-analyzability
-[terse method extraction]: #terse-method-extraction
+[Tennent correspondence principle]: http://gafter.blogspot.com/2006/08/tennents-correspondence-principle-and.html
 [term rewriting with autogenerated variables]: #term-rewriting-with-autogenerated-variables
 [term rewriting with single dummy variable]: #term-rewriting-with-single-dummy-variable
+[term rewriting]: #term-rewriting
+[terse composition]: #terse-composition
+[terse function application]: #terse-function-application
+[terse function calls]: #terse-function-calls
+[terse method extraction]: #terse-method-extraction
+[terse parentheses]: #terse-parentheses
+[terse partial application]: #terse-partial-application
+[terse variables]: #terse-variables
+[tertiary topic]: #additional-feature-np
+[TheNavigateur functional composition]: https://github.com/TheNavigateur/proposal-pipeline-operator-for-function-composition
+[topic and comment]: https://en.wikipedia.org/wiki/Topic_and_comment
+[topic style]: #topic-style
+[topic variables in other languages]: https://rosettacode.org/wiki/Topic_variable
+[topic-token bikeshedding]: https://github.com/tc39/proposal-pipeline-operator/issues/91
+[Underscore.js + CP + BP + PP]: #underscorejs-core-proposal--additional-feature-bppp
+[Underscore.js + CP]: #underscorejs-core-proposal-only
+[Underscore.js]: http://underscorejs.org
+[Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
+[untangled flow]: #untangled-flow
+[Visual Basic’s `select` statement]: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/select-case-statement
+[WebKit console variables]: https://webkit.org/blog/829/web-inspector-updates/
+[WHATWG Fetch + CP]: #whatwg-fetch-standard-core-proposal-only
+[WHATWG Fetch Standard]: https://fetch.spec.whatwg.org/
+[WHATWG Streams + CP + BP + PF + NP]: #whatwg-streams-standard-core-proposal--additional-features-bppfmt
+[WHATWG Streams + CP + BP + PF]: #whatwg-streams-standard-core-proposal--additional-feature-bppf
+[WHATWG Streams Standard]: https://stream.spec.whatwg.org/
+[WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
+[Wikipedia: term rewriting]: https://en.wikipedia.org/wiki/Term_rewriting
+[zero runtime cost]: #zero-runtime-cost
