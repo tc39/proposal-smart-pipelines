@@ -2011,7 +2011,7 @@ PipelineTopicList[In, Yield, Await] :
 <emu-grammar>PipelineExpression : PipelineExpression `|&gt;` PipelineBody</emu-grammar>
 <emu-alg>
 1. Assert: _topics_ is a list.
-2. <ins>Assert: _restTopics_ is a list.</ins>
+2. <ins>Assert: _restStartIndex_ is [TODO].</ins>
 3. Let _envRec_ be env's Environment Record.
 4. Assert: _envRec_ is a declarative Environment Record.
 5. Assert: _envRec_.HasTopicBinding() is *false*.
