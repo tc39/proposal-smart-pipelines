@@ -5565,8 +5565,8 @@ Because pipeline [topic style][] supports [arbitrary expressions][expressive
 versatility], when [`do` expressions][] are added to JavaScript they too will be
 supported within pipeline bodies. When this occurs, topic references would be
 allowed within inner `do` expressions, along with arrow functions and `if` and
-`try` statements. However, pipelines in [topic style][] already support a block
-form that is similar to `do` expressions. See the examples in [Motivation][].
+`try` statements. [Additional Feature BP][] would extend this further, also
+supporting pipeline-body blocks that act nearly identically to `do` expressions.
 
 ## Private class fields and class decorators
 [TODO]
