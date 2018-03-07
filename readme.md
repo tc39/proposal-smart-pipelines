@@ -4481,7 +4481,8 @@ simplicity][], in the same manner that [Huffman coding][] optimizes textual
 symbols’ length for their frequency of use: more commonly used symbols are
 shorter in written length.
 
-Furthermore, calls are not only unary; they are also [TODO]
+Furthermore, calls are not only unary; they may also be n-ary. [Additional
+Feature NP][] adds support for terse N-ary function calls within pipelines.
 
 ### Terse composition
 Terse composition of all expressions – [not only unary functions][expressive
