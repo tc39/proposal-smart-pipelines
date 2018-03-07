@@ -891,19 +891,19 @@ Normally, Contains does not look inside most function forms. However, Contains i
 </emu-clause>
 
 <emu-annex id=sec-additional-feature-bp>
-<h1>Additional Feature BP</h1>
+<h1>Additional Feature BP: Block pipelines</h1>
 <p><strong>Not at Stage 0.</strong></p>
 <p>[TODO]</p>
 </emu-annex>
 
 <emu-annex id=sec-additional-feature-pp>
-<h1>Additional Feature PP</h1>
+<h1>Additional Feature PP: Prefix pipelines</h1>
 <p><strong>Not at Stage 0.</strong></p>
 <p>[TODO]</p>
 </emu-annex>
 
 <emu-annex id=sec-additional-feature-pf>
-<h1>Additional Feature PF</h1>
+<h1>Additional Feature PF: Pipeline functions</h1>
 <p><strong>Not at Stage 0.</strong></p>
 <p>This annex specifies additional ECMAScript language syntax and semantics for <strong>pipeline functions</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing an additional <strong>pipeline-function operator</strong> `+&gt;`. This new <strong>unary</strong> operator creates arrow functions with an implicit parameter pipelined into a pipeline body, such that `+&gt;` |PipelineBody| is equivalent to `$=&gt;$|&gt;` |PipelineBody|. The operator brings much power: it enables terse <strong>method extraction</strong>, terse <strong>partial application</strong> of functions/expressions (into unary functions), and terse <strong>composition</strong> of functions/expressions.</p>
 
@@ -1197,13 +1197,13 @@ PipelineBody : PipelineTopicBody
 </emu-annex>
 
 <emu-annex id=sec-additional-feature-tc>
-<h1>Additional Feature TC</h1>
+<h1>Additional Feature TC: Topical `catch`es</h1>
 <p><strong>Not at Stage 0.</strong></p>
 <p>[TODO]</p>
 </emu-annex>
 
 <emu-annex id=sec-additional-feature-np>
-<h1>Additional Feature NP</h1>
+<h1>Additional Feature NP: N-ary pipelines</h1>
 <p><strong>Not at Stage 0.</strong></p>
 <p>This annex specifies additional ECMAScript language syntax and semantics for <strong>n-ary smart pipelines</strong> and <strong>multiple lexical topics</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing n-ary pipeline forms `headList |> …` and `… |> bodyList |> …`, an additional secondary topic reference `##`, a tertiary topic reference `###`, a |RestTopicReference| `...`, and a parenthesized pipeline-head syntax to bind the new references [TODO: xref]. When combined with the <emu-xref href=#sec-additional-feature-pf>additional feature PF</emu-xref>, the resulting additional feature PF+NP enables <strong>partial application</strong> of functions/expressions into n-ary functions. [TODO: xref with PF+NP]</p>
 
@@ -2334,7 +2334,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 </emu-annex>
 
 <emu-annex id=sec-additional-feature-tf>
-<h1>Additional Feature TF</h1>
+<h1>Additional Feature TF: Topical `for`s</h1>
 <p><strong>Not at Stage 0.</strong></p>
 <p>[TODO]</p>
 </emu-annex>
