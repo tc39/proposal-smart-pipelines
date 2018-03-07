@@ -4294,11 +4294,7 @@ form to another. There is **no single type** of expression that forms a
 
 <td>
 
-33. Functional partial application?
-34. Unary-function composition?
-35. Function binding?
-
-[TODO]
+33. [Function binding?][Function binding]
 
 </table>
 
