@@ -4652,8 +4652,9 @@ into their function-call control-flow syntaxes, with [Perl 6 as perhaps the mos
 extensive, unified example][Perl 6 topicization]. Integration of topic with
 syntax enables especially pithy, terse [tacit programming][].
 
-In addition, many JavaScript console [REPLs][], such as those of the WebKit Web
-Inspector and the Node.js interactive console… [TODO]
+In addition, many JavaScript console [REPLs][], [such as the WebKit Web
+Inspector console variables][WebKit console variables], [other browsers’ console
+variables][] and the Node.js console variables.
 
 Several disadvantages to these prior approaches may increase the probability of
 developer surprise, in which “surprise” refers to behavior difficult to predict
@@ -6340,3 +6341,5 @@ the steps of the computation would be:
 [formal NP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-np
 [formal TF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-tf
 [TC39 60th meeting, pipelines]: https://tc39.github.io/tc39-notes/2017-09_sep-26.html#11iia-pipeline-operator
+[WebKit console variables]: https://webkit.org/blog/829/web-inspector-updates/
+[other browsers’ console variables]: https://www.andismith.com/blogs/2011/11/25-dev-tool-secrets/
