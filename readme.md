@@ -3310,6 +3310,7 @@ f(a, b)
 ```js
 (a, b, ...c, d)
 |> f
+|> g
 ```
 Spread elements are permitted within pipeline heads, with the same meaning as in
 regular argument lists.
@@ -3317,7 +3318,7 @@ regular argument lists.
 <td>
 
 ```js
-f(a, b, ...c, d)
+g(f(a, b, ...c, d))
 ```
 
 <tr>
@@ -3326,6 +3327,7 @@ f(a, b, ...c, d)
 ```js
 ...a
 |> f
+|> g
 ```
 When a pipeline head only consists of one item, its parentheses may be omitted,
 which is the usual syntax from the [Core Proposal][]. But this now goes for
@@ -3334,7 +3336,7 @@ spread elements too.
 <td>
 
 ```js
-f(...a)
+g(f(...a))
 ```
 
 <tr>
@@ -3343,6 +3345,7 @@ f(...a)
 ```js
 (a, b)
 |> f(#, x, ##)
+|> g
 ```
 When a pipeline’s body is in [topic style][], the first element in the argument
 list is bound to the primary topic reference `#`, the second element is bound to
@@ -3353,7 +3356,7 @@ pipeline body.
 <td>
 
 ```js
-f(a, x, b)
+g(f(a, x, b))
 ```
 
 <tr>
@@ -3362,6 +3365,7 @@ f(a, x, b)
 ```js
 (a, b, ...c, d)
 |> f(#, x, ...)
+|> g
 ```
 The pipeline also binds an array to a rest topic reference `...` within the
 pipeline body. The array contains the arguments of the pipeline head that were
@@ -3370,7 +3374,7 @@ not bound to any other topic reference.
 <td>
 
 ```js
-f(a, x, ...[b, ...c, d])
+g(f(a, x, ...[b, ...c, d]))
 ```
 
 <tr>
@@ -3379,6 +3383,7 @@ f(a, x, ...[b, ...c, d])
 ```js
 (a, b, c, d, e)
 |> f(##, x, ...)
+|> g
 ```
 The rest topic reference `...` starts from beyond the furthest topic reference
 that is used within the pipeline body. Here, the furthest topic reference is the
@@ -3392,8 +3397,9 @@ spreads its elements into whatever expression surrounds it.
 
 ```js
 do {
-  const [_tertiary, ..._rest] = [c, d, e];
-  f(a, _secondary, x, ..._rest)
+  const [_primary, _secondary, _tertiary, ..._rest]
+    = [a, b, c, d, e];
+  g(f(a, _secondary, x, ..._rest))
 }
 ```
 
@@ -3403,6 +3409,7 @@ do {
 ```js
 (a, b, c, ...d, e)
 |> f(#, ###, x, ...)
+|> g
 ```
 Here, the furthest topic reference is the tertiary topic reference `###`: the
 third argument item. So only the rest topic reference `...` contains `d`’s
@@ -3414,7 +3421,7 @@ because `##` is not used at all in the pipeline body.
 ```js
 do {
   const _rest = [...d, e];
-  f(a, _tertiary, x, ..._rest)
+  g(f(a, _tertiary, x, ..._rest))
 }
 ```
 
@@ -3424,6 +3431,7 @@ do {
 ```js
 (a, ...b, c, ...d, e)
 |> f(#, ##, ###, x, ...)
+|> g
 ```
 
 <td>
@@ -3432,7 +3440,7 @@ do {
 do {
   const [_secondary, _tertiary, ..._rest] =
     [...b, c, ...d, e];
-  f(a, _secondary, _tertiary, x, ..._rest)
+  g(f(a, _secondary, _tertiary, x, ..._rest))
 }
 ```
 
@@ -3442,6 +3450,7 @@ do {
 ```js
 (a, ...b, c, ...d, e)
 |> f(#, ##, x, ...)
+|> g
 ```
 
 <td>
@@ -3450,7 +3459,7 @@ do {
 do {
   const [_secondary, ..._rest] =
     [...b, c, ...d, e];
-  f(a, _secondary, x, ..._rest)
+  g(f(a, _secondary, x, ..._rest))
 }
 ```
 
@@ -3460,12 +3469,13 @@ do {
 ```js
 (a, b)
 |> # - ##
+|> g
 ```
 
 <td>
 
 ```js
-a - b
+g(a - b)
 ```
 
 <tr>
