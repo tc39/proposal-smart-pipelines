@@ -417,23 +417,6 @@ PipelineTopicBody[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
 </emu-grammar>
 
-<h2>Supplemental Syntax</h2>
-<p>When the production <emu-grammar>PipelineHead : ConditionalExpression</emu-grammar> is recognized the following grammar is used to refine the interpretation of |ConditionalExpression|:</p>
-
-<emu-grammar type=definition>
-PipelineTopicListHead[In, Yield, Await] :
-  `(` PipelineTopicList[?In, ?Yield, ?Await] `)`
-
-PipelineTopicList[In, Yield, Await] :
-  PipelineTopicListHead[?In, ?Yield, ?Await]
-  PipelineTopicList[?In, ?Yield, ?Await] `,` AssignmentExpression[?In, ?Yield, ?Await]
-  AssignmentExpression[?In, ?Yield, ?Await]
-</emu-grammar>
-
-<emu-note type=editor>
-<p>The supplemental grammar is intended to ensure forward compatibility with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
-</emu-note>
-
 <emu-clause id=sec-pipeline-operator-static-semantics-early-errors>
 <h1>Static Semantics: Early Errors</h1>
 <emu-note type=editor>
@@ -442,11 +425,11 @@ PipelineTopicList[In, Yield, Await] :
 
 <emu-grammar>PipelineHead : ConditionalExpression</emu-grammar>
 <emu-alg>
-* It is a Syntax Error if _ConditionalExpression_ is covering a |PipelineTopicListHead|.
+* It is a Syntax Error if _ConditionalExpression_ is covering |Arguments|.
 </emu-alg>
 
 <emu-note type=editor>
-<p>This early error prohibits _PipelineHead_ from covering a comma-separated expression. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This early error prohibits _PipelineHead_ from covering a comma-separated argument list. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>PipelineTopicBody : ConditionalExpression</emu-grammar>
@@ -1928,16 +1911,14 @@ PipelineHead[?In, ?Yield, ?Await] :
   <del class=block>ConditionalExpression[?In, ?Yield, ?Await]</del>
   <ins class=block>
   [lookahead &lt;! {`(`}] ConditionalExpression[?In, ?Yield, ?Await]
-  PipelineTopicListHead[?Yield, ?Await]
+  Arguments[?Yield, ?Await]
   </ins>
   PipelineExpression[?In, ?Yield, ?Await]
-
-PipelineTopicListHead[Yield, Await]:
-  CoverPipelineTopicListAndArrowParameterList[?Yield, ?Await] `)`
 
 PipelineBody[In, Yield, Await] :
   PipelineBareFunctionCall
   PipelineBareConstructorCall
+  PipelineBareAwaitedFunctionCall[?Await]
   PipelineTopicBody[?In, ?Yield, ?Await]
 
 PipelineBareFunctionCall :
@@ -1945,6 +1926,9 @@ PipelineBareFunctionCall :
 
 PipelineBareConstructorCall :
   `new` SimpleReference
+
+PipelineBareAwaitedFunctionCall[Await] :
+  [+Await] `await` SimpleReference
 
 SimpleReference :
   IdentifierReference
@@ -1954,9 +1938,8 @@ PipelineTopicBody[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
 </emu-grammar>
 
+<del class=block>
 <h2>Supplemental Syntax</h2>
-<p>[TODO: spread ... in (...array) |> # + ##]</p>
-
 <p>When the production <emu-grammar>ArrowParameters : ConditionalExpression</emu-grammar> is recognized the following grammar is used to refine the interpretation of |ConditionalExpression|:</p>
 
 <emu-grammar type=definition>
@@ -1968,6 +1951,7 @@ PipelineTopicList[In, Yield, Await] :
   PipelineTopicList[?In, ?Yield, ?Await] `,` AssignmentExpression[?In, ?Yield, ?Await]
   AssignmentExpression[?In, ?Yield, ?Await]
 </emu-grammar>
+</del>
 
 <emu-annex id=sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>
 <h1>Static Semantics: Early Errors</h1>
