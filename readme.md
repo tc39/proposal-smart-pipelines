@@ -5572,8 +5572,20 @@ allowed within inner `do` expressions, along with arrow functions and `if` and
 `try` statements. [Additional Feature BP][] would extend this further, also
 supporting pipeline-body blocks that act nearly identically to `do` expressions.
 
-## Private class fields and class decorators
-[TODO]
+## Private class fields, class decorators, nullish coalescing, and optional chaining
+This proposal’s compatibility with these four proposals depends on its choice of
+tokens for its topic references: `#`/`##`/`###`/`...`, `@`/`@@`/`@@@`, or
+`?`/`??`/`???`.
+
+Because topic proposals are nullary operators, these are unambiguous with all
+four proposals, with one exception: `?`/`??`/`???` is not compatible with
+nullish coalescing and optional chaining’s current choice of `… ??: …`, `…??.…`,
+`…??[…]`, and `…??(…)`. This is not a problem with `#`/`##`/`###`/`...` and with
+`@`/`@@`/`@@@`.
+
+In fact, if [Additional Feature PF][] and [Additional Feature NP][] subsume the
+current [partial function application][] proposal, which uses nullary `?`, then
+single `?` might be freed up for optional chaining.
 
 ## Alternative pipeline proposals
 There are several other alternative pipeline-operator proposals competing with
