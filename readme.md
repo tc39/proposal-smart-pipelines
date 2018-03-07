@@ -138,6 +138,8 @@ illustrate** the power of the pipeline/topic concept and are always simply
 **rewritable** into forms that use **only the Core Proposal**.
 
 ## Core Proposal
+The Core Proposal is [**formally specified in a separate draft
+specification**][formal CP].
 
 <table>
 <thead>
@@ -1643,6 +1645,9 @@ This first Additional Feature – **block pipelines** – adds an additional
 [topic-style pipeline body syntax][smart body syntax], using blocks to stand for
 `do` expressions.
 
+[Additional Feature BP is **formally specified in a separate draft
+specification**][formal BP].
+
 <table>
 <thead>
 <tr>
@@ -1746,6 +1751,9 @@ prefix form of the pipeline operator. The tacit, default head is the topic
 reference `#` itself, which must be resolvable within the outer lexical
 environment. This may occur within `if` statements, `try` statements, and [`do`
 expressions][], as well as block pipeline bodies with [Additional Feature BP][].
+
+[Additional Feature PP is **formally specified in a separate draft
+specification**][formal PP].
 
 <table>
 <thead>
@@ -2350,6 +2358,9 @@ binding would be in addition to the explicit binding of a normal variable
 `error` declared within any parenthesized antecedent `(error)` in
 `try { … } catch (error) { … }`.
 
+[Additional Feature TC is **formally specified in a separate draft
+specification**][formal TC].
+
 <table>
 <thead>
 <tr>
@@ -2456,6 +2467,9 @@ and **N-ary** functional composition.
 appearance of the pipeline-function operator does not have to be `+>`. It could
 also be `~>`, `->`, `=|`, `=|>` or something else to be decided after future
 bikeshedding discussion.
+
+[Additional Feature PF is **formally specified in a separate draft
+specification**][formal PF].
 
 <table>
 <thead>
@@ -3256,6 +3270,9 @@ The precise appearances of the secondary, tertiary, and rest topic references do
 not have to be `##`, `###`, and `...`. For instance, they could instead be `#1`,
 `#2`, and `#...`; this is yet to be bikeshedded.
 
+[Additional Feature NP is **formally specified in a separate draft
+specification**][formal NP].
+
 <table>
 <thead>
 <tr>
@@ -3961,6 +3978,9 @@ the `for` loop. But this could be changed afterward with Additional Feature TF 
 **Topical `for`s** – which would cause `for` loops to bind the topic to useful
 values, which in turn would make `for` loops terser, emphasizing what happens to
 each item rather than the items’ variables themselves.
+
+[Additional Feature TF is **formally specified in a separate draft
+specification**][formal TF].
 
 <table>
 <thead>
@@ -6286,3 +6306,10 @@ do { do { do { do { 3 * 3 } } }
 [simonstaton functional composition]: https://github.com/simonstaton/Function.prototype.compose-TC39-Proposal
 [i-am-tom functional composition]: https://github.com/fantasyland/ECMAScript-proposals/issues/1#issuecomment-306243513
 [function composition]: #function-composition
+[formal CP]: https://jschoi.org/18/es-smart-pipelines/spec
+[formal BP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-bp
+[formal PP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pp
+[formal PF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pf
+[formal TC]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-tc
+[formal NP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-np
+[formal TF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-tf
