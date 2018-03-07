@@ -4566,8 +4566,6 @@ learning could be small, particularly in comparison to the large gains in
 readability and comprehensibility that it might bring to code in general.
 
 # Relations to other work
-[TODO: https://github.com/gajus/babel-plugin-transform-function-composition]
-
 ## Pipelines in other programming languages
 The concept of a pipeline operator appears in numerous other languages, variously
 called “pipeline”, “threading”, and “feed” operators. This is because developers
@@ -4799,8 +4797,8 @@ There are several existing proposals for unary functional composition, which
 [Additional Feature PF][] would all subsume. Additional Feature PF can compose
 not only unary functions but [expressions of any type][expressive versatility],
 including object methods, async functions, and `if` `else` statements. And with
-[Additional Feature NP][], even n-ary functional composition would be supported,
-which no current proposal yet addresses.
+[Additional Feature NP][], even functional composition into n-ary functions
+would be supported, which no current proposal yet addresses.
 
 <table>
 <thead>
@@ -5465,9 +5463,6 @@ to be called always within the third function (`select`)’s callback block.
 Such a solution is not yet specified by the current proposal for [ECMAScript
 block parameters][]. Lexical topics can fill in that gap.
 
-<tr>
-<td colspan=2>
-
 ```js
 class CompletionRecord {
   type, value;
@@ -5587,6 +5582,60 @@ In fact, if [Additional Feature PF][] and [Additional Feature NP][] subsume th
 current [partial function application][] proposal, which uses nullary `?`, then
 single `?` might be freed up for optional chaining.
 
+## Alternative pipeline Babel plugin
+[Gajus Kuizinas wrote a Babel plugin for syntactic functional composition][gajus
+functional composition], which may be useful to compare with this proposal’s
+smart pipelines. Kuizinas’s plugin makes the choice to insert its pipeline
+heads’ values into its pipeline bodies’ last parameter, which is convenient for
+Ramda-style functions but not for Underscore-style functions.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Kuizinas’ Babel plugin
+
+<tbody>
+<tr>
+<td>
+
+```js
+apple
+|> foo('foo parameter 0', 'foo parameter 1', #)
+|> bar('bar parameter 0', #)
+|> baz('baz parameter 0', #)
+```
+
+<td>
+
+```js
+apple
+  ::foo('foo parameter 0', 'foo parameter 1')
+  ::bar('bar parameter 0')
+  ::baz('baz parameter 0')
+```
+From [Babel plugin for syntactic functional composition by Gajus Kuizinas][gajus
+functional composition].
+
+<tr>
+<td>
+
+```js
+{x: 'x'}
+|> assocPath(['y', 'a'], 'a', #)
+|> assocPath(['y', 'b'], 'b', #)
+```
+
+<td>
+
+```js
+{x: 'x'}
+  ::assocPath(['y', 'a'], 'a')
+  ::assocPath(['y', 'b'], 'b')
+```
+
+</table>
+
 ## Alternative pipeline proposals
 There are several other alternative pipeline-operator proposals competing with
 the smart-pipeline Core Proposal. The Core Proposal is only one variant of the
@@ -5630,10 +5679,11 @@ locality][] and [numerous statically detectable early errors][], the mental
 burden on the developer in remembering [smart body syntax][] is light.
 
 The benefits of smart pipelines on many real-world examples are well
-demonstrated above, and many of them are not possible with the other pipeline
-proposals. It is hoped that the Core Proposal is strongly considered by TC39,
-keeping in mind that it simple but versatile syntax would open the door to
-addressing the use cases of many other proposals in a uniform manner.
+demonstrated in the [Motivation][] section above, and many of the examples are
+not possible with the other pipeline proposals. It is hoped that the Core
+Proposal is strongly considered by TC39, keeping in mind that it simple but
+versatile syntax would open the door to addressing the use cases of many other
+proposals in a uniform manner.
 
 # Appendices
 ## Smart body syntax
@@ -6280,6 +6330,7 @@ the steps of the computation would be:
 [isiahmeadows functional composition]: https://github.com/isiahmeadows/function-composition-proposal
 [simonstaton functional composition]: https://github.com/simonstaton/Function.prototype.compose-TC39-Proposal
 [i-am-tom functional composition]: https://github.com/fantasyland/ECMAScript-proposals/issues/1#issuecomment-306243513
+[gajus functional composition]: https://github.com/gajus/babel-plugin-transform-function-composition
 [function composition]: #function-composition
 [formal CP]: https://jschoi.org/18/es-smart-pipelines/spec
 [formal BP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-bp
