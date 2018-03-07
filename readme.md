@@ -3553,9 +3553,9 @@ value
 // Unexpected token `=>`.
 // Cannot parse base expression.
 ```
-Because arrow functions have looser precedence than the pipe operator `|>`, it
-is never ambiguous with the parenthesized-list pipeline-head syntax. The above
-code is being interpreted as if it were the below:
+Because arrow functions have looser precedence than the pipeline operator `|>`,
+it is never ambiguous with the parenthesized-list syntax for N-ary pipelines.
+The above invalid code is being interpreted as if it were the below:
 ```js
 (value |> (f, g) |> (x, y)) =>
   (# * 5 |> settimeout)
