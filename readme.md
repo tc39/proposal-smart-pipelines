@@ -4702,7 +4702,7 @@ scoping][] and [static analyzability][].
 An existing proposal for [ECMAScript function binding][] has three use cases:
 
 1. Extracting a method from an object as a standalone function:
-   `o.method.bind(object)` as `::object.method`.
+   `object.method.bind(object)` as `::object.method`.
 2. Calling a function as if it were a method call on an object:
    `func.call(object, ...args)` as `object::func(...args)`
 3. Creating a function by binding an object to it:
@@ -4710,10 +4710,11 @@ An existing proposal for [ECMAScript function binding][] has three use cases:
 
 The smart-pipelines [Core Proposal][] + [Additional Feature PF][] **subsumes**
 the [ECMAScript function binding][] proposal in the **first use case** (prefix
-`::`). But the other two use cases (infix `::`) are not addressed by smart
-pipelines. Smart pipelines and infix function binding `::` can and should
-coexist. In fact, infix function binding could be made more ergonomic in many
-cases by replacing prefix `::function` with a shortcut for infix `#::function`.
+`::`). But the **other two** use cases (infix `::`) are **not addressed** by
+smart pipelines. Smart pipelines and **infix** function binding `::` **can and
+should coexist**. In fact, infix function binding could be made more ergonomic
+in many cases by replacing prefix `::function` with a shortcut for the
+expression `#::function`.
 
 <table>
 <thead>
