@@ -171,7 +171,7 @@ new User.Message(
   capitalize(
     doubledSay(
       await promise
-        ??: throw new TypeError(
+        || throw new TypeError(
           `Invalid value from ${promise}`)
     ), ', '
   ) + '!'
@@ -192,7 +192,7 @@ left and right of each subexpression** to understand its data flow.
 ```js
 promise
 |> await #
-|> # ??: throw new TypeError(
+|> # || throw new TypeError(
   `Invalid value from ${promise}`)
 |> doubleSay(#, ', ')
 |> capitalize
@@ -226,7 +226,7 @@ await stream.write(
     capitalize(
       doubledSay(
         await promise
-          ??: throw new TypeError(
+          || throw new TypeError(
             `Invalid value from ${promise}`)
       ), ', '
     ) + '!'
@@ -240,7 +240,7 @@ indentation and four more pairs of parentheses.
 In addition, much related code is here separated by unrelated code. Rather than
 a **uniform** postfix chain, operations appear **either before** the previous
 step’s expression (`await stream.write(…)`,`new User.Message(…)`,
-`capitalize(…)`, `doubledSay(…)`, `await …`) but also **after** (`… ??: throw
+`capitalize(…)`, `doubledSay(…)`, `await …`) but also **after** (`… || throw
 new TypeError()`, `… + '!'`). An additional argument to function calls (such as
 `, ` in `doubledSay(…, ', ')`) is also separated from its function calls,
 forming another easy-to-miss “postfix” argument.
@@ -313,7 +313,7 @@ operations, logical operations, bitwise operations, `typeof`, `instanceof`,
 ```js
 promise
 |> await #
-|> # ??: throw new TypeError()
+|> # || throw new TypeError()
 |> doubleSay(#, ', ')
 |> capitalize
 |> # + '!'
@@ -334,7 +334,7 @@ await stream.write(
     capitalize(
       doubledSay(
         await promise
-          ??: throw new TypeError(
+          || throw new TypeError(
             `Invalid value from ${promise}`)
       ), ', '
     ) + '!'
@@ -348,7 +348,7 @@ await stream.write(
 ```js
 promise
 |> await #
-|> # ??: throw new TypeError(
+|> # || throw new TypeError(
     `Invalid value from ${#}`)
 |> doubleSay(#, ', ')
 |> capitalize(#)
@@ -368,7 +368,7 @@ await stream.write(
     capitalize(
       doubledSay(
         await promise
-          ??: throw new TypeError(
+          || throw new TypeError(
             `Invalid value from ${promise}`)
       ), ', '
     ) + '!'
@@ -479,7 +479,7 @@ function capitalize (str) {
 
 promise
 |> await #
-|> # ??: throw new TypeError()
+|> # || throw new TypeError()
 |> doubleSay(#, ', ')
 |> capitalize |> # + '!'
 |> new User.Message
@@ -509,7 +509,7 @@ await stream.write(
     capitalizedString(
       doubledSay(
         await promise
-          ??: throw new TypeError()
+          || throw new TypeError()
       ), ', '
     ) + '!'
   )
@@ -518,7 +518,7 @@ await stream.write(
 This deeply nested expression has four levels of indentation instead of two.
 Reading its data flow requires checking both the beginning of each expression
 (`new User.Message`, `capitalizedString`, `doubledSay`, `await promise` and
-end of each expression (`??: throw new TypeError()`, `, ', '`, ` + '!'`)).
+end of each expression (`|| throw new TypeError()`, `, ', '`, ` + '!'`)).
 
 <tr>
 <td>
@@ -555,7 +555,7 @@ expressions that are embeddable in other expressions.
 ```js
 promise
 |> await #
-|> # ??: throw new TypeError()
+|> # || throw new TypeError()
 |> `${#}, ${#}`
 |> #[0].toUpperCase() + #.substring(1)
 |> # + '!'
@@ -571,7 +571,7 @@ may prefer to inline: trading off self-documentation for localization of code.
 new User.Message(do {
   const value = do {
     const value = await promise
-      ??: throw new TypeError();
+      || throw new TypeError();
     `${value}, ${value}`
   }
   value[0].toUpperCase()
@@ -588,7 +588,7 @@ writability and in readability.
 ```js
 promise
 |> await #
-|> # ??: throw new TypeError()
+|> # || throw new TypeError()
 |> `${#}, ${#}`
 |> #[0].toUpperCase() + #.substring(1)
 |> # + '!'
@@ -600,7 +600,7 @@ promise
 ```js
 do {
   const promiseValue = await promise
-    ??: throw new TypeError();
+    || throw new TypeError();
   const doubledValue =
     `${promiseValue}, ${promiseValue}`;
   const capitalizedValue
@@ -622,7 +622,7 @@ nouns over their verbs), and it is easy to typo their names.
 ```js
 promise
 |> await #
-|> # ??: throw new TypeError()
+|> # || throw new TypeError()
 |> normalize
 |> `${#}, ${#}`
 |> #[0].toUpperCase() + #.substring(1)
@@ -638,7 +638,7 @@ a call of a function `normalize` was inserted between the second and third steps
 ```js
 do {
   const promiseValue = await promise
-    ??: throw new TypeError();
+    || throw new TypeError();
   const normalizedValue = normalize();
   const doubledValue =
     `${normalizedValue}, ${normalizedValue}`;
@@ -4391,14 +4391,14 @@ new User.Message(
   capitalize(
     doubledSay(
       (await promise)
-        ??: throw new TypeError(`Invalid value from ${promise}`)
+        || throw new TypeError(`Invalid value from ${promise}`)
     )
   ) + '!'
 )
 ```
 …the deep inner expression `await promise` is relatively short. In
 contrast, the shallow outer expression
-`` capitalize(doubledSay((await promise) ??: throw new TypeError(`Invalid value from ${promise}`))) + '!'`) ``
+`` capitalize(doubledSay((await promise) || throw new TypeError(`Invalid value from ${promise}`))) + '!'`) ``
 is very long. Yet both are
 quite similar: they are transformations of a string into another. This
 insight is lost in the deeply nested noise.
@@ -4412,7 +4412,7 @@ along left to right, not back and forth.
 ```js
 promise
 |> await #
-|> # ??: throw new TypeError()
+|> # || throw new TypeError()
 |> doubleSay(#, ', ')
 |> capitalize
 |> # + '!'
@@ -6009,7 +6009,7 @@ Consider also the [motivating first example above][Core Proposal]:
 ```js
 promise
 |> await #
-|> # ??: throw new TypeError(
+|> # || throw new TypeError(
   `Invalid value from ${promise}`)
 |> doubleSay(#, ', ')
 |> capitalize
@@ -6024,7 +6024,7 @@ do {
   const
     _0 = promise,
     _1 = await _0,
-    _2 = _1 ??: throw new TypeError(
+    _2 = _1 || throw new TypeError(
       `Invalid value from ${promise}`),
     _3 = doubleSay(_2),
     _4 = capitalize(_3);
