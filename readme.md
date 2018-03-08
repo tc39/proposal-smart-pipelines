@@ -2562,10 +2562,10 @@ array.map(+> # |> f |> g |> h |> # * 2)
 array.map($ => $ |> # |> f |> g |> h |> # * 2)
 array.map($ => $ |> f |> g |> h |> # * 2)
 ```
-When coupled with [Additional Feature PP][], the phrase `+> |>` (that is,
-prefix pipeline function `|=>` immediately followed by prefix pipeline `|>`)
-cancels out into simply the prefix pipeline function `+>`. All five of these
-expressions here are equivalent.
+When coupled with [Additional Feature PP][], the phrase `+> |>` (that is, the
+prefix pipeline-function operator `+>` immediately followed by the prefix
+pipeline operator `|>`) cancels out into simply the prefix pipeline-function
+operator `+>`. All five of these expressions here are equivalent.
 
 <td>
 
