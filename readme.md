@@ -2,7 +2,11 @@
 ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 
 <nav><details>
-<summary><strong>Table of Contents</strong></summary>
+<summary>
+
+📖 **Table of Contents**
+
+</summary>
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -64,7 +68,8 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
   - [Block parameters](#block-parameters)
     - [Topic metaprogramming references](#topic-metaprogramming-references)
   - [`do` expressions](#do-expressions)
-  - [Private class fields, class decorators, nullish coalescing, and optional chaining](#private-class-fields-class-decorators-nullish-coalescing-and-optional-chaining)
+  - [Private class fields, class decorators, nullish coalescing, and optional](#private-class-fields-class-decorators-nullish-coalescing-and-optional)
+  - [chaining](#chaining)
   - [Alternative pipeline Babel plugin](#alternative-pipeline-babel-plugin)
   - [Alternative pipeline proposals](#alternative-pipeline-proposals)
 - [Appendices](#appendices)
@@ -5583,16 +5588,18 @@ allowed within inner `do` expressions, along with arrow functions and `if` and
 `try` statements. [Additional Feature BP][] would extend this further, also
 supporting pipeline-body blocks that act nearly identically to `do` expressions.
 
-## Private class fields, class decorators, nullish coalescing, and optional chaining
+## Private class fields, class decorators, nullish coalescing, and optional
+## chaining
 This proposal’s compatibility with these four proposals depends on its choice of
-tokens for its topic references: `#`/`##`/`###`/`...`, `@`/`@@`/`@@@`, or
-`?`/`??`/`???`.
+tokens for its topic references, such as `#`/`##`/`###`/`...`, `@`/`@@`/`@@@`,
+or `?`/`??`/`???`. This is being bikeshedded at [tc39/proposal-pipeline-operator
+issue #91][topic-token bikeshedding].
 
 Because topic proposals are nullary operators, these are unambiguous with all
 four proposals, with one exception: `?`/`??`/`???` is not compatible with
-[nullish coalescing and optional chaining’s current choice of `… ??: …`, `…??.…`,
-`…??[…]`, and `…??(…)`][`??:`]. This is not a problem with `#`/`##`/`###`/`...` and with
-`@`/`@@`/`@@@`.
+[nullish coalescing and optional chaining’s current choice of `… ??: …`,
+`…??.…`, `…??[…]`, and `…??(…)`][`??:`]. This is not a problem with
+`#`/`##`/`###`/`...` and with `@`/`@@`/`@@@`.
 
 In fact, if [Additional Feature PF][] and [Additional Feature NP][] subsume the
 current [partial function application][] proposal, which uses nullary `?`, then
@@ -5630,8 +5637,8 @@ apple
   ::bar('bar parameter 0')
   ::baz('baz parameter 0')
 ```
-From [Babel plugin for syntactic functional composition by Gajus Kuizinas][gajus
-functional composition].
+From [gajus/babel-plugin-transform-function-composition][gajus functional
+composition].
 
 <tr>
 <td>
@@ -5680,11 +5687,11 @@ expression composition][terse composition], [terse partial application][], and
 unified [general concept][conceptual generality].
 
 Indeed, the original pipeline proposal was blocked from Stage 2 by TC39 during
-its [60th meeting, on September 2017][TC39 60th meeting, pipelines]. At that
-time, several members expressed concern that it could be coordinated more with
-the proposals for [function binding][] and [partial function application][] in a
-more coherent approach. Smart pipelines open the door to such a coherent
-approach with these and other use cases.
+its [60th meeting, on September 2017][TC39 60th meeting, pipelines], for similar
+reasons. At that time, several members expressed concern that it could be
+coordinated more with the proposals for [function binding][] and [partial
+function application][] in a more coherent approach. Smart pipelines open the
+door to such an approach to all these use cases.
 
 Smart pipelines and their [smart body syntax][] sacrifice a small amount of
 [simplicity][cyclomatic simplicity] in return for a vast amount of [expressive
@@ -5697,7 +5704,7 @@ burden on the developer in remembering [smart body syntax][] is light.
 The benefits of smart pipelines on many real-world examples are well
 demonstrated in the [Motivation][] section above, and many of the examples are
 not possible with the other pipeline proposals. It is hoped that the Core
-Proposal is strongly considered by TC39, keeping in mind that it simple but
+Proposal is strongly considered by TC39, keeping in mind that its simple but
 versatile syntax would open the door to addressing the use cases of many other
 proposals in a uniform manner.
 
