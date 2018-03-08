@@ -157,7 +157,7 @@ specification**][formal CP].
 <tr>
 <td>
 
-The binary “smart” pipeline operator `|>` proposed here would provide a
+The infix “smart” pipeline operator `|>` proposed here would provide a
 **[backwards- and forwards-compatible][don’t break my code]** style of
 **chaining nested expressions** into a readable, **left-to-right** manner.
 
@@ -5820,7 +5820,7 @@ and instead **use a topic reference** in the body ([topic style][])…or **assig
 the body to a variable**, then **use that variable as a bare body**.
 
 ## Operator precedence and associativity
-As a binary operation forming compound expressions, the [operator precedence and
+As a infix operation forming compound expressions, the [operator precedence and
 associativity][MDN operator precedence] of pipelining must be determined, relative
 to other operations.
 
