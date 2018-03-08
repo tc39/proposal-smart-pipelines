@@ -5589,8 +5589,8 @@ tokens for its topic references: `#`/`##`/`###`/`...`, `@`/`@@`/`@@@`, or
 
 Because topic proposals are nullary operators, these are unambiguous with all
 four proposals, with one exception: `?`/`??`/`???` is not compatible with
-nullish coalescing and optional chaining’s current choice of `… ??: …`, `…??.…`,
-`…??[…]`, and `…??(…)`. This is not a problem with `#`/`##`/`###`/`...` and with
+[nullish coalescing and optional chaining’s current choice of `… ??: …`, `…??.…`,
+`…??[…]`, and `…??(…)`][`??:`]. This is not a problem with `#`/`##`/`###`/`...` and with
 `@`/`@@`/`@@@`.
 
 In fact, if [Additional Feature PF][] and [Additional Feature NP][] subsume the
@@ -6487,3 +6487,4 @@ The pipeline chain is therefore equivalent to:\
 [bare function call]: #bare-function-call
 [bare constructor call]: #bare-constructor-call
 [bare awaited function call]: #bare-awaited-function-call
+[`??:`]: https://github.com/tc39/proposal-nullish-coalescing/pull/23
