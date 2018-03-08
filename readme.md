@@ -757,7 +757,7 @@ g (
 ```js
 value
 |> f
-|> x => # + x
+|> (x => # + x)
 ```
 The body of a pipeline in topic style may contain an inner arrow function but no
 other type of block expression. Both versions of this example result in an arrow
@@ -1722,7 +1722,7 @@ value
 |> f
 |> {
     try {
-      JSON.parse($);
+      JSON.parse(#);
       catch (error) {
         { message: error.message }
       }
@@ -2556,11 +2556,11 @@ array.map($ => h(g(f($))) * 2)
 <td>
 
 ```js
+array.map(+> f |> g |> h |> # * 2)
 array.map(+> |> f |> g |> h |> # * 2)
-array.map($ +> # |> f |> g |> h |> # * 2)
+array.map(+> # |> f |> g |> h |> # * 2)
 array.map($ => $ |> # |> f |> g |> h |> # * 2)
 array.map($ => $ |> f |> g |> h |> # * 2)
-array.map($ +> f |> g |> h |> # * 2)
 ```
 When coupled with [Additional Feature PP][], the phrase `+> |>` (that is,
 prefix pipeline function `|=>` immediately followed by prefix pipeline `|>`)
@@ -6087,7 +6087,175 @@ pipeline chain:\
 `}`.
 
 ### Additional Feature NP
-[TODO]
+Adapted from a [previous example][Additional Feature NP]:
+```js
+(a, b, ...c, d, e)
+|> f(##, x, ...)
+|> g
+```
+This would be statically equivalent to the following:
+```js
+do {
+  const
+    [_0, __0, ...s_0] = [a, b, ...c, d, e]
+    _1 = f(__0, x, ...s_0);
+  g(_1)
+}
+```
+
+Another one:
+```js
+(a, b)
+|> (f, # ** c + ##)
+|> # - ##
+```
+This would be statically equivalent to the following:
+```js
+do {
+  const
+    [_0, __0] = [a, b]
+    [_1, __1] = [f(_0), _0 ** c + __0];
+  g(_1)
+}
+```
+
+From a [previous Lodash example][Lodash + CP + BP + PP + PF + NP]:
+```js
+number
+|> `${#}e`
+|> ...#.split('e')
+|> `${#}e${+## + precision}`
+|> func
+```
+This would be statically equivalent to the following:
+```js
+do {
+  const
+    _0 = number,
+    _1 = `${_0}e`,
+    [_2, __2] = [..._1.split('e')];
+  func(_2, __2);
+}
+```
+…which of course may be simplified to:
+```js
+do {
+  const
+    _0 = number,
+    _1 = `${_0}e`,
+    [_2, __2] = [..._1.split('e')];
+  func(_2, __2);
+}
+```
+
+From a [previous WHATWG Streams example][WHATWG Streams + CP + BP + PF + NP]:
+```js
+value
+|> (#, offset, #.byteLength - offset)
+|> new Uint8Array
+|> await reader.read
+|> (#.buffer, #.byteLength)
+|> readInto(#, offset + ##);
+```
+This would be statically equivalent to the following:
+```js
+do {
+  const
+    [_0] = [value],
+    [_1, __1, ___1] = [_0, offset(_0), __0.byteLength - offset],
+    _2 = new Uint8Array(_1),
+    _3 = await reader.read(_2),
+    [_4, __4] = [_3.buffer, _3.byteLength];
+  readInto(_4, offset + __4);
+}
+```
+…which of course may be simplified to:
+```js
+do {
+  const
+    _0 = value,
+    _1 = _0,
+    __1 = offset,
+    ___1 = _0.byteLength - offset,
+    _2 = new Uint8Array(_1),
+    _3 = await reader.read(_2),
+    _4 = _3.buffer,
+    __4 = _3.byteLength;
+  readInto(_4, offset + __4);
+}
+```
+
+Using the same notation from the first subsection, then consider any
+pipeline chain:\
+𝐸₀ `|>` 𝐸₁ `|>` 𝐸₂ `|>` … `|>` 𝐸ₙ₋₂ `|>` 𝐸ₙ₋₁\
+…in which, for each x from 0 until n−1, 𝐸ₓ is either:
+
+* A single expression 𝐸ₓ[0] (which may start with `...`).
+* Or an argument list `(` 𝐸ₓ[0] `,` 𝐸ₓ[1] `,` … `,` 𝐸ₓ[width(𝐸ₓ)−2] `,`
+  𝐸ₓ[width(𝐸ₓ)−1] `)`, where each element of the argument list may be an
+  expression, an expression starting with `...`, or a blank elision.
+
+The last pipeline body, 𝐸ₙ₋₁, is an exception: it must be a **single**
+expression that does **not** start with `...`, and it cannot be a parenthesized
+argument list either.
+
+The pipeline chain is therefore equivalent to:\
+`do` `{`\
+  `const `\
+    `[` #₀[0] `,` … `,` #₀[max topic index(𝐸₀)] `,` `...` #₀[r] `]` `=`\
+      `[`\
+        𝐸₀[0] `,`\
+        𝐸₀[1] `,`\
+        … `,`\
+        𝐸₀[width(𝐸₀)−2]\
+        𝐸₀[width(𝐸₀)−1]\
+    `]` `,`\
+    `[` #₁[0] `,` … `,` #₁[max topic index(𝐸₁)] `,` `... ` #₁[r] `]` `=`\
+      `[`\
+          sub(𝐸₁[0], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+          sub(𝐸₁[1], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+          …\
+          sub(𝐸₁[width(𝐸₁)−2], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+          sub(𝐸₁[width(𝐸₁)−1], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+      `]` `,`\
+    `[` #₂[0] `,` … `,` #₂[max topic index(𝐸₂)] `,` `... ` #₂[r] `]` `=`\
+      `[`\
+          sub(𝐸₂[0], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+          sub(𝐸₂[1], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+          …\
+          sub(𝐸₂[width(𝐸₂)−2], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+          sub(𝐸₂[width(𝐸₂)−1], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+      `]` `,`\
+    … `,`\
+    `[` #ₙ₋₂[0] `,` #ₙ₋₂[1] `,` … `,` `... ` (#ₙ₋₂)ₛ `]` `=`\
+      `[`\
+          sub(𝐸ₙ₋₂[0], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+          sub(𝐸ₙ₋₂[1], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+          … `,`\
+          sub(𝐸ₙ₋₂[width(𝐸ₙ₋₂)−2], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+          sub(𝐸ₙ₋₂[width(𝐸ₙ₋₂)−1], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+      `]` `;`\
+  sub(𝐸ₙ₋₁, #ₙ₋₂[0], #ₙ₋₂[1], …, #ₙ₋₂[width(𝐸ₙ₋₂)−1])\
+`}`.
+
+***
+
+[TODO: Define width(𝐸) and max topic index(𝐸).]
+
+***
+
+* If 𝑃 is a [bare function call][] – then sub(𝑃, #[0], #[1], …, #[m]) is
+  𝑃 `(` [TODO] `)`.
+* If 𝑃 is a [bare awaited function call][] – then sub(𝑃, #[0], #[1], …, #[m])
+  is `await` 𝑃 `(` [TODO] `)`.
+* If 𝑃 is a [bare constructor call][] – then sub(𝑃, #[0], #[1], …, #[m]) is
+  `new` 𝑃 `(` [TODO] `)`.
+* [TODO] If 𝑃 is in [topic style][] – then sub(𝑃, #[0], #[1], #[2], #ₛ) is 𝑃 but in which
+  all unshadowed instances of the primary topic reference `#` are replaced by
+  #[0], unshadowed instances of the secondary topic reference `##` are replaced
+  by #[1], unshadowed instances of the tertiary topic reference `###` are
+  replaced by #[2], and unshadowed instances of the rest topic reference `...`
+  are replaced by `...` #ₛ.
 
 [“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 [“don’t break my code”]: #dont-break-my-code
