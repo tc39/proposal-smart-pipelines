@@ -6075,8 +6075,8 @@ Using the same notation from the first subsection, then in general:
 * If 𝑃 is a [bare constructor call][] – then sub(𝑃, #) is `new` 𝑃 `(` # `)`.
 * If 𝑃 is in [topic style][] – then sub(𝑃, #) is 𝑃 but in which all unshadowed
   instances of the topic reference `#` are replaced by #.
-* ***If 𝑃 is in the form `{` 𝑆₀, 𝑆₁, …, 𝑆ₘ₋₂, 𝑆ₘ₋₁ `}` – then sub(𝑃, #) is
-  `do {` sub(𝑆₀, #ₓ), sub(𝑆₁, #ₓ), …, sub(𝑆ₘ₋₂, #ₓ), sub(𝑆ₘ₋₁, #ₓ) `}`**.
+* **If 𝑃 is in the form `{` 𝑆₀, 𝑆₁, …, 𝑆ₘ₋₂, 𝑆ₘ₋₁ `}` – then sub(𝑃, #) is
+  `do {` sub(𝑆₀, #), sub(𝑆₁, #), …, sub(𝑆ₘ₋₂, #), sub(𝑆ₘ₋₁, #) `}`**.
 
 ### Additional Feature PP
 Using the same notation from the first subsection, then in general, given a
