@@ -6047,7 +6047,7 @@ outer lexical environment’s variable, and they must not be shadowed by any
 deeply inner lexical environment’s variable.
 
 With this notation, then in general, given a pipeline chain:\
-𝐸₀ `|>` 𝐸₁ `|>` 𝐸₂ `|>` … `|>` 𝐸ₙ₋₂ `|>` 𝐸ₙ₋₁,\
+𝐸₀ `|>` 𝐸₁ `|>` 𝐸₂ `|>` … `|>` 𝐸ᵤ₋₂ `|>` 𝐸ᵤ₋₁,\
 …then that pipeline chain is equivalent to:\
 `do` `{`\
   `const `\
@@ -6055,8 +6055,8 @@ With this notation, then in general, given a pipeline chain:\
     #₁ `=` sub(𝐸₁, #₀) `,`\
     #₂ `=` sub(𝐸₂, #₁) `,`\
     … `,`\
-    #ₙ₋₂ `=` sub(𝐸ₙ₋₂, #ₙ₋₃) `;`\
-  sub(𝐸ₙ₋₁, #ₙ₋₂)\
+    #ᵤ₋₂ `=` sub(𝐸ᵤ₋₂, #ᵤ₋₃) `;`\
+  sub(𝐸ᵤ₋₁, #ᵤ₋₂)\
 `}`,\
 
 * If 𝑃 is a [bare function call][] – then sub(𝑃, #) is 𝑃 `(` # `)`.
@@ -6075,13 +6075,13 @@ Using the same notation from the first subsection, then in general:
 * If 𝑃 is a [bare constructor call][] – then sub(𝑃, #) is `new` 𝑃 `(` # `)`.
 * If 𝑃 is in [topic style][] – then sub(𝑃, #) is 𝑃 but in which all unshadowed
   instances of the topic reference `#` are replaced by #.
-* **If 𝑃 is in the form `{` 𝑆₀, 𝑆₁, …, 𝑆ₘ₋₂, 𝑆ₘ₋₁ `}` – then sub(𝑃, #) is
-  `do {` sub(𝑆₀, #), sub(𝑆₁, #), …, sub(𝑆ₘ₋₂, #), sub(𝑆ₘ₋₁, #) `}`**.
+* **If 𝑃 is in the form `{` 𝑆₀, 𝑆₁, …, 𝑆ᵥ₋₂, 𝑆ᵥ₋₁ `}` – then sub(𝑃, #) is
+  `do {` sub(𝑆₀, #), sub(𝑆₁, #), …, sub(𝑆ᵥ₋₂, #), sub(𝑆ᵥ₋₁, #) `}`**.
 
 ### Additional Feature PP
 Using the same notation from the first subsection, then in general, given a
 pipeline chain:\
-`|>` 𝐸₁ `|>` 𝐸₂ `|>` … `|>` 𝐸ₙ₋₂ `|>` 𝐸ₙ₋₁,\
+`|>` 𝐸₁ `|>` 𝐸₂ `|>` … `|>` 𝐸ᵤ₋₂ `|>` 𝐸ᵤ₋₁,\
 …then that pipeline chain is equivalent to:\
 `do` `{`\
   `const `\
@@ -6089,8 +6089,8 @@ pipeline chain:\
     #₁ `=` sub(𝐸₁, #₀) `,`\
     #₂ `=` sub(𝐸₂, #₁) `,`\
     … `,`\
-    #ₙ₋₂ `=` sub(𝐸ₙ₋₂, #ₙ₋₃) `;`\
-  sub(𝐸ₙ₋₁, #ₙ₋₂)\
+    #ᵤ₋₂ `=` sub(𝐸ᵤ₋₂, #ᵤ₋₃) `;`\
+  sub(𝐸ᵤ₋₁, #ᵤ₋₂)\
 `}`.
 
 ### Additional Feature NP
@@ -6194,15 +6194,15 @@ do {
 
 Using the same notation from the first subsection, then consider any
 pipeline chain:\
-𝐸₀ `|>` 𝐸₁ `|>` 𝐸₂ `|>` … `|>` 𝐸ₙ₋₂ `|>` 𝐸ₙ₋₁\
-…in which, for each x from 0 until n−1, 𝐸ₓ is either:
+𝐸₀ `|>` 𝐸₁ `|>` 𝐸₂ `|>` … `|>` 𝐸ᵤ₋₂ `|>` 𝐸ᵤ₋₁\
+…in which, for each i from 0 until n−1, 𝐸ᵢ is either:
 
-* A single expression 𝐸ₓ[0] (which may start with `...`).
-* Or an argument list `(` 𝐸ₓ[0] `,` 𝐸ₓ[1] `,` … `,` 𝐸ₓ[width(𝐸ₓ)−2] `,`
-  𝐸ₓ[width(𝐸ₓ)−1] `)`, where each element of the argument list may be an
+* A single expression 𝐸ᵢ[0] (which may start with `...`).
+* Or an argument list `(` 𝐸ᵢ[0] `,` 𝐸ᵢ[1] `,` … `,` 𝐸ᵢ[width(𝐸ᵢ)−2] `,`
+  𝐸ᵢ[width(𝐸ᵢ)−1] `)`, where each element of the argument list may be an
   expression, an expression starting with `...`, or a blank elision.
 
-The last pipeline body, 𝐸ₙ₋₁, is an exception: it must be a **single**
+The last pipeline body, 𝐸ᵤ₋₁, is an exception: it must be a **single**
 expression that does **not** start with `...`, and it cannot be a parenthesized
 argument list either.
 
@@ -6234,15 +6234,15 @@ The pipeline chain is therefore equivalent to:\
           sub(𝐸₂[width(𝐸₂)−1], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
       `]` `,`\
     … `,`\
-    `[` #ₙ₋₂[0] `,` #ₙ₋₂[1] `,` … `,` `... ` (#ₙ₋₂)ₛ `]` `=`\
+    `[` #ᵤ₋₂[0] `,` #ᵤ₋₂[1] `,` … `,` `... ` (#ᵤ₋₂)ₛ `]` `=`\
       `[`\
-          sub(𝐸ₙ₋₂[0], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
-          sub(𝐸ₙ₋₂[1], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+          sub(𝐸ᵤ₋₂[0], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+          sub(𝐸ᵤ₋₂[1], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
           … `,`\
-          sub(𝐸ₙ₋₂[width(𝐸ₙ₋₂)−2], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
-          sub(𝐸ₙ₋₂[width(𝐸ₙ₋₂)−1], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+          sub(𝐸ᵤ₋₂[width(𝐸ᵤ₋₂)−2], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
+          sub(𝐸ᵤ₋₂[width(𝐸ᵤ₋₂)−1], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
       `]` `;`\
-  sub(𝐸ₙ₋₁, #ₙ₋₂[0], #ₙ₋₂[1], …, #ₙ₋₂[width(𝐸ₙ₋₂)−1])\
+  sub(𝐸ᵤ₋₁, #ᵤ₋₂[0], #ᵤ₋₂[1], …, #ᵤ₋₂[width(𝐸ᵤ₋₂)−1])\
 `}`.
 
 ***
