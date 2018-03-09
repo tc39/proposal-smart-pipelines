@@ -68,8 +68,7 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
   - [Block parameters](#block-parameters)
     - [Topic metaprogramming references](#topic-metaprogramming-references)
   - [`do` expressions](#do-expressions)
-  - [Private class fields, class decorators, nullish coalescing, and optional](#private-class-fields-class-decorators-nullish-coalescing-and-optional)
-  - [chaining](#chaining)
+  - [Private class fields, class decorators, nullish coalescing, and optional chaining](#private-class-fields-class-decorators-nullish-coalescing-and-optional-chaining)
   - [Alternative pipeline Babel plugin](#alternative-pipeline-babel-plugin)
   - [Alternative pipeline proposals](#alternative-pipeline-proposals)
 - [Appendices](#appendices)
@@ -5588,8 +5587,7 @@ allowed within inner `do` expressions, along with arrow functions and `if` and
 `try` statements. [Additional Feature BP][] would extend this further, also
 supporting pipeline-body blocks that act nearly identically to `do` expressions.
 
-## Private class fields, class decorators, nullish coalescing, and optional
-## chaining
+## Private class fields, class decorators, nullish coalescing, and optional chaining
 This proposal’s compatibility with these four proposals depends on its choice of
 tokens for its topic references, such as `#`/`##`/`###`/`...`, `@`/`@@`/`@@@`,
 or `?`/`??`/`???`. This is being bikeshedded at [tc39/proposal-pipeline-operator
