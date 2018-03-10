@@ -32,9 +32,9 @@ contributors: J. S. Choi
 <p>A <dfn>topic-binding environment</dfn> is a Lexical Environment that establishes a topic binding. The <dfn>topic environment</dfn> of the running execution context is its Lexical Environment's nearest outer environment that is a topic-binding environment, as defined by the abstract operator GetTopicEnvironment.</p>
 
 <emu-note>
-<p>The <strong>only</strong> Lexical Environments that are topic-binding environments are declarative environments that are associated with <strong>|PipelineTopicBody|</strong> and which were created with the <strong>TopicPipelineBodyInstantiation</strong> abstract operation.</p>
+<p>The <strong>only</strong> Lexical Environments that are topic-binding environments are declarative environments that are associated with <strong>|PipelineTopicExpression|</strong> and which were created with the <strong>TopicExpressionInstantiation</strong> abstract operation.</p>
 
-<p>There is also one syntax nonterminal that <strong>instantiates</strong> topic-binding environments with <strong>provided topic values</strong> of any ECMAScript language type. This nonterminal is <strong>|PipelineTopicBody|</strong>, which uses the abstract operation <strong>TopicPipelineBodyInstantiation</strong>. In addition, |PipelineTopicBody| <strong>hides</strong> its own inner topic references from Contains. Within |PipelineTopicBody|'s scopes, such topic references would <strong>not</strong> trigger early error rules during program compilation. Instead, they would be evaluated at runtime into the values of the <strong>newly instantiated</strong> topic-binding environments' topic bindings.</p>
+<p>There is also one syntax nonterminal that <strong>instantiates</strong> topic-binding environments with <strong>provided topic values</strong> of any ECMAScript language type. This nonterminal is <strong>|PipelineTopicExpression|</strong>, which uses the abstract operation <strong>TopicExpressionInstantiation</strong>. In addition, |PipelineTopicExpression| <strong>hides</strong> its own inner topic references from Contains. Within |PipelineTopicExpression|'s scopes, such topic references would <strong>not</strong> trigger early error rules during program compilation. Instead, they would be evaluated at runtime into the values of the <strong>newly instantiated</strong> topic-binding environments' topic bindings.</p>
 
 <p>All other Lexical Environments do not establish any topic bindings; in particular, object and global environments are never topic-binding environments.</p>
 
@@ -346,7 +346,7 @@ PrimaryExpression[Yield, Await] :
 
 <emu-note>
 <p>The loop in step 2 will always terminate because the list of environments will always end before reaching the global environment. GetTopicEnvironment will never be called when there is no topic-binding environment in the list of environments.</p>
-<p>This is because how, in general, syntax nonterminals that define top-level scopes (such as |Script| and |Module|) are syntactically forbidden to contain the topic reference `#`. Any use of the topic reference within those nonterminals (as detected by the static semantic rule Contains) would trigger early error rules associated with those nonterminals. It is only within nonterminals that hide the topic reference from Contains (such as |PipelineTopicBody|) that the topic reference is syntactically permitted.</p>
+<p>This is because how, in general, syntax nonterminals that define top-level scopes (such as |Script| and |Module|) are syntactically forbidden to contain the topic reference `#`. Any use of the topic reference within those nonterminals (as detected by the static semantic rule Contains) would trigger early error rules associated with those nonterminals. It is only within nonterminals that hide the topic reference from Contains (such as |PipelineTopicExpression|) that the topic reference is syntactically permitted.</p>
 </emu-note>
 </emu-clause>
 
@@ -398,7 +398,7 @@ PipelineBody[In, Yield, Await] :
   PipelineBareFunctionCall
   PipelineBareConstructorCall
   PipelineBareAwaitedFunctionCall[?Await]
-  PipelineTopicBody[?In, ?Yield, ?Await]
+  PipelineTopicExpression[?In, ?Yield, ?Await]
 
 PipelineBareFunctionCall :
   SimpleReference
@@ -413,7 +413,7 @@ SimpleReference :
   IdentifierReference
   SimpleReference `.` IdentifierName
 
-PipelineTopicBody[In, Yield, Await] :
+PipelineTopicExpression[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
 </emu-grammar>
 
@@ -432,7 +432,7 @@ PipelineTopicBody[In, Yield, Await] :
 <p>This early error prohibits _PipelineHead_ from covering a comma-separated argument list. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
-<emu-grammar>PipelineTopicBody : ConditionalExpression</emu-grammar>
+<emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
 <emu-alg>
 * It is a Syntax Error if _ConditionalExpression_ Contains `#` is *false*.
 * It is a Syntax Error if _ConditionalExpression_ is covering a |YieldExpression|.
@@ -440,7 +440,7 @@ PipelineTopicBody[In, Yield, Await] :
 </emu-alg>
 
 <emu-note type=editor>
-<p>This third early error prohibits _PipelineTopicBody_ from covering a comma-separated expression. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This third early error prohibits _PipelineTopicExpression_ from covering a comma-separated expression. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 </emu-clause>
 
@@ -464,8 +464,8 @@ PipelineTopicBody[In, Yield, Await] :
 </emu-alg>
 </emu-clause>
 
-<emu-clause id=sec-pipeline-operator-runtime-semantics-topicpipelinebodyinstantiation aoid=TopicPipelineBodyInstantiation>
-<h1>Runtime Semantics: TopicPipelineBodyInstantiation</h1>
+<emu-clause id=sec-pipeline-operator-runtime-semantics-TopicExpressioninstantiation aoid=TopicExpressionInstantiation>
+<h1>Runtime Semantics: TopicExpressionInstantiation</h1>
 <emu-note type=editor>
 <p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
@@ -519,11 +519,11 @@ PipelineTopicBody[In, Yield, Await] :
 4. Return ? Await(_value_).
 </emu-alg>
 
-<emu-grammar>PipelineTopicBody : ConditionalExpression</emu-grammar>
+<emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
 <emu-alg>
 1. Let _oldEnv_ be the running execution context's Lexical Environment.
 2. Let _pipelineBodyEnv_ be New Declarative Environment(_oldEnv_).
-3. Perform TopicPipelineBodyInstantiation(_headValues_, _pipelineBodyEnv_).
+3. Perform TopicExpressionInstantiation(_headValues_, _pipelineBodyEnv_).
 4. Set the running execution context's Lexical Environment to _pipelineBodyEnv_.
 5. Let _pipelineValue_ be the result of evaluating _ConditionalExpression_.
 6. Set the running execution context's Lexical Environment to _oldEnv_.
@@ -592,7 +592,7 @@ AssignmentExpression[In, Yield, Await] :
 </ul>
 
 <emu-note>
-<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |BlockStatement|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; such topic references would not trigger the early error above.</p>
+<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |BlockStatement|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; such topic references would not trigger the early error above.</p>
 <p>Although |BlockStatement| cannot contain a topic reference `#`, |Block| itself can. Certain uses of |Block| in statement-level nonterminals, such as |Block| in |TryStatement|, also allow the topic reference.</p>
 </emu-note>
 </ins>
@@ -623,7 +623,7 @@ IfStatement :
 
 <ins class=block>
 <emu-note>
-<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |IfStatement|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |IfStatement|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 </ins>
 
@@ -662,7 +662,7 @@ IterationStatement :
 
 <ins class=block>
 <emu-note>
-<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including iteration statements, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including iteration statements, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 </ins>
 </emu-clause>
@@ -688,7 +688,7 @@ IterationStatement :
 
 <ins class=block>
 <emu-note>
-<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |WithStatement|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |WithStatement|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 </ins>
 
@@ -714,7 +714,7 @@ IterationStatement :
 
 <ins class=block>
 <emu-note>
-<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |CaseBlock|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |CaseBlock|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 </ins>
 
@@ -749,7 +749,7 @@ Finally : `finally` Block</emu-grammar>
 
 <ins class=block>
 <emu-note>
-<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |Catch| and |Finally|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early errors above.</p>
+<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |Catch| and |Finally|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early errors above.</p>
 <p>Furthermore, the `try` block itself (|Block| in |TryStatement|) <strong>may</strong> contain topic references, assuming that |TryStatement| is contained within a parse that is also allowed to contain the topic reference. During runtime, such topic references would refer to the outer environment's topic binding. Along with arrow functions (that is, |FunctionBody| in |ConciseBody|), this behaviour is unlike that of any other syntax nonterminal containing |Statement|.</p>
 </emu-note>
 </ins>
@@ -838,7 +838,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 
 <ins class=block>
 <emu-note>
-<p>In general, top-level program scope, including |Script|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+<p>In general, top-level program scope, including |Script|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 </ins>
 
@@ -864,7 +864,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 
 <ins class=block>
 <emu-note>
-<p>In general, a top-level program scope, including |Module|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+<p>In general, a top-level program scope, including |Module|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 </ins>
 
@@ -944,7 +944,7 @@ $ =&gt; o.m(f($) + 1)</code></pre></td>
 </emu-note>
 
 <emu-note>
-<p>There is also one syntax nonterminal that <strong>instantiates</strong> topic-binding environments with <strong>provided topic values</strong> of any ECMAScript language type. This nonterminal is <strong>|PipelineTopicBody|</strong>, which uses the abstract operation <strong>TopicPipelineBodyInstantiation</strong><ins>, and which in turn is used by |PipelineExpression| and |PipelineFunction|</ins>. In addition, |PipelineTopicBody| <strong>hides</strong> its own inner topic references from Contains. Within |PipelineTopicBody|'s scopes, such topic references would <strong>not</strong> trigger early error rules during program compilation. Instead, they would be evaluated at runtime into the values of the <strong>newly instantiated</strong> topic-binding environments' topic bindings.</p>
+<p>There is also one syntax nonterminal that <strong>instantiates</strong> topic-binding environments with <strong>provided topic values</strong> of any ECMAScript language type. This nonterminal is <strong>|PipelineTopicExpression|</strong>, which uses the abstract operation <strong>TopicExpressionInstantiation</strong><ins>, and which in turn is used by |PipelineExpression| and |PipelineFunction|</ins>. In addition, |PipelineTopicExpression| <strong>hides</strong> its own inner topic references from Contains. Within |PipelineTopicExpression|'s scopes, such topic references would <strong>not</strong> trigger early error rules during program compilation. Instead, they would be evaluated at runtime into the values of the <strong>newly instantiated</strong> topic-binding environments' topic bindings.</p>
 </emu-note>
 
 </emu-annex>
@@ -1003,7 +1003,7 @@ PipelineFunction[In, Yield, Await] :
 PipelineBody :
   PipelineBareFunctionCall
   PipelineBareConstructorCall
-  PipelineTopicBody
+  PipelineTopicExpression
 </emu-grammar>
 <emu-alg>
 1. Return a new empty List.
@@ -1033,7 +1033,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 PipelineBody :
   PipelineBareFunctionCall
   PipelineBareConstructorCall
-  PipelineTopicBody
+  PipelineTopicExpression
 </emu-grammar>
 <emu-alg>
 1. Return *false*.
@@ -1056,7 +1056,7 @@ PipelineBody :
 PipelineBody :
   PipelineBareFunctionCall
   PipelineBareConstructorCall
-  PipelineTopicBody
+  PipelineTopicExpression
 </emu-grammar>
 <emu-alg>
 1. Return 1.
@@ -1079,7 +1079,7 @@ PipelineBody :
 PipelineBody :
   PipelineBareFunctionCall
   PipelineBareConstructorCall
-  PipelineTopicBody
+  PipelineTopicExpression
 </emu-grammar>
 <emu-alg>
 1. Return *true*.
@@ -1091,7 +1091,7 @@ PipelineBody :
 <p>With parameters _iteratorRecord_ and _environment_.</p>
 <emu-see-also-para op="IteratorBindingInitialization"></emu-see-also-para>
 <emu-grammar>
-PipelineBody : PipelineTopicBody
+PipelineBody : PipelineTopicExpression
 </emu-grammar>
 <emu-alg>
 1. Assert: _iteratorRecord_.[[Done]] is *false*.
@@ -1957,7 +1957,7 @@ PipelineBody[In, Yield, Await] :
   PipelineBareFunctionCall
   PipelineBareConstructorCall
   PipelineBareAwaitedFunctionCall[?Await]
-  PipelineTopicBody[?In, ?Yield, ?Await]
+  PipelineTopicExpression[?In, ?Yield, ?Await]
   <ins class=block>Arguments[?Yield, ?Await]</ins>
 
 PipelineBareFunctionCall :
@@ -1973,7 +1973,7 @@ SimpleReference :
   IdentifierReference
   SimpleReference `.` IdentifierName
 
-PipelineTopicBody[In, Yield, Await] :
+PipelineTopicExpression[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
 </emu-grammar>
 
@@ -2005,7 +2005,7 @@ PipelineTopicList[In, Yield, Await] :
 </emu-alg>
 </del>
 
-<emu-grammar>PipelineTopicBody : ConditionalExpression</emu-grammar>
+<emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
 <emu-alg>
 * It is a Syntax Error if <del>_ConditionalExpression_ Contains `#` is *false*.</del><ins>all of the following conditions are true:</ins>
   * <ins>_ConditionalExpression_ Contains |TopicExpression| is *false*.</ins>
@@ -2035,8 +2035,8 @@ PipelineTopicList[In, Yield, Await] :
 </emu-alg>
 </emu-annex>
 
-<emu-annex id=sec-additional-feature-np-pipeline-operator-runtime-semantics-topicpipelinebodyinstantiation aoid=TopicPipelineBodyInstantiation>
-<h1>Runtime Semantics: TopicPipelineBodyInstantiation</h1>
+<emu-annex id=sec-additional-feature-np-pipeline-operator-runtime-semantics-TopicExpressioninstantiation aoid=TopicExpressionInstantiation>
+<h1>Runtime Semantics: TopicExpressionInstantiation</h1>
 <emu-note type=editor>
 <p>This section revises the <emu-xref href=#sec-pipeline-operator-static-semantics-early-errors>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
@@ -2087,7 +2087,7 @@ PipelineTopicList[In, Yield, Await] :
 </emu-alg>
 
 <emu-note>
-<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |BlockStatement|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; such topic references would not trigger the early error above.</p>
+<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |BlockStatement|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; such topic references would not trigger the early error above.</p>
 <p>Although |BlockStatement| cannot contain a <del>topic reference `#`</del><ins>TopicExpression (`#`, `##`, or `###`) or a RestTopicReference (`...`)</ins>, |Block| itself can. Certain uses of |Block| in statement-level nonterminals, such as |Block| in |TryStatement|, also allow the topic reference.</p>
 </emu-note>
 
@@ -2117,7 +2117,7 @@ IfStatement :
 </emu-alg>
 
 <emu-note>
-<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |IfStatement|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>TopicExpression (`#`, `##`, or `###`) or a RestTopicReference (`...`)</ins>. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |IfStatement|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>TopicExpression (`#`, `##`, or `###`) or a RestTopicReference (`...`)</ins>. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 
 </emu-annex>
@@ -2156,7 +2156,7 @@ IterationStatement :
 </emu-alg>
 
 <emu-note>
-<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including iteration statements, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>TopicExpression (`#`, `##`, or `###`) or a RestTopicReference (`...`)</ins>. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including iteration statements, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>TopicExpression (`#`, `##`, or `###`) or a RestTopicReference (`...`)</ins>. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 </emu-annex>
 
@@ -2180,7 +2180,7 @@ IterationStatement :
 </emu-alg>
 
 <emu-note>
-<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |WithStatement|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>TopicExpression (`#`, `##`, or `###`) or a RestTopicReference (`...`)</ins>. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |WithStatement|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>TopicExpression (`#`, `##`, or `###`) or a RestTopicReference (`...`)</ins>. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 
 </emu-annex>
@@ -2204,7 +2204,7 @@ IterationStatement :
 </emu-alg>
 
 <emu-note>
-<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |CaseBlock|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>TopicExpression (`#`, `##`, or `###`) or a RestTopicReference (`...`)</ins>. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |CaseBlock|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>TopicExpression (`#`, `##`, or `###`) or a RestTopicReference (`...`)</ins>. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 
 </emu-annex>
@@ -2237,7 +2237,7 @@ Finally : `finally` Block</emu-grammar>
 </emu-alg>
 
 <emu-note>
-<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |Catch| and |Finally|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>TopicExpression (`#`, `##`, or `###`) or a RestTopicReference (`...`)</ins>. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early errors above.</p>
+<p>In general, syntax nonterminals that define inner program scopes containing nested |Statement|s, including |Catch| and |Finally|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>TopicExpression (`#`, `##`, or `###`) or a RestTopicReference (`...`)</ins>. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early errors above.</p>
 <p>Furthermore, the `try` block itself (|Block| in |TryStatement|) <strong>may</strong> contain topic references, assuming that |TryStatement| is contained within a parse that is also allowed to contain the topic reference. During runtime, such topic references would refer to the outer environment's topic binding. Along with arrow functions (that is, |FunctionBody| in |ConciseBody|), this behaviour is unlike that of any other syntax nonterminal containing |Statement|.</p>
 </emu-note>
 </emu-annex>
@@ -2320,7 +2320,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 </emu-alg>
 
 <emu-note>
-<p>In general, top-level program scope, including |Script|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>TopicExpression (`#`, `##`, or `###`) or a RestTopicReference (`...`)</ins>. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+<p>In general, top-level program scope, including |Script|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>TopicExpression (`#`, `##`, or `###`) or a RestTopicReference (`...`)</ins>. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 
 </emu-annex>
@@ -2344,7 +2344,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 </emu-alg>
 
 <emu-note>
-<p>In general, a top-level program scope, including |Module|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicBody|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
+<p>In general, a top-level program scope, including |Module|, may <strong>not</strong> contain a topic reference `#`. However, syntax nonterminals associated with topic-binding environments (such as |PipelineTopicExpression|) hide their own inner topic references from Contains; within their scopes, such topic references would not trigger the early error above.</p>
 </emu-note>
 
 </emu-annex>
