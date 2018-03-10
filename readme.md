@@ -285,7 +285,7 @@ For instance, the chained pipeline:
 5 |> # - 3
   |> -#
   |> # * 2
-  |> Math.max(#, 0);
+  |> Math.max(#, 0)
 ```
 
 <td>
