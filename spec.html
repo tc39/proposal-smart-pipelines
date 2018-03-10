@@ -335,7 +335,7 @@ PrimaryExpression[Yield, Await] :
 <emu-alg>
 1. Let _lex_ be the running execution context's Lexical Environment.
 2. Repeat,
-  1. Let _envRec_ be _lex_'s EnvironmentRecord.
+  1. Let _envRec_ be _lex_'s Environment Record.
   2. Let _status_ be _envRec_.HasTopicBinding().
   3. If _status_ is *true*, return _envRec_.
   4. Assert: _lex_ is not a global environment.
@@ -1106,7 +1106,7 @@ PipelineBody : PipelineTopicBody
   3. ReturnIfAbrupt(_v_).
 8. If _iteratorRecord_.[[Done]] is *true*, let _v_ be *undefined*.
 9. Return ? _environment_.BindTopic(_v_).
-<!-- TODO: Why return NormalCompletion(empty) in last step of https://tc39.github.io/ecma262/#sec-initializeboundname instead of just returning the EnvironmentRecord’s method’s result ? -->
+<!-- TODO: Why return NormalCompletion(empty) in last step of https://tc39.github.io/ecma262/#sec-initializeboundname instead of just returning the Environment Record’s method’s result ? -->
 </emu-alg>
 </emu-annex>
 
