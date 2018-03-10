@@ -473,12 +473,12 @@ topic references `#`.)
 
 ```js
 function doubleSay (str, separator) {
-  return `${str}${separator}${string}`
+  return `${str}${separator}${string}`;
 }
 
 function capitalize (str) {
   return str[0].toUpperCase()
-    + str.substring(1)
+    + str.substring(1);
 }
 
 promise
@@ -500,12 +500,12 @@ from `… |> new User.Message(#)`.)
 
 ```js
 function doubleSay (str, separator) {
-  return `${str}${separator}${str}`
+  return `${str}${separator}${str}`;
 }
 
 function capitalize (str) {
   return str[0].toUpperCase()
-    + str.substring(1)
+    + str.substring(1);
 }
 
 await stream.write(
@@ -541,11 +541,11 @@ topic, the topic is still only ever evaluated once.
 ```js
 do {
   const $ = …;
-  f($, $)
+  f($, $);
 }
 do {
   const $ = …;
-  [$, $ * 2, $ * 3]
+  [$, $ * 2, $ * 3];
 }
 ```
 This is equivalent to storing the topic value in a unique variable, then using
@@ -577,9 +577,9 @@ new User.Message(do {
     const value = await promise
       || throw new TypeError();
     `${value}, ${value}`
-  }
+  };
   value[0].toUpperCase()
-    + value.substring(1)
+    + value.substring(1);
 } + '!')
 ```
 Inlining these functions directly into nested expressions using `do` is
@@ -669,7 +669,7 @@ becomes the final result of that pipeline, which in turn is passed into `|> g`.
 ```js
 value
 |> f
-|> do { sideEffect(); # }
+|> do { sideEffect(); #; }
 |> g
 ```
 This can be useful for embedding side effects in pipeline chains, as in the example
@@ -685,7 +685,7 @@ g (
   do {
     const $ = f(value);
     sideEffect();
-    $
+    $;
   }
 )
 ```
@@ -731,7 +731,7 @@ value
   try {
     JSON.parse(#);
     catch (error) {
-      { message: error.message }
+      { message: error.message };
     }
   }
 }
@@ -748,7 +748,7 @@ g (
     try {
       JSON.parse($);
       catch (error) {
-        { message: error.message }
+        { message: error.message };
       }
     }
   }
@@ -772,7 +772,7 @@ function in a closure on the previous pipeline’s result `value |> f`.
 ```js
 do {
   const $ = f(value);
-  x => $ + x
+  x => $ + x;
 }
 ```
 The arrow function lexically closes over the topic value, takes one parameter,
@@ -794,7 +794,7 @@ can be useful for using callbacks in a pipeline.
 ```js
 do {
   const $ = f(value);
-  settimeout(() => $ * 5)
+  settimeout(() => $ * 5);
 }
 ```
 The topic value (here represented by a normal variable `$`) is still lexically
@@ -816,7 +816,7 @@ The arrow function can also be created on a separate pipeline step.
 ```js
 do {
   const $ = f(value);
-  settimeout(() => $ * 5)
+  settimeout(() => $ * 5);
 }
 ```
 The result here is the same.
@@ -875,7 +875,7 @@ topic with the topic within its own body’s inner context.
 do {
   const $ = value;
   f(x => g($ + x) * 2)
-    .toString()
+    .toString();
 }
 ```
 
@@ -898,7 +898,7 @@ do {
   f(x => {
     const _$ = g($, x);
     return [_$ * 3, _$ * 5];
-  })
+  });
 }
 ```
 
@@ -932,7 +932,7 @@ value |> function () { return #; }
 <td>
 
 ```js
-value |> class { m: () { return #; }}
+value |> class { m: () { return #; } }
 // 🚫 Syntax Error:
 // Pipeline body `|> class { … }`
 // binds topic but contains no topic reference.
@@ -947,7 +947,7 @@ value |> class { m: () { return #; }}
 value
 |> await f(#, 5)
 |> do {
-  # + 30
+  # + 30;
 }
 |> g
 ```
@@ -1037,7 +1037,7 @@ various ways. These examples may become more easily readable with smart pipeline
 '/music/pk/altes-kamuffel'
 |> await fetch(#)
 |> await #.blob()
-|> playBlob
+|> playBlob;
 ```
 
 <td>
@@ -1045,14 +1045,14 @@ various ways. These examples may become more easily readable with smart pipeline
 ```js
 fetch('/music/pk/altes-kamuffel')
   .then(res => res.blob())
-  .then(playBlob)
+  .then(playBlob);
 ```
 ```js
 playBlob(
   await (
     await fetch('/music/pk/altes-kamuffel')
   ).blob()
-)
+);
 ```
 
 <tr>
@@ -1062,7 +1062,7 @@ playBlob(
 'https://example.com/'
 |> await fetch(#, { method: 'HEAD' })
 |> #.headers.get('content-type')
-|> console.log
+|> console.log;
 ```
 
 <td>
@@ -1073,7 +1073,7 @@ fetch('https://example.com/',
 ).then(response =>
   console.log(
     response.headers.get('content-type'))
-)
+);
 ```
 
 <tr>
@@ -1083,7 +1083,7 @@ fetch('https://example.com/',
 'https://example.com/'
 |> await fetch(#, { method: 'HEAD' })
 |> #.headers.get('content-type')
-|> console.log
+|> console.log;
 ```
 
 <td>
@@ -1095,7 +1095,7 @@ console.log(
       { method: 'HEAD' }
     )
   ).headers.get('content-type')
-)
+);
 ```
 
 <tr>
@@ -1105,19 +1105,19 @@ console.log(
 'https://example.com/'
 |> await fetch(#, { method: 'HEAD' })
 |> #.headers.get('content-type')
-|> console.log
+|> console.log;
 ```
 
 <td>
 
 ```js
-do {
+{
   const url = 'https://example.com/';
   const response =
     await fetch(url, { method: 'HEAD' });
   const contentType =
     response.headers.get('content-type');
-  console.log(contentType)
+  console.log(contentType);
 }
 ```
 
@@ -1139,13 +1139,13 @@ do {
       # |> await #.json()
         |> processJSON
   }
-}
+};
 ```
 
 <td>
 
 ```js
-do {
+{
   const response =
     await fetch('https://pk.example/berlin-calling',
       { mode: 'cors' }
@@ -1159,7 +1159,7 @@ do {
     else
       throw new TypeError();
   };
-  processJSON(json)
+  processJSON(json);
 }
 ```
 
@@ -1671,11 +1671,11 @@ specification**][formal BP].
 ```js
 value
 |> f
-|> { sideEffect(); # }
+|> { sideEffect(); #; }
 |> g
 ```
-Instead of using [`do` expressions][] (that is, `|> do { sideEffect(); # }`), a
-block body is used with the same meaning: `|> { sideEffect(); # }`.
+Instead of using [`do` expressions][] (that is, `|> do { sideEffect(); #; }`), a
+block body is used with the same meaning: `|> { sideEffect(); #; }`.
 
 <td>
 
@@ -1684,8 +1684,8 @@ g (
   do {
     const $ = f(value);
     sideEffect();
-    $
-  }
+    $;
+  };
 )
 ```
 
@@ -1728,7 +1728,7 @@ value
     try {
       JSON.parse(#);
       catch (error) {
-        { message: error.message }
+        { message: error.message };
       }
     }
   }
@@ -1746,7 +1746,7 @@ g (
     try {
       JSON.parse(#);
       catch (error) {
-        { message: error.message }
+        { message: error.message };
       }
     }
   }
@@ -1838,7 +1838,7 @@ value
     try {
     |> JSON.parse;
       catch (error) {
-        { message: error.message }
+        { message: error.message };
       }
     }
   }
@@ -1855,7 +1855,7 @@ g (
     try {
       JSON.parse(#);
       catch (error) {
-        { message: error.message }
+        { message: error.message };
       }
     }
   }
@@ -1867,7 +1867,7 @@ g (
 
 ```js
 function () {
-|> f |> g
+|> f |> g;
 }
 // 🚫 Syntax Error:
 // Lexical context `function () { |> f |> g }`
@@ -1880,7 +1880,7 @@ explicit topic references within a context without a topic in general:
 
 ```js
 function () {
-  # |> f |> g
+  # |> f |> g;
 }
 // 🚫 Syntax Error:
 // Lexical context `function () { # |> f |> g }`
@@ -1923,7 +1923,7 @@ terseness could be further improved.
       # |> await #.json()
         |> processJSON;
   }
-}
+};
 ```
 This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
 only. Note that several expressions start with `# |>`. There is also a `|> do {
@@ -1963,7 +1963,7 @@ fetch('https://pk.example/berlin-calling',
     |> await #.json()
     |> processJSON;
   }
-}
+};
 ```
 This pipeline version also uses [Additional Feature BP][] and [Additional
 Feature PP][]. The `|> do { … }` has simply become `|> { … }`. And the repeated
@@ -2385,7 +2385,7 @@ specification**][formal TC].
 try {
   …
 } catch {
-  #.message |> console.log
+  #.message |> console.log;
 } finally {
   …
 }
@@ -2404,7 +2404,7 @@ form would also support the tacit topic binding.
 try {
   …
 } catch (error) {
-  log(error.message)
+  log(error.message);
 } finally {
   …
 }
@@ -2423,7 +2423,7 @@ value
     try {
     |> JSON.parse;
       catch {
-        { message: #.message }
+        { message: #.message };
       }
     }
   }
@@ -2439,7 +2439,7 @@ g (
     try {
       JSON.parse(#);
       catch (error) {
-        { message: error.message }
+        { message: error.message };
       }
     }
   }
@@ -2946,10 +2946,10 @@ $('.some-link').on('click', ::view.reset)
 
 ```js
 const { hasOwnProperty } =
-  Object.prototype
-const x = { key: 5 }
-x::hasOwnProperty
-x::hasOwnProperty('key')
+  Object.prototype;
+const x = { key: 5 };
+x::hasOwnProperty;
+x::hasOwnProperty('key');
 ```
 For terse **method calling/binding**, the infix `::` operator would still be
 required.
@@ -2958,10 +2958,10 @@ required.
 
 ```js
 const { hasOwnProperty } =
-  Object.prototype
-const x = { key: 5 }
-x::hasOwnProperty
-x::hasOwnProperty('key')
+  Object.prototype;
+const x = { key: 5 };
+x::hasOwnProperty;
+x::hasOwnProperty('key');
 ```
 But the `::` operator would only need to handle method calls. No operator
 overloading of `::` for method extraction (that is, `::` as a prefix operator)
@@ -2993,8 +2993,8 @@ functions wherever no terse JavaScript equivalent yet exists (such as with
 <td>
 
 ```js
-const pickIndexes = +> R.values |> R.pickAll
-['a', 'b', 'c'] |> pickIndexes([0, 2], #)
+const pickIndexes = +> R.values |> R.pickAll;
+['a', 'b', 'c'] |> pickIndexes([0, 2], #);
 // ['a', 'c']
 ```
 
@@ -3002,8 +3002,8 @@ const pickIndexes = +> R.values |> R.pickAll
 
 ```js
 const pickIndexes = R.compose(
-  R.values, R.pickAll)
-pickIndexes([0, 2], ['a', 'b', 'c'])
+  R.values, R.pickAll);
+pickIndexes([0, 2], ['a', 'b', 'c']);
 // ['a', 'c']
 ```
 
@@ -3011,16 +3011,16 @@ pickIndexes([0, 2], ['a', 'b', 'c'])
 <td>
 
 ```js
-const list = +> [...]
-list(1, 2, 3)
+const list = +> [...];
+list(1, 2, 3);
 // [1, 2, 3]
 ```
 
 <td>
 
 ```js
-const list = R.unapply(R.identity)
-list(1, 2, 3)
+const list = R.unapply(R.identity);
+list(1, 2, 3);
 // [1, 2, 3]
 ```
 
@@ -3034,14 +3034,14 @@ const getNewTitles = async +>
 |> #.flatten()
 |> #.map(+> #.items)
 |> #.map(+> #.filter(+> #))
-|> #.map(+> #.title)
+|> #.map(+> #.title);
 
 try {
   '/products.json'
   |> getNewTitles
-  |> console.log
+  |> console.log;
 } catch {
-|> console.error
+|> console.error;
 }
 
 const fetchDependent = async +>
@@ -3050,14 +3050,14 @@ const fetchDependent = async +>
 |> #.flatten()
 |> #.map(+> #.url)
 |> #.map(fetch)
-|> #.flatten()
+|> #.flatten();
 
 try {
   'urls.json'
   |> fetchDependent
-  |> console.log
+  |> console.log;
 } catch {
-|> console.error
+|> console.error;
 }
 ```
 
@@ -3070,7 +3070,7 @@ const getNewTitles = R.compose(
   R.pluck('items'),
   R.chain(JSON.parse),
   fetch
-)
+);
 
 getNewTitles('/products.json')
   .fork(console.error, console.log);
@@ -3080,10 +3080,10 @@ const fetchDependent = R.compose(
   R.pluck('url'),
   R.chain(parseJSON),
   fetch
-)
+);
 
 fetchDependent('urls.json')
-  .fork(console.error, console.log)
+  .fork(console.error, console.log);
 ```
 
 <tr>
@@ -3092,14 +3092,14 @@ fetchDependent('urls.json')
 ```js
 number
 |> R.repeat(Math.random, #)
-|> #.map(+> #())
+|> #.map(+> #());
 ```
 
 <td>
 
 ```js
 R.map(R.call,
-  R.repeat(Math.random, number))
+  R.repeat(Math.random, number));
 ```
 
 <tr>
@@ -3109,9 +3109,9 @@ R.map(R.call,
 const renameBy = (fn, obj) =>
   [...obj]
   |> #.map(R.adjust(fn, 0)),
-  |> {...#}
-{ A: 1, B: 2, C: 3 }
-|> renameBy(+> `a${#}`))
+  |> {...#};
+{ A: 1, B: 2, C: 3 };
+|> renameBy(+> `a${#}`));
 // { aA: 1, aB: 2, aC: 3 }
 ```
 
@@ -3124,8 +3124,8 @@ const renameBy = R.curry((fn, obj) =>
     R.map(R.adjust(fn, 0)),
     R.fromPairs
   )(obj)
-)
-renameBy(R.concat('a'), { A: 1, B: 2, C: 3 })
+);
+renameBy(R.concat('a'), { A: 1, B: 2, C: 3 });
 // { aA: 1, aB: 2, aC: 3 }
 ```
 
@@ -3403,7 +3403,7 @@ spreads its elements into whatever expression surrounds it.
 do {
   const [_primary, _secondary, _tertiary, ..._rest]
     = [a, b, c, d, e];
-  g(f(a, _secondary, x, ..._rest))
+  g(f(a, _secondary, x, ..._rest));
 }
 ```
 
@@ -3425,7 +3425,7 @@ because `##` is not used at all in the pipeline body.
 ```js
 do {
   const _rest = [...d, e];
-  g(f(a, _tertiary, x, ..._rest))
+  g(f(a, _tertiary, x, ..._rest));
 }
 ```
 
@@ -3444,7 +3444,7 @@ do {
 do {
   const [_secondary, _tertiary, ..._rest] =
     [...b, c, ...d, e];
-  g(f(a, _secondary, _tertiary, x, ..._rest))
+  g(f(a, _secondary, _tertiary, x, ..._rest));
 }
 ```
 
@@ -3463,7 +3463,7 @@ do {
 do {
   const [_secondary, ..._rest] =
     [...b, c, ...d, e];
-  g(f(a, _secondary, x, ..._rest))
+  g(f(a, _secondary, x, ..._rest));
 }
 ```
 
@@ -3535,7 +3535,7 @@ f(a) - (a ** c + b)
 ```js
 do {
   const $ = h(f(a), g(b));
-  l(i($), $ + 1, k($))
+  l(i($), $ + 1, k($));
 }
 ```
 
@@ -3607,7 +3607,7 @@ As a result of these rules, `|> ... |>` collects the previous
 do {
   const [_primary, , _tertiary, ..._rest] =
     createRange(number);
-  [_primary, _tertiary, _rest]
+  [_primary, _tertiary, _rest];
 }
 ```
 
@@ -3817,23 +3817,23 @@ pipeline functions when [Additional Feature NP][] syntax is supported.
 <td>
 
 ```js
-const cssQuery = +> ##.querySelectorAll(#)
-const setStyle = +> { ##.style = # }
+const cssQuery = +> ##.querySelectorAll(#);
+const setStyle = +> { ##.style = # };
 document
 |> cssQuery('a, p', #)
-|> #.map(+> setStyle({ color: 'red' }))
+|> #.map(+> setStyle({ color: 'red' }));
 ```
 
 <td>
 
 ```js
 const cssQuery = R.invoker(1,
-  'querySelectorAll')
-const setStyle = R.assoc('style')
+  'querySelectorAll');
+const setStyle = R.assoc('style');
 R.pipe(
   cssQuery('a, p'),
   R.map(setStyle({ color: 'red' }))
-)(document)
+)(document);
 ```
 
 <tr>
@@ -3843,10 +3843,10 @@ R.pipe(
 const disco = +>
 |> R.zipWith(+> #(##),
     [ red, green, blue ])
-|> #.join(' ')
+|> #.join(' ');
 [ 'foo', 'bar', 'xyz' ]
 |> disco
-|> console.log
+|> console.log;
 ```
 
 <td>
@@ -3856,10 +3856,9 @@ const disco = R.pipe(
   R.zipWith(
     R.call,
     [ red, green, blue ]),
-  R.join(' ')
-)
+  R.join(' '));
 console.log(
-  disco([ 'foo', 'bar', 'xyz' ]))
+  disco([ 'foo', 'bar', 'xyz' ]));
 ```
 
 <tr>
@@ -3868,15 +3867,15 @@ console.log(
 ```js
 const dotPath = +>
 |> (#.split('.'), ##)
-|> R.path(#, ##)
+|> R.path(#, ##);
 const propsDotPath = +>
 |> (R.map(dotPath), [##])
-|> R.ap
+|> R.ap;
 const obj = {
   a: { b: { c: 1 } },
   x: 2
-}
-propsDotPath(['a.b.c', 'x'], obj)
+};
+propsDotPath(['a.b.c', 'x'], obj);
 // [ 1, 2 ]
 ```
 
@@ -3885,15 +3884,15 @@ propsDotPath(['a.b.c', 'x'], obj)
 ```js
 const dotPath = R.useWith(
   R.path,
-  [R.split('.')])
+  [R.split('.')]);
 const propsDotPath = R.useWith(
   R.ap,
-  [R.map(dotPath), R.of])
+  [R.map(dotPath), R.of]);
 const obj = {
   a: { b: { c: 1 } },
   x: 2
-}
-propsDotPath(['a.b.c', 'x'], obj)
+};
+propsDotPath(['a.b.c', 'x'], obj);
 // [ 1, 2 ]
 ```
 
@@ -3919,10 +3918,10 @@ try {
   readableStream
   |> await #.pipeTo(writableStream);
   "Success"
-  |> console.log
+  |> console.log;
 } catch {
   ("Error", #)
-  |> console.error
+  |> console.error;
 }
 ```
 
@@ -3939,16 +3938,16 @@ readableStream.pipeTo(writableStream)
 
 ```js
 const reader = readableStream
-  .getReader({ mode: "byob" })
+  .getReader({ mode: "byob" });
 
 try {
   new ArrayBuffer(1024)
   |> await readInto
   |> ("The first 1024 bytes:", #)
-  |> console.log
+  |> console.log;
 } catch {
   ("Something went wrong!", #)
-  |> console.error
+  |> console.error;
 }
 
 async function readInto(buffer, offset = 0) {
@@ -3969,14 +3968,14 @@ async function readInto(buffer, offset = 0) {
 
 ```js
 const reader = readableStream
-  .getReader({ mode: "byob" })
+  .getReader({ mode: "byob" });
 
-let startingAB = new ArrayBuffer(1024)
+let startingAB = new ArrayBuffer(1024);
 readInto(startingAB)
   .then(buffer =>
     console.log("The first 1024 bytes:", buffer))
   .catch(e =>
-    console.error("Something went wrong!", e))
+    console.error("Something went wrong!", e));
 
 function readInto(buffer, offset = 0) {
   if (offset === buffer.byteLength) {
@@ -4051,7 +4050,7 @@ for await (stream) {
   |> await f
   |> #.length
   |> # + 3
-  |> g
+  |> g;
 }
 ```
 An additional tacit `for await` loop form, completely lacking a parenthesized
@@ -4067,7 +4066,7 @@ for await (const c of stream) {
     (await f(c))
       .length
       + 3
-  )
+  );
 }
 ```
 
@@ -4765,10 +4764,10 @@ $('.some-link').on('click', ::view.reset)
 <td>
 
 ```js
-const { hasOwnProperty } = Object.prototype
-const x = { key: 5 }
-x::hasOwnProperty
-x::hasOwnProperty('key')
+const { hasOwnProperty } = Object.prototype;
+const x = { key: 5 };
+x::hasOwnProperty;
+x::hasOwnProperty('key');
 ```
 For terse **method calling/binding**, the infix `::` operator would still be
 required.
@@ -4776,10 +4775,10 @@ required.
 <td>
 
 ```js
-const { hasOwnProperty } = Object.prototype
-const x = { key: 5 }
-x::hasOwnProperty
-x::hasOwnProperty('key')
+const { hasOwnProperty } = Object.prototype;
+const x = { key: 5 };
+x::hasOwnProperty;
+x::hasOwnProperty('key');
 ```
 But the `::` operator would only need to handle method calls. No operator
 overloading of `::` for method extraction (that is, `::` as a prefix operator)
@@ -5154,17 +5153,17 @@ Meadows][isiahmeadows functional composition].
 <td>
 
 ```js
-const f = (x, y, z) => [x, y, z]
-const g = +> f(#, 4, ##)
-g(1, 2) // [1, 4, 2]
+const f = (x, y, z) => [x, y, z];
+const g = +> f(#, 4, ##);
+g(1, 2) // [1, 4, 2];
 ```
 
 <td>
 
 ```js
-const f = (x, y, z) => [x, y, z]
-const g = f(?, 4, ?)
-g(1, 2) // [1, 4, 2]
+const f = (x, y, z) => [x, y, z];
+const g = f(?, 4, ?);
+g(1, 2) // [1, 4, 2];
 ```
 
 <tr>
@@ -5172,9 +5171,9 @@ g(1, 2) // [1, 4, 2]
 
 ```js
 const maxGreaterThanZero =
-  +> Math.max(0, ...)
-maxGreaterThanZero(1, 2) // 2
-maxGreaterThanZero(-1, -2) // 0
+  +> Math.max(0, ...);
+maxGreaterThanZero(1, 2); // 2
+maxGreaterThanZero(-1, -2); // 0
 ```
 
 Partial application into a variadic function is also naturally handled by
@@ -5208,14 +5207,16 @@ boon to the proposal for [ECMAScript pattern matching][].
 <td>
 
 ```js
-… |> f
+…
+|> f
 |> match (#) {
-    100: #
-    Array:
-      #.length
-    /(\d)(\d)(\d)/:
-      #.groups |> #[0] + #[1] + #[2]
-  }
+  100:
+    #;
+  Array:
+    #.length;
+  /(\d)(\d)(\d)/:
+    #.groups |> #[0] + #[1] + #[2];
+}
 ```
 The `match` expression would **bind the topic reference** within the scope of a
 successfully matching clause’s scope. The topic value would be the **truthy
@@ -5225,11 +5226,12 @@ result** of the successful **`Symbol.matches`** call.
 
 ```js
 match (f(…)) {
-  100: x
+  100:
+    x;
   Array -> a:
-    x.length
+    x.length;
   /(\d)(\d)(\d)/ -> m:
-    m.groups |> #[0] + #[1] + #[2]
+    m.groups |> #[0] + #[1] + #[2];
 }
 ```
 With a topic binding, the `-> a` and `-> m` bindings would be unnecessary.
@@ -5238,16 +5240,17 @@ With a topic binding, the `-> a` and `-> m` bindings would be unnecessary.
 <td>
 
 ```js
-… |> f
+…
+|> f
 |> match {
-    { x, y }:
-      (x ** 2 + y ** 2)
-      |> Math.sqrt
-    [...]:
-      #.length
-    else:
-      throw new Error(#)
-  }
+  { x, y }:
+    (x ** 2 + y ** 2)
+    |> Math.sqrt;
+  [...]:
+    #.length;
+  else:
+    throw new Error(#);
+}
 ```
 [ECMAScript pattern matching][] could also have a **completely tacit version**,
 in which the parenthesized antecedent (`(#)` in `match (#)`) is completely
@@ -5259,11 +5262,11 @@ omitted in favor of tacitly using the outer context’s topic.
 match (f(…)) {
   { x, y }:
     (x ** 2 + y ** 2)
-    |> Math.sqrt
+    |> Math.sqrt;
   [...] -> a:
-    a.length
+    a.length;
   else:
-    throw new Error(vector)
+    throw new Error(vector);
   }
 }
 ```
@@ -5277,12 +5280,12 @@ try {
   catch {
     match {
       SyntaxError:
-      |> f
+      |> f;
       TypeError:
-      |> g |> h(#, {strict: true})
+      |> g |> h(#, {strict: true});
       Error:
-      |> throw #
-    }
+      |> throw #;
+    };
   }
 }
 ```
@@ -5304,7 +5307,7 @@ try {
         h(g(error), {strict: true})
       Error:
         throw error
-    }
+    };
   }
 }
 ```
@@ -5336,7 +5339,7 @@ desired behavior.
 <td>
 
 ```js
-materials.map { |> f |> .length }
+materials.map { |> f |> .length; }
 ```
 This example uses [Additional Feature PP][]. The first parameter of the arrow
 function that the block parameter implicitly creates is bound to the topic,
@@ -5345,7 +5348,7 @@ which in turn is fed into the pipeline `|> f |> .length`.
 <td>
 
 ```js
-materials.map do (m) { f(m).length }
+materials.map do (m) { f(m).length; }
 ```
 
 The block-parameter proposal itself has not yet settled on how to parameterize
@@ -5363,7 +5366,7 @@ materials.map(+> f |> .length)
 <td>
 
 ```js
-materials.map (m) { f(m).length }
+materials.map (m) { f(m).length; }
 ```
 
 <tr>
@@ -5372,7 +5375,7 @@ materials.map (m) { f(m).length }
 ```js
 a(1) {
   #::b(2) { … }
-}
+};
 ```
 The block-parameter proposal in particular has not settled on how to nest block
 parameters. But the [Core Proposal][]’s simple syntax rules already can handle
@@ -5382,8 +5385,8 @@ nested block parameters.
 
 ```js
 a(1) {
-  ::b(2) { … }
-}
+  ::b(2) { … };
+};
 ```
 The block-parameter proposal’s authors have been exploring using a sygil –
 perhaps related to the [function bind operator `::`][function binding] – in
@@ -5395,17 +5398,17 @@ magic that would be unnecessary with topic references.
 
 This would simply be equivalent to:
 ```js
-a(1, +>
-  #::b(2, +> { … })
-)
+a(1, +> {
+  #::b(2, +> { … });
+})
 ```
 
 <td>
 
 ```js
 a(1) {
-  ::b(2) { … }
-}
+  ::b(2) { … };
+};
 ```
 
 <tr>
@@ -5416,17 +5419,17 @@ its prefix form `::function` to mean `#::function`, then this can become even
 terser, without additional magic:
 
 ```js
-a(1) do {
-  ::b(2) { … }
-}
+a(1) {
+  ::b(2) { … };
+};
 ```
 
 <td>
 
 ```js
 a(1) {
-  ::b(2) { … }
-}
+  ::b(2) { … };
+};
 ```
 
 <tr>
@@ -5438,12 +5441,12 @@ server(app) {
     request()
     |> .get('param1')
     |> `hello world ${#}`
-    |> response.send
-  }
+    |> response.send;
+  };
 
   #::listen(3000) {
-    log('hello')
-  }
+    log('hello');
+  };
 }
 ```
 And again, if the [function bind operator `::`][function binding]’s proposal
@@ -5458,13 +5461,13 @@ server(app) do (_app) {
     request()
     |> #.get('param1')
     |> `hello world ${#}`
-    |> response.send
-  }
+    |> response.send;
+  };
 
   _app::listen(3000) {
-    log('hello')
-  }
-}
+    log('hello');
+  };
+};
 ```
 
 </table>
@@ -5567,16 +5570,16 @@ function applyWhenValue (contextTopic, testValue, block) {
 select ('world') {
   when ([Boolean, Number]) {
   |> log;
-  }
+  };
   when (String) {
   |> `Hello ${#}`
   |> log;
-  }
+  };
   otherwise {
     throw `Error: ${|> format}`
     |> new Error;
-  }
-}
+  };
+};
 ```
 
 ## `do` expressions
@@ -5864,6 +5867,7 @@ to loosest**. Each level may contain the parse types listed for that level –
 | ″″             | Templates               |`` …`…` ``      | Unchainable infix with circumfix|
 | ″″             | Parentheses             |`(…)`           | Circumfix                |
 | ″″             | [`do` expressions][]    |`do { … }`      | ″″                       |
+| ″″             | [`match` expressions][] |`match { … }`   | ″″                       |
 | LHS            | Dynamic properties      |`…[…]`          | LTR infix with circumfix |
 | ″″             | Static properties       |`….…`           | ″″                       |
 | ″″             | Tagged templates        |`` …`…` ``      | ″″                       |
@@ -6003,11 +6007,11 @@ other lines.
 1 |> # + 2 |> # * 3
 
 // Static term rewriting
-do { const _0 = 1, _1 = _0 + 2; _1 * 3 }
+do { const _0 = 1, _1 = _0 + 2; _1 * 3; }
 
 // Runtime evaluation
-do { const _1 = 1 + 2; _1 * 3 }
-do { 3 * 3 }
+do { const _1 = 1 + 2; _1 * 3; }
+do { 3 * 3; }
 9
 ```
 
@@ -6056,7 +6060,7 @@ With this notation, then in general, given a pipeline chain:\
     #₂ `=` sub(𝐸₂, #₁) `,`\
     … `,`\
     #ᵤ₋₂ `=` sub(𝐸ᵤ₋₂, #ᵤ₋₃) `;`\
-  sub(𝐸ᵤ₋₁, #ᵤ₋₂)\
+  sub(𝐸ᵤ₋₁, #ᵤ₋₂) `;`\
 `}`,\
 
 * If 𝑃 is a [bare function call][] – then sub(𝑃, #) is 𝑃 `(` # `)`.
@@ -6075,8 +6079,8 @@ Using the same notation from the first subsection, then in general:
 * If 𝑃 is a [bare constructor call][] – then sub(𝑃, #) is `new` 𝑃 `(` # `)`.
 * If 𝑃 is in [topic style][] – then sub(𝑃, #) is 𝑃 but in which all unshadowed
   instances of the topic reference `#` are replaced by #.
-* **If 𝑃 is in the form `{` 𝑆₀, 𝑆₁, …, 𝑆ᵥ₋₂, 𝑆ᵥ₋₁ `}` – then sub(𝑃, #) is
-  `do {` sub(𝑆₀, #), sub(𝑆₁, #), …, sub(𝑆ᵥ₋₂, #), sub(𝑆ᵥ₋₁, #) `}`**.
+* **If 𝑃 is in the form `{` 𝑆₀ `;` 𝑆₁ `;` … `;` 𝑆ᵥ₋₂ `;` 𝑆ᵥ₋₁ `;` `}` – then sub(𝑃, #) is
+  `do {` sub(𝑆₀, #) `;` sub(𝑆₁, #) `;` … `;` sub(𝑆ᵥ₋₂, #) `;` sub(𝑆ᵥ₋₁, #) `;` `}`**.
 
 ### Additional Feature PP
 Using the same notation from the first subsection, then in general, given a
@@ -6090,7 +6094,7 @@ pipeline chain:\
     #₂ `=` sub(𝐸₂, #₁) `,`\
     … `,`\
     #ᵤ₋₂ `=` sub(𝐸ᵤ₋₂, #ᵤ₋₃) `;`\
-  sub(𝐸ᵤ₋₁, #ᵤ₋₂)\
+  sub(𝐸ᵤ₋₁, #ᵤ₋₂) `;`\
 `}`.
 
 ### Additional Feature NP
@@ -6106,7 +6110,7 @@ do {
   const
     [_0, __0, ...s_0] = [a, b, ...c, d, e]
     _1 = f(__0, x, ...s_0);
-  g(_1)
+  g(_1);
 }
 ```
 
@@ -6122,7 +6126,7 @@ do {
   const
     [_0, __0] = [a, b]
     [_1, __1] = [f(_0), _0 ** c + __0];
-  g(_1)
+  g(_1);
 }
 ```
 
@@ -6242,7 +6246,7 @@ The pipeline chain is therefore equivalent to:\
           sub(𝐸ᵤ₋₂[width(𝐸ᵤ₋₂)−2], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
           sub(𝐸ᵤ₋₂[width(𝐸ᵤ₋₂)−1], #₀[0], #₀[1], #₀[2], #₀[r]) `,`\
       `]` `;`\
-  sub(𝐸ᵤ₋₁, #ᵤ₋₂[0], #ᵤ₋₂[1], …, #ᵤ₋₂[width(𝐸ᵤ₋₂)−1])\
+  sub(𝐸ᵤ₋₁, #ᵤ₋₂[0], #ᵤ₋₂[1], …, #ᵤ₋₂[width(𝐸ᵤ₋₂)−1]) `;`\
 `}`.
 
 ***
