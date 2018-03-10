@@ -283,9 +283,9 @@ outside a pipeline body.
 For instance, the chained pipeline:
 ```js
 5 |> # - 3
-|> -#
-|> # * 2
-|> Math.max(#, 0);
+  |> -#
+  |> # * 2
+  |> Math.max(#, 0);
 ```
 
 <td>
