@@ -946,9 +946,9 @@ value |> class { m: () { return #; }}
 ```js
 value
 |> await f(#, 5)
-|> {
-    # + 30
-  }
+|> do {
+  # + 30
+}
 |> g
 ```
 The nested statements that **may** contain topic references from outer lexical
@@ -971,12 +971,12 @@ g(await f(value, 5) + 30)
 ```js
 value
 |> await f(#, 5)
-|> {
-    if (# > 20)
-      # + 30;
-    else
-      # - 10;
-  }
+|> do {
+  if (# > 20)
+    # + 30;
+  else
+    # - 10;
+}
 |> g
 ```
 Using `do` expressions then allows the embedding of arbitrary statements such as
@@ -1000,15 +1000,15 @@ g(do {
 ```js
 value
 |> await f(#, 5)
-|> {
-    if (x > 20)
-      x + 30;
-    else
-      x - 10;
-  }
+|> do {
+  if (x > 20)
+    x + 30;
+  else
+    x - 10;
+}
 |> g
 // 🚫 Syntax Error:
-// Pipeline body `|> { if (…) … else … }`
+// Pipeline body `|> do { if (…) … else … }`
 // binds topic but contains no topic reference.
 ```
 But the same [early error rules][early errors] that apply to any topical
