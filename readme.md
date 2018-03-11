@@ -905,12 +905,12 @@ do {
 <tr>
 <td>
 
-**Most nested statements cannot** use an **outside context’s topic** in their
-expressions. This applies to block statements; function, async-function,
-generator, async-generator, and class definitions; `for` and `while` statements
-(but see [Additional Feature TF][]); and `catch` clauses (but see [Additional
-Feature TC][]). (Exceptions include arrow functions and `do`, `if`, `try`,
-`return`, `yield`, and `yield *` statements.)
+**Four kinds of blocks cannot** use an **outside context’s topic** in their
+expressions. These are: **non**-arrow function definitions (including those for
+async functions, generators, and async generators), class definitions, `for` and
+`while` statements (but see [Additional Feature TF][]), `catch` clauses (but see
+[Additional Feature TC][]), and `with` statements. (Arrow functions are an
+exception, as further explained below.)
 
 This behavior is in order to fulfill the [goals][] of [simple scoping][] and of
 [“don’t shoot me in the foot”][]: it prevents the origin of any topic from being
@@ -951,10 +951,10 @@ value
 }
 |> g
 ```
-The nested statements that **may** contain topic references from outer lexical
-environments are **[`do` expressions][]**, **arrow functions, `if` statements**,
-`try` statements (though not `catch` clauses), and `return`, `yield`, and
-`yield *` statements.
+Any other nested blocks **may** contain topic references from outer lexical
+environments. These include **[`do` expressions][]**, **arrow functions, `if`
+statements**, `try` statements and their `finally` clauses (though not their
+`catch` clauses), `switch` statements, and bare block statements.
 
 This example demonstrates how a `do` expression can be a pipeline body if it
 contains an outer topic reference `#`.
