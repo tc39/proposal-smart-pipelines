@@ -24,7 +24,7 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [jQuery (Core Proposal + Additional Feature BP+PP)](#jquery-core-proposal--additional-feature-bppp)
     - [Underscore.js (Core Proposal + Additional Feature BP+PP)](#underscorejs-core-proposal--additional-feature-bppp)
     - [Lodash (Core Proposal + Additional Feature BP+PP)](#lodash-core-proposal--additional-feature-bppp)
-  - [Additional Feature TC](#additional-feature-tc)
+  - [Additional Feature TS](#additional-feature-ts)
   - [Additional Feature PF](#additional-feature-pf)
     - [Ramda (Core Proposal + Additional Feature BP+PF)](#ramda-core-proposal--additional-feature-bppf)
     - [WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF)](#whatwg-streams-standard-core-proposal--additional-features-bppppf)
@@ -32,7 +32,7 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [Lodash (Core Proposal + Additional Features BP+PP+PF+NP)](#lodash-core-proposal--additional-features-bppppfnp)
     - [Ramda (Core Proposal + Additional Features BP+PF+NP)](#ramda-core-proposal--additional-features-bppfnp)
     - [WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF+NP)](#whatwg-streams-standard-core-proposal--additional-features-bppppfnp)
-  - [Additional Feature TF](#additional-feature-tf)
+  - [Additional Feature FS](#additional-feature-fs)
 - [Goals](#goals)
   - [“Don’t break my code.”](#dont-break-my-code)
     - [Backward compatibility](#backward-compatibility)
@@ -40,6 +40,7 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [Forward compatibility](#forward-compatibility)
   - [“Don’t shoot me in the foot.”](#dont-shoot-me-in-the-foot)
     - [Simple scoping](#simple-scoping)
+    - [Opt-in behavior](#opt-in-behavior)
     - [Static analyzability](#static-analyzability)
   - [“Don’t make me overthink.”](#dont-make-me-overthink)
     - [Syntactic locality](#syntactic-locality)
@@ -64,6 +65,7 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
   - [Function binding](#function-binding)
   - [Function composition](#function-composition)
   - [Partial function application](#partial-function-application)
+  - [Optional `catch` binding](#optional-catch-binding)
   - [Pattern matching](#pattern-matching)
   - [Block parameters](#block-parameters)
     - [Topic metaprogramming references](#topic-metaprogramming-references)
@@ -104,9 +106,9 @@ independent-but-compatible **Additional Features**:
 |[Additional Feature BP][]| None    | Block pipeline bodies `… \|> {…}`                                      | Application of **block expressions**                                                                            |
 |[Additional Feature PP][]| None    | Prefix pipelines `\|> …`                                               | Application **within blocks**                                                                                   |
 |[Additional Feature PF][]| None    | Pipeline functions `+>  `                                              | **Partial** function/expression **application**<br>Function/expression **composition**<br>**Method extraction** |
-|[Additional Feature TC][]| None    | Topical `catch` blocks                                                 | Application to **caught errors**                                                                                |
+|[Additional Feature TS][]| None    | Pipeline `try` statements                                              | Application to **caught errors**                                                                                |
 |[Additional Feature NP][]| None    | N-ary pipelines `(…, …) \|> …`<br>Lexical topics `##`, `###`, and `...`| **N-ary** function/expression **application**                                                                   |
-|[Additional Feature TF][]| None    | Topical `for` / `for await` loops                                      | Application within **iteration loops**                                                                          |
+|[Additional Feature FS][]| None    | Pipeline `for` / `for await` statements                                | Application within **iteration loops**                                                                          |
 
 The **Core Proposal** is currently at **Stage 0** of the [TC39 process][TC39
 process] and is planned to be presented, along with a [competing
@@ -908,8 +910,8 @@ do {
 **Four kinds of blocks cannot** use an **outside context’s topic** in their
 expressions. These are: **non**-arrow function definitions (including those for
 async functions, generators, and async generators), class definitions, `for` and
-`while` statements (but see [Additional Feature TF][]), `catch` clauses (but see
-[Additional Feature TC][]), and `with` statements. (Arrow functions are an
+`while` statements (but see [Additional Feature FS][]), `catch` clauses (but see
+[Additional Feature TS][]), and `with` statements. (Arrow functions are an
 exception, as further explained below.)
 
 This behavior is in order to fulfill the [goals][] of [simple scoping][] and of
@@ -957,7 +959,7 @@ statements**, `try` statements and their `finally` clauses (though not their
 `catch` clauses), `switch` statements, and bare block statements.
 
 This example demonstrates how a `do` expression can be a pipeline body if it
-contains an outer topic reference `#`.
+contains an outer topic reference.
 
 <td>
 
@@ -1011,8 +1013,8 @@ value
 // Pipeline body `|> do { if (…) … else … }`
 // binds topic but contains no topic reference.
 ```
-But the same [early error rules][early errors] that apply to any topical
-pipeline body apply also to topical bodies that are `do` expressions.
+But the same [early error rules][] that apply to any topical pipeline body apply
+also to topical bodies that are `do` expressions.
 
 <td>
 
@@ -1797,7 +1799,7 @@ value
 |> g
 ```
 This example becomes even pithier with [Additional Feature PP][] and [Additional
-Feature TC][].
+Feature TS][].
 
 <td>
 
@@ -1906,7 +1908,7 @@ value
   }
 |> g
 ```
-This example becomes even pithier with [Additional Feature TC][].
+This example becomes even pithier with [Additional Feature TS][].
 
 <td>
 
@@ -2418,20 +2420,47 @@ function castPath (value, object) {
 
 </table>
 
-## Additional Feature TC
+## Additional Feature TS
 With the [Core Proposal][] only, all `try` statements’ `catch` clauses would
-prohibit the use of the topic reference `#` within their bodies, except where
-the topic reference `#` is inside an inner pipeline inside the `catch` clause:
-this is one of the Core Proposal’s [early errors][] mentioned above.
+prohibit the use of the topic reference within their bodies, except where the
+topic reference `#` is inside an inner pipeline inside the `catch` clause: this
+is one of the Core Proposal’s [early errors][] mentioned above.
 
-The next Additional Feature – **Topical `catch`es** – makes all `catch` clauses
-implicitly bind their caught errors to the topic reference `#`. This implicit
-binding would be in addition to the explicit binding of a normal variable
-`error` declared within any parenthesized antecedent `(error)` in
-`try { … } catch (error) { … }`.
+The next Additional Feature – **Pipeline `try` Statements** – adds new forms of
+the `try` statement, the `catch` clause, and the `finally` clause, in the form
+of `try |> …`, `catch |> …`, and `finally |> …`, each followed by a [pipeline
+body with the same smart body syntax][smart body syntax].
 
-[Additional Feature TC is **formally specified in a separate draft
-specification**][formal TC].
+The developer must **[opt into this behavior][opt-in behavior]** by using a
+pipeline token `|>`, followed by the pipeline body. No existing code would be
+affected. Any, some, or none of the three clauses in a `try` statement may be in
+a pipeline form versus the regular block form.
+
+The pipeline `try |> …` statement and the `finally |> …` clause would both apply
+the outer context’s topic to their pipeline bodies. As per the usual [smart body
+syntax][], if a pipeline body is in bare mode, then it will be called as a
+function call, constructor call, or awaited function call on the outer topic. If
+the pipeline body is in topic style, then the body is evaluated as an expression
+with a new lexical environment, in which the topic reference is bound to the
+outer topic.
+
+The pipeline `catch |> …` clause would treat its caught error as if it were the
+head of a pipeline whose body is the expression following the `|>`. As per the
+usual [smart body syntax][], if the pipeline body is in bare mode, then it will
+be called as a function call, constructor call, or awaited function call on the
+error. If the pipeline body is in topic style, then the body is evaluated as an
+expression with a new lexical environment, in which the topic reference is bound
+to the caught error.
+
+With [Additional Feature BP][], this syntax which would naturally allow the form
+`catch |> { … }`, except, within the block, the error would be `#`.
+
+In addition, a bare `catch` form, completely lacking a parenthesized antecedent,
+has already been proposed as [optional `catch` binding][]. This bare form is
+mutually compatible with Additional Feature TS.
+
+[Additional Feature TS is **formally specified in a separate draft
+specification**][formal TS].
 
 <table>
 <thead>
@@ -2444,36 +2473,37 @@ specification**][formal TC].
 <td>
 
 ```js
-try {
-  …
-} catch {
-  #.message |> console.log;
-} finally {
-  …
+value
+|> f
+|> {
+  try |> 1 / #;
+  catch (error) { console.error(error) }
 }
+|> g
 ```
+This example also uses [Additional Feature BP][].
 
-The second Additional Feature makes all `catch` clauses implicitly bind their
-caught errors to the topic reference `#`.
+The `catch` clause is in the regular block form. But the `try` clause is in the
+pipeline form using the [topic style][]. It applies the expression `1 / #` to
+the outer context’s topic (in this case, `f(value)`).
 
-An additional bare `catch` form, completely lacking a parenthesized antecedent,
-has already been proposed as [ECMAScript optional catch binding][]. This bare
-form would also support the tacit topic binding.
+The semicolon after `1 / #` is optional. There is no ASI hazard here because
+pipeline bodies may never contain a `catch` or `finally` clause, unless the
+clause is inside a block.
 
 <td>
 
 ```js
-try {
-  …
-} catch (error) {
-  log(error.message);
-} finally {
-  …
-}
+g (
+  do {
+    try {
+      1 / f(value);
+    }
+    catch (error) {
+      console.error(error);
+    }
+  }, 1)
 ```
-
-The implicit topic binding would be in addition to the explicit binding of a
-normal variable `error` declared within any parenthesized antecedent.
 
 <tr>
 <td>
@@ -2482,14 +2512,158 @@ normal variable `error` declared within any parenthesized antecedent.
 value
 |> f
 |> {
+  try |> 1 / #;
+  catch |> console.error;
+}
+|> g(#, 1)
+```
+Now the `catch` clause is also in the pipeline form, using the [bare style][] to
+apply `console.error` as a method call to the caught error.
+
+<td>
+
+```js
+g (
+  do {
     try {
-    |> JSON.parse;
-      catch {
-        { message: #.message };
-      }
+      1 / f(value);
     }
+    catch (error) {
+      console.error(error);
+    }
+  }, 1)
+```
+
+<tr>
+<td>
+
+```js
+value
+|> f
+|> {
+  try
+  |> 1 / #;
+  catch
+  |> #.message |> console.error;
+}
+|> g(#, 1)
+```
+Pipeline `try` statements and their clauses may be chained as usual. This
+pipeline `catch` clause is in [topic style][] (`|> #.message`) followed by [bare
+style][] (`|> console.error`).
+
+<td>
+
+```js
+g (
+  do {
+    try {
+      1 / f(value);
+    }
+    catch (error) {
+      console.error(error);
+    }
+  }, 1)
+```
+
+<tr>
+<td>
+
+```js
+value
+|> f
+|> {
+  try {
+    |> 1 / #;
   }
+  catch |> {
+    |> #.message
+    |> console.error;
+  }
+}
 |> g
+```
+This pipeline `try` statement’s `catch` clause is using the topic-block style
+from [Additional Feature BP][], as well as [Additional Feature PP][] to
+abbreviate both `# |> 1 / #` and `# |> #.message`. A `|>` between `try` and its
+block `{ |> 1 / # }` is unnecessary, because the outer topic does not need to
+be rebound. However, it is necessary between `catch` and its block in order to
+opt into binding the topic reference to the caught errors.
+
+<td>
+
+```js
+g (
+  do {
+    try {
+      1 / f(value);
+    }
+    catch (error) {
+      console.error(error.message);
+    }
+  }, 1)
+```
+
+<tr>
+<td>
+
+```js
+value
+|> f
+|> {
+  try { 1 / #; }
+  catch (error) {
+    #.message |> console.error;
+  }
+}
+|> g(#, 1)
+// 🚫 Syntax Error:
+// Lexical context `catch { … }`
+// contains a topic reference
+// but has no topic binding.
+```
+If the developer includes the parenthesized parameter (like `(error)` in this
+example) or if they leave out the `|>` after the `catch`, then no topic binding
+is established. As per the [early error rules][] in [Core Proposal][], topic
+references are not allowed in regular `catch` blocks. This sort of [opt-in
+behavior][] is a goal of this proposal and helps ensure that the developer does
+not [shoot themselves in the foot][“don’t shoot me in the foot”] by accidentally
+using the topic value from an unexpected outer environment.
+
+<tr>
+<td>
+
+```js
+value
+|> f
+|> {
+  try { 1 / #; }
+  catch {
+    #.message |> console.error;
+  }
+}
+|> g(#, 1)
+// 🚫 Syntax Error:
+// Lexical context `catch { … }`
+// contains a topic reference
+// but has no topic binding.
+```
+This opt-in behavior is mutually compatible with the proposal for [optional
+`catch` binding][].
+
+<td>
+
+<tr>
+<td>
+
+```js
+value
+|> f
+|> {
+  try |> JSON.parse;
+  catch |> { message: #.message };
+}
+|> g(#, 1)
 ```
 
 <td>
@@ -2500,12 +2674,10 @@ g (
     const $ = f(value);
     try {
       JSON.parse(#);
-      catch (error) {
-        { message: error.message };
-      }
+    } catch (error) {
+      { message: error.message };
     }
-  }
-)
+  }, 1)
 ```
 
 </table>
@@ -3102,9 +3274,9 @@ try {
   '/products.json'
   |> getNewTitles
   |> console.log;
-} catch {
-|> console.error;
 }
+catch
+|> console.error;
 
 const fetchDependent = async +>
 |> await fetch
@@ -3118,10 +3290,11 @@ try {
   'urls.json'
   |> fetchDependent
   |> console.log;
-} catch {
-|> console.error;
 }
+catch
+|> console.error;
 ```
+This example also uses [Additional Feature TS][] for terse `catch` clauses.
 
 <td>
 
@@ -3979,13 +4152,15 @@ use cases are covered by pipeline functions with [Additional Feature NP][].
 try {
   readableStream
   |> await #.pipeTo(writableStream);
+
   "Success"
   |> console.log;
-} catch {
-  ("Error", #)
-  |> console.error;
 }
+catch
+|> ("Error", #)
+|> console.error;
 ```
+This example also uses [Additional Feature TS][] for terse `catch` clauses.
 
 <td>
 
@@ -4007,10 +4182,10 @@ try {
   |> await readInto
   |> ("The first 1024 bytes:", #)
   |> console.log;
-} catch {
-  ("Something went wrong!", #)
-  |> console.error;
 }
+catch
+|> ("Something went wrong!", #)
+|> console.error;
 
 async function readInto(buffer, offset = 0) {
   return buffer |> {
@@ -4025,6 +4200,7 @@ async function readInto(buffer, offset = 0) {
   };
 }
 ```
+This example also uses [Additional Feature TS][] for terse `catch` clauses.
 
 <td>
 
@@ -4054,16 +4230,16 @@ function readInto(buffer, offset = 0) {
 
 </table>
 
-## Additional Feature TF
+## Additional Feature FS
 With the [Core Proposal][] only, `for`–`of` statements would prohibit the use
 of `#` within their bodies, except where `#` is inside an inner pipeline inside
-the `for` loop. But this could be changed afterward with Additional Feature TF –
+the `for` loop. But this could be changed afterward with Additional Feature FS –
 **Topical `for`s** – which would cause `for` loops to bind the topic to useful
 values, which in turn would make `for` loops terser, emphasizing what happens to
 each item rather than the items’ variables themselves.
 
-[Additional Feature TF is **formally specified in a separate draft
-specification**][formal TF].
+[Additional Feature FS is **formally specified in a separate draft
+specification**][formal FS].
 
 <table>
 <thead>
@@ -4075,12 +4251,10 @@ specification**][formal TF].
 <tr>
 <td>
 
-With Additional Feature FT, all `for`–`of` loops would implicitly bind each
-iterator value to `#`. This implicit binding would be in addition to the
-explicit binding of a normal variable `i` declared within the parenthesized
-antecedent `for (const i of … { … })`.
+With Additional Feature FT, a pipeline `for`–`of` loop would be added, which
+would tacitly apply a pipeline body to each iterator value.
 ```js
-for (range(0, 50)) {
+for (range(0, 50)) |> {
   log(# ** 2);
   log(|> Math.sqrt);
 }
@@ -4101,13 +4275,30 @@ for (const i of range(0, 50)) {
 <tr>
 <td>
 
-Similar additions would be made to the asynchronous `for` loop. All
-`for`–`await`–`of` loops would implicitly bind each iterator value to `#`. This
-implicit binding would be in addition to the explicit binding of a normal
-variable `i` declared within the parenthesized antecedent
-`for await (const i of …) { … }`.
 ```js
-for await (stream) {
+for (const i of range(0, 50)) {
+  log(# ** 2);
+  log(|> Math.sqrt);
+}
+// 🚫 Syntax Error:
+// Lexical context `for (…) { … }`
+// contains a topic reference
+// but has no topic binding.
+```
+This implicit binding would only occur [when the developer opts into this
+behavior][opt-in behavior] with `|>`. It would never occur when a normal,
+explicit parenthesized binding exists. Attempting to use a topic reference
+in such a regular `for` block would trigger an [early error rule][].
+
+<td>
+
+<tr>
+<td>
+
+Similar additions would be made to the asynchronous `for` loop. A pipeline
+`for`–`await`–`of` loop would implicitly bind each iterator value to `#`.
+```js
+for await (stream) |> {
   yield |>
   |> await f
   |> #.length
@@ -4115,10 +4306,9 @@ for await (stream) {
   |> g;
 }
 ```
-An additional tacit `for await` loop form, completely lacking a parenthesized
-antecedent, would also be added. Note that in this case, a `|>` (or a `#`) must
-be included after `yield` because – as usual – a newline after a `yield` causes
-[automatic semicolon insertion][ASI] after the `yield`.
+Note that in this case, a `|>` (or a `#`) must be included after `yield` because
+– as usual – a newline after a `yield` causes [automatic semicolon
+insertion][ASI] after the `yield`.
 
 <td>
 
@@ -4136,7 +4326,7 @@ for await (const c of stream) {
 
 # Goals
 
-There are sixteen ordered goals that the smart body syntax tries to fulfill,
+There are seventeen ordered goals that the smart body syntax tries to fulfill,
 which may be summarized,<br>
 “Don’t break my code,”<br>
 “Don’t make me overthink,”<br>
@@ -4167,26 +4357,27 @@ and a few other goals.
 **“Don’t shoot me in the foot.”**
 
  7. [Simple scoping](#simple-scoping)
- 8. [Static analyzability](#static-analyzability)
+ 8. [Opt-in behavior](#opt-in-behavior)
+ 9. [Static analyzability](#static-analyzability)
 
 <tr>
 <td>
 
 **“Make my code easier to read.”**
 
- 9. [Untangled flow](#untangled-flow)
-10. [Distinguishability](#distinguishability)
-11. [Terse parentheses](#terse-parentheses)
-12. [Terse variables](#terse-variables)
-13. [Terse function calls](#terse-function-calls)
+10. [Untangled flow](#untangled-flow)
+11. [Distinguishability](#distinguishability)
+12. [Terse parentheses](#terse-parentheses)
+13. [Terse variables](#terse-variables)
+14. [Terse function calls](#terse-function-calls)
 
 <td>
 
 **Other**
 
-14. [Conceptual generality](#conceptual-generality)
-15. [Human writability](#human-writability)
-16. [Novice learnability](#novice-learnability)
+15. [Conceptual generality](#conceptual-generality)
+16. [Human writability](#human-writability)
+17. [Novice learnability](#novice-learnability)
 
 </table>
 
@@ -4247,21 +4438,62 @@ all of these, especially because of its [early errors][].
 
 ## “Don’t shoot me in the foot.”
 The syntax should not be a footgun: it should not easy for a developer to
-accidentally shoot themselves in the foot with it.
+accidentally shoot themselves in the foot with it. Lessons from the [topic
+variables of other programming languages][topic references in other programming
+languages] may be instructive in formulating these goals.
+
+### Opt-in behavior
+The lexical topic is implicit, hidden state. State is intrinsically dangerous in
+that it may induce the developer to commit [mode errors][], later “surprising”
+the developer with unpredicted behavior. It should therefore not be easy for a
+developer to accidentally bind or use the topic. If the developer accidentally
+binds or uses the topic, any use of that reference could result in subtle,
+pernicious bugs.
+
+The larger the probability that a developer will accidentally clobber or
+overwrite the topic, the less predictable their code becomes. It should not be
+easy to accidentally shadow a reference from an outer lexical scope.
+
+The larger the probability that a developer accidentally uses the topic, the
+less predictable their code becomes. It should not be easy to accidentally use
+the current lexical scope’s topic. In particular, bare/tacit function calls that
+use the topic should not be easy to accidentally perform.
+
+In this proposal, the developer therefore **must explicitly opt into**
+topic-using behavior, whether binding or using, by using the pipeline operator
+`|>`. This includes [Additional Feature TS][] and [Additional Feature FS][],
+which both require the use of `|>`.
+
+This is quite different than [much prior art in other programming
+languages][topic references in other programming languages]. Other languages
+frequently bind their topic references using numerous syntactic structures, with
+no way for the developer to opt out. In addition, bare/tacit function calls are
+easier to accidentally perform in some programming languages – making it more
+difficult to tell whether a bare identifier `print` is meant to be a simple
+variable reference or a bare function call on the topic value.
 
 ### Simple scoping
 It should not be easy to accidentally shadow a reference from an outer lexical
 scope. When the developer does so, any use of that reference could result in
 subtle, pernicious bugs.
 
-The rules for when the topic is bound should be simple and consistent. It should
+The rules for where the topic is bound should be simple and consistent. It should
 be clear and obvious when a topic is bound and in what scope it exists. And
-forgetting these rules should result in early, compile-time errors, not subtle
-runtime bugs.
+forgetting these rules should result in [early, compile-time errors][early
+errors], not subtle runtime bugs.
 
-The rules of topic scoping is simple: **Topic references are bound in the bodies
-of pipelines, and they cannot be used within any block other than arrow
-functions.** See the section on [inner blocks][].
+It should always be easy to find the origin of a topic binding, without looking
+deeply into the stack. Topic references are therefore bound only in the bodies
+of pipelines, and they cannot be used within `function`, `class`, `for`,
+`while`, `catch`, and `with` statements (see [Core Proposal][]). When the
+developer wishes to trace the origin of a topic binding, they may be certain
+that if they find any of such statements during their search, they have moved
+too far and should retrace their path for the topic binding.
+
+This proposal’s topic references are different than [much prior art in other
+programming languages][topic references in other programming languages]. Other
+languages frequently use dynamic binding rather than lexical binding for their
+topic references.
 
 ### Static analyzability
 [Early errors][] help the editing JavaScript developer avoid common [footguns][]
@@ -4746,15 +4978,15 @@ the topic value.
 Another disadvantage arises from the ability to clobber or overwrite the value of the
 topic variable, which may affect code in surprising ways.
 
-However, JavaScript’s topic reference `#` is different than this prior art. It
+However, JavaScript’s topic references are is different than this prior art. It
 is lexically bound, with [simple scoping][], and it is [statically
-analyzable][]. It also cannot be accidentally bound; the developer must opt into
-binding it by using the pipeline operator (although [Additional Feature TC][]
-and [Additional Feature TF][] are limited exceptions that do not extend into
-inner blocks). The topic also cannot be accidentally used; it is an [early
-error][] when `#` is used outside of a pipeline body (see [Core Proposal][] and
-[static analyzability][]). The proposal is as a whole designed to [prevent
-footguns][“don’t shoot me in the foot”].
+analyzable][]. It also cannot be accidentally bound; [the developer must opt
+into binding it][opt-in behavior] by using the pipeline operator `|>`. (This
+includes [Additional Feature TS][] and [Additional Feature FS][], which both
+require the use of `|>`.) The topic also cannot be accidentally used; it is an
+[early error][] when `#` is used outside of a pipeline body (see [Core
+Proposal][] and [static analyzability][]). The proposal is as a whole designed
+to [prevent footguns][“don’t shoot me in the foot”].
 
 The topic is [conceptually general][conceptual generality] and could be extended
 to other forms. This proposal is [forward compatible][forward compatibility]
@@ -5254,6 +5486,83 @@ the other proposal’s code.
 
 </table>
 
+## Optional `catch` binding
+In addition, a bare `catch` form, completely lacking a parenthesized antecedent,
+has already been proposed as [ECMAScript optional `catch` binding][]. This bare
+form is mutually compatible with this proposal, including with [Additional
+Feature TS][]. The developer must **[opt into using Additional
+Feature TS][opt-in behavior]** by using a pipeline token `|>`, followed by the
+pipeline body. No existing code would be affected. Any, some, or none of the
+three clauses in a `try` statement may be in a pipeline form versus the regular
+block form or the bare block form.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines too
+<th>With optional `catch` binding only
+
+<tbody>
+<tr>
+<td>
+
+```js
+value
+|> f
+|> {
+  try {
+    |> 1 / #;
+  }
+  catch {
+    { type: error };
+  }
+}
+|> g
+```
+Even with [Additional Feature TS][], omitting `catch` binding still works,
+although the topic cannot be used within the block without a `|>`.
+
+<td>
+
+```js
+g (
+  do {
+    try {
+      1 / f(value);
+    }
+    catch {
+      { type: error };
+    }
+  }, 1)
+```
+
+<tr>
+<td>
+
+```js
+value
+|> f
+|> {
+  try { 1 / #; }
+  catch {
+    #.message |> console.error;
+  }
+}
+|> g(#, 1)
+// 🚫 Syntax Error:
+// Lexical context `catch { … }`
+// contains a topic reference
+// but has no topic binding.
+```
+If the developer leaves out the `|>` after the `catch`, then no topic binding is
+established. As per the [early error rules][] in [Core Proposal][], topic
+references are not allowed in regular `catch` blocks. This sort of [opt-in
+behavior][] is a goal of this proposal and helps ensure that the developer does
+not [shoot themselves in the foot][“don’t shoot me in the foot”] by accidentally
+using the topic value from an unexpected outer environment.
+
+</table>
+
 ## Pattern matching
 The smart pipelines and topic references of the [Core Proposal][] would be a
 boon to the proposal for [ECMAScript pattern matching][].
@@ -5337,40 +5646,34 @@ match (f(…)) {
 <td>
 
 ```js
-try {
-  …
-  catch {
-    match {
-      SyntaxError:
-      |> f;
-      TypeError:
-      |> g |> h(#, {strict: true});
-      Error:
-      |> throw #;
-    };
-  }
-}
+try { … }
+catch
+|> match {
+  SyntaxError:
+  |> f;
+  TypeError:
+  |> g |> h(#, {strict: true});
+  Error:
+  |> throw #;
+};
 ```
 With ECMAScript pattern matching + the [Core Proposal][] + [Additional
-Feature PP][] + [Additional Feature TC][] + [ECMAScript optional catch
-binding][], handling caught errors (and promise rejections) based on error type
-becomes more ergonomic.
+Feature PP][] + [Additional Feature TS][], handling caught errors (and promise
+rejections) based on error type becomes more ergonomic.
 
 <td>
 
 ```js
-try {
-  …
-  catch (error) {
-    match (error) {
-      SyntaxError:
-        f(error)
-      TypeError:
-        h(g(error), {strict: true})
-      Error:
-        throw error
-    };
-  }
+try { … }
+catch (error) {
+  match (error) {
+    SyntaxError:
+      f(error)
+    TypeError:
+      h(g(error), {strict: true})
+    Error:
+      throw error
+  };
 }
 ```
 The version with pattern matching alone is more verbose with five more `error`
@@ -5773,8 +6076,8 @@ proposals in a uniform manner.
 
 # Appendices
 ## Smart body syntax
-Most pipelines will use the topic reference `#` in their bodies. This style of
-pipeline is called **[topic style][]**.
+Most pipelines will use topic references in their bodies. This style of pipeline
+is called **[topic style][]**.
 
 For three simple cases – unary functions, unary async functions, and unary
 constructors – you may omit the topic reference from the body. This is called
@@ -6014,7 +6317,7 @@ to loosest**. Each level may contain the parse types listed for that level –
 | ″″             | Switch statements       |`switch (…) …`  | ″″                       |
 | ″″             | Iteration statements    |                | ″″                       |
 | ″″             | With statements         |`with (…) {…}`  | ″″                       |
-| ″″             | Try statements          |`try {… catch (…) {…} finally {…}}` | ″″   |
+| ″″             | Try statements          |`try {…} catch (…) {…} finally {…}` | ″″   |
 | Statement list | Case clause             |`case: …`       | Unchainable prefix       |
 | Root           | Script                  |                | Root                     |
 | ″″             | Module                  |                | ″″                       |
@@ -6025,7 +6328,7 @@ precedent in prior programming languages’ use of “topic variables”.
 
 The term “**head**” is preferred to “**topic expression**” because, in the
 future, the topic concept could be extended to other syntaxes, as with
-[Additional Feature TC][] and [Additional Feature TF][], not just pipelines.
+[Additional Feature TS][] and [Additional Feature FS][], not just pipelines.
 
 In addition, “head” is preferred to “**LHS**”, because “LHS” in the ECMAScript
 specification usually refers to the [LHS of assignments][ECMAScript LHS expressions],
@@ -6051,7 +6354,7 @@ body of the pipeline operator.
 
 “**[Bare style][]**” can also be called “**tacit style**”, but the former is
 preferred to the latter. Eventually, certain possible future extensions to the
-topic concept, such as [Additional Feature TC][] and [Additional Feature TF][],
+topic concept, such as [Additional Feature TS][] and [Additional Feature FS][],
 would enable [tacit programming][] even without using bare-style pipelines.
 
 ## Term rewriting
@@ -6344,9 +6647,8 @@ The pipeline chain is therefore equivalent to:\
 [Additional Feature NP]: #additional-feature-np
 [Additional Feature PF]: #additional-feature-pf
 [Additional Feature PP]: #additional-feature-pp
-[Additional Feature TC]: #additional-feature-tc
-[Additional Feature TE]: #additional-feature-te
-[Additional Feature TF]: #additional-feature-tf
+[Additional Feature TS]: #additional-feature-ts
+[Additional Feature FS]: #additional-feature-fs
 [Additional Features]: #smart-pipelines
 [annevk]: https://github.com/annevk
 [antecedent]: https://en.wikipedia.org/wiki/Antecedent_(grammar)
@@ -6400,7 +6702,7 @@ The pipeline chain is therefore equivalent to:\
 [ECMAScript Notational Conventions, § Grammars]: https://tc39.github.io/ecma262/#sec-syntactic-and-lexical-grammars
 [ECMAScript Notational Conventions, § Lexical Grammar]: https://tc39.github.io/ecma262/#sec-lexical-and-regexp-grammars
 [ECMAScript Notational Conventions, § Runtime Semantics]: https://tc39.github.io/ecma262/#sec-runtime-semantics
-[ECMAScript optional catch binding]: https://github.com/tc39/proposal-optional-catch-binding
+[ECMAScript optional `catch` binding]: https://github.com/tc39/proposal-optional-catch-binding
 [ECMAScript partial application]: https://github.com/tc39/proposal-partial-application
 [ECMAScript pattern matching]: https://github.com/tc39/proposal-pattern-matching
 [ECMAScript Primary Expressions]: https://tc39.github.io/ecma262/#prod-PrimaryExpression
@@ -6423,8 +6725,8 @@ The pipeline chain is therefore equivalent to:\
 [formal PF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pf
 [formal pipeline specification]: https://jschoi.org/18/es-smart-pipelines/spec
 [formal PP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pp
-[formal TC]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-tc
-[formal TF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-tf
+[formal TS]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-ts
+[formal FS]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-fs
 [forward compatibility]: #forward-compatibility
 [function bind operator `::`]: #function-bind-operator
 [function binding]: #function-binding
@@ -6443,7 +6745,6 @@ The pipeline chain is therefore equivalent to:\
 [IIFEs]: https://en.wikipedia.org/wiki/Immediately-invoked_function_expression
 [immutable objects]: https://en.wikipedia.org/wiki/Immutable_object
 [incidental complexity]: https://en.wikipedia.org/wiki/Incidental_complexity
-[inner blocks]: #inner-blocks
 [intro]: #smart-pipelines
 [isiahmeadows functional composition]: https://github.com/isiahmeadows/function-composition-proposal
 [jashkenas]: https://github.com/jashkenas
@@ -6561,3 +6862,10 @@ The pipeline chain is therefore equivalent to:\
 [bare constructor call]: #bare-constructor-call
 [bare awaited function call]: #bare-awaited-function-call
 [`??:`]: https://github.com/tc39/proposal-nullish-coalescing/pull/23
+[optional `catch` binding]: #optional-catch-binding
+[`match` expressions]: #pattern-matching
+[early error rules]: #static-analyzability
+[topic references in other programming languages]: #topic-references-in-other-programming-languages
+[opt-in behavior]: #opt-in-behavior
+[mode errors]: https://en.wikipedia.org/wiki/Mode_(computer_interface)#Mode_errors
+[early error rule]: #static-analyzability
