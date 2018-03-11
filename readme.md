@@ -1020,10 +1020,10 @@ pipeline body apply also to topical bodies that are `do` expressions.
 <td>
 
 A function definition that is the body of a pipeline may contain topic
-references in its default parameters’ expressions. This is because
-default-parameter expressions are evaluated within the the same context as that
-outside of the function. However, as stated above, the function body itself
-still may not contain topic references, just like class definitions.
+references in its default parameters’ expressions, because their scoping is
+similar to that of the outside context’s: similar enough such that also allowing
+topic references in them would fulfill the goal of [simple scoping][]. However,
+as stated above, the function body itself still may not contain topic references.
 
 ```js
 value
