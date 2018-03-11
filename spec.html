@@ -82,7 +82,7 @@ contributors: J. S. Choi
 
 <emu-table id=table-15 caption="Abstract Methods of Environment Records">
 <table>
-<tbody>
+<thead>
 <tr>
 <th>
 Method
@@ -91,6 +91,8 @@ Method
 Purpose
 </th>
 </tr>
+</thead>
+<tbody>
 <tr>
 <td>
 <ins>HasTopicBinding()</ins>
@@ -165,7 +167,7 @@ If the value of [[TopicBindingStatus]] is *true*, [[TopicValues]] is a list cont
 
 <emu-table id=table-62 caption="Additional Methods of Declarative Environment Records">
 <table>
-<tbody>
+<thead>
 <tr>
 <th>
 Method
@@ -178,6 +180,8 @@ Purpose
 <td>
 BindTopicValues(V)
 </td>
+</thead>
+<tbody>
 <td>
 Establish the immutable topic binding (that is, the `#` binding) of this Environment Record and set the topic binding's value. _V_ is a list containing the one element which is the topic value and is a value of any ECMAScript language type. Afterward, the value returned by the Environment Record's HasTopicBinding method is *true*. This method cannot be called more than once on any single Environment Record.
 </td>
@@ -1236,7 +1240,7 @@ PipelineBody : PipelineTopicExpression
 
 <emu-table id=table-additional-feature-np-15 caption="Abstract Methods of Environment Records">
 <table>
-<tbody>
+<thead>
 <tr>
 <th>
 Method
@@ -1245,6 +1249,8 @@ Method
 Purpose
 </th>
 </tr>
+</thead>
+<tbody>
 <tr>
 <td>
 HasTopicBinding()
@@ -1266,7 +1272,7 @@ Determine the status of an Environment Record's topic binding (<ins>that is, the
 
 <emu-table id=table-additional-feature-np-61 caption="Additional Fields of Declarative Environment Records">
 <table>
-<tbody>
+<thead>
 <tr>
 <th>
 Method
@@ -1278,6 +1284,8 @@ Value
 Purpose
 </th>
 </tr>
+</thead>
+<tbody>
 <tr>
 <td>
 [[TopicBindingStatus]]
@@ -1319,7 +1327,7 @@ If the value of [[TopicBindingStatus]] is *true*, [[TopicValues]] is a list cont
 
 <emu-table id=table-additional-feature-np-62 caption="Additional Methods of Declarative Environment Records">
 <table>
-<tbody>
+<thead>
 <tr>
 <th>
 Method
@@ -1328,6 +1336,8 @@ Method
 Purpose
 </th>
 </tr>
+</thead>
+<tbody>
 <tr>
 <td>
 BindTopicValues(V<ins>, VRest</ins>)
