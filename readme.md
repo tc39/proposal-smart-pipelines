@@ -1016,6 +1016,67 @@ pipeline body apply also to topical bodies that are `do` expressions.
 
 <td>
 
+<tr>
+<td>
+
+A function definition that is the body of a pipeline may contain topic
+references in its default parameters’ expressions. This is because
+default-parameter expressions are evaluated within the the same context as that
+outside of the function. However, as stated above, the function body itself
+still may not contain topic references, just like class definitions.
+
+```js
+value
+|> processing
+|> function (x = #) { return x; }
+```
+<td>
+
+```js
+function (x = processing(value)) {
+  return x;
+}
+```
+
+<tr>
+<td>
+
+The same applies to the parenthesized antecedents of `for` and `while` loops.
+
+```js
+value
+|> process
+|> do {
+  for (const element of #)
+    …
+}
+```
+```js
+value
+|> process
+|> do {
+  let element;
+  while (element = getNextFrom(#))
+    …
+}
+```
+<td>
+
+```js
+do {
+  for (const element
+    of process(value))
+    …
+}
+```
+do {
+  let element;
+  while (element =
+    getNextFrom(value))
+    …
+}
+```
+
 </table>
 
 ### WHATWG Fetch Standard (Core Proposal only)
