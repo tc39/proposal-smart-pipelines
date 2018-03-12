@@ -876,29 +876,6 @@ $ =&gt; o.m(f($) + 1)</code></pre></td>
 
 <p>This annex uses a new token `+&gt;`, but this token is merely an <strong>illustrative placeholder</strong> to avoid premature bikeshedding discussion. The actual operator ideally would communicate its status as a combination of `=&gt;` and `|&gt;`. Example replacements of `+&gt;` include `-&gt;` |PipelineBody| (which both resembles the `|&gt;` operator with the `|` rotated sideways and resembles the `=&gt;` operator but with a skinnier arrow body) and `=|` |PipelineBody| (which is a blending of `=&gt;` and `|&gt;` with the `&gt;` removed).</p>
 
-<emu-annex id=sec-additional-feature-pf-executable-code-and-execution-contexts>
-<h1>Executable Code and Execution Contexts</h1>
-
-<emu-annex id=sec-additional-feature-pf-lexical-environments>
-<h1>Lexical Environments</h1>
-
-<emu-annex id=sec-additional-feature-pf-lexical-topics>
-<h1>Lexical Topics</h1>
-
-<emu-note type=editor>
-<p>This section further revises the <emu-xref href=#sec-lexical-topics>corresponding new clause in the core proposal</emu-xref>.</p>
-</emu-note>
-
-<emu-note>
-<p>There is also one syntax nonterminal that <strong>instantiates</strong> topic-binding environments with <strong>provided topic values</strong> of any ECMAScript language type. This <dfn>topic-binding nonterminal</dfn> is <strong>|PipelineTopicExpression|</strong>, which uses the abstract operation <strong>TopicExpressionInstantiation</strong><ins>, and which in turn is used by |PipelineExpression| and |PipelineFunction|</ins>. In addition, |PipelineTopicExpression| <strong>hides</strong> its own inner topic references from Contains. Within |PipelineTopicExpression|'s scopes, such topic references would <strong>not</strong> trigger early error rules during program compilation. Instead, they would be evaluated at runtime into the values of the <strong>newly instantiated</strong> topic-binding environments' topic bindings.</p>
-</emu-note>
-
-</emu-annex>
-
-</emu-annex>
-
-</emu-annex>
-
 <emu-annex id=sec-additional-feature-pf-ecmascript-language-expressions>
 <h1>ECMAScript Language: Expressions</h1>
 
