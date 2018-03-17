@@ -173,15 +173,19 @@ transformations become [**untangled** into **short steps**][untangled flow].
 <td>
 
 ```js
-new User.Message(
-  capitalize(
-    doubledSay(
-      await promise
-        || throw new TypeError(
-          `Invalid value from ${promise}`)
-    ), ', '
-  ) + '!'
-)
+console.log(
+  await stream.write(
+    new User.Message(
+      capitalize(
+        doubledSay(
+          await promise
+            || throw new TypeError(
+              `Invalid value from ${promise}`)
+        ), ', '
+      ) + '!'
+    )
+  )
+);
 ```
 **Nested, deeply composed** expressions occur often in JavaScript. They occur
 whenever any single value must be processed by a **series of data
@@ -205,8 +209,8 @@ promise
 |> # + '!'
 |> new User.Message
 |> await stream.write
+|> console.log;
 ```
-
 With smart pipelines, the code above becomes **terser** and, literally, more
 **straightforward**. Prefix, infix, and postfix expressions would be less
 tangled together in threads of spaghetti. Instead, data values would be **piped
@@ -227,17 +231,19 @@ unrelated lines.
 <td>
 
 ```js
-await stream.write(
-  new User.Message(
-    capitalize(
-      doubledSay(
-        await promise
-          || throw new TypeError(
-            `Invalid value from ${promise}`)
-      ), ', '
-    ) + '!'
+console.log(
+  await stream.write(
+    new User.Message(
+      capitalize(
+        doubledSay(
+          await promise
+            || throw new TypeError(
+              `Invalid value from ${promise}`)
+        ), ', '
+      ) + '!'
+    )
   )
-)
+);
 ```
 Compared with the pipeline version, the original code requires **additional
 indentation and grouping** on each step. This requires four more levels of
@@ -266,10 +272,7 @@ body is then evaluated, using that **topic binding**. In the end, the whole
 pipeline expression’s value is the end result into which the pipeline body
 evaluated with the topic binding.
 ```js
-5 |> do {
-  # = 50;
-  # + 1
-}
+input |> (# = 50);
 // 🚫 Reference Error:
 // Cannot assign to topic reference.
 ```
@@ -284,20 +287,24 @@ outside a pipeline body.
 
 For instance, the chained pipeline:
 ```js
-5 |> # - 3
-  |> -#
-  |> # * 2
-  |> Math.max(#, 0)
+input
+|> # - 3
+|> -#
+|> # * 2
+|> Math.max(#, 0)
+|> console.log;
 ```
 
 <td>
 
 …is equivalent to the tangled nested expression:
 ```js
-Math.max(
-  -(5 - 3) * 2,
-  0
-)
+console.log(
+  Math.max(
+    -(input - 3) * 2,
+    0
+  )
+);
 ```
 
 <tr>
@@ -307,7 +314,7 @@ The syntax is [**statically term rewritable** into already valid code][term
 rewriting] in this way, with [theoretically **zero runtime cost**][zero runtime
 cost].
 
-Similar use cases appear **numerous times** in JavaScript code, whenever any value
+Similar use cases appear **numerous times** in JavaScript code, whenever any input
 is transformed by **[expressions of any type][expressive versatility]**:
 function calls, property calls, method calls, object constructions, arithmetic
 operations, logical operations, bitwise operations, `typeof`, `instanceof`,
@@ -325,6 +332,7 @@ promise
 |> # + '!'
 |> new User.Message
 |> await stream.write
+|> console.log;
 ```
 Note that, in the example above, it is **not necessary** to include
 **parentheses** for `capitalize` or `new User.Message`; they were **tacitly
@@ -335,17 +343,19 @@ the version below.
 <td>
 
 ```js
-await stream.write(
-  new User.Message(
-    capitalize(
-      doubledSay(
-        await promise
-          || throw new TypeError(
-            `Invalid value from ${promise}`)
-      ), ', '
-    ) + '!'
+console.log(
+  await stream.write(
+    new User.Message(
+      capitalize(
+        doubledSay(
+          await promise
+            || throw new TypeError(
+              `Invalid value from ${promise}`)
+        ), ', '
+      ) + '!'
+    )
   )
-)
+);
 ```
 
 <tr>
@@ -361,6 +371,7 @@ promise
 |> # + '!'
 |> new User.Message(#)
 |> await stream.write(#)
+|> console.log(#);
 ```
 This version is equivalent to the version above, except that the `capitalize`
 and `new User.Message` pipeline bodies explicitly include optional topic
@@ -369,17 +380,19 @@ references `#`, making the expressions slightly wordier than necessary.
 <td>
 
 ```js
-await stream.write(
-  new User.Message(
-    capitalize(
-      doubledSay(
-        await promise
-          || throw new TypeError(
-            `Invalid value from ${promise}`)
-      ), ', '
-    ) + '!'
+console.log(
+  await stream.write(
+    new User.Message(
+      capitalize(
+        doubledSay(
+          await promise
+            || throw new TypeError(
+              `Invalid value from ${promise}`)
+        ), ', '
+      ) + '!'
+    )
   )
-)
+);
 ```
 
 <tr>
@@ -398,7 +411,7 @@ function application][].
 <td>
 
 ```js
-value
+const object = input
 |> f
 |> # + 2
 |> # * 3
@@ -407,7 +420,7 @@ value
 |> o.unaryMethod
 |> await asyncFunction
 |> await o.asyncMethod
-|> new Constructor
+|> new Constructor;
 ```
 This pipeline is a very flat expression, with only one level of indentation, and
 with each transformation step on its own line.
@@ -426,19 +439,20 @@ dots, `new`**, and **await** – and **never parentheses, brackets, braces**, or
 <td>
 
 ```js
-new Constructor(
-  await o.asyncMethod(
-    await asyncFunction(
-      o.unaryMethod(
-        g(
-          -(f(value) + 2)
-            * 3,
-          x
+const object =
+  new Constructor(
+    await o.asyncMethod(
+      await asyncFunction(
+        o.unaryMethod(
+          g(
+            -(f(input) + 2)
+              * 3,
+            x
+          )
         )
       )
     )
-  )
-)
+  );
 ```
 In contrast to the version with pipes, this code is deeply nested, not flat.
 
@@ -453,12 +467,12 @@ indentation of any previous steps’ lines.
 <td>
 
 ```js
-value |> x + 50 |> f |> g(x, 2)
+input |> x + 50 |> f |> g(x, 2);
 // 🚫 Syntax Error:
 // Pipeline body `|> x + 50`
 // binds topic but contains no topic reference.
 // 🚫 Syntax Error:
-// Pipeline body `|> f(x, 2)`
+// Pipeline body `|> g(x, 2)`
 // binds topic but contains no topic reference.
 ```
 In order to fulfill the [goal][goals] of [“don’t shoot me in the foot”][],
@@ -490,6 +504,7 @@ promise
 |> capitalize |> # + '!'
 |> new User.Message
 |> await stream.write
+|> console.log;
 ```
 This pipeline is also relatively flat, with only one level of indentation, and
 with each transformation step on its own line.
@@ -510,16 +525,19 @@ function capitalize (str) {
     + str.substring(1);
 }
 
-await stream.write(
-  new User.Message(
-    capitalizedString(
-      doubledSay(
-        await promise
-          || throw new TypeError()
-      ), ', '
-    ) + '!'
+console.log(
+  await stream.write(
+    new User.Message(
+      capitalize(
+        doubledSay(
+          await promise
+            || throw new TypeError(
+              `Invalid value from ${promise}`)
+        ), ', '
+      ) + '!'
+    )
   )
-)
+);
 ```
 This deeply nested expression has four levels of indentation instead of two.
 Reading its data flow requires checking both the beginning of each expression
@@ -530,8 +548,10 @@ end of each expression (`|| throw new TypeError()`, `, ', '`, ` + '!'`)).
 <td>
 
 ```js
-… |> f(#, #)
-… |> [#, # * 2, # * 3]
+x = … |> f(#, #);
+```
+```js
+x = … |> [#, # * 2, # * 3];
 ```
 The topic reference may be used multiple times in a pipeline body. Each use
 refers to the same value (wherever the topic reference is not overridden by
@@ -541,19 +561,19 @@ topic, the topic is still only ever evaluated once.
 <td>
 
 ```js
-do {
+{
   const $ = …;
-  f($, $);
-}
-do {
-  const $ = …;
-  [$, $ * 2, $ * 3];
+  x = f($, $);
 }
 ```
-This is equivalent to storing the topic value in a unique variable, then using
-that variable multiple times in an expression. [`do` expressions][] are used
-here to remain equivalent to the pipeline versions, which are themselves
-expressions that are embeddable in other expressions.
+```js
+{
+  const $ = …;
+  x = [$, $ * 2, $ * 3];
+}
+```
+This is equivalent to assigning the topic value to a [unique variable][lexically
+hygienic], then using that variable multiple times in an expression.
 
 <tr>
 <td>
@@ -566,6 +586,8 @@ promise
 |> #[0].toUpperCase() + #.substring(1)
 |> # + '!'
 |> new User.Message
+|> stream.write
+|> console.log;
 ```
 When tiny functions are only used once, and when their bodies would be obvious and
 self-documenting in meaning, then they might be ritual boilerplate that a developer
@@ -574,37 +596,7 @@ may prefer to inline: trading off self-documentation for localization of code.
 <td>
 
 ```js
-new User.Message(do {
-  const value = do {
-    const value = await promise
-      || throw new TypeError();
-    `${value}, ${value}`
-  };
-  value[0].toUpperCase()
-    + value.substring(1);
-} + '!')
-```
-Inlining these functions directly into nested expressions using `do` is
-less successful than inlining the functions with the pipeline, both in
-writability and in readability.
-
-<tr>
-<td>
-
-```js
-promise
-|> await #
-|> # || throw new TypeError()
-|> `${#}, ${#}`
-|> #[0].toUpperCase() + #.substring(1)
-|> # + '!'
-|> new User.Message
-```
-
-<td>
-
-```js
-do {
+{
   const promiseValue = await promise
     || throw new TypeError();
   const doubledValue =
@@ -614,7 +606,11 @@ do {
       + doubledValue.substring(1);
   const exclaimedValue
     = capitalizedValue + '!';
-  new User.Message(exclaimedValue)
+  const userMessage =
+    new User.Message(exclaimedValue);
+  const writeValue =
+    stream.write(userMessage);
+  console.log(writeValue);
 }
 ```
 Using a sequence of variables instead has both advantages and disadvantages. The
@@ -634,6 +630,8 @@ promise
 |> #[0].toUpperCase() + #.substring(1)
 |> # + '!'
 |> new User.Message
+|> await stream.write
+|> console.log;
 ```
 With a pipeline, there are no unnecessary variable identifiers. Inserting a new
 step in between two steps (or deleting a step) only touches one new line. Here,
@@ -642,18 +640,22 @@ a call of a function `normalize` was inserted between the second and third steps
 <td>
 
 ```js
-do {
+{
   const promiseValue = await promise
     || throw new TypeError();
   const normalizedValue = normalize();
   const doubledValue =
     `${normalizedValue}, ${normalizedValue}`;
-  const capitalizedValue
-    = doubledValue[0].toUpperCase()
+  const capitalizedValue =
+    doubledValue[0].toUpperCase()
       + doubledValue.substring(1);
-  const exclaimedValue
-    = capitalizedValue + '!';
-  new User.Message(exclaimedValue)
+  const exclaimedValue =
+    capitalizedValue + '!';
+  const userMessage =
+    new User.Message(exclaimedValue);
+  const writeValue =
+    stream.write(userMessage);
+  console.log(writeValue);
 }
 ```
 This code underwent a similar insertion of `normalize`. With a series of
@@ -663,16 +665,17 @@ requires editing the variable names in the following step.
 <tr>
 <td>
 
-As with any other expression, a pipeline in [topic style][] may use a [`do`
-block][`do` expressions] as its body, as long as the `do` expression contains the
-topic reference `#`. The topic reference `#` is bound to the previous result
-`value |> f` within the scope of the block, and the result of the `do` block
-becomes the final result of that pipeline, which in turn is passed into `|> g`.
+If [`do` expressions][] also become part of JavaScript, then, as with any other
+expression, a pipeline in [topic style][] may use a `do` as its body, as long as
+the `do` expression contains the topic reference `#`. The topic reference `#` is
+bound to the previous result `value |> f` within the scope of the block, and the
+result of the `do` block becomes the final result of that pipeline, which in
+turn is passed into `|> g`.
 ```js
-value
+x = input
 |> f
 |> do { sideEffect(); #; }
-|> g
+|> g;
 ```
 This can be useful for embedding side effects in pipeline chains, as in the example
 above, and `if` `else` statements and `try` statements, such as with the
@@ -683,20 +686,20 @@ This may be made even more pithier with [Additional Feature BP][], explained la
 <td>
 
 ```js
-g (
+x = g(
   do {
-    const $ = f(value);
+    const $ = f(input);
     sideEffect();
     $;
   }
-)
+);
 ```
 
 <tr>
 <td>
 
 ```js
-value
+x = input
 |> f
 |> do {
     if (typeof # === 'number')
@@ -704,30 +707,31 @@ value
     else
       { data: # };
   }
-|> g
+|> g;
 ```
-`if` `else` statements may also be used within `do`-block pipeline bodies, as an
-alternative to the ternary conditional operator `?` `:`.
+If [`do` expressions][] also become part of JavaScript, then `if` `else`
+statements may also be used within `do`-block pipeline bodies, as an alternative
+to the ternary conditional operator `?` `:`.
 
 <td>
 
 ```js
-g (
+x = g(
   do {
-    const $ = f(value);
+    const $ = f(input);
     if (typeof $ === 'number')
       $ + 1;
     else
       { data: $ };
   }
-)
+);
 ```
 
 <tr>
 <td>
 
 ```js
-value
+x = input
 |> f
 |> do {
   try {
@@ -737,16 +741,17 @@ value
     }
   }
 }
-|> g
+|> g;
 ```
-`try` statements are also useful to embed in pipelines with `do`-block bodies.
+If [`do` expressions][] also become part of JavaScript, then `try` statements
+would also be useful to embed in pipelines with `do`-block bodies.
 
 <td>
 
 ```js
-g (
+x = g(
   do {
-    const $ = f(value);
+    const $ = f(input);
     try {
       JSON.parse($);
       catch (error) {
@@ -754,26 +759,26 @@ g (
       }
     }
   }
-)
+);
 ```
 
 <tr>
 <td>
 
 ```js
-value
+f = input
 |> f
-|> (x => # + x)
+|> (x => # + x);
 ```
 The body of a pipeline in topic style may contain an inner arrow function but no
 other type of block expression. Both versions of this example result in an arrow
-function in a closure on the previous pipeline’s result `value |> f`.
+function in a closure on the previous pipeline’s result `input |> f`.
 
 <td>
 
 ```js
-do {
-  const $ = f(value);
+{
+  const $ = f(input);
   x => $ + x;
 }
 ```
@@ -784,9 +789,10 @@ and returns the sum of the topic value and the parameter.
 <td>
 
 ```js
-value
+input
 |> f
 |> settimeout(() => # * 5)
+|> processIntervalID;
 ```
 This ability to create arrow functions, which do not lexically shadow the topic,
 can be useful for using callbacks in a pipeline.
@@ -794,31 +800,36 @@ can be useful for using callbacks in a pipeline.
 <td>
 
 ```js
-do {
-  const $ = f(value);
-  settimeout(() => $ * 5);
+{
+  const $ = f(input);
+  const intervalID = settimeout(() => $ * 5);
+  processIntervalID(intervalID);
 }
 ```
-The topic value (here represented by a normal variable `$`) is still lexically
-accessible within the arrow function’s body in both examples.
+The topic value of the second pipeline (here represented by a normal variable
+`$`) is still lexically accessible within its body, an arrow function, in both
+examples.
 
 <tr>
 <td>
 
 ```js
-value
+input
 |> f
 |> (() => # * 5)
 |> settimeout
+|> processIntervalID;
 ```
 The arrow function can also be created on a separate pipeline step.
 
 <td>
 
 ```js
-do {
-  const $ = f(value);
-  settimeout(() => $ * 5);
+{
+  const $ = f(input);
+  const callback = () => $ * 5;
+  const intervalID = settimeout(callback);
+  processIntervalID(intervalID);
 }
 ```
 The result here is the same.
@@ -827,10 +838,11 @@ The result here is the same.
 <td>
 
 ```js
-value
+input
 |> f
 |> () => # * 5
 |> settimeout
+|> processIntervalID;
 // 🚫 Syntax Error:
 // Unexpected token `=>`.
 // Cannot parse base expression.
@@ -841,19 +853,20 @@ of its steps’ bodies, then the arrow-function expression must be parenthesized
 (The same applies to assignment and yield operators, which are also looser than
 the pipeline operator.) The example above is being parsed as if it were:
 ```js
-(value |> f |> ()) =>
-  (# * 5 |> settimeout)
+(input |> f |> ()) =>
+  (# * 5 |> settimeout |> processIntervalID)
 // 🚫 Syntax Error:
 // Unexpected token `=>`.
 // Cannot parse base expression.
 ```
-The arrow function must be parenthesized, simply as with any other
-looser-precedence expression:
+The arrow function must be parenthesized, as with any other looser-precedence
+expression:
 ```js
-value
+input
 |> (f, g)
 |> (() => # * 5)
 |> settimeout
+|> processIntervalID;
 ```
 
 <td>
@@ -863,10 +876,10 @@ value
 
 Both the head and the body of a pipeline may contain nested inner pipelines.
 ```js
-value
+x = input
 |> f(x =>
-    # + x |> g |> # * 2)
-|> #.toString()
+  # + x |> g |> # * 2)
+|> #.toString();
 ```
 
 <td>
@@ -874,10 +887,11 @@ value
 A nested pipeline works consistently. It merely shadows the outer context’s
 topic with the topic within its own body’s inner context.
 ```js
-do {
-  const $ = value;
-  f(x => g($ + x) * 2)
-    .toString();
+{
+  const $ = input;
+  x = f(x =>
+    g($ + x) * 2
+  ).toString();
 }
 ```
 
@@ -885,19 +899,19 @@ do {
 <td>
 
 ```js
-value
+x = input
 |> # ** 2
 |> f(x => #
   |> g(#, x)
-  |> [# * 3, # * 5])
+  |> [# * 3, # * 5]);
 ```
 
 <td>
 
 ```js
-do {
-  const $ = value ** 2;
-  f(x => {
+{
+  const $ = input ** 2;
+  x = f(x => {
     const _$ = g($, x);
     return [_$ * 3, _$ * 5];
   });
@@ -919,7 +933,7 @@ This behavior is in order to fulfill the [goals][] of [simple scoping][] and of
 difficult to find.
 
 ```js
-value |> function () { return #; }
+x = input |> function () { return #; }
 // 🚫 Syntax Error:
 // Lexical context `function () { return #; }`
 // contains a topic reference
@@ -934,7 +948,7 @@ value |> function () { return #; }
 <td>
 
 ```js
-value |> class { m: () { return #; } }
+x = input |> class { m: () { return #; } }
 // 🚫 Syntax Error:
 // Pipeline body `|> class { … }`
 // binds topic but contains no topic reference.
@@ -946,32 +960,32 @@ value |> class { m: () { return #; } }
 <td>
 
 ```js
-value
+x = input
 |> await f(#, 5)
-|> do {
-  # + 30;
+|> () => {
+  if (#)
+    return # + 30;
+  else
+    return #;
 }
-|> g
+|> g;
 ```
 Any other nested blocks **may** contain topic references from outer lexical
-environments. These include **[`do` expressions][]**, **arrow functions, `if`
-statements**, `try` statements and their `finally` clauses (though not their
-`catch` clauses), `switch` statements, and bare block statements.
-
-This example demonstrates how a `do` expression can be a pipeline body if it
-contains an outer topic reference.
+environments. These include **arrow functions, `if` statements**, `try`
+statements and their `finally` clauses (though not their `catch` clauses),
+`switch` statements, and bare block statements.
 
 <td>
 
 ```js
-g(await f(value, 5) + 30)
+x = g(await f(input, 5) + 30);
 ```
 
 <tr>
 <td>
 
 ```js
-value
+x = input
 |> await f(#, 5)
 |> do {
   if (# > 20)
@@ -979,7 +993,7 @@ value
   else
     # - 10;
 }
-|> g
+|> g;
 ```
 Using `do` expressions then allows the embedding of arbitrary statements such as
 `if` statements inside pipeline bodies, greatly increasing their expressiveness.
@@ -988,19 +1002,19 @@ Using `do` expressions then allows the embedding of arbitrary statements such as
 
 ```js
 g(do {
-  const value_ = await f(value, 5)
-  if (value_ > 20)
-    value_ + 30;
+  const input_ = await f(input, 5)
+  if (input_ > 20)
+    input_ + 30;
   else
-    value_ - 10;
-})
+    input_ - 10;
+});
 ```
 
 <tr>
 <td>
 
 ```js
-value
+input
 |> await f(#, 5)
 |> do {
   if (x > 20)
@@ -1046,7 +1060,7 @@ function (x = processing(value)) {
 The same applies to the parenthesized antecedents of `for` and `while` loops.
 
 ```js
-value
+input
 |> process
 |> do {
   for (const element of #)
@@ -1054,7 +1068,7 @@ value
 }
 ```
 ```js
-value
+input
 |> process
 |> do {
   let element;
@@ -1067,7 +1081,7 @@ value
 ```js
 do {
   for (const element
-    of process(value))
+    of process(input))
     …
 }
 ```
@@ -1075,7 +1089,7 @@ do {
 do {
   let element;
   while (element =
-    getNextFrom(value))
+    getNextFrom(input))
     …
 }
 ```
@@ -1277,8 +1291,10 @@ the `parsed` variable in the next statement – then right when noticing its
 <td>
 
 ```js
-(key |> toType) === 'object'
-key |> toType |> # === 'object'
+(key |> toType) === 'object';
+```
+```js
+key |> toType |> # === 'object';
 ```
 `|>` has a looser precedence than most operators, including `===`. (Only
 assignment operators, arrow function `=>`, yield operators, and the comma
@@ -1287,7 +1303,7 @@ operator are any looser.)
 <td>
 
 ```js
-toType(key) === 'object'
+toType(key) === 'object';
 ```
 From [jquery/src/core/access.js][].
 
@@ -1297,7 +1313,7 @@ From [jquery/src/core/access.js][].
 ```js
 context = context
 |> # instanceof jQuery
-    ? #[0] : #
+    ? #[0] : #;
 ```
 
 <td>
@@ -1305,7 +1321,7 @@ context = context
 ```js
 context =
   context instanceof jQuery
-    ? context[0] : context
+    ? context[0] : context;
 ```
 From [jquery/src/core/access.js][].
 
@@ -1318,7 +1334,7 @@ context
       ? #.ownerDocument || #
       : document
 |> jQuery.parseHTML(match[1], #, true)
-|> jQuery.merge
+|> jQuery.merge;
 ```
 
 <td>
@@ -1333,7 +1349,7 @@ jQuery.merge(
       : document,
     true
   )
-)
+);
 ```
 From [jquery/src/core/init.js][]. Used `??.` in both versions for conciseness.
 
@@ -1369,13 +1385,13 @@ of both clauses, at a different offset from the margin.
 
 ```js
 elem = match[2]
-|> document.getElementById
+|> document.getElementById;
 ```
 
 <td>
 
 ```js
-elem = document.getElementById( match[ 2 ] )
+elem = document.getElementById(match[2]);
 ```
 From [jquery/src/core/init.js][].
 
@@ -1736,7 +1752,7 @@ specification**][formal BP].
 value
 |> f
 |> { sideEffect(); #; }
-|> g
+|> g;
 ```
 Instead of using [`do` expressions][] (that is, `|> do { sideEffect(); #; }`), a
 block body is used with the same meaning: `|> { sideEffect(); #; }`.
@@ -1744,13 +1760,13 @@ block body is used with the same meaning: `|> { sideEffect(); #; }`.
 <td>
 
 ```js
-g (
+g(
   do {
     const $ = f(value);
     sideEffect();
     $;
   };
-)
+);
 ```
 
 <tr>
@@ -1765,21 +1781,19 @@ value
     else
       { data: # };
   }
-|> g
+|> g;
 ```
 
 <td>
 
 ```js
-g (
-  do {
-    const $ = f(value);
-    if (typeof $ === 'number')
-      $ + 1;
-    else
-      { data: $ };
-  }
-)
+g (do {
+  const $ = f(value);
+  if (typeof $ === 'number')
+    $ + 1;
+  else
+    { data: $ };
+});
 ```
 
 <tr>
@@ -1796,7 +1810,7 @@ value
       }
     }
   }
-|> g
+|> g;
 ```
 This example becomes even pithier with [Additional Feature PP][] and [Additional
 Feature TS][].
@@ -1804,17 +1818,15 @@ Feature TS][].
 <td>
 
 ```js
-g (
-  do {
-    const $ = f(value);
-    try {
-      JSON.parse(#);
-      catch (error) {
-        { message: error.message };
-      }
+g(do {
+  const $ = f(value);
+  try {
+    JSON.parse(#);
+    catch (error) {
+      { message: error.message };
     }
   }
-)
+});
 ```
 
 </table>
@@ -1906,24 +1918,22 @@ value
       }
     }
   }
-|> g
+|> g;
 ```
 This example becomes even pithier with [Additional Feature TS][].
 
 <td>
 
 ```js
-g (
-  do {
-    const $ = f(value);
-    try {
-      JSON.parse(#);
-      catch (error) {
-        { message: error.message };
-      }
+g(do {
+  const $ = f(value);
+  try {
+    JSON.parse(#);
+    catch (error) {
+      { message: error.message };
     }
   }
-)
+});
 ```
 
 <tr>
@@ -2479,7 +2489,7 @@ value
   try |> 1 / #;
   catch (error) { console.error(error) }
 }
-|> g
+|> g;
 ```
 This example also uses [Additional Feature BP][].
 
@@ -2494,15 +2504,14 @@ clause is inside a block.
 <td>
 
 ```js
-g (
-  do {
-    try {
-      1 / f(value);
-    }
-    catch (error) {
-      console.error(error);
-    }
-  }, 1)
+g (do {
+  try {
+    1 / f(value);
+  }
+  catch (error) {
+    console.error(error);
+  }
+}, 1);
 ```
 
 <tr>
@@ -2515,7 +2524,7 @@ value
   try |> 1 / #;
   catch |> console.error;
 }
-|> g(#, 1)
+|> g(#, 1);
 ```
 Now the `catch` clause is also in the pipeline form, using the [bare style][] to
 apply `console.error` as a method call to the caught error.
@@ -2523,15 +2532,14 @@ apply `console.error` as a method call to the caught error.
 <td>
 
 ```js
-g (
-  do {
-    try {
-      1 / f(value);
-    }
-    catch (error) {
-      console.error(error);
-    }
-  }, 1)
+g (do {
+  try {
+    1 / f(value);
+  }
+  catch (error) {
+    console.error(error);
+  }
+}, 1);
 ```
 
 <tr>
@@ -2546,7 +2554,7 @@ value
   catch
   |> #.message |> console.error;
 }
-|> g(#, 1)
+|> g(#, 1);
 ```
 Pipeline `try` statements and their clauses may be chained as usual. This
 pipeline `catch` clause is in [topic style][] (`|> #.message`) followed by [bare
@@ -2555,15 +2563,14 @@ style][] (`|> console.error`).
 <td>
 
 ```js
-g (
-  do {
-    try {
-      1 / f(value);
-    }
-    catch (error) {
-      console.error(error);
-    }
-  }, 1)
+g (do {
+  try {
+    1 / f(value);
+  }
+  catch (error) {
+    console.error(error);
+  }
+}, 1);
 ```
 
 <tr>
@@ -2581,7 +2588,7 @@ value
     |> console.error;
   }
 }
-|> g
+|> g;
 ```
 This pipeline `try` statement’s `catch` clause is using the topic-block style
 from [Additional Feature BP][], as well as [Additional Feature PP][] to
@@ -2593,15 +2600,14 @@ opt into binding the topic reference to the caught errors.
 <td>
 
 ```js
-g (
-  do {
-    try {
-      1 / f(value);
-    }
-    catch (error) {
-      console.error(error.message);
-    }
-  }, 1)
+g (do {
+  try {
+    1 / f(value);
+  }
+  catch (error) {
+    console.error(error.message);
+  }
+}, 1);
 ```
 
 <tr>
@@ -2663,21 +2669,20 @@ value
   try |> JSON.parse;
   catch |> { message: #.message };
 }
-|> g(#, 1)
+|> g(#, 1);
 ```
 
 <td>
 
 ```js
-g (
-  do {
-    const $ = f(value);
-    try {
-      JSON.parse(#);
-    } catch (error) {
-      { message: error.message };
-    }
-  }, 1)
+g (do {
+  const $ = f(value);
+  try {
+    JSON.parse(#);
+  } catch (error) {
+    { message: error.message };
+  }
+}, 1);
 ```
 
 </table>
@@ -2688,8 +2693,8 @@ prefix operator `+> …`**, which creates a new type of function, the **pipeline
 function**. `+> …` interprets its inner expression as a **pipeline body** but
 wraps it in a **unary arrow function**, which plugs its single parameter into
 the pipeline body as if it were a pipeline head. In other words, a pipeline
-function would act as if it were `$ => $ |> …`, where `$` is a hygienically
-unique variable.
+function would act as if it were `$ => $ |> …`, where `$` is a [hygienically
+unique variable][lexically hygienic].
 
 A pipe function takes **no** a parameter list; its unary parameter is implicitly
 bound to the tacit pipeline head. And just like with regular pipelines, a
@@ -2726,10 +2731,10 @@ specification**][formal PF].
 <td>
 
 ```js
-array.map($ => $ |> #)
+array.map($ => $ |> #);
 ```
 ```js
-array.map($ => $)
+array.map($ => $);
 ```
 These functions are the same. They both pipe a unary parameter into a
 topic-style pipeline whose bodies evaluate simply to the topic, unmodified.
@@ -2737,7 +2742,7 @@ topic-style pipeline whose bodies evaluate simply to the topic, unmodified.
 <td>
 
 ```js
-array.map($ => $)
+array.map($ => $);
 ```
 In other words, they are both [identity function][]s.
 
@@ -2745,8 +2750,10 @@ In other words, they are both [identity function][]s.
 <td>
 
 ```js
-array.map($ => $ |> # + 2)
-array.map(+> # + 2)
+array.map($ => $ |> # + 2);
+```
+```js
+array.map(+> # + 2);
 ```
 These functions are also the same with each other. They both pipe a unary
 parameter into a topic-style pipeline whose bodies are the topic plus two.
@@ -2754,15 +2761,17 @@ parameter into a topic-style pipeline whose bodies are the topic plus two.
 <td>
 
 ```js
-array.map($ => $ + 2)
+array.map($ => $ + 2);
 ```
 
 <tr>
 <td>
 
 ```js
-array.map($ => $ |> f)
-array.map(+> f)
+array.map($ => $ |> f);
+```
+```js
+array.map(+> f);
 ```
 These functions are also the same as each other. However, their pipelines
 are in **bare mode**, so no topic reference is needed in their bodies.
@@ -2770,15 +2779,17 @@ are in **bare mode**, so no topic reference is needed in their bodies.
 <td>
 
 ```js
-array.map($ => f($))
+array.map($ => f($));
 ```
 
 <tr>
 <td>
 
 ```js
-array.map($ => $ |> f |> g |> h |> # * 2)
-array.map(+> f |> g |> h |> # * 2)
+array.map($ => $ |> f |> g |> h |> # * 2);
+```
+```js
+array.map(+> f |> g |> h |> # * 2);
 ```
 Pipelines may be chained within a pipeline function. The prefix
 pipeline-function operator `+>` would have looser precedence than the infix
@@ -2787,18 +2798,18 @@ pipeline operator `|>`.
 <td>
 
 ```js
-array.map($ => h(g(f($))) * 2)
+array.map($ => h(g(f($))) * 2);
 ```
 
 <tr>
 <td>
 
 ```js
-array.map(+> f |> g |> h |> # * 2)
-array.map(+> |> f |> g |> h |> # * 2)
-array.map(+> # |> f |> g |> h |> # * 2)
-array.map($ => $ |> # |> f |> g |> h |> # * 2)
-array.map($ => $ |> f |> g |> h |> # * 2)
+array.map(+> f |> g |> h |> # * 2);
+array.map(+> |> f |> g |> h |> # * 2);
+array.map(+> # |> f |> g |> h |> # * 2);
+array.map($ => $ |> # |> f |> g |> h |> # * 2);
+array.map($ => $ |> f |> g |> h |> # * 2);
 ```
 When coupled with [Additional Feature PP][], the phrase `+> |>` (that is, the
 prefix pipeline-function operator `+>` immediately followed by the prefix
@@ -2808,7 +2819,7 @@ operator `+>`. All five of these expressions here are equivalent.
 <td>
 
 ```js
-array.map($ => h(g(f($))) * 2)
+array.map($ => h(g(f($))) * 2);
 ```
 
 <tr>
@@ -2863,7 +2874,7 @@ environment does have its own topic binding.
 equivalent to piping a value through several function calls, within a unary
 function, starting with the outer function’s tacit unary parameter.
 ```js
-array.map(+> f |> g |> h(2, #) |> # + 2)
+array.map(+> f |> g |> h(2, #) |> # + 2);
 ```
 There are [several existing proposals for unary functional composition][function
 composition], which Additional Feature PF would all subsume. And with
@@ -2873,7 +2884,7 @@ which no current proposal yet addresses.
 <td>
 
 ```js
-array.map($ => h(2, g(f($))) + 2)
+array.map($ => h(2, g(f($))) + 2);
 ```
 
 <tr>
@@ -2882,11 +2893,11 @@ array.map($ => h(2, g(f($))) + 2)
 ```js
 const doubleThenSquareThenHalfAsync =
   async $ => $
-    |> double |> await squareAsync |> half
+    |> double |> await squareAsync |> half;
 ```
 ```js
 const doubleThenSquareThenHalfAsync =
-  async +> double |> await squareAsync |> half
+  async +> double |> await squareAsync |> half;
 ```
 When compared to the proposal for [syntactic functional composition by
 TheNavigateur][TheNavigateur functional composition], this syntax does not need
@@ -2899,11 +2910,11 @@ as usual.
 ```js
 const doubleThenSquareThenHalfAsync =
   async $ =>
-    half(await squareAsync(double($)))
+    half(await squareAsync(double($)));
 ```
 ```js
 const doubleThenSquareThenHalfAsync =
-  double +> squareAsync +> half
+  double +> squareAsync +> half;
 ```
 From the proposal for [syntactic functional composition by
 TheNavigateur][TheNavigateur functional composition].
@@ -2917,7 +2928,7 @@ const toSlug =
   |> #.split(' ')
   |> #.map($ => $.toLowerCase())
   |> #.join('-')
-  |> encodeURIComponent
+  |> encodeURIComponent;
 ```
 This example also uses [Additional Feature PP][] for its second line:
 ```js
@@ -2925,7 +2936,7 @@ const toSlug = +>
 |> #.split(' ')
 |> #.map(+> #.toLowerCase())
 |> #.join('-')
-|> encodeURIComponent
+|> encodeURIComponent;
 ```
 When compared to the proposal for [syntactic functional composition by Isiah
 Meadows][isiahmeadows functional composition], this syntax does not need to
@@ -2941,15 +2952,15 @@ const toSlug = $ =>
     $.split(' ')
       .map(str =>
         str.toLowerCase())
-      .join('-'))
+      .join('-'));
 ```
 ```js
 const toSlug =
-    _ => _.split(" ")
-    :> _ => _.map(str =>
-      str.toLowerCase())
-    :> _ => _.join("-")
-    :> encodeURIComponent
+  _ => _.split(" ")
+  :> _ => _.map(str =>
+    str.toLowerCase())
+  :> _ => _.join("-")
+  :> encodeURIComponent;
 ```
 From the proposal for [syntactic functional composition by Isiah
 Meadows][isiahmeadows functional composition].
@@ -2961,7 +2972,7 @@ Meadows][isiahmeadows functional composition].
 const getTemperatureFromServerInLocalUnits =
   async +>
   |> await getTemperatureKelvinFromServerAsync
-  |> convertTemperatureKelvinToLocalUnits
+  |> convertTemperatureKelvinToLocalUnits;
 ```
 Lifting of non-sync-function expressions into function expressions is
 unnecessary for composition with Additional Feature PF.
@@ -2973,7 +2984,7 @@ Promise.prototype[Symbol.lift] =
   f => x => x.then(f)
 const getTemperatureFromServerInLocalUnits =
   getTemperatureKelvinFromServerAsync
-  :> convertTemperatureKelvinToLocalUnits
+  :> convertTemperatureKelvinToLocalUnits;
 ```
 From the proposal for [syntactic functional composition by Isiah
 Meadows][isiahmeadows functional composition].
@@ -3036,13 +3047,13 @@ Staton][simonstaton functional composition].
 <td>
 
 ```js
-const pluck = +> map |> prop
+const pluck = +> map |> prop;
 ```
 
 <td>
 
 ```js
-const pluck = compose(map)(prop)
+const pluck = compose(map)(prop);
 ```
 From a [comment about syntactic functional composition by Tom Harding][i-am-tom
 functional composition].
@@ -3054,8 +3065,8 @@ functional composition].
 a tacit parameter into a function-call expression, within which the one
 parameter is resolvable.
 ```js
-array.map($ => $ |> f(2, #))
-array.map(+> f(2, #))
+array.map($ => $ |> f(2, #));
+array.map(+> f(2, #));
 ```
 
 <td>
@@ -3064,38 +3075,38 @@ Pipeline functions look similar to the proposal for [partial function
 application][] by [Ron Buckton][], except that partial-application expressions
 are simply pipeline bodies that are prefixed by the pipeline-function operator.
 ```js
-array.map(f(2, ?))
-array.map($ => f(2, $))
+array.map(f(2, ?));
+array.map($ => f(2, $));
 ```
 
 <tr>
 <td>
 
 ```js
-const addOne = +> add(1, #)
-addOne(2) // 3
+const addOne = +> add(1, #);
+addOne(2); // 3
 ```
 
 <td>
 
 ```js
-const addOne = add(1, ?)
-addOne(2) // 3
+const addOne = add(1, ?);
+addOne(2); // 3
 ```
 
 <tr>
 <td>
 
 ```js
-const addTen = +> add(#, 10)
-addTen(2) // 12
+const addTen = +> add(#, 10);
+addTen(2); // 12
 ```
 
 <td>
 
 ```js
-const addTen = add(?, 10)
-addTen(2) // 12
+const addTen = add(?, 10);
+addTen(2); // 12
 ```
 
 <tr>
@@ -3104,7 +3115,7 @@ addTen(2) // 12
 ```js
 let newScore = player.score
 |> add(7, #)
-|> clamp(0, 100, #)
+|> clamp(0, 100, #);
 ```
 
 <td>
@@ -3112,7 +3123,7 @@ let newScore = player.score
 ```js
 let newScore = player.score
 |> add(7, ?)
-|> clamp(0, 100, ?)
+|> clamp(0, 100, ?);
 ```
 
 <tr>
@@ -3123,7 +3134,7 @@ const toSlug = +>
 |> encodeURIComponent
 |> _.split(#, " ")
 |> _.map(#, _.toLower)
-|> _.join(#, "-")
+|> _.join(#, "-");
 ```
 Additional Feature PF simultaneously handles function composition and
 partial application into unary functions.
@@ -3135,7 +3146,7 @@ const toSlug =
   encodeURIComponent
   :> _.split(?, " ")
   :> _.map(?, _.toLower)
-  :> _.join(?, "-")
+  :> _.join(?, "-");
 ```
 From the proposal for [syntactic functional composition by Isiah
 Meadows][isiahmeadows functional composition].
@@ -3149,7 +3160,7 @@ result of their pipeline-operator-like semantics.\
 [bare style][]. This in turn is `$ => console.log($)`…
 ```js
 Promise.resolve(123)
-  .then(+> console.log)
+  .then(+> console.log);
 ```
 
 <td>
@@ -3157,22 +3168,22 @@ Promise.resolve(123)
 …and `$ => console.log($)` is equivalent to `console.log.bind(console)`.
 ```js
 Promise.resolve(123)
-  .then(console.log.bind(console))
+  .then(console.log.bind(console));
 Promise.resolve(123)
-  .then(::console.log)
+  .then(::console.log);
 ```
 
 <tr>
 <td>
 
 ```js
-$('.some-link').on('click', +> view.reset)
+$('.some-link').on('click', +> view.reset);
 ```
 
 <td>
 
 ```js
-$('.some-link').on('click', ::view.reset)
+$('.some-link').on('click', ::view.reset);
 ```
 
 <tr>
@@ -3531,25 +3542,22 @@ specification**][formal NP].
 <td>
 
 ```js
-(a, b)
-|> f
+(a, b) |> f;
 ```
-Pipeline heads would become reinterpreted as argument lists, which would then be
-applied to the pipeline bodies.
+Pipeline heads using commas would be interpreted as argument lists, which would
+then be applied to the pipeline bodies.
 
 <td>
 
 ```js
-f(a, b)
+f(a, b);
 ```
 
 <tr>
 <td>
 
 ```js
-(a, b, ...c, d)
-|> f
-|> g
+(a, b, ...c, d) |> f |> g;
 ```
 Spread elements are permitted within pipeline heads, with the same meaning as in
 regular argument lists.
@@ -3557,16 +3565,14 @@ regular argument lists.
 <td>
 
 ```js
-g(f(a, b, ...c, d))
+g(f(a, b, ...c, d));
 ```
 
 <tr>
 <td>
 
 ```js
-...a
-|> f
-|> g
+...a |> f |> g;
 ```
 When a pipeline head only consists of one item, its parentheses may be omitted,
 which is the usual syntax from the [Core Proposal][]. But this now goes for
@@ -3575,16 +3581,14 @@ spread elements too.
 <td>
 
 ```js
-g(f(...a))
+g(f(...a));
 ```
 
 <tr>
 <td>
 
 ```js
-(a, b)
-|> f(#, x, ##)
-|> g
+(a, b) |> f(#, x, ##) |> g;
 ```
 When a pipeline’s body is in [topic style][], the first element in the argument
 list is bound to the primary topic reference `#`, the second element is bound to
@@ -3595,16 +3599,14 @@ pipeline body.
 <td>
 
 ```js
-g(f(a, x, b))
+g(f(a, x, b));
 ```
 
 <tr>
 <td>
 
 ```js
-(a, b, ...c, d)
-|> f(#, x, ...)
-|> g
+(a, b, ...c, d) |> f(#, x, ...) |> g;
 ```
 The pipeline also binds an array to a rest topic reference `...` within the
 pipeline body. The array contains the arguments of the pipeline head that were
@@ -3613,16 +3615,14 @@ not bound to any other topic reference.
 <td>
 
 ```js
-g(f(a, x, ...[b, ...c, d]))
+g(f(a, x, ...[b, ...c, d]));
 ```
 
 <tr>
 <td>
 
 ```js
-(a, b, c, d, e)
-|> f(##, x, ...)
-|> g
+(a, b, c, d, e) |> f(##, x, ...) |> g;
 ```
 The rest topic reference `...` starts from beyond the furthest topic reference
 that is used within the pipeline body. Here, the furthest topic reference is the
@@ -3635,7 +3635,7 @@ spreads its elements into whatever expression surrounds it.
 <td>
 
 ```js
-do {
+{
   const [_primary, _secondary, _tertiary, ..._rest]
     = [a, b, c, d, e];
   g(f(a, _secondary, x, ..._rest));
@@ -3646,9 +3646,7 @@ do {
 <td>
 
 ```js
-(a, b, c, ...d, e)
-|> f(#, ###, x, ...)
-|> g
+(a, b, c, ...d, e) |> f(#, ###, x, ...) |> g;
 ```
 Here, the furthest topic reference is the tertiary topic reference `###`: the
 third argument item. So only the rest topic reference `...` contains `d`’s
@@ -3658,7 +3656,7 @@ because `##` is not used at all in the pipeline body.
 <td>
 
 ```js
-do {
+{
   const _rest = [...d, e];
   g(f(a, _tertiary, x, ..._rest));
 }
@@ -3670,7 +3668,7 @@ do {
 ```js
 (a, ...b, c, ...d, e)
 |> f(#, ##, ###, x, ...)
-|> g
+|> g;
 ```
 
 <td>
@@ -3689,7 +3687,7 @@ do {
 ```js
 (a, ...b, c, ...d, e)
 |> f(#, ##, x, ...)
-|> g
+|> g;
 ```
 
 <td>
@@ -3706,15 +3704,13 @@ do {
 <td>
 
 ```js
-(a, b)
-|> # - ##
-|> g
+(a, b) |> # - ## |> g;
 ```
 
 <td>
 
 ```js
-g(a - b)
+g(a - b);
 ```
 
 <tr>
@@ -3723,9 +3719,7 @@ g(a - b)
 N-ary pipelines may be chained by using comma expressions to make their pipeline
 bodies also n-ary.
 ```js
-(a, b)
-|> (f, g)
-|> h
+(a, b) |> (f, g) |> h;
 ```
 Each element in an N-ary pipeline body is independently applied to each
 consecutive argument from the pipeline head.
@@ -3733,7 +3727,7 @@ consecutive argument from the pipeline head.
 <td>
 
 ```js
-h(f(a), g(b))
+h(f(a), g(b));
 ```
 
 <tr>
@@ -3742,7 +3736,7 @@ h(f(a), g(b))
 ```js
 (a, b)
 |> (f, # ** c + ##)
-|> # - ##
+|> # - ##;
 ```
 The elements in an N-ary pipeline body may be either in bare style (like the `f`
 here) or in topic style (like the `# ** c + ##` here).
@@ -3750,7 +3744,7 @@ here) or in topic style (like the `# ** c + ##` here).
 <td>
 
 ```js
-f(a) - (a ** c + b)
+f(a) - (a ** c + b);
 ```
 
 <tr>
@@ -3761,7 +3755,7 @@ f(a) - (a ** c + b)
 |> (f, g)
 |> h
 |> (i, # + 1, k)
-|> l
+|> l;
 ```
 
 
@@ -3780,7 +3774,7 @@ do {
 ```js
 (a, b)
 |> (f, g)
-|> (h, i)
+|> (h, i);
 // 🚫 Syntax Error:
 // A pipeline chain terminates
 // with a 2-ary pipeline body
@@ -3810,7 +3804,7 @@ it is never ambiguous with the parenthesized-list syntax for N-ary pipelines.
 The above invalid code is being interpreted as if it were the below:
 ```js
 (value |> (f, g) |> (x, y)) =>
-  (# * 5 |> settimeout)
+  (# * 5 |> settimeout);
 // 🚫 Syntax Error:
 // Unexpected token `=>`.
 // Cannot parse base expression.
@@ -3821,7 +3815,7 @@ looser-precedence expression:
 value
 |> (f, g)
 |> ((x, y) => # * x + ## * y)
-|> settimeout
+|> settimeout;
 ```
 
 <td>
@@ -3832,7 +3826,7 @@ value
 ```js
 number
 |> ...createRange
-|> [#, ###, ...]
+|> [#, ###, ...];
 ```
 As a result of these rules, `|> ... |>` collects the previous
 
@@ -3852,7 +3846,7 @@ do {
 ```js
 x
 |> (f, ...g, h)
-|> [...].length
+|> [...].length;
 ```
 As a result of the rules, `|> [...]` collects its pipeline head’s n-ary
 arguments into a single flattened array, to which the rest topic reference `...`
@@ -3861,14 +3855,14 @@ is then bound.
 <td>
 
 ```js
-[f(x), ...g(x), h(x)].length
+[f(x), ...g(x), h(x)].length;
 ```
 
 <tr>
 <td>
 
 ```js
-array.sort(+> # - ##)
+array.sort(+> # - ##);
 ```
 Additional Feature NP, when coupled with [Additional Feature PF][], would
 enable very terse callback functions.
@@ -3876,7 +3870,7 @@ enable very terse callback functions.
 <td>
 
 ```js
-array.sort((_0, _1) => _0 - _1)
+array.sort((_0, _1) => _0 - _1);
 ```
 
 <tr>
@@ -3885,7 +3879,7 @@ array.sort((_0, _1) => _0 - _1)
 ```js
 [ { x: 22 }, { x: 42 } ]
   .map(+> #.x)
-  .reduce(+> # - ##, 0)
+  .reduce(+> # - ##, 0);
 ```
 
 <td>
@@ -3893,16 +3887,16 @@ array.sort((_0, _1) => _0 - _1)
 ```js
 [ { x: 22 }, { x: 42 } ]
   .map(el => el.x)
-  .reduce((_0, _1) => _0 - _1, 0)
+  .reduce((_0, _1) => _0 - _1, 0);
 ```
 
 <tr>
 <td>
 
 ```js
-const f = (x, y, z) => [x, y, z]
-const g = +> f(#, 4, ##)
-g(1, 2) // [1, 4, 2]
+const f = (x, y, z) => [x, y, z];
+const g = +> f(#, 4, ##);
+g(1, 2); // [1, 4, 2]
 ```
 Additional Feature NP, when coupled with [Additional Feature PF][], would also
 solve **partial application into n-ary functions**. (Additional Feature PF would
@@ -3911,9 +3905,9 @@ only address partial application into unary functions.)
 <td>
 
 ```js
-const f = (x, y, z) => [x, y, z]
-const g = f(?, 4, ?)
-g(1, 2) // [1, 4, 2]
+const f = (x, y, z) => [x, y, z];
+const g = f(?, 4, ?);
+g(1, 2); // [1, 4, 2]
 ```
 The current proposal for [partial function application][] assumes that each use
 of the same `?` placeholder token represents a different parameter. In contrast,
@@ -3936,9 +3930,9 @@ value in the same lexical environment.
 
 ```js
 const maxGreaterThanZero =
-  +> Math.max(0, ...)
-maxGreaterThanZero(1, 2) // 2
-maxGreaterThanZero(-1, -2) // 0
+  +> Math.max(0, ...);
+maxGreaterThanZero(1, 2); // 2
+maxGreaterThanZero(-1, -2); // 0
 ```
 Partial application into a variadic function is also naturally handled by
 Additional Feature NP with [Additional Feature PF][].
@@ -3947,9 +3941,9 @@ Additional Feature NP with [Additional Feature PF][].
 
 ```js
 const maxGreaterThanZero =
-  Math.max(0, ...)
-maxGreaterThanZero(1, 2) // 2
-maxGreaterThanZero(-1, -2) // 0
+  Math.max(0, ...);
+maxGreaterThanZero(1, 2); // 2
+maxGreaterThanZero(-1, -2); // 0
 ```
 In this case, the topic function version looks once again nearly identical to
 the other proposal’s code.
@@ -4031,7 +4025,6 @@ function createRound (methodName) {
     return func(number);
   }
 }
-
 ```
 
 </table>
@@ -4167,7 +4160,7 @@ This example also uses [Additional Feature TS][] for terse `catch` clauses.
 ```js
 readableStream.pipeTo(writableStream)
   .then(() => console.log("Success"))
-  .catch(e => console.error("Error", e))
+  .catch(e => console.error("Error", e));
 ```
 
 <tr>
@@ -4684,14 +4677,15 @@ in JavaScript code – their attention must switch between the start and end of
 each nested expression. And these expressions will dramatically differ in
 length, depending on their level in the syntactic tree. To use the example above:
 ```js
-new User.Message(
-  capitalize(
-    doubledSay(
-      (await promise)
-        || throw new TypeError(`Invalid value from ${promise}`)
-    )
-  ) + '!'
-)
+console.log(
+  await stream.write(
+    new User.Message(
+      capitalize(
+        doubledSay(
+          (await promise)
+            || throw new TypeError(`Invalid value from ${promise}`)
+        )
+      ) + '!')));
 ```
 …the deep inner expression `await promise` is relatively short. In
 contrast, the shallow outer expression
@@ -4715,6 +4709,7 @@ promise
 |> # + '!'
 |> new User.Message
 |> await stream.write
+|> console.log;
 ```
 
 The introduction to this [motivation][] section already explained much of
@@ -5030,28 +5025,30 @@ result of their pipeline-operator-like semantics.\
 `+> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
 [bare style][]. This in turn is `$ => console.log($)`…
 ```js
-Promise.resolve(123).then(+> console.log)
+Promise.resolve(123).then(+> console.log);
 ```
 
 <td>
 
 …and `$ => console.log($)` is equivalent to `console.log.bind(console)`.
 ```js
-Promise.resolve(123).then(console.log.bind(console))
-Promise.resolve(123).then(::console.log)
+Promise.resolve(123).then(console.log.bind(console));
+```
+```js
+Promise.resolve(123).then(::console.log);
 ```
 
 <tr>
 <td>
 
 ```js
-$('.some-link').on('click', +> view.reset)
+$('.some-link').on('click', +> view.reset);
 ```
 
 <td>
 
 ```js
-$('.some-link').on('click', ::view.reset)
+$('.some-link').on('click', ::view.reset);
 ```
 
 <tr>
@@ -5087,7 +5084,7 @@ nested functions would become even terser.
 ```js
 a(1, +>
   ::b(2, +> …)
-)
+);
 ```
 See [block parameters][] for further examples.
 
@@ -5096,7 +5093,7 @@ See [block parameters][] for further examples.
 ```js
 a(1, $ =>
   $::b(2, $ => …)
-)
+);
 ```
 
 </table>
@@ -5124,13 +5121,13 @@ would be supported, which no current proposal yet addresses.
 <td>
 
 ```js
-array.map(+> f |> g |> h(2, #) |> # + 2)
+array.map(+> f |> g |> h(2, #) |> # + 2);
 ```
 
 <td>
 
 ```js
-array.map($ => h(2, g(f($))) + 2)
+array.map($ => h(2, g(f($))) + 2);
 ```
 
 <tr>
@@ -5141,7 +5138,7 @@ const doubleThenSquareThenHalfAsync =
   async +>
     |> double
     |> await squareAsync
-    |> half
+    |> half;
 ```
 When compared to the proposal for [syntactic functional composition by
 TheNavigateur][TheNavigateur functional composition], this syntax does not need
@@ -5154,11 +5151,11 @@ as usual.
 ```js
 const doubleThenSquareThenHalfAsync =
   async $ =>
-    half(await squareAsync(double($)))
+    half(await squareAsync(double($)));
 ```
 ```js
 const doubleThenSquareThenHalfAsync =
-  double +> squareAsync +> half
+  double +> squareAsync +> half;
 ```
 From the proposal for [syntactic functional composition by
 TheNavigateur][TheNavigateur functional composition].
@@ -5172,7 +5169,7 @@ const toSlug =
   |> #.split(' ')
   |> #.map($ => $.toLowerCase())
   |> #.join('-')
-  |> encodeURIComponent
+  |> encodeURIComponent;
 ```
 This example also uses [Additional Feature PP][] for its second line:
 ```js
@@ -5180,7 +5177,7 @@ const toSlug = +>
 |> #.split(' ')
 |> #.map(+> #.toLowerCase())
 |> #.join('-')
-|> encodeURIComponent
+|> encodeURIComponent;
 ```
 When compared to the proposal for [syntactic functional composition by Isiah
 Meadows][isiahmeadows functional composition], this syntax does not need to
@@ -5196,7 +5193,7 @@ const toSlug = $ =>
     $.split(' ')
       .map(str =>
         str.toLowerCase())
-      .join('-'))
+      .join('-'));
 ```
 ```js
 const toSlug =
@@ -5204,7 +5201,7 @@ const toSlug =
   :> _ => _.map(str =>
     str.toLowerCase())
   :> _ => _.join("-")
-  :> encodeURIComponent
+  :> encodeURIComponent;
 ```
 From the proposal for [syntactic functional composition by Isiah
 Meadows][isiahmeadows functional composition].
@@ -5216,7 +5213,7 @@ Meadows][isiahmeadows functional composition].
 const getTemperatureFromServerInLocalUnits =
   async +>
   |> await getTemperatureKelvinFromServerAsync
-  |> convertTemperatureKelvinToLocalUnits
+  |> convertTemperatureKelvinToLocalUnits;
 ```
 Lifting of non-sync-function expressions into function expressions is
 unnecessary for composition with Additional Feature PF.
@@ -5225,10 +5222,10 @@ unnecessary for composition with Additional Feature PF.
 
 ```js
 Promise.prototype[Symbol.lift] = f => x =>
-  x.then(f)
+  x.then(f);
 const getTemperatureFromServerInLocalUnits =
   getTemperatureKelvinFromServerAsync
-  :> convertTemperatureKelvinToLocalUnits
+  :> convertTemperatureKelvinToLocalUnits;
 ```
 From the proposal for [syntactic functional composition by Isiah
 Meadows][isiahmeadows functional composition].
@@ -5292,13 +5289,13 @@ Staton][simonstaton functional composition].
 <td>
 
 ```js
-const pluck = +> map |> prop
+const pluck = +> map |> prop;
 ```
 
 <td>
 
 ```js
-const pluck = compose(map)(prop)
+const pluck = compose(map)(prop);
 ```
 From a [comment about syntactic functional composition by Tom Harding][i-am-tom
 functional composition].
@@ -5343,45 +5340,45 @@ value in the same lexical environment.
 <td>
 
 ```js
-array.map($ => $ |> f(2, #))
-array.map(+> f(2, #))
+array.map($ => $ |> f(2, #));
+array.map(+> f(2, #));
 ```
 
 <td>
 
 ```js
-array.map(f(2, ?))
-array.map($ => f(2, $))
-```
-
-<tr>
-<td>
-
-```js
-const addOne = +> add(1, #)
-addOne(2) // 3
-```
-
-<td>
-
-```js
-const addOne = add(1, ?)
-addOne(2) // 3
+array.map(f(2, ?));
+array.map($ => f(2, $));
 ```
 
 <tr>
 <td>
 
 ```js
-const addTen = +> add(#, 10)
-addTen(2) // 12
+const addOne = +> add(1, #);
+addOne(2); // 3
 ```
 
 <td>
 
 ```js
-const addTen = add(?, 10)
-addTen(2) // 12
+const addOne = add(1, ?);
+addOne(2); // 3
+```
+
+<tr>
+<td>
+
+```js
+const addTen = +> add(#, 10);
+addTen(2); // 12
+```
+
+<td>
+
+```js
+const addTen = add(?, 10);
+addTen(2); // 12
 ```
 
 <tr>
@@ -5390,7 +5387,7 @@ addTen(2) // 12
 ```js
 let newScore = player.score
 |> add(7, #)
-|> clamp(0, 100, #)
+|> clamp(0, 100, #);
 ```
 
 <td>
@@ -5398,7 +5395,7 @@ let newScore = player.score
 ```js
 let newScore = player.score
 |> add(7, ?)
-|> clamp(0, 100, ?)
+|> clamp(0, 100, ?);
 ```
 
 <tr>
@@ -5409,7 +5406,7 @@ const toSlug = +>
 |> encodeURIComponent
 |> _.split(#, " ")
 |> _.map(#, _.toLower)
-|> _.join(#, "-")
+|> _.join(#, "-");
 ```
 Additional Feature PF simultaneously handles function composition and
 partial application into unary functions.
@@ -5421,7 +5418,7 @@ const toSlug =
 encodeURIComponent
 :> _.split(?, " ")
 :> _.map(?, _.toLower)
-:> _.join(?, "-")
+:> _.join(?, "-");
 ```
 From the proposal for [syntactic functional composition by Isiah
 Meadows][isiahmeadows functional composition].
@@ -5432,7 +5429,7 @@ Meadows][isiahmeadows functional composition].
 ```js
 [ { x: 22 }, { x: 42 } ]
   .map(+> #.x)
-  .reduce(+> # - ##, 0)
+  .reduce(+> # - ##, 0);
 ```
 
 <td>
@@ -5440,7 +5437,7 @@ Meadows][isiahmeadows functional composition].
 ```js
 [ { x: 22 }, { x: 42 } ]
   .map(el => el.x)
-  .reduce((_0, _1) => _0 - _1, 0)
+  .reduce((_0, _1) => _0 - _1, 0);
 ```
 
 <tr>
@@ -5477,9 +5474,9 @@ Additional Feature NP with [Additional Feature PF][].
 
 ```js
 const maxGreaterThanZero =
-  Math.max(0, ...)
-maxGreaterThanZero(1, 2) // 2
-maxGreaterThanZero(-1, -2) // 0
+  Math.max(0, ...);
+maxGreaterThanZero(1, 2); // 2
+maxGreaterThanZero(-1, -2); // 0
 ```
 In this case, the topic function version looks once again nearly identical to
 the other proposal’s code.
@@ -5517,7 +5514,7 @@ value
     { type: error };
   }
 }
-|> g
+|> g;
 ```
 Even with [Additional Feature TS][], omitting `catch` binding still works,
 although the topic cannot be used within the block without a `|>`.
@@ -5525,15 +5522,14 @@ although the topic cannot be used within the block without a `|>`.
 <td>
 
 ```js
-g (
-  do {
-    try {
-      1 / f(value);
-    }
-    catch {
-      { type: error };
-    }
-  }, 1)
+g (do {
+  try {
+    1 / f(value);
+  }
+  catch {
+    { type: error };
+  }
+}, 1);
 ```
 
 <tr>
@@ -5725,13 +5721,13 @@ problem, making other, special block parameters unnecessary.
 
 Note that this would be the same as:
 ```js
-materials.map(+> f |> .length)
+materials.map(+> f |> .length);
 ```
 
 <td>
 
 ```js
-materials.map (m) { f(m).length; }
+materials.map (m) { f(m).length; };
 ```
 
 <tr>
@@ -5739,7 +5735,7 @@ materials.map (m) { f(m).length; }
 
 ```js
 a(1) {
-  #::b(2) { … }
+  #::b(2) { … };
 };
 ```
 The block-parameter proposal in particular has not settled on how to nest block
@@ -5765,7 +5761,7 @@ This would simply be equivalent to:
 ```js
 a(1, +> {
   #::b(2, +> { … });
-})
+});
 ```
 
 <td>
@@ -5992,16 +5988,16 @@ Ramda-style functions but not for Underscore-style functions.
 apple
 |> foo('foo parameter 0', 'foo parameter 1', #)
 |> bar('bar parameter 0', #)
-|> baz('baz parameter 0', #)
+|> baz('baz parameter 0', #);
 ```
 
 <td>
 
 ```js
 apple
-  ::foo('foo parameter 0', 'foo parameter 1')
-  ::bar('bar parameter 0')
-  ::baz('baz parameter 0')
+::foo('foo parameter 0', 'foo parameter 1')
+::bar('bar parameter 0')
+::baz('baz parameter 0');
 ```
 From [gajus/babel-plugin-transform-function-composition][gajus functional
 composition].
@@ -6012,15 +6008,15 @@ composition].
 ```js
 {x: 'x'}
 |> assocPath(['y', 'a'], 'a', #)
-|> assocPath(['y', 'b'], 'b', #)
+|> assocPath(['y', 'b'], 'b', #);
 ```
 
 <td>
 
 ```js
 {x: 'x'}
-  ::assocPath(['y', 'a'], 'a')
-  ::assocPath(['y', 'b'], 'b')
+::assocPath(['y', 'a'], 'a')
+::assocPath(['y', 'b'], 'b');
 ```
 
 </table>
@@ -6369,15 +6365,15 @@ already-existing variables.
 With this notation, each line in this example would be equivalent to all the
 other lines.
 ```js
-1 |> # + 2 |> # * 3
+1 |> # + 2 |> # * 3;
 
 // Static term rewriting
-do { const _0 = 1, _1 = _0 + 2; _1 * 3; }
+do { const _0 = 1, _1 = _0 + 2; _1 * 3; };
 
 // Runtime evaluation
-do { const _1 = 1 + 2; _1 * 3; }
-do { 3 * 3; }
-9
+do { const _1 = 1 + 2; _1 * 3; };
+do { 3 * 3; };
+9;
 ```
 
 Consider also the [motivating first example above][Core Proposal]:
@@ -6391,6 +6387,7 @@ promise
 |> # + '!'
 |> new User.Message
 |> await stream.write
+|> console.log;
 ```
 
 This would be statically equivalent to the following:
@@ -6404,8 +6401,9 @@ do {
     _3 = doubleSay(_2),
     _4 = capitalize(_3);
     _5 = _4 + '!',
-    _6 = new User.Message(_5);
-  await stream.write(_6);
+    _6 = new User.Message(_5),
+    _7 = await stream.write(_6);
+  console.log(_7);
 }
 ```
 Suppose that we can generate a series of new [lexically hygienic][] variables
@@ -6465,57 +6463,59 @@ pipeline chain:\
 ### Additional Feature NP
 Adapted from a [previous example][Additional Feature NP]:
 ```js
-(a, b, ...c, d, e)
+x = (a, b, ...c, d, e)
 |> f(##, x, ...)
-|> g
+|> g;
 ```
 This would be statically equivalent to the following:
 ```js
-do {
+x = do {
   const
     [_0, __0, ...s_0] = [a, b, ...c, d, e]
     _1 = f(__0, x, ...s_0);
   g(_1);
-}
+};
 ```
 
 Another one:
 ```js
-(a, b)
+x = (a, b)
 |> (f, # ** c + ##)
 |> # - ##
+|> g;
 ```
 This would be statically equivalent to the following:
 ```js
-do {
+x = do {
   const
     [_0, __0] = [a, b]
     [_1, __1] = [f(_0), _0 ** c + __0];
-  g(_1);
-}
+    _2 = _1 - __1;
+  g(_2);
+};
 ```
 
 From a [previous Lodash example][Lodash + CP + BP + PP + PF + NP]:
 ```js
-number
+x = number
 |> `${#}e`
 |> ...#.split('e')
 |> `${#}e${+## + precision}`
-|> func
+|> func;
 ```
 This would be statically equivalent to the following:
 ```js
-do {
+x = do {
   const
     _0 = number,
     _1 = `${_0}e`,
     [_2, __2] = [..._1.split('e')];
   func(_2, __2);
-}
+};
 ```
 …which of course may be simplified to:
 ```js
-do {
+x = do {
   const
     _0 = number,
     _1 = `${_0}e`,
@@ -6526,7 +6526,7 @@ do {
 
 From a [previous WHATWG Streams example][WHATWG Streams + CP + BP + PF + NP]:
 ```js
-value
+x = value
 |> (#, offset, #.byteLength - offset)
 |> new Uint8Array
 |> await reader.read
@@ -6535,7 +6535,7 @@ value
 ```
 This would be statically equivalent to the following:
 ```js
-do {
+x = do {
   const
     [_0] = [value],
     [_1, __1, ___1] = [_0, offset(_0), __0.byteLength - offset],
@@ -6543,11 +6543,11 @@ do {
     _3 = await reader.read(_2),
     [_4, __4] = [_3.buffer, _3.byteLength];
   readInto(_4, offset + __4);
-}
+};
 ```
 …which of course may be simplified to:
 ```js
-do {
+x = do {
   const
     _0 = value,
     _1 = _0,
