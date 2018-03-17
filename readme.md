@@ -19,11 +19,12 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [Underscore.js (Core Proposal only)](#underscorejs-core-proposal-only)
     - [Lodash (Core Proposal only)](#lodash-core-proposal-only)
   - [Additional Feature BP](#additional-feature-bp)
+    - [WHATWG Fetch Standard (Core Proposal + Additional Feature BP)](#whatwg-fetch-standard-core-proposal--additional-feature-bp)
+    - [jQuery (Core Proposal + Additional Feature BP)](#jquery-core-proposal--additional-feature-bp)
+    - [Lodash (Core Proposal + Additional Feature BP)](#lodash-core-proposal--additional-feature-bp)
   - [Additional Feature PP](#additional-feature-pp)
-    - [WHATWG Fetch Standard (Core Proposal + Additional Feature BP+PP)](#whatwg-fetch-standard-core-proposal--additional-feature-bppp)
     - [jQuery (Core Proposal + Additional Feature BP+PP)](#jquery-core-proposal--additional-feature-bppp)
     - [Underscore.js (Core Proposal + Additional Feature BP+PP)](#underscorejs-core-proposal--additional-feature-bppp)
-    - [Lodash (Core Proposal + Additional Feature BP+PP)](#lodash-core-proposal--additional-feature-bppp)
   - [Additional Feature TS](#additional-feature-ts)
   - [Additional Feature PF](#additional-feature-pf)
     - [Ramda (Core Proposal + Additional Feature BP+PF)](#ramda-core-proposal--additional-feature-bppf)
@@ -39,8 +40,8 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [Zero runtime cost](#zero-runtime-cost)
     - [Forward compatibility](#forward-compatibility)
   - [“Don’t shoot me in the foot.”](#dont-shoot-me-in-the-foot)
-    - [Simple scoping](#simple-scoping)
     - [Opt-in behavior](#opt-in-behavior)
+    - [Simple scoping](#simple-scoping)
     - [Static analyzability](#static-analyzability)
   - [“Don’t make me overthink.”](#dont-make-me-overthink)
     - [Syntactic locality](#syntactic-locality)
@@ -62,6 +63,7 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 - [Relations to other work](#relations-to-other-work)
   - [Pipelines in other programming languages](#pipelines-in-other-programming-languages)
   - [Topic references in other programming languages](#topic-references-in-other-programming-languages)
+  - [`do` expressions](#do-expressions)
   - [Function binding](#function-binding)
   - [Function composition](#function-composition)
   - [Partial function application](#partial-function-application)
@@ -69,7 +71,7 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
   - [Pattern matching](#pattern-matching)
   - [Block parameters](#block-parameters)
     - [Topic metaprogramming references](#topic-metaprogramming-references)
-  - [`do` expressions](#do-expressions)
+  - [`do` expressions](#do-expressions-1)
   - [Private class fields, class decorators, nullish coalescing, and optional chaining](#private-class-fields-class-decorators-nullish-coalescing-and-optional-chaining)
   - [Alternative pipeline Babel plugin](#alternative-pipeline-babel-plugin)
   - [Alternative pipeline proposals](#alternative-pipeline-proposals)
@@ -6769,17 +6771,19 @@ The pipeline chain is therefore equivalent to:\
 [“don’t make me overthink”]: #dont-make-me-overthink
 [“don’t shoot me in the foot”]: #dont-shoot-me-in-the-foot
 [“make my code easier to read”]: #make-my-code-easier-to-read
+[`??:`]: https://github.com/tc39/proposal-nullish-coalescing/pull/23
 [`do` expressions]: #do-expressions
 [`for` iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
 [`in` relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
+[`match` expressions]: #pattern-matching
 [`new.target`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target
 [Abstract: Get Topic Environment]: #abstract-get-topic-environment
 [Additional Feature BP]: #additional-feature-bp
+[Additional Feature FS]: #additional-feature-fs
 [Additional Feature NP]: #additional-feature-np
 [Additional Feature PF]: #additional-feature-pf
 [Additional Feature PP]: #additional-feature-pp
 [Additional Feature TS]: #additional-feature-ts
-[Additional Feature FS]: #additional-feature-fs
 [Additional Features]: #smart-pipelines
 [annevk]: https://github.com/annevk
 [antecedent]: https://en.wikipedia.org/wiki/Antecedent_(grammar)
@@ -6789,6 +6793,9 @@ The pipeline chain is therefore equivalent to:\
 [async pipeline functions]: #additional-feature-pf
 [background]: #background
 [backward compatibility]: #backward-compatibility
+[bare awaited function call]: #bare-awaited-function-call
+[bare constructor call]: #bare-constructor-call
+[bare function call]: #bare-function-call
 [bare style]: #bare-style
 [binding]: https://en.wikipedia.org/wiki/Binding_(linguistics)
 [block parameters]: #block-parameters
@@ -6806,6 +6813,8 @@ The pipeline chain is therefore equivalent to:\
 [distinguishable punctuators]: #distinguishable-punctuators
 [don’t break my code]: #dont-break-my-code
 [DSLs]: https://en.wikipedia.org/wiki/Domain-specific_language
+[early error rule]: #static-analyzability
+[early error rules]: #static-analyzability
 [early error]: #static-analyzability
 [early errors]: #static-analyzability
 [ECMAScript _Identifier Name_]: https://tc39.github.io/ecma262/#prod-IdentifierName
@@ -6851,13 +6860,13 @@ The pipeline chain is therefore equivalent to:\
 [footguns]: https://en.wiktionary.org/wiki/footgun
 [formal BP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-bp
 [formal CP]: https://jschoi.org/18/es-smart-pipelines/spec
+[formal FS]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-fs
 [formal grammar]: #grammar
 [formal NP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-np
 [formal PF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pf
 [formal pipeline specification]: https://jschoi.org/18/es-smart-pipelines/spec
 [formal PP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pp
 [formal TS]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-ts
-[formal FS]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-fs
 [forward compatibility]: #forward-compatibility
 [function bind operator `::`]: #function-bind-operator
 [function binding]: #function-binding
@@ -6900,6 +6909,7 @@ The pipeline chain is therefore equivalent to:\
 [MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
 [MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
 [mindeavor]: https://github.com/gilbert
+[mode errors]: https://en.wikipedia.org/wiki/Mode_(computer_interface)#Mode_errors
 [motivation]: #motivation
 [Node-stream piping]: https://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
 [Node.js `util.promisify`]: https://nodejs.org/api/util.html#util_util_promisify_original
@@ -6909,6 +6919,8 @@ The pipeline chain is therefore equivalent to:\
 [object initializers’ Computed Property Contains rule]: https://tc39.github.io/ecma262/#sec-object-initializer-static-semantics-computedpropertycontains
 [OCaml pipe]: http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html
 [operator precedence]: #operator-precedence
+[opt-in behavior]: #opt-in-behavior
+[optional `catch` binding]: #optional-catch-binding
 [optional-chaining syntax proposal]: https://github.com/tc39/proposal-optional-chaining
 [other browsers’ console variables]: https://www.andismith.com/blogs/2011/11/25-dev-tool-secrets/
 [other ECMAScript proposals]: #other-ecmascript-proposals
@@ -6917,6 +6929,7 @@ The pipeline chain is therefore equivalent to:\
 [PEP 20]: https://www.python.org/dev/peps/pep-0020/
 [Perl 6 pipe]: https://docs.perl6.org/language/operators#infix_==&gt;
 [Perl 6 topicization]: https://www.perl.com/pub/2002/10/30/topic.html/
+[Perl 6’s given block]: https://docs.perl6.org/language/control#given
 [pipeline body]: https://jschoi.org/18/es-smart-pipelines/spec#prod-PipelineBody
 [pipeline functions]: #additional-feature-pf
 [pipeline head]: https://jschoi.org/18/es-smart-pipelines/spec#prod-PipelineHead
@@ -6971,6 +6984,7 @@ The pipeline chain is therefore equivalent to:\
 [tertiary topic]: #additional-feature-np
 [TheNavigateur functional composition]: https://github.com/TheNavigateur/proposal-pipeline-operator-for-function-composition
 [topic and comment]: https://en.wikipedia.org/wiki/Topic_and_comment
+[topic references in other programming languages]: #topic-references-in-other-programming-languages
 [topic style]: #topic-style
 [topic variables in other languages]: https://rosettacode.org/wiki/Topic_variable
 [topic-token bikeshedding]: https://github.com/tc39/proposal-pipeline-operator/issues/91
@@ -6989,15 +7003,3 @@ The pipeline chain is therefore equivalent to:\
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
 [Wikipedia: term rewriting]: https://en.wikipedia.org/wiki/Term_rewriting
 [zero runtime cost]: #zero-runtime-cost
-[bare function call]: #bare-function-call
-[bare constructor call]: #bare-constructor-call
-[bare awaited function call]: #bare-awaited-function-call
-[`??:`]: https://github.com/tc39/proposal-nullish-coalescing/pull/23
-[optional `catch` binding]: #optional-catch-binding
-[`match` expressions]: #pattern-matching
-[early error rules]: #static-analyzability
-[topic references in other programming languages]: #topic-references-in-other-programming-languages
-[opt-in behavior]: #opt-in-behavior
-[mode errors]: https://en.wikipedia.org/wiki/Mode_(computer_interface)#Mode_errors
-[early error rule]: #static-analyzability
-[Perl 6’s given block]: https://docs.perl6.org/language/control#given
