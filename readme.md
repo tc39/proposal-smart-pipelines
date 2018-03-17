@@ -5102,6 +5102,26 @@ potentially multiplying its benefits toward [untangled flow][], [terse
 variables][], and [human writability][], while still preserving [simple
 scoping][] and [static analyzability][].
 
+## `do` expressions
+There is a TC39 proposal for [`do` expressions][] at Stage 1. Smart pipelines do
+**not** require `do` expressions. However, if [`do` expressions][] also become
+part of JavaScript, then, as with **any** other type of expression, a pipeline
+in [topic style][] may use a `do` as its body, as long as the `do` expression
+contains the topic reference `#`. The topic reference `#` is bound to the
+pipeline head’s value, the `do` expression is evaluated, then the result of the
+`do` block becomes the final result of that pipeline, and the lexical
+environment is reset – all as usual.
+
+In this manner, pipelines with `do` expressions act as a way to create a
+“topic-context block”, similarly to [Perl 6’s given block][]. Within this block,
+statements may use the topic reference may be used as an abbreviation for the
+same value. This can be useful for embedding side effects, `if` `else`
+statements, `try` statements, and `switch` statements within pipeline chains.
+They may be made even pithier with [Additional Feature BP][], explained later.
+
+However, smart pipelines do not depend on `do` expressions, with the exception
+of [Additional Feature BP][].
+
 ## Function binding
 An existing proposal for [ECMAScript function binding][] has three use cases:
 
