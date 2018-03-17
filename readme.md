@@ -665,106 +665,6 @@ requires editing the variable names in the following step.
 <tr>
 <td>
 
-If [`do` expressions][] also become part of JavaScript, then, as with any other
-expression, a pipeline in [topic style][] may use a `do` as its body, as long as
-the `do` expression contains the topic reference `#`. The topic reference `#` is
-bound to the previous result `value |> f` within the scope of the block, and the
-result of the `do` block becomes the final result of that pipeline, which in
-turn is passed into `|> g`.
-```js
-x = input
-|> f
-|> do { sideEffect(); #; }
-|> g;
-```
-This can be useful for embedding side effects in pipeline chains, as in the example
-above, and `if` `else` statements and `try` statements, such as with the
-examples in the rows below.
-
-This may be made even more pithier with [Additional Feature BP][], explained later.
-
-<td>
-
-```js
-x = g(
-  do {
-    const $ = f(input);
-    sideEffect();
-    $;
-  }
-);
-```
-
-<tr>
-<td>
-
-```js
-x = input
-|> f
-|> do {
-    if (typeof # === 'number')
-      # + 1;
-    else
-      { data: # };
-  }
-|> g;
-```
-If [`do` expressions][] also become part of JavaScript, then `if` `else`
-statements may also be used within `do`-block pipeline bodies, as an alternative
-to the ternary conditional operator `?` `:`.
-
-<td>
-
-```js
-x = g(
-  do {
-    const $ = f(input);
-    if (typeof $ === 'number')
-      $ + 1;
-    else
-      { data: $ };
-  }
-);
-```
-
-<tr>
-<td>
-
-```js
-x = input
-|> f
-|> do {
-  try {
-    JSON.parse(#);
-    catch (error) {
-      { message: error.message };
-    }
-  }
-}
-|> g;
-```
-If [`do` expressions][] also become part of JavaScript, then `try` statements
-would also be useful to embed in pipelines with `do`-block bodies.
-
-<td>
-
-```js
-x = g(
-  do {
-    const $ = f(input);
-    try {
-      JSON.parse($);
-      catch (error) {
-        { message: error.message };
-      }
-    }
-  }
-);
-```
-
-<tr>
-<td>
-
 ```js
 f = input
 |> f
@@ -984,57 +884,6 @@ x = g(await f(input, 5) + 30);
 <tr>
 <td>
 
-```js
-x = input
-|> await f(#, 5)
-|> do {
-  if (# > 20)
-    # + 30;
-  else
-    # - 10;
-}
-|> g;
-```
-Using `do` expressions then allows the embedding of arbitrary statements such as
-`if` statements inside pipeline bodies, greatly increasing their expressiveness.
-
-<td>
-
-```js
-g(do {
-  const input_ = await f(input, 5)
-  if (input_ > 20)
-    input_ + 30;
-  else
-    input_ - 10;
-});
-```
-
-<tr>
-<td>
-
-```js
-input
-|> await f(#, 5)
-|> do {
-  if (x > 20)
-    x + 30;
-  else
-    x - 10;
-}
-|> g
-// 🚫 Syntax Error:
-// Pipeline body `|> do { if (…) … else … }`
-// binds topic but contains no topic reference.
-```
-But the same [early error rules][] that apply to any topical pipeline body apply
-also to topical bodies that are `do` expressions.
-
-<td>
-
-<tr>
-<td>
-
 A function definition that is the body of a pipeline may contain topic
 references in its default parameters’ expressions, because their scoping is
 similar to that of the outside context’s: similar enough such that also allowing
@@ -1062,7 +911,7 @@ The same applies to the parenthesized antecedents of `for` and `while` loops.
 ```js
 input
 |> process
-|> do {
+|> (x, y) => {
   for (const element of #)
     …
 }
@@ -1070,7 +919,7 @@ input
 ```js
 input
 |> process
-|> do {
+|> (x, y) => {
   let element;
   while (element = getNextFrom(#))
     …
@@ -1079,14 +928,14 @@ input
 <td>
 
 ```js
-do {
+(x, y) => {
   for (const element
     of process(input))
     …
 }
 ```
 ```js
-do {
+(x, y) {
   let element;
   while (element =
     getNextFrom(input))
@@ -1205,40 +1054,33 @@ console.log(
 ```js
 'https://pk.example/berlin-calling'
 |> await fetch(#, { mode: 'cors' })
-|> do {
-    if (
-      # |> #.headers.get('content-type')
-        |> #??.toLowerCase()
-        |> #.indexOf('application/json')
-        |> # >= 0
-    )
-      throw new TypeError();
-    else
-      # |> await #.json()
-        |> processJSON
-  }
-};
+|> (
+  #.headers.get('content-type')
+  |> # && #
+    .toLowerCase()
+    .indexOf('application/json')
+    >= 0
+  )
+  ? #
+  : throw new TypeError()
+|> await #.json()
+|> processJSON;
 ```
 
 <td>
 
 ```js
-{
-  const response =
-    await fetch('https://pk.example/berlin-calling',
-      { mode: 'cors' }
-    );
-  const json = do {
-    if (response.headers.get('content-type')
-      ??.toLowerCase()
-      .indexOf('application/json') >= 0
-    )
-      response.json();
-    else
-      throw new TypeError();
-  };
-  processJSON(json);
-}
+fetch('https://pk.example/berlin-calling',
+  { mode: 'cors' }
+).then(response => {
+  if (response.headers.get('content-type')
+    ??.toLowerCase()
+    .indexOf('application/json') >= 0
+  )
+    return response.json();
+  else
+    throw new TypeError();
+}).then(processJSON);
 ```
 
 </table>
@@ -1357,12 +1199,11 @@ From [jquery/src/core/init.js][]. Used `??.` in both versions for conciseness.
 <td>
 
 ```js
-match |> do {
-  if (this[match] |> isFunction)
-    # |> context[#] |> this[match](#);
-  else
-    # |> context[#] |> this.attr(match, #);
-}
+match
+|> context[#]
+|> (this[match] |> isFunction)
+  ? this[match](#);
+  : this.attr(match, #);
 ```
 Note how, in this version, the parallelism between the two clauses is very
 clear: they both share the form `match |> context[#] |> something(match, #)`.
@@ -1399,22 +1240,22 @@ From [jquery/src/core/init.js][].
 <td>
 
 ```js
-return context |> do {
-  // Handle HTML strings
-  if (…)
-    …
-  // Handle $(expr, $(...))
-  else if (!# || #.jquery)
-    # |> # || root
-      |> #.find(selector);
-  // Handle $(expr, context)
-  else
-    # |> this.constructor
-      |> #.find(selector);
-};
+// Handle HTML strings
+if (…)
+  …
+// Handle $(expr, $(...))
+else if (!# || #.jquery)
+  return context
+  |> # || root
+  |> #.find(selector);
+// Handle $(expr, context)
+else
+  return context
+  |> this.constructor
+  |> #.find(selector);
 ```
 The parallelism between the final two clauses becomes clearer here too.
-They both are of the form `# |> something |> #.find(selector)`.
+They both are of the form `return context |> something |> #.find(selector)`.
 
 <td>
 
@@ -1431,37 +1272,6 @@ else
     .find(selector);
 ```
 From [jquery/src/core/init.js][]. The parallelism is much less clear here.
-
-<tr>
-<td>
-
-```js
-return selector |> do {
-  if (typeof # === 'string')
-    …
-  else if (# |> isFunction) {
-    if (root.ready !== undefined)
-      root.ready(#);
-    else
-      #(jQuery);
-  }
-  else
-    jQuery.makeArray(#, this);
-};
-```
-
-<td>
-
-```js
-if (typeof selector === 'string')
-  …
-else if (isFunction(selector))
-  return root.ready !== undefined
-    ? root.ready(selector)
-    : selector(jQuery);
-return jQuery.makeArray(selector, this);
-```
-From [jquery/src/core/access.js][].
 
 </table>
 
@@ -1568,22 +1378,24 @@ function (
 
 ```js
 function (obj) {
-  return obj |> do {
-    if (# == null)
-      0;
-    else if (|> isArrayLike)
-    |> #.length;
-    else
-    |> _.keys
-    |> #.length;
+  return obj
+  |>  # == null
+    ? 0
+    : # |> isArrayLike
+    ? # |> #.length
+    : # |> _.keys |> #.length;
   };
 }
 ```
-Pipelines make parallelism between all three clauses becomes clearer: `0` for
-the `if` clause, `# |> #.length` for the `else if`, and `# |> something |> #.length`
-for the `else`. [This particular example becomes even clearer][Underscore.js +
-CP + BP + PP] when paired with [Additional Feature BP][] and [Additional
-Feature PP][].
+Smart pipelines make parallelism between all three clauses becomes clearer:\
+`0` if it is nullish,\
+`# |> #.length` if it is array-like, and\
+`# |> something |> #.length` otherwise.\
+(Technically, `# |> #.length` could simply be `#.length`, but it is written in
+this redundant form in order to emphasis its parallelism with the other branch.)
+
+[This particular example becomes even clearer][Underscore.js + CP + BP + PP]
+when paired with [Additional Feature BP][] and [Additional Feature PP][].
 
 <td>
 
@@ -1620,15 +1432,12 @@ involves complex data processing that becomes more readable with smart pipelines
 ```js
 function hashGet (key) {
   return this.__data__
-  |> do {
-      if (nativeCreate)
-        #[key] |> do {
-          if (# !== HASH_UNDEFINED)
-            #;
-        };
-      else if (hashOwnProperty.call(#, key))
-        #[key];
-    };
+  |> nativeCreate
+    ? (#[key] === HASH_UNDEFINED
+      ? undefined : #)
+    : hashOwnProperty.call(#, key)
+    ? #[key]
+    : undefined;
 }
 ```
 
@@ -1672,14 +1481,12 @@ function listCacheHas (key) {
 
 ```js
 function mapCacheDelete (key) {
-  return key
+  const result = key
   |> getMapData(this, #)
   |> #['delete']
-  |> #(key)
-  |> do {
-    this.size -= # ? 1 : 0;
-    #
-  };
+  |> #(key);
+  this.size -= result ? 1 : 0;
+  return result;
 }
 ```
 
@@ -1699,14 +1506,12 @@ function mapCacheDelete (key) {
 
 ```js
 function castPath (value, object) {
-  return value |> do {
-    if (# |> isArray)
-      #;
-    else if (# |> isKey(#, object))
-      [#];
-    else
-      # |> toString |> stringToPath;
-  };
+  return value |>
+    # |> isArray
+    ? #
+    : (# |> isKey(#, object))
+    ? [#]
+    : # |> toString |> stringToPath;
 }
 ```
 
@@ -1726,14 +1531,27 @@ function castPath (value, object) {
 </table>
 
 ## Additional Feature BP
-In the [Core Proposal][], [`do` expressions][] are permitted as
-[topic-style][topic style] pipeline bodies as long as they contain the topic
-reference `#`. They might be so useful, in fact, that it might be worth building
-them into the pipeline operator `|>` itself.
+There is a TC39 proposal for [`do` expressions][] at Stage 1. Smart pipelines do
+**not** require `do` expressions. However, if [`do` expressions][] also become
+part of JavaScript, then, as with **any** other type of expression, a pipeline
+in [topic style][] may use a `do` as its body, as long as the `do` expression
+contains the topic reference `#`. The topic reference `#` is bound to the
+pipeline head’s value, the `do` expression is evaluated, then the result of the
+`do` block becomes the final result of that pipeline, and the lexical
+environment is reset – all as usual.
 
-This first Additional Feature – **block pipelines** – adds an additional
-[topic-style pipeline body syntax][smart body syntax], using blocks to stand for
-`do` expressions.
+In this manner, pipelines with `do` expressions act as a way to create a
+“topic-context block”, similarly to [Perl 6’s given block][]. Within this block,
+statements may use the topic reference may be used as an abbreviation for the
+same value. This can be useful for embedding side effects, `if` `else`
+statements, `try` statements, and `switch` statements within pipeline chains.
+They may be made even pithier with [Additional Feature BP][], explained later.
+
+[`do` expressions][] as [topic-style][topic style] pipeline bodies might be so
+useful, in fact, that it might be worth building them into the pipeline operator
+`|>` itself as an add-on feature. This Additional Feature – **block pipelines**
+– adds an additional [topic-style pipeline body syntax][smart body syntax],
+using blocks to stand for `do` expressions.
 
 [Additional Feature BP is **formally specified in a separate draft
 specification**][formal BP].
@@ -1749,84 +1567,557 @@ specification**][formal BP].
 <td>
 
 ```js
-value
+x = input
 |> f
 |> { sideEffect(); #; }
 |> g;
 ```
-Instead of using [`do` expressions][] (that is, `|> do { sideEffect(); #; }`), a
-block body is used with the same meaning: `|> { sideEffect(); #; }`.
+Side effects may easily be embedded within block pipeline bodies.
 
 <td>
 
 ```js
-g(
-  do {
-    const $ = f(value);
-    sideEffect();
-    $;
-  };
-);
+const $ = f(input);
+sideEffect();
+x = g($);
 ```
 
 <tr>
 <td>
 
 ```js
-value
+x = input
 |> f
 |> {
-    if (typeof # === 'number')
-      # + 1;
-    else
-      { data: # };
-  }
+  if (typeof # === 'number')
+    # + 1;
+  else
+    { data: # };
+}
 |> g;
 ```
+`if` `else` statements may also be used within block pipeline bodies, as an
+alternative to the ternary conditional operator `?` `:`.
 
 <td>
 
 ```js
-g (do {
-  const $ = f(value);
-  if (typeof $ === 'number')
-    $ + 1;
-  else
-    { data: $ };
-});
+const _1 = f(input);
+let _2;
+if (typeof $ === 'number')
+  _2 = $ + 1;
+else
+  _2 = { data: $ };
+x = g(_2);
 ```
 
 <tr>
 <td>
 
 ```js
-value
+x = input
 |> f
 |> {
-    try {
-      JSON.parse(#);
-      catch (error) {
-        { message: error.message };
-      }
+  try {
+    # |> JSON.parse;
+    catch (error) {
+      { message: error.message };
     }
   }
+}
 |> g;
 ```
+`try` statements would also be useful to embed in pipelines with block bodies.
 This example becomes even pithier with [Additional Feature PP][] and [Additional
 Feature TS][].
 
 <td>
 
 ```js
-g(do {
-  const $ = f(value);
-  try {
-    JSON.parse(#);
-    catch (error) {
-      { message: error.message };
-    }
+const _1 = f(input);
+let _2;
+try {
+  _2 = JSON.parse(_1);
+  catch (error) {
+    _2 = { message: error.message };
   }
-});
+}
+x = g(_2);
+```
+
+<tr>
+<td>
+
+```js
+input
+|> await f(#, 5)
+|> {
+  if (x > 20)
+    x + 30;
+  else
+    x - 10;
+}
+|> g
+// 🚫 Syntax Error:
+// Pipeline body `|> { if (…) … else … }`
+// binds topic but contains no topic reference.
+```
+The same [early error rules][] that apply to any topical pipeline body apply
+also to topical bodies that are `do` expressions.
+
+</table>
+
+### WHATWG Fetch Standard (Core Proposal + Additional Feature BP)
+Revisiting an [example above from the WHATWG Fetch Standard][WHATWG Fetch + CP]
+shows how human comprehensibility could be further improved with [Additional
+Feature BP][].
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+
+<tr>
+<td>
+
+```js
+'https://pk.example/berlin-calling'
+|> await fetch(#, { mode: 'cors' })
+|> (
+  #.headers.get('content-type')
+  |> # && #
+    .toLowerCase()
+    .indexOf('application/json')
+    >= 0
+  )
+  ? #
+  : throw new TypeError()
+|> await #.json()
+|> processJSON;
+```
+This pipeline version uses [Core Proposal][] syntax only.
+
+<td>
+
+```js
+fetch('https://pk.example/berlin-calling',
+  { mode: 'cors' }
+).then(response => {
+  if (response.headers.get('content-type')
+    ??.toLowerCase()
+    .indexOf('application/json') >= 0
+  )
+    return response.json();
+  else
+    throw new TypeError();
+}).then(processJSON);
+```
+
+<tr>
+<td>
+
+And this pipeline version also uses [Additional Feature BP][]. This allows the
+use of an `if` `else` statement instead of a ternary `?` `:` expression.
+```js
+'https://pk.example/berlin-calling'
+|> await fetch(#, { mode: 'cors' })
+|> {
+  const contentTypeIsJSON =
+    #.headers.get('content-type')
+    |> # && #
+      .toLowerCase()
+      .indexOf('application/json')
+      >= 0;
+  if (contentTypeIsJSON) #;
+  else throw new TypeError();
+}
+|> await #.json()
+|> processJSON;
+```
+It also allows the judicious use of variable/constant assignment where it would
+make the meaning of code clearer, rather than [requiring unnecessary variables
+redundant with the names of functions][terse variables].
+
+<td>
+
+```js
+fetch('https://pk.example/berlin-calling',
+  { mode: 'cors' }
+).then(response => {
+  if (response.headers.get('content-type')
+    ??.toLowerCase()
+    .indexOf('application/json') >= 0
+  )
+    return response.json();
+  else
+    throw new TypeError();
+}).then(processJSON);
+```
+
+</table>
+
+### jQuery (Core Proposal + Additional Feature BP)
+Revisiting the [examples above from jQuery][jQuery + CP] with [Additional
+Feature BP][] and [Additional Feature PP][] shows how terseness could be further
+improved.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+match
+|> context[#]
+|> (this[match] |> isFunction)
+  ? this[match](#);
+  : this.attr(match, #);
+```
+This pipeline version uses [Core Proposal][] syntax.
+
+<td>
+
+```js
+if (isFunction(this[match])) {
+  this[match](context[match]);
+} else
+  this.attr(match, context[match]);
+}
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+match
+|> context[#]
+|> {
+  if (this[match] |> isFunction)
+    this[match](#);
+  else
+    this.attr(match, #);
+}
+```
+With [Additional Feature BP][], an `if` `else` statement can be used instead of
+a ternary `?` `:` expression.
+
+<td>
+
+```js
+if (isFunction(this[match])) {
+  this[match](context[match]);
+} else
+  this.attr(match, context[match]);
+}
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+// Handle HTML strings
+if (…)
+  …
+// Handle $(expr, $(...))
+else if (!# || #.jquery)
+  return context
+  |> # || root
+  |> #.find(selector);
+// Handle $(expr, context)
+else
+  return context
+  |> this.constructor
+  |> #.find(selector);
+```
+This pipeline version uses [Core Proposal][] syntax only. Note that both
+statements are of the form `return context |> something |> #.find(selector)`.
+
+<td>
+
+```js
+// Handle HTML strings
+if (…) {
+  …
+// Handle $(expr, $(...))
+} else if (!context || context.jquery) {
+  return (context || root).find(selector);
+// Handle $(expr, context)
+} else {
+  return this.constructor(context)
+    .find(selector);
+}
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+return context
+|> {
+  // Handle HTML strings
+  if (…)
+    …
+  // Handle $(expr, $(...))
+  else if (!# || #.jquery)
+    # || root;
+  // Handle $(expr, context)
+  else
+    # |> this.constructor;
+}
+|> #.find(selector);
+```
+This pipeline version uses [Additional Feature BP][]. The common phrases `return
+context |>` and `|> #.find(selector)` have moved out of the `if` `else if` `else`,
+into its own statement. The `if` `else if` `else` itself was moved into a block in
+the middle of the new unified pipeline. This emphasizes the unity of the common
+path through which content data flow in this code.
+
+<td>
+
+```js
+// Handle HTML strings
+if (…) {
+  …
+// Handle $(expr, $(...))
+} else if (!context || context.jquery) {
+  return (context || root).find(selector);
+// Handle $(expr, context)
+} else {
+  return this.constructor(context)
+    .find(selector);
+}
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+return selector |> {
+  if (typeof # === 'string')
+    …
+  else if (# |> isFunction)
+    root.ready !== undefined
+      ? root.ready(#)
+      : #(jQuery);
+  else
+    jQuery.makeArray(#, this);
+};
+```
+This is a example from jQuery’s codebase on which pipelines would not have been
+worth using without [Additional Feature BP][].
+
+<td>
+
+```js
+if (typeof selector === 'string') {
+  …
+} else if (isFunction(selector)) {
+  return root.ready !== undefined
+    ? root.ready(selector)
+    : selector(jQuery);
+}
+return jQuery.makeArray(selector, this);
+```
+From [jquery/src/core/access.js][].
+
+</table>
+
+### Lodash (Core Proposal + Additional Feature BP)
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+function hashGet (key) {
+  return this.__data__
+  |> nativeCreate
+    ? (#[key]
+      |> # === HASH_UNDEFINED
+      ? undefined : #)
+    : hashOwnProperty.call(#, key)
+    ? #[key]
+    : undefined;
+}
+```
+This pipeline version uses [Core Proposal][] syntax only.
+
+<td>
+
+```js
+function hashGet (key) {
+  var data = this.__data__;
+  if (nativeCreate) {
+    var result = data[key];
+    return result === HASH_UNDEFINED
+      ? undefined : result;
+  }
+  return hasOwnProperty.call(data, key)
+    ? data[key] : undefined;
+}
+```
+
+<tr>
+<td>
+
+```js
+function hashGet (key) {
+  return this.__data__ |> {
+    if (nativeCreate) {
+      if (#[key] === HASH_UNDEFINED)
+        undefined;
+      else
+        #;
+    } else if (hashOwnProperty.call(#, key))
+      #[key];
+  };
+}
+```
+This pipeline version also uses [Additional Feature BP][].
+
+<td>
+
+```js
+function hashGet (key) {
+  var data = this.__data__;
+  if (nativeCreate) {
+    var result = data[key];
+    return result === HASH_UNDEFINED
+      ? undefined : result;
+  }
+  return hasOwnProperty.call(data, key)
+    ? data[key] : undefined;
+}
+```
+
+<tr>
+<td>
+
+```js
+function mapCacheDelete (key) {
+  const result = key
+  |> getMapData(this, #)
+  |> #['delete']
+  |> #(key);
+  this.size -= result ? 1 : 0;
+  return result;
+}
+```
+This pipeline version uses [Core Proposal][] syntax only.
+
+<td>
+
+```js
+function mapCacheDelete (key) {
+  var result =
+    getMapData(this, key)['delete'](key);
+  this.size -= result ? 1 : 0;
+  return result;
+}
+```
+
+<tr>
+<td>
+
+```js
+function mapCacheDelete (key) {
+  return key
+  |> getMapData(this, #)
+  |> #['delete']
+  |> #(key)
+  |> {
+    this.size -= # ? 1 : 0;
+    #;
+  };
+}
+```
+This pipeline version also uses [Additional Feature BP][].
+
+<td>
+
+```js
+function mapCacheDelete (key) {
+  var result =
+    getMapData(this, key)['delete'](key);
+  this.size -= result ? 1 : 0;
+  return result;
+}
+```
+
+<tr>
+<td>
+
+```js
+function castPath (value, object) {
+  return value |>
+    # |> isArray
+    ? #
+    : (# |> isKey(#, object))
+    ? [#]
+    : # |> toString |> stringToPath;
+}
+```
+This pipeline version uses [Core Proposal][] syntax only.
+
+<td>
+
+```js
+function castPath (value, object) {
+  if (isArray(value)) {
+    return value;
+  }
+  return isKey(value, object)
+    ? [value]
+    : stringToPath(toString(value));
+}
+```
+
+<tr>
+<td>
+
+```js
+function castPath (value, object) {
+  return value |> {
+    if (# |> isArray)
+      #;
+    else if (# |> isKey(#, object))
+      [#];
+    else
+      # |> toString |> stringToPath;
+  };
+}
+```
+This pipeline version also uses [Additional Feature BP][].
+
+<td>
+
+```js
+function castPath (value, object) {
+  if (isArray(value)) {
+    return value;
+  }
+  return isKey(value, object)
+    ? [value]
+    : stringToPath(toString(value));
+}
 ```
 
 </table>
@@ -1835,8 +2126,9 @@ g(do {
 The next Additional Feature – **Prefix Pipelines** – adds a “headless” tacit
 prefix form of the pipeline operator. The tacit, default head is the topic
 reference `#` itself, which must be resolvable within the outer lexical
-environment. This may occur within `if` statements, `try` statements, and [`do`
-expressions][], as well as block pipeline bodies with [Additional Feature BP][].
+environment. This feature is especially useful in ternary-conditional `?` `:`
+expressions and (with [Additional Feature BP][]) `if` `else` statements, `try`
+statements, and `switch` statements.
 
 [Additional Feature PP is **formally specified in a separate draft
 specification**][formal PP].
@@ -1852,12 +2144,11 @@ specification**][formal PP].
 <td>
 
 ```js
-x |> {
-  if (# |> predicate)
-    # |> f |> # ** 2;
-  else
-    # |> g |> # ** 3;
-}
+input
+|> (# |> predicate)
+  ? (# |> f |> # ** 2;)
+  : (# |> g |> # ** 3)
+|> console.log;
 ```
 In this version, which uses Core Proposal syntax only, several pipelines start
 with the phrase `# |>`.
@@ -1865,15 +2156,70 @@ with the phrase `# |>`.
 <td>
 
 ```js
-do {
-  if (predicate(x))
-    f(x) ** 2;
+{
+  let temp;
+  if (predicate(input))
+    temp = f(input) ** 2;
   else
-    g(x) ** 3;
+    temp = g(input) ** 3;
+  console.log(temp);
 }
 ```
 Note that the topic reference in the repeated `# |>` here all refer to the same
-topic from the same lexical environment – `x` – into `predicate`, `f`, and `g`.
+topic value – `input` – into `predicate`, `f`, and `g`.
+
+<tr>
+<td>
+
+```js
+input
+|> (|> predicate)
+  ? (|> f |> # ** 2;)
+  : (|> g |> # ** 3)
+|> console.log;
+```
+In this version, which also uses Additional Feature PP, those pipelines omit the
+phrase `# |>`, using a tacit prefix pipeline `|>`, which is implied to use `#`
+as the value of their topics.
+
+<td>
+
+```js
+{
+  let temp;
+  if (predicate(input))
+    temp = f(input) ** 2;
+  else
+    temp = g(input) ** 3;
+  console.log(temp);
+}
+```
+The unary pipeline `|>` still piped in the same tacit topic from the same
+lexical environment – `x` – into `predicate`, `f`, and `g`. The result is still
+the same as before.
+
+<tr>
+<td>
+
+```js
+x |> {
+  if (# |> predicate)
+    # |> f |> # ** 2;
+  else
+    # |> g |> # ** 3;
+}
+```
+In this version, which also uses [Additional Feature BP][] but not Additional
+Feature PP, several pipelines also start with the phrase `# |>`.
+
+<td>
+
+```js
+if (predicate(x))
+  f(x) ** 2;
+else
+  g(x) ** 3;
+```
 
 <tr>
 <td>
@@ -1893,12 +2239,10 @@ as the value of their topics.
 <td>
 
 ```js
-do {
-  if (predicate(x))
-    f(x) ** 2;
-  else
-    g(x) ** 3;
-}
+if (predicate(x))
+  f(x) ** 2;
+else
+  g(x) ** 3;
 ```
 The unary pipeline `|>` still piped in the same tacit topic from the same
 lexical environment – `x` – into `predicate`, `f`, and `g`. The result is still
@@ -1911,13 +2255,13 @@ the same as before.
 value
 |> f
 |> {
-    try {
-    |> JSON.parse;
-      catch (error) {
-        { message: error.message };
-      }
+  try {
+  |> JSON.parse;
+    catch (error) {
+      { message: error.message };
     }
   }
+}
 |> g;
 ```
 This example becomes even pithier with [Additional Feature TS][].
@@ -1925,15 +2269,15 @@ This example becomes even pithier with [Additional Feature TS][].
 <td>
 
 ```js
-g(do {
-  const $ = f(value);
-  try {
-    JSON.parse(#);
-    catch (error) {
-      { message: error.message };
-    }
+const _1 = f(value);
+let _2;
+try {
+  _2 = JSON.parse(#);
+  catch (error) {
+    _2 = { message: error.message };
   }
-});
+}
+g(_2);
 ```
 
 <tr>
@@ -1949,8 +2293,8 @@ function () {
 // but has no topic binding.
 ```
 If a prefix pipeline is used within a context in which the topic is not
-resolvable, then this is an [early error][], just like how it is an error to use
-explicit topic references within a context without a topic in general:
+resolvable, then this is an [early error][]. This is just like how it is an
+error to use explicit topic references within a context without a topic:
 
 ```js
 function () {
@@ -1966,105 +2310,7 @@ function () {
 
 </table>
 
-### WHATWG Fetch Standard (Core Proposal + Additional Feature BP+PP)
-Revisiting the [examples above from the WHATWG Fetch Standard][WHATWG Fetch +
-CP] with [Additional Feature BP][] and [Additional Feature PP][] shows how
-terseness could be further improved.
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-
-<tr>
-<td>
-
-```js
-'https://pk.example/berlin-calling'
-|> await fetch(#, { mode: 'cors' })
-|> do {
-    if (
-      # |> #.headers.get('content-type')
-        |> #??.toLowerCase()
-        |> #.indexOf('application/json')
-        |> # >= 0
-    )
-      throw new new TypeError();
-    else
-      # |> await #.json()
-        |> processJSON;
-  }
-};
-```
-This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
-only. Note that several expressions start with `# |>`. There is also a `|> do {
-… }` block being used as a pipeline body.
-
-<td>
-
-```js
-fetch('https://pk.example/berlin-calling',
-  { mode: 'cors' }
-).then(response => {
-  if (response.headers.get('content-type')
-    ??.toLowerCase()
-    .indexOf('application/json') >= 0
-  )
-    return response.json();
-  else
-    throw new TypeError();
-}).then(processJSON);
-```
-
-<tr>
-<td>
-
-```js
-'https://pk.example/berlin-calling'
-|> await fetch(#, { mode: 'cors' })
-|> {
-    if (
-    |> #.headers.get('content-type')
-    |> #??.toLowerCase()
-    |> #.indexOf('application/json')
-    |> # >= 0
-    )
-      throw new new TypeError();
-    else
-    |> await #.json()
-    |> processJSON;
-  }
-};
-```
-This pipeline version also uses [Additional Feature BP][] and [Additional
-Feature PP][]. The `|> do { … }` has simply become `|> { … }`. And the repeated
-`# |>` has been elided, but it is still tacitly there.
-
-<td>
-
-```js
-fetch('https://pk.example/berlin-calling',
-  { mode: 'cors' }
-).then(response => {
-  if (response.headers.get('content-type')
-    ??.toLowerCase()
-    .indexOf('application/json') >= 0
-  )
-    return response.json();
-  else
-    throw new TypeError();
-}).then(processJSON);
-```
-
-</table>
-
 ### jQuery (Core Proposal + Additional Feature BP+PP)
-Similarly, revisiting the [examples above from jQuery][jQuery + CP] with
-[Additional Feature BP][] and [Additional Feature PP][] shows how terseness
-could be further improved.
 
 <table>
 <thead>
@@ -2077,75 +2323,21 @@ could be further improved.
 <td>
 
 ```js
-match |> do {
-  if (this[match] |> isFunction)
-    # |> context[#] |> this[match](#);
-  else
-    # |> context[#] |> this.attr(match, #);
-}
-```
-This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
-only. Note that several expressions start with `# |>`. There is also a `|> do {
-… }` block being used as a pipeline body.
-
-<td>
-
-```js
-if (isFunction(this[match])) {
-  this[match](context[match]);
-} else
-  this.attr(match, context[match]);
-}
-```
-From [jquery/src/core/init.js][].
-
-<tr>
-<td>
-
-```js
-match |> {
-  if (this[match] |> isFunction)
-  |> context[#] |> this[match](#);
-  else
-  |> context[#] |> this.attr(match, #);
-}
-```
-This pipeline version also uses [Additional Feature BP][] and [Additional
-Feature PP][]. The `|> do { … }` has simply become `|> { … }`. And the repeated
-`# |>` has been elided, but it is still tacitly there.
-
-<td>
-
-```js
-if (isFunction(this[match])) {
-  this[match](context[match]);
-} else
-  this.attr(match, context[match]);
-}
-```
-From [jquery/src/core/init.js][].
-
-<tr>
-<td>
-
-```js
-return context |> do {
+return context |> {
   // Handle HTML strings
   if (…)
     …
   // Handle $(expr, $(...))
   else if (!# || #.jquery)
-    # |> # || root
-      |> #.find(selector);
+    # || root;
   // Handle $(expr, context)
   else
-    # |> this.constructor
-      |> #.find(selector);
-};
+    # |> this.constructor;
+}
+|> #.find(selector);
 ```
-This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
-only. Note that several expressions start with `# |>`. There is also a `|> do {
-… }` block being used as a pipeline body.
+This pipeline version uses [Core Proposal][] syntax plus [Additional Feature BP][].
+With [Additional Feature PP][], the `#` in `# |> this.constructor` can be elided.
 
 <td>
 
@@ -2174,17 +2366,16 @@ return context |> {
     …
   // Handle $(expr, $(...))
   else if (!# || #.jquery)
-  |> # || root
-  |> #.find(selector);
+    # || root;
   // Handle $(expr, context)
   else
-  |> this.constructor
-  |> #.find(selector);
-};
+  |> this.constructor;
+}
+|> #.find(selector);
 ```
-This pipeline version also uses [Additional Feature BP][] and [Additional
-Feature PP][]. The `|> do { … }` has simply become `|> { … }`. And the repeated
-`# |>` has been elided, but it is still tacitly there.
+This pipeline version uses [Additional Feature BP][] and [Additional
+Feature PP][]. The `#` in `# |> this.constructor` has been elided, but it is
+still tacitly there.
 
 <td>
 
@@ -2207,7 +2398,7 @@ From [jquery/src/core/init.js][].
 <td>
 
 ```js
-return selector |> do {
+return selector |> {
   if (typeof # === 'string')
     …
   else if (# |> isFunction)
@@ -2216,11 +2407,10 @@ return selector |> do {
       : #(jQuery);
   else
     jQuery.makeArray(#, this);
-}
+};
 ```
-This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
-only. Note that several expressions start with `# |>`. There is also a `|> do {
-… }` block being used as a pipeline body.
+This pipeline version uses [Core Proposal][] syntax plus [Additional Feature BP][].
+With [Additional Feature PP][], the `#` in `# |> isFunction` can be elided.
 
 <td>
 
@@ -2251,9 +2441,9 @@ return selector |> {
     jQuery.makeArray(#, this);
 };
 ```
-This pipeline version also uses [Additional Feature BP][] and [Additional
-Feature PP][]. The `|> do { … }` has simply become `|> { … }`. And the repeated
-`# |>` has been elided, but it is still tacitly there.
+This pipeline version uses [Additional Feature BP][] and [Additional
+Feature PP][]. The `#` in `# |> isFunction` has been elided, but it is still
+tacitly there.
 
 <td>
 
@@ -2287,21 +2477,18 @@ with [Additional Feature PP][] improves the visual parallelism of its code.
 
 ```js
 function (obj) {
-  return obj |> do {
-    if (# == null)
-      0;
-    else if (# |> isArrayLike)
-      # |> #.length;
-    else
-      # |> _.keys
-        |> #.length;
+  return obj
+  |> # == null
+    ? 0
+    : # |> isArrayLike
+    ? # |> #.length
+    : # |> _.keys |> #.length;
   };
 }
 ```
-Pipelines make parallelism between all three clauses becomes clearer.
-This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
-only. Note that several expressions start with `# |>`. There is also a `|> do {
-… }` block being used as a pipeline body.
+Smart pipelines make parallelism between all three clauses becomes clearer. This
+pipeline version uses [Core Proposal][] syntax only. Note that several
+expressions start with `# |>`.
 
 <td>
 
@@ -2319,21 +2506,22 @@ function (obj) {
 
 ```js
 function (obj) {
-  return obj |> {
-    if (# == null)
-      0;
-    else if (|> isArrayLike)
-    |> #.length;
-    else
-    |> _.keys
-    |> #.length;
+  return obj
+  |>  # == null
+    ? 0
+    : |> isArrayLike
+    ? |> #.length
+    : |> _.keys |> #.length;
   };
 }
 ```
-By removing `# |>` noise, [Additional Feature PP][] makes this parallelism even
-clearer: `0` for the `if` clause, `|> #.length` for the `else if` clause, and
-`|> something |> #.length` for the `else` clause. [Additional Feature BP][] also
-makes the `do` unnecessary.
+By removing `# |>` clutter, [Additional Feature PP][] makes this parallelism even
+clearer for the human reader:\
+`0` if it is nullish,\
+`|> #.length` if it is array-like, and\
+`|> something |> #.length` otherwise.\
+(Technically, `|> #.length` could simply be `#.length`, but it is written in
+this redundant form in order to emphasis its parallelism with the other branch.)
 
 <td>
 
@@ -2347,86 +2535,6 @@ function (obj) {
 ```
 The behavior of the code remains the same. All tacit prefix pipelines `|>` here
 use the outer environment’s topic: `obj`.
-
-</table>
-
-### Lodash (Core Proposal + Additional Feature BP+PP)
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-function hashGet (key) {
-  return this.__data__ |> do {
-    if (nativeCreate)
-      #[key] |> {
-        if # !== HASH_UNDEFINED
-          #;
-      };
-    else if (hashOwnProperty.call(#, key))
-      #[key];
-    else
-      undefined;
-  };
-}
-```
-This pipeline version uses [Core Proposal][] syntax (plus [`do` expressions][])
-only. Note that several expressions start with `# |>`. There is also a `|> do {
-… }` block being used as a pipeline body.
-
-<td>
-
-```js
-function hashGet (key) {
-  var data = this.__data__;
-  if (nativeCreate) {
-    var result = data[key];
-    return result === HASH_UNDEFINED
-      ? undefined : result;
-  }
-  return hasOwnProperty.call(data, key)
-    ? data[key] : undefined;
-}
-```
-
-<tr>
-<td>
-
-```js
-function castPath (value, object) {
-  return value |> {
-    if (|> isArray)
-      #;
-    else if (|> isKey(#, object))
-      [#];
-    else
-    |> toString |> stringToPath;
-  };
-}
-```
-This pipeline version also uses [Additional Feature BP][] and [Additional
-Feature PP][]. The `|> do { … }` has simply become `|> { … }`. And the repeated
-`# |>` has been elided, but it is still tacitly there.
-
-<td>
-
-```js
-function castPath (value, object) {
-  if (isArray(value)) {
-    return value;
-  }
-  return isKey(value, object)
-    ? [value]
-    : stringToPath(toString(value));
-}
-```
 
 </table>
 
@@ -2482,36 +2590,38 @@ specification**][formal TS].
 <tr>
 <td>
 
+The example below also uses [Additional Feature BP][].
+
+The `try` clause is in the pipeline form using the [topic style][]. It applies
+the expression `1 / #` to the outer context’s topic (in this case, `f(value)`).
+
+The `catch` clause is also in the pipeline form using the [bare style][]. It
+applies the function `processError` to the caught error.
+
 ```js
 value
 |> f
 |> {
   try |> 1 / #;
-  catch (error) { console.error(error) }
+  catch |> processError;
 }
 |> g;
 ```
-This example also uses [Additional Feature BP][].
-
-The `catch` clause is in the regular block form. But the `try` clause is in the
-pipeline form using the [topic style][]. It applies the expression `1 / #` to
-the outer context’s topic (in this case, `f(value)`).
-
-The semicolon after `1 / #` is optional. There is no ASI hazard here because
-pipeline bodies may never contain a `catch` or `finally` clause, unless the
-clause is inside a block.
+The semicolons after `1 / #` and after `processError` are optional. There is no
+ASI hazard here because pipeline bodies may never contain a `catch` or `finally`
+clause, unless the clause is inside a block.
 
 <td>
 
 ```js
-g (do {
-  try {
-    1 / f(value);
-  }
-  catch (error) {
-    console.error(error);
-  }
-}, 1);
+let _1;
+try {
+  _1 = 1 / f(value);
+}
+catch (error) {
+  _1 = processError(error);
+}
+g (_1, 1);
 ```
 
 <tr>
@@ -2522,24 +2632,24 @@ value
 |> f
 |> {
   try |> 1 / #;
-  catch |> console.error;
+  catch |> #.message;
 }
 |> g(#, 1);
 ```
-Now the `catch` clause is also in the pipeline form, using the [bare style][] to
-apply `console.error` as a method call to the caught error.
+Now the `catch` clause is also in topic style, applying apply `console.error` as
+a method call to the caught error.
 
 <td>
 
 ```js
-g (do {
-  try {
-    1 / f(value);
-  }
-  catch (error) {
-    console.error(error);
-  }
-}, 1);
+let _1;
+try {
+  _1 = 1 / f(value);
+}
+catch (error) {
+  _1 = error.message;
+}
+g (_1, 1);
 ```
 
 <tr>
@@ -2552,30 +2662,33 @@ value
   try
   |> 1 / #;
   catch
-  |> #.message |> console.error;
+  |> #.message |> capitalize;
 }
 |> g(#, 1);
 ```
 Pipeline `try` statements and their clauses may be chained as usual. This
 pipeline `catch` clause is in [topic style][] (`|> #.message`) followed by [bare
-style][] (`|> console.error`).
+style][] (`|> capitalize`).
 
 <td>
 
 ```js
-g (do {
-  try {
-    1 / f(value);
-  }
-  catch (error) {
-    console.error(error);
-  }
-}, 1);
+let _1;
+try {
+  _1 = 1 / f(value);
+}
+catch (error) {
+  _1 = capitalize(error.message);
+}
+g (_1, 1);
 ```
 
 <tr>
 <td>
 
+This pipeline `try` statement’s `catch` clause is using the topic-block style
+from [Additional Feature BP][], as well as [Additional Feature PP][] to
+abbreviate both `# |> 1 / #` and `# |> #.message`.
 ```js
 value
 |> f
@@ -2585,41 +2698,43 @@ value
   }
   catch |> {
     |> #.message
-    |> console.error;
+    |> capitalize;
   }
 }
 |> g;
 ```
-This pipeline `try` statement’s `catch` clause is using the topic-block style
-from [Additional Feature BP][], as well as [Additional Feature PP][] to
-abbreviate both `# |> 1 / #` and `# |> #.message`. A `|>` between `try` and its
-block `{ |> 1 / # }` is unnecessary, because the outer topic does not need to
-be rebound. However, it is necessary between `catch` and its block in order to
-opt into binding the topic reference to the caught errors.
+A `|>` between `try` and its block `{ |> 1 / # }` is unnecessary, because the
+outer topic does not need to be rebound. However, it is necessary between
+`catch` and its block in order to opt into binding the topic reference to the
+caught errors.
 
 <td>
 
 ```js
-g (do {
-  try {
-    1 / f(value);
-  }
-  catch (error) {
-    console.error(error.message);
-  }
-}, 1);
+let _1;
+try {
+  _1 = 1 / f(value);
+}
+catch (error) {
+  _1 = capitalize(error.message);
+}
+g (_1, 1);
 ```
 
 <tr>
 <td>
 
+If the developer includes the parenthesized parameter (like `(error)` in this
+example) or if they leave out the `|>` after the `catch`, then no topic binding
+is established. As per the [early error rules][] in [Core Proposal][], topic
+references are not allowed in regular `catch` blocks.
 ```js
 value
 |> f
 |> {
   try { 1 / #; }
   catch (error) {
-    #.message |> console.error;
+    #.message |> capitalize;
   }
 }
 |> g(#, 1)
@@ -2628,13 +2743,10 @@ value
 // contains a topic reference
 // but has no topic binding.
 ```
-If the developer includes the parenthesized parameter (like `(error)` in this
-example) or if they leave out the `|>` after the `catch`, then no topic binding
-is established. As per the [early error rules][] in [Core Proposal][], topic
-references are not allowed in regular `catch` blocks. This sort of [opt-in
-behavior][] is a goal of this proposal and helps ensure that the developer does
-not [shoot themselves in the foot][“don’t shoot me in the foot”] by accidentally
-using the topic value from an unexpected outer environment.
+This sort of [opt-in behavior][] is a goal of this proposal and helps ensure
+that the developer does not [shoot themselves in the foot][“don’t shoot me in
+the foot”] by accidentally using the topic value from an unexpected outer
+environment.
 
 <tr>
 <td>
@@ -2645,7 +2757,7 @@ value
 |> {
   try { 1 / #; }
   catch {
-    #.message |> console.error;
+    #.message |> capitalize;
   }
 }
 |> g(#, 1)
@@ -2675,14 +2787,14 @@ value
 <td>
 
 ```js
-g (do {
-  const $ = f(value);
-  try {
-    JSON.parse(#);
-  } catch (error) {
-    { message: error.message };
-  }
-}, 1);
+let _1;
+try {
+  _1 = 1 / f(value);
+}
+catch (error) {
+  _1 = { message: error.message };
+}
+g (_1, 1);
 ```
 
 </table>
@@ -3674,7 +3786,7 @@ because `##` is not used at all in the pipeline body.
 <td>
 
 ```js
-do {
+{
   const [_secondary, _tertiary, ..._rest] =
     [...b, c, ...d, e];
   g(f(a, _secondary, _tertiary, x, ..._rest));
@@ -3693,7 +3805,7 @@ do {
 <td>
 
 ```js
-do {
+{
   const [_secondary, ..._rest] =
     [...b, c, ...d, e];
   g(f(a, _secondary, x, ..._rest));
@@ -3762,7 +3874,7 @@ f(a) - (a ** c + b);
 <td>
 
 ```js
-do {
+{
   const $ = h(f(a), g(b));
   l(i($), $ + 1, k($));
 }
@@ -3833,7 +3945,7 @@ As a result of these rules, `|> ... |>` collects the previous
 <td>
 
 ```js
-do {
+{
   const [_primary, , _tertiary, ..._rest] =
     createRange(number);
   [_primary, _tertiary, _rest];
@@ -5522,14 +5634,14 @@ although the topic cannot be used within the block without a `|>`.
 <td>
 
 ```js
-g (do {
-  try {
-    1 / f(value);
-  }
-  catch {
-    { type: error };
-  }
-}, 1);
+let _1;
+try {
+  _1 = 1 / f(value);
+}
+catch (error) {
+  _1 = { message: error.message };
+}
+g (_1, 1);
 ```
 
 <tr>
@@ -6227,8 +6339,6 @@ to loosest**. Each level may contain the parse types listed for that level –
 | ″″             | Regular expression      |`/…/…`          | ″″                       |
 | ″″             | Templates               |`` …`…` ``      | Unchainable infix with circumfix|
 | ″″             | Parentheses             |`(…)`           | Circumfix                |
-| ″″             | [`do` expressions][]    |`do { … }`      | ″″                       |
-| ″″             | [`match` expressions][] |`match { … }`   | ″″                       |
 | LHS            | Dynamic properties      |`…[…]`          | LTR infix with circumfix |
 | ″″             | Static properties       |`….…`           | ″″                       |
 | ″″             | Tagged templates        |`` …`…` ``      | ″″                       |
@@ -6355,10 +6465,11 @@ would enable [tacit programming][] even without using bare-style pipelines.
 
 ## Term rewriting
 ### Core Proposal
-Pipeline chains can be rewritten into a nested `do` expression. There are many
-ways to illustrate this equivalency. The simplest way is to use a single `do`
-expression containing a series of autogenerated variable declarations, in which
-the variables are arbitrary except they are [lexically hygienic][]: that is, the
+Pipeline chains can be rewritten into a nested [`do` expression][]. There are
+many ways to illustrate this equivalency. (It can also be less simply rewritten
+without `do` expressions.) The simplest way is to use a single `do` expression
+containing a series of autogenerated variable declarations, in which the
+variables are arbitrary except they are [lexically hygienic][]: that is, the
 variables can be anything as long as they do not conflict with other
 already-existing variables.
 
@@ -6869,3 +6980,4 @@ The pipeline chain is therefore equivalent to:\
 [opt-in behavior]: #opt-in-behavior
 [mode errors]: https://en.wikipedia.org/wiki/Mode_(computer_interface)#Mode_errors
 [early error rule]: #static-analyzability
+[Perl 6’s given block]: https://docs.perl6.org/language/control#given
