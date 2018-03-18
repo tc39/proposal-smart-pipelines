@@ -104,14 +104,14 @@ independent-but-compatible **Additional Features**:
 |Name                     | Status  | Features                                                               | Purpose                                                                                                         |
 | ----------------------- | ------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 |[Core Proposal][]        | Stage 0 | Infix pipelines `… \|> …`<br>Lexical topic `#`                         | **Unary** function/expression **application**                                                                   |
-|[Additional Feature BC][]| None    | Bare constructor calls `… \|> new …`                                   | Application of **constructors**                                                                                 |
-|[Additional Feature BA][]| None    | Bare awaited calls `… \|> await …`                                     | Application of **async functions**                                                                              |
-|[Additional Feature BP][]| None    | Block pipeline bodies `… \|> {…}`                                      | Application of **block expressions**                                                                            |
-|[Additional Feature PP][]| None    | Prefix pipelines `\|> …`                                               | Application **within blocks**                                                                                   |
+|[Additional Feature BC][]| None    | Bare constructor calls `… \|> new …`                                   | Tacit application of **constructors**                                                                           |
+|[Additional Feature BA][]| None    | Bare awaited calls `… \|> await …`                                     | Tacit application of **async functions**                                                                        |
+|[Additional Feature BP][]| None    | Block pipeline bodies `… \|> {…}`                                      | Tacit application of **block expressions**                                                                      |
+|[Additional Feature PP][]| None    | Prefix pipelines `\|> …`                                               | Tacit application **within blocks**                                                                             |
 |[Additional Feature PF][]| None    | Pipeline functions `+>  `                                              | **Partial** function/expression **application**<br>Function/expression **composition**<br>**Method extraction** |
-|[Additional Feature TS][]| None    | Pipeline `try` statements                                              | Application to **caught errors**                                                                                |
+|[Additional Feature TS][]| None    | Pipeline `try` statements                                              | Tacit application to **caught errors**                                                                          |
 |[Additional Feature NP][]| None    | N-ary pipelines `(…, …) \|> …`<br>Lexical topics `##`, `###`, and `...`| **N-ary** function/expression **application**                                                                   |
-|[Additional Feature FS][]| None    | Pipeline `for` / `for await` statements                                | Application within **iteration loops**                                                                          |
+|[Additional Feature FS][]| None    | Pipeline `for` / `for await` statements                                | Tacit application within **iteration loops**                                                                    |
 
 The **Core Proposal** is currently at **Stage 0** of the [TC39 process][TC39
 process] and is planned to be presented, along with a [competing
