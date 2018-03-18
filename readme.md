@@ -6885,6 +6885,7 @@ The pipeline chain is therefore equivalent to:\
 [“don’t shoot me in the foot”]: #dont-shoot-me-in-the-foot
 [“make my code easier to read”]: #make-my-code-easier-to-read
 [`??:`]: https://github.com/tc39/proposal-nullish-coalescing/pull/23
+[`do` expression]: #do-expressions
 [`do` expressions]: #do-expressions
 [`for` iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
 [`in` relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
