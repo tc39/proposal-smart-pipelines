@@ -4358,7 +4358,7 @@ specification**][formal FS].
 <tr>
 <td>
 
-With Additional Feature FT, a pipeline `for`–`of` loop would be added, which
+With Additional Feature FT, a tacit pipeline `for` loop would be added, which
 would tacitly apply a pipeline body to each iterator value.
 ```js
 for (range(0, 50)) |> {
@@ -4366,9 +4366,9 @@ for (range(0, 50)) |> {
   log(|> Math.sqrt);
 }
 ```
-An additional tacit `for` loop form, completely lacking a parenthesized
-antecedent, would also be added. This example uses that tacit form, along with
-[Additional Feature PP][].
+This `for` loop form, completely lacking a parenthesized antecedent, would also
+be added. This example uses that tacit form, along with [Additional
+Feature PP][].
 
 <td>
 
