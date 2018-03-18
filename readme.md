@@ -18,8 +18,8 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [jQuery (Core Proposal only)](#jquery-core-proposal-only)
     - [Underscore.js (Core Proposal only)](#underscorejs-core-proposal-only)
     - [Lodash (Core Proposal only)](#lodash-core-proposal-only)
-  - [Additional Feature BC](#additional-feature%C2%A0bc)
-  - [Additional Feature BA](#additional-feature%C2%A0ba)
+  - [Additional Feature BC](#additional-feature-bc)
+  - [Additional Feature BA](#additional-feature-ba)
   - [Additional Feature BP](#additional-feature-bp)
     - [WHATWG Fetch Standard (Core Proposal + Additional Feature BP)](#whatwg-fetch-standard-core-proposal--additional-feature-bp)
     - [jQuery (Core Proposal + Additional Feature BP)](#jquery-core-proposal--additional-feature-bp)
@@ -86,9 +86,9 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
   - [Explanation of nomenclature](#explanation-of-nomenclature)
   - [Term rewriting](#term-rewriting)
     - [Core Proposal](#core-proposal-1)
-    - [Additional Feature BP](#additional-feature%C2%A0bp)
-    - [Additional Feature PP](#additional-feature%C2%A0pp)
-    - [Additional Feature NP](#additional-feature%C2%A0np)
+    - [Additional Feature BP](#additional-feature-bp-1)
+    - [Additional Feature PP](#additional-feature-pp-1)
+    - [Additional Feature NP](#additional-feature-np-1)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 </details></nav>
@@ -1532,7 +1532,7 @@ function castPath (value, object) {
 
 </table>
 
-## Additional Feature BC
+## Additional Feature BC
 An Additional Feature – **bare constructor calls** – makes unary constructor
 calls terser. It adds a mode to bare style: if a bare-style pipeline body is
 preceded by a `new`, then instead of a function call, it is a constructor call.
@@ -1575,7 +1575,7 @@ console.log(
 
 </table>
 
-## Additional Feature BA
+## Additional Feature BA
 Another Additional Feature – **bare awaited calls** – makes unary async function
 calls terser. It adds another mode to bare style: if a bare-style pipeline body is
 preceded by a `await`, then instead of a mere function call, it is an awaited
@@ -6681,7 +6681,7 @@ With this notation, then in general, given a pipeline chain:\
 * If 𝑃 is in [topic style][] – then sub(𝑃, #) is 𝑃 but in which all unshadowed
   instances of the topic reference `#` are replaced by #.
 
-### Additional Feature BP
+### Additional Feature BP
 Using the same notation from the first subsection, then in general:
 
 * If 𝑃 is a [bare function call][] – then sub(𝑃, #) is 𝑃 `(` # `)`.
@@ -6693,7 +6693,7 @@ Using the same notation from the first subsection, then in general:
 * **If 𝑃 is in the form `{` 𝑆₀ `;` 𝑆₁ `;` … `;` 𝑆ᵥ₋₂ `;` 𝑆ᵥ₋₁ `;` `}` – then sub(𝑃, #) is
   `do {` sub(𝑆₀, #) `;` sub(𝑆₁, #) `;` … `;` sub(𝑆ᵥ₋₂, #) `;` sub(𝑆ᵥ₋₁, #) `;` `}`**.
 
-### Additional Feature PP
+### Additional Feature PP
 Using the same notation from the first subsection, then in general, given a
 pipeline chain:\
 `|>` 𝐸₁ `|>` 𝐸₂ `|>` … `|>` 𝐸ᵤ₋₂ `|>` 𝐸ᵤ₋₁,\
@@ -6708,7 +6708,7 @@ pipeline chain:\
   sub(𝐸ᵤ₋₁, #ᵤ₋₂) `;`\
 `}`.
 
-### Additional Feature NP
+### Additional Feature NP
 Adapted from a [previous example][Additional Feature NP]:
 ```js
 x = (a, b, ...c, d, e)
