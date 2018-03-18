@@ -18,6 +18,8 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [jQuery (Core Proposal only)](#jquery-core-proposal-only)
     - [Underscore.js (Core Proposal only)](#underscorejs-core-proposal-only)
     - [Lodash (Core Proposal only)](#lodash-core-proposal-only)
+  - [Additional Feature BC](#additional-feature%C2%A0bc)
+  - [Additional Feature BA](#additional-feature%C2%A0ba)
   - [Additional Feature BP](#additional-feature-bp)
     - [WHATWG Fetch Standard (Core Proposal + Additional Feature BP)](#whatwg-fetch-standard-core-proposal--additional-feature-bp)
     - [jQuery (Core Proposal + Additional Feature BP)](#jquery-core-proposal--additional-feature-bp)
@@ -78,9 +80,6 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 - [Appendices](#appendices)
   - [Smart body syntax](#smart-body-syntax)
     - [Bare style](#bare-style)
-      - [Bare function call](#bare-function-call)
-      - [Bare awaited function call](#bare-awaited-function-call)
-      - [Bare constructor call](#bare-constructor-call)
     - [Topic style](#topic-style)
     - [Practical consequences](#practical-consequences)
   - [Operator precedence and associativity](#operator-precedence-and-associativity)
@@ -105,6 +104,8 @@ independent-but-compatible **Additional Features**:
 |Name                     | Status  | Features                                                               | Purpose                                                                                                         |
 | ----------------------- | ------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 |[Core Proposal][]        | Stage 0 | Infix pipelines `… \|> …`<br>Lexical topic `#`                         | **Unary** function/expression **application**                                                                   |
+|[Additional Feature BC][]| None    | Bare constructor function calls `… \|> new …`                          | Application of *constructors**                                                                                  |
+|[Additional Feature BA][]| None    | Bare awaited function calls `… \|> await …`                          | Application of *async functions**                                                                               |
 |[Additional Feature BP][]| None    | Block pipeline bodies `… \|> {…}`                                      | Application of **block expressions**                                                                            |
 |[Additional Feature PP][]| None    | Prefix pipelines `\|> …`                                               | Application **within blocks**                                                                                   |
 |[Additional Feature PF][]| None    | Pipeline functions `+>  `                                              | **Partial** function/expression **application**<br>Function/expression **composition**<br>**Method extraction** |
@@ -209,8 +210,8 @@ promise
 |> doubleSay(#, ', ')
 |> capitalize
 |> # + '!'
-|> new User.Message
-|> await stream.write
+|> new User.Message(#)
+|> await stream.write(#)
 |> console.log;
 ```
 With smart pipelines, the code above becomes **terser** and, literally, more
@@ -332,15 +333,14 @@ promise
 |> doubleSay(#, ', ')
 |> capitalize
 |> # + '!'
-|> new User.Message
-|> await stream.write
+|> new User.Message(#)
+|> await stream.write(#)
 |> console.log;
 ```
-Note that, in the example above, it is **not necessary** to include
-**parentheses** for `capitalize` or `new User.Message`; they were **tacitly
-implied**, respectively forming a **tacit unary function call** and a **tacit
-unary constructor call**. In other words, the example above is equivalent to
-the version below.
+Note that, in the example above, it is **not necessary** to include the
+**parenthesized argument (`#`)** for `capitalize` and `console.log`. They were
+**tacitly implied**, forming a **tacit unary function call**. In other words,
+the example above is equivalent to the version in the next row.
 
 <td>
 
@@ -376,7 +376,7 @@ promise
 |> console.log(#);
 ```
 This version is equivalent to the version above, except that the `capitalize`
-and `new User.Message` pipeline bodies explicitly include optional topic
+and `console.log` pipeline bodies explicitly include optional topic
 references `#`, making the expressions slightly wordier than necessary.
 
 <td>
@@ -420,23 +420,23 @@ const object = input
 |> -#
 |> g(#, x)
 |> o.unaryMethod
-|> await asyncFunction
-|> await o.asyncMethod
-|> new Constructor;
+|> await asyncFunction(#)
+|> await o.asyncMethod(#)
+|> new Constructor(#);
 ```
 This pipeline is a very flat expression, with only one level of indentation, and
 with each transformation step on its own line.
 
 Note that `… |> f` is a bare unary function call. This is the same as `… |> f(#)`,
-but the topic reference `#` is unnecessary; it is invisibly, tacitly implied.
+but the topic reference `#` is unnecessary; it is invisibly, tacitly implied. The
+same goes for `o.unaryMethod`, which is a unary function call on `o.unaryMethod`.
 
 This is the [**smart** part of the smart pipeline operator][smart body syntax],
 which can distinguish between two syntax styles (**[bare style][]** vs. **[topic
-style][]**) by using a simple rule: **bare** style uses only **identifiers,
-dots, `new`**, and **await** – and **never parentheses, brackets, braces**, or
-**other operators**. And **topic** style **always** contains at least one
-**topic reference**. For more information, see the reference below about the
-**[smart body syntax][]**.
+style][]**) by using a simple rule: **bare** style uses only **identifiers and
+dots – and **never parentheses, brackets, braces**, or **other operators**. And
+**topic** style **always** contains at least one **topic reference**. For more
+information, see the reference below about the **[smart body syntax][]**.
 
 <td>
 
@@ -503,17 +503,16 @@ promise
 |> await #
 |> # || throw new TypeError()
 |> doubleSay(#, ', ')
-|> capitalize |> # + '!'
-|> new User.Message
-|> await stream.write
+|> capitalize
+|> # + '!'
+|> new User.Message(#)
+|> await stream.write(#)
 |> console.log;
 ```
 This pipeline is also relatively flat, with only one level of indentation, and
 with each transformation step on its own line.
 
-(`… |> capitalize` is a bare unary function call equivalent to `… |> capitalize(#)`.
-Similarly, `… |> new User.Message` is a bare unary constructor call, abbreviated
-from `… |> new User.Message(#)`.)
+`… |> capitalize` is a bare unary function call equivalent to `… |> capitalize(#)`.
 
 <td>
 
@@ -587,7 +586,7 @@ promise
 |> `${#}, ${#}`
 |> #[0].toUpperCase() + #.substring(1)
 |> # + '!'
-|> new User.Message
+|> new User.Message(#)
 |> stream.write
 |> console.log;
 ```
@@ -631,8 +630,8 @@ promise
 |> `${#}, ${#}`
 |> #[0].toUpperCase() + #.substring(1)
 |> # + '!'
-|> new User.Message
-|> await stream.write
+|> new User.Message(#)
+|> await stream.write(#)
 |> console.log;
 ```
 With a pipeline, there are no unnecessary variable identifiers. Inserting a new
@@ -1528,6 +1527,92 @@ function castPath (value, object) {
     ? [value]
     : stringToPath(toString(value));
 }
+```
+
+</table>
+
+## Additional Feature BC
+An Additional Feature – **bare constructor calls** – makes unary constructor
+calls terser. It adds a mode to bare style: if a bare-style pipeline body is
+preceded by a `new`, then instead of a function call, it is a constructor call.
+`value |> object.Constructor` is equivalent to `object.Constructor(value)`.
+This is backwards compatible with the [Core Proposal][] as well as all other
+Additional Features.
+
+[Additional Feature BC is **formally specified in a separate draft
+specification**][formal BC].
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+value
+|> # + '!'
+|> new User.Message
+|> await stream.write(#)
+|> console.log;
+```
+
+<td>
+
+```js
+console.log(
+  await stream.write(
+    new User.Message(
+      value + '!'
+    )
+  )
+);
+```
+
+</table>
+
+## Additional Feature BA
+Another Additional Feature – **bare awaited calls** – makes unary async function
+calls terser. It adds another mode to bare style: if a bare-style pipeline body is
+preceded by a `await`, then instead of a mere function call, it is an awaited
+function call. `value |> await object.asyncFunction` is equivalent to
+`await object.asyncFunction(value)`. This is backwards compatible with the [Core
+Proposal][] as well as all other Additional Features.
+
+[Additional Feature BA is **formally specified in a separate draft
+specification**][formal BC].
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+value
+|> # + '!'
+|> new User.Message(#)
+|> await stream.write
+|> console.log;
+```
+
+<td>
+
+```js
+console.log(
+  await stream.write(
+    new User.Message(
+      value + '!'
+    )
+  )
+);
 ```
 
 </table>
@@ -2559,18 +2644,18 @@ a pipeline form versus the regular block form.
 The pipeline `try |> …` statement and the `finally |> …` clause would both apply
 the outer context’s topic to their pipeline bodies. As per the usual [smart body
 syntax][], if a pipeline body is in bare mode, then it will be called as a
-function call, constructor call, or awaited function call on the outer topic. If
-the pipeline body is in topic style, then the body is evaluated as an expression
-with a new lexical environment, in which the topic reference is bound to the
-outer topic.
+function call, constructor call, or awaited function call on the outer topic.
+If the pipeline body is in topic style, then the body is evaluated as an
+expression with a new lexical environment, in which the topic reference is bound
+to the outer topic.
 
 The pipeline `catch |> …` clause would treat its caught error as if it were the
 head of a pipeline whose body is the expression following the `|>`. As per the
 usual [smart body syntax][], if the pipeline body is in bare mode, then it will
-be called as a function call, constructor call, or awaited function call on the
-error. If the pipeline body is in topic style, then the body is evaluated as an
-expression with a new lexical environment, in which the topic reference is bound
-to the caught error.
+be called as a function call, constructor call, or awaited function call on
+the error. If the pipeline body is in topic style, then the body is evaluated as
+an expression with a new lexical environment, in which the topic reference is
+bound to the caught error.
 
 With [Additional Feature BP][], this syntax which would naturally allow the form
 `catch |> { … }`, except, within the block, the error would be `#`.
@@ -3089,7 +3174,8 @@ const getTemperatureFromServerInLocalUnits =
   |> convertTemperatureKelvinToLocalUnits;
 ```
 Lifting of non-sync-function expressions into function expressions is
-unnecessary for composition with Additional Feature PF.
+unnecessary for composition with Additional Feature PF. [Additional
+Feature BA][] is also useful here.
 
 <td>
 
@@ -3419,7 +3505,8 @@ try {
 catch
 |> console.error;
 ```
-This example also uses [Additional Feature TS][] for terse `catch` clauses.
+This example also uses [Additional Feature TS][] for terse `catch` clauses
+and [Additional Feature BA][] for terse awaited function calls.
 
 <td>
 
@@ -4307,7 +4394,9 @@ async function readInto(buffer, offset = 0) {
   };
 }
 ```
-This example also uses [Additional Feature TS][] for terse `catch` clauses.
+This example also uses [Additional Feature TS][] for terse `catch` clauses,
+[Additional Feature BC][] for a terse constructor call on `Uint8Array`, and
+[Additional Feature BA][] for a terse async function call on `readInto`.
 
 <td>
 
@@ -4407,7 +4496,7 @@ Similar additions would be made to the asynchronous `for` loop. A pipeline
 ```js
 for await (stream) |> {
   yield |>
-  |> await f
+  |> await f(#, 1)
   |> #.length
   |> # + 3
   |> g;
@@ -4422,7 +4511,7 @@ insertion][ASI] after the `yield`.
 ```js
 for await (const c of stream) {
   yield g(
-    (await f(c))
+    (await f(c, 1))
       .length
       + 3
   );
@@ -4821,8 +4910,8 @@ promise
 |> doubleSay(#, ', ')
 |> capitalize
 |> # + '!'
-|> new User.Message
-|> await stream.write
+|> new User.Message(#)
+|> await stream.write(#)
 |> console.log;
 ```
 
@@ -5267,6 +5356,11 @@ array.map($ => h(2, g(f($))) + 2);
 <tr>
 <td>
 
+When compared to the proposal for [syntactic functional composition by
+TheNavigateur][TheNavigateur functional composition], this syntax does not need
+to give implicit special treatment to async functions. There is instead an async
+version of the pipe-function operator, within which `await` may be used, simply
+as usual.
 ```js
 const doubleThenSquareThenHalfAsync =
   async +>
@@ -5274,11 +5368,7 @@ const doubleThenSquareThenHalfAsync =
     |> await squareAsync
     |> half;
 ```
-When compared to the proposal for [syntactic functional composition by
-TheNavigateur][TheNavigateur functional composition], this syntax does not need
-to give implicit special treatment to async functions. There is instead an async
-version of the pipe-function operator, within which `await` may be used, simply
-as usual.
+This example uses [Additional Feature BA][] for `… |> await squareAsync`.
 
 <td>
 
@@ -5343,14 +5433,16 @@ Meadows][isiahmeadows functional composition].
 <tr>
 <td>
 
+Lifting of non-sync-function expressions into function expressions is
+unnecessary for composition with Additional Feature PF.
 ```js
 const getTemperatureFromServerInLocalUnits =
   async +>
   |> await getTemperatureKelvinFromServerAsync
   |> convertTemperatureKelvinToLocalUnits;
 ```
-Lifting of non-sync-function expressions into function expressions is
-unnecessary for composition with Additional Feature PF.
+This example uses [Additional Feature BA][] for
+`… |> await getTemperatureKelvinFromServerAsync`.
 
 <td>
 
@@ -5979,7 +6071,8 @@ statement][]. Two of these functions (`when` and `otherwise`) that are expected
 to be called always within the third function (`select`)’s callback block.
 
 Such a solution is not yet specified by the current proposal for [ECMAScript
-block parameters][]. Lexical topics can fill in that gap.
+block parameters][]. Lexical topics can fill in that gap. (The example below
+also uses [Additional Feature BC][].)
 
 ```js
 class CompletionRecord {
@@ -6213,46 +6306,62 @@ For three simple cases – unary functions, unary async functions, and unary
 constructors – you may omit the topic reference from the body. This is called
 **[bare style][]**.
 
-When a pipe is in bare style, we refer to the body as a **bare function call**,
-**bare async function call**, or a **bare constructor call**, depending on the
-rules of bare style. The body acts as just a simple reference to a function or
-constructor, such as with `… |> text.capitalize`, with `… |> await DOM.fetch`,
-and with `… |> new User.Message`. The body’s value would then be called as a
-unary function or constructor, without having to use the topic reference as an
-explicit argument.
+When a pipe is in bare style, we refer to the pipeline as a **bare function
+call**. (If [Additional Feature BC][] or [Additional Feature BA][] are used,
+then a bare-style pipeline body may instead be a **bare async function call**,
+or a **bare constructor call**, depending on the rules of bare style.) The body
+acts as just a simple reference to a function, such as with `… |> capitalize` or
+with `… |> console.log`. The body’s value would then be called as a unary
+function, without having to use the topic reference as an explicit argument.
 
-The two bare-style productions require no parameters, because they can only
-be made up of identifiers and `.`, optionally preceded by `new` or `await`.
+The two bare-style productions require no parameters, because they can only be
+**simple references**, made up of identifiers and dots `.`. (If [Additional
+Feature BC][] is used, then the simple reference may optionally be preceded by
+`new`: `… |> new o.C`. If [Additional Feature BA][] is used, then the simple
+reference may optionally be preceded by `await`: `… |> new o.af`. Even with
+Additional Features BC or BA, `new` and `await` may not be used on their own
+without a simple reference: `… |> o.C |> new` 🚫 and `… |> o.af |> await` 🚫 are
+invalid pipelines. Instead, use either the bare style `… |> new o.C` and
+`… |> await o.af`, or use topic style: `… |> af |> await #`.
 
-Also, `new` and `await` cannot be used on their own with bare style.
-`… |> await` 🚫 and `… |> new` 🚫 are invalid pipelines. For `await`, instead
-use either `… |> await af` or use topic style: `… |> af |> await #`.
+With the [Core Proposal only][]:
 
 | Valid [topic style][]   | Valid [bare style][]                     | Invalid pipeline
 | ----------------------- | ---------------------------------------- | --------------------
 |`… \|> f(#)`             |`… \|> f`                                 |  `… \|> f()` 🚫
 | ″″                      | ″″                                       | `… \|> (f)` 🚫
 | ″″                      | ″″                                       | `… \|> (f())` 🚫
+|`… \|> o.f(#)`           |`… \|> o.f`                               | `… \|> o.f()` 🚫
+|`… \|> o.f(arg, #)`      |`const f = $ => o::f(arg, $); … \|> f`    | `… \|> o.f(arg)` 🚫
+|`… \|> o.make()(#)`      |`const f = o.make(); … \|> f`             | `… \|> o.make()` 🚫
+|`… \|> o[symbol](#)`     |`const f = o[symbol]; … \|> f`            | `… \|> o[symbol]` 🚫
+
+With [Additional Feature BC][]:
+
+| Valid [topic style][]   | Valid [bare style][]                     | Invalid pipeline
+| ----------------------- | ---------------------------------------- | --------------------
+|`… \|> new C(#)`         |`… \|> new C`                             | `… \|> new C()` 🚫
+| ″″                      | ″″                                       | `… \|> (new C)` 🚫
+| ″″                      | ″″                                       | `… \|> (new C())` 🚫
+| ″″                      | ″″                                       | `… \|> new (C)` 🚫
+| ″″                      | ″″                                       | `… \|> new (C())` 🚫
+|`… \|> new o.C(#)`       |`… \|> new o.C`                           | `… \|> new o.f()` 🚫
+|`… \|> new o.C(arg, #)`  |`const f = $ => new o::C(arg, $); … \|> f`| `… \|> new o.C(arg)` 🚫
+|`… \|> new o.make()(#)`  |`const C = o.make(); … \|> new C`         | `… \|> new o.make()` 🚫
+|`… \|> new o[symbol](#)` |`const f = new o[symbol]; … \|> f`        | `… \|> new o[symbol]` 🚫
+|`… \|> await new o.make()(#)`|`const af = new o.make(); … \|> await af`| `… \|> new await o.make()` 🚫
+
+With [Additional Feature BA][]:
+
+| Valid [topic style][]   | Valid [bare style][]                     | Invalid pipeline
+| ----------------------- | ---------------------------------------- | --------------------
 |`… \|> await af(#)`      |`… \|> await af`                          | `… \|> await af()` 🚫
 | ″″                      | ″″                                       | `… \|> (await f)` 🚫
 | ″″                      | ″″                                       | `… \|> (await f())` 🚫
 | ″″                      | ″″                                       | `… \|> await (f)` 🚫
 | ″″                      | ″″                                       | `… \|> await (f())` 🚫
 |`… \|> af \|> await #`   | ″″                                       |  `… \|> af \|> await` 🚫
-|`… \|> new C(#)`         |`… \|> new C`                             | `… \|> new C()` 🚫
-| ″″                      | ″″                                       | `… \|> (new C)` 🚫
-| ″″                      | ″″                                       | `… \|> (new C())` 🚫
-| ″″                      | ″″                                       | `… \|> new (C)` 🚫
-| ″″                      | ″″                                       | `… \|> new (C())` 🚫
-|`… \|> o.f(#)`           |`… \|> o.f`                               | `… \|> o.f()` 🚫
 |`… \|> await o.f(#)`     |`… \|> await o.f`                         | `… \|> await o.f()` 🚫
-|`… \|> new o.f(#)`       |`… \|> new o.f`                           | `… \|> new o.f()` 🚫
-|`… \|> o.f(arg, #)`      |`const f = $ => o::f(arg, $); … \|> f`    | `… \|> o.f(arg)` 🚫
-|`… \|> new o.C(arg, #)`  |`const f = $ => new o::C(arg, $); … \|> f`| `… \|> new o.C(arg)` 🚫
-|`… \|> o[symbol](#)`     |`const f = o[symbol]; … \|> f`            | `… \|> o[symbol]` 🚫
-|`… \|> new o[symbol](#)` |`const f = new o[symbol]; … \|> f`        | `… \|> new o[symbol]` 🚫
-|`… \|> o.make()(#)`      |`const f = o.make(); … \|> f`             | `… \|> o.make()` 🚫
-|`… \|> new o.make()(#)`  |`const C = o.make(); … \|> new C`         | `… \|> new o.make()` 🚫
 |`… \|> await o.make()(#)`|`const af = o.make(); … \|> await af`     | `… \|> await o.make()` 🚫
 |`… \|> await new o.make()(#)`|`const af = new o.make(); … \|> await af`| `… \|> new await o.make()` 🚫
 
@@ -6262,7 +6371,6 @@ simple property identifiers. If there are any operators, parentheses (including
 for method calls), brackets, or anything other than identifiers and dot
 punctuators, then it is in [topic style][], not in bare style.
 
-#### Bare function call
 If the body is a merely a simple reference, then that identifier is interpreted
 to be a **bare function call**. The pipeline’s value will be the result of
 calling the body with the current topic as its argument.
@@ -6274,8 +6382,20 @@ or **_topic_ `|>` _identifier0_`.`_identifier1_`.`_identifier2_**\
 or so forth,\
 then the pipeline is a bare function call.
 
-#### Bare awaited function call
-If the body starts with `await`, followed by a mere identifier, optionally with
+**With [Additional Feature BC][]:**\
+If a pipeline body starts with `new`, followed by a mere identifier, optionally
+with a chain of properties, and with no parentheses or brackets, then that
+identifier is interpreted to be a **bare constructor**.
+
+That is: **if a pipeline** is of the form\
+**_topic_ `|>` `new` _identifier_**\
+or **_topic_ `|>` `new` _identifier0_`.`_identifier1_**\
+or **_topic_ `|>` `new` _identifier0_`.`_identifier1_`.`_identifier2_**\
+or so forth,\
+then the pipeline is a bare constructor call.
+
+**With [Additional Feature BA][]:**\
+If a pipeline body starts with `await`, followed by a mere identifier, optionally with
 a chain of properties, and with no parentheses or brackets, then that identifier
 is interpreted to be a **bare awaited function call**.
 
@@ -6286,31 +6406,23 @@ or **_topic_ `|>` `await` _identifier0_`.`_identifier1_`.`_identifier2_**\
 or so forth,\
 then the pipeline is a bare async function call.
 
-#### Bare constructor call
-If the body starts with `new`, followed by a mere identifier, optionally with a
-chain of properties, and with no parentheses or brackets, then that identifier
-is interpreted to be a **bare constructor**.
-
-That is: **if a pipeline** is of the form\
-**_topic_ `|>` `new` _identifier_**\
-or **_topic_ `|>` `new` _identifier0_`.`_identifier1_**\
-or **_topic_ `|>` `new` _identifier0_`.`_identifier1_`.`_identifier2_**\
-or so forth,\
-then the pipeline is a bare constructor call.
-
 ### Topic style
-**If a pipeline** of the form _topic_ |> _body_ does ***not* match the [bare
-style][]** (that is, it is *not* a bare function call, bare async function call,
-or bare constructor call), then it **must be in topic style**. And topic style
-requires that there be a topic reference in the pipeline body; otherwise it is
-an [early error][].
+The presence or absence of topic tokens (`#`, `##`, `###`) is *not* used in the
+grammar to distinguish topic style from bare style to fulfill the goal of
+[syntactic locality][]. Instead, **if a pipeline** of the form _topic_
+|> _body_ does ***not* match the [bare style][]** (that is, it is *not* a bare
+function call, bare async function call, or bare constructor call), then it
+**must be in topic style**. Topic style **requires** that there be a topic
+reference in the pipeline body; otherwise it is an [early error][].
 
-A topic pipeline body is either:
+A pipeline body that is not in bare style is usually a **topic expression**.
+This is any expression at the [precedence level once tighter than pipeline-level
+expressions][operator precedence] – that is, any conditional-level expression.
 
-* An expression at the [precedence level once tighter than pipeline-level
-  expressions][operator precedence] – that is, a conditional-level expression.
-* A block `{` … `}` containing a list of statements, the last of which is used
-  as the result of the whole pipeline.
+**With [Additional Feature BA][]:**\
+A pipeline body that is a block `{` … `}` containing a list of statements is a
+**topic block**. The last statement in the block is used as the result of the
+whole pipeline, similarly to [`do` expressions][].
 
 ### Practical consequences
 Therefore, a pipeline in **[bare style][] *never*** has **parentheses `(…)` or
@@ -6518,8 +6630,8 @@ promise
 |> doubleSay(#, ', ')
 |> capitalize
 |> # + '!'
-|> new User.Message
-|> await stream.write
+|> new User.Message(#)
+|> await stream.write(#)
 |> console.log;
 ```
 
@@ -6657,7 +6769,8 @@ x = do {
 }
 ```
 
-From a [previous WHATWG Streams example][WHATWG Streams + CP + BP + PF + NP]:
+From a [previous WHATWG Streams example][WHATWG Streams + CP + BP + PF + NP]
+with [Additional Feature BC][]:
 ```js
 x = value
 |> (#, offset, #.byteLength - offset)
@@ -6778,6 +6891,7 @@ The pipeline chain is therefore equivalent to:\
 [`match` expressions]: #pattern-matching
 [`new.target`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target
 [Abstract: Get Topic Environment]: #abstract-get-topic-environment
+[Additional Feature BC]: #additional-feature-bc
 [Additional Feature BP]: #additional-feature-bp
 [Additional Feature FS]: #additional-feature-fs
 [Additional Feature NP]: #additional-feature-np
@@ -6793,9 +6907,9 @@ The pipeline chain is therefore equivalent to:\
 [async pipeline functions]: #additional-feature-pf
 [background]: #background
 [backward compatibility]: #backward-compatibility
-[bare awaited function call]: #bare-awaited-function-call
-[bare constructor call]: #bare-constructor-call
-[bare function call]: #bare-function-call
+[bare awaited function call]: #bare-style
+[bare constructor call]: #bare-style
+[bare function call]: #bare-style
 [bare style]: #bare-style
 [binding]: https://en.wikipedia.org/wiki/Binding_(linguistics)
 [block parameters]: #block-parameters
@@ -6858,6 +6972,8 @@ The pipeline chain is therefore equivalent to:\
 [F# pipe]: https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining
 [first pipeline-operator proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
 [footguns]: https://en.wiktionary.org/wiki/footgun
+[formal BA]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-ba
+[formal BC]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-bc
 [formal BP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-bp
 [formal CP]: https://jschoi.org/18/es-smart-pipelines/spec
 [formal FS]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-fs
