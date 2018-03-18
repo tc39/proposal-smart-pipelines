@@ -1075,8 +1075,9 @@ fetch('https://pk.example/berlin-calling',
   { mode: 'cors' }
 ).then(response => {
   if (response.headers.get('content-type')
-    ??.toLowerCase()
-    .indexOf('application/json') >= 0
+    && response.headers.get('content-type')
+      .toLowerCase()
+      .indexOf('application/json') >= 0
   )
     return response.json();
   else
@@ -1173,9 +1174,9 @@ From [jquery/src/core/access.js][].
 
 ```js
 context
-|> #??.nodeType
-      ? #.ownerDocument || #
-      : document
+|> # && #.nodeType
+  ? #.ownerDocument || #
+  : document
 |> jQuery.parseHTML(match[1], #, true)
 |> jQuery.merge;
 ```
@@ -1186,7 +1187,7 @@ context
 jQuery.merge(
   this, jQuery.parseHTML(
     match[1],
-    context??.nodeType
+    context && context.nodeType
       ? context.ownerDocument
         || context
       : document,
@@ -1194,7 +1195,7 @@ jQuery.merge(
   )
 );
 ```
-From [jquery/src/core/init.js][]. Used `??.` in both versions for conciseness.
+From [jquery/src/core/init.js][].
 
 <tr>
 <td>
@@ -1794,8 +1795,9 @@ fetch('https://pk.example/berlin-calling',
   { mode: 'cors' }
 ).then(response => {
   if (response.headers.get('content-type')
-    ??.toLowerCase()
-    .indexOf('application/json') >= 0
+    && response.headers.get('content-type')
+      .toLowerCase()
+      .indexOf('application/json') >= 0
   )
     return response.json();
   else
@@ -1835,8 +1837,9 @@ fetch('https://pk.example/berlin-calling',
   { mode: 'cors' }
 ).then(response => {
   if (response.headers.get('content-type')
-    ??.toLowerCase()
-    .indexOf('application/json') >= 0
+    && response.headers.get('content-type')
+      .toLowerCase()
+      .indexOf('application/json') >= 0
   )
     return response.json();
   else
