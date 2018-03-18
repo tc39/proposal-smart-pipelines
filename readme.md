@@ -6324,7 +6324,7 @@ without a simple reference: `… |> o.C |> new` 🚫 and `… |> o.af |> await` 
 invalid pipelines. Instead, use either the bare style `… |> new o.C` and
 `… |> await o.af`, or use topic style: `… |> af |> await #`.
 
-With the [Core Proposal only][]:
+With the [Core Proposal][] only:
 
 | Valid [topic style][]   | Valid [bare style][]                     | Invalid pipeline
 | ----------------------- | ---------------------------------------- | --------------------
@@ -6892,6 +6892,7 @@ The pipeline chain is therefore equivalent to:\
 [`match` expressions]: #pattern-matching
 [`new.target`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target
 [Abstract: Get Topic Environment]: #abstract-get-topic-environment
+[Additional Feature BA]: #additional-feature-ba
 [Additional Feature BC]: #additional-feature-bc
 [Additional Feature BP]: #additional-feature-bp
 [Additional Feature FS]: #additional-feature-fs
