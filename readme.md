@@ -1582,12 +1582,12 @@ function castPath (value, object) {
 </table>
 
 ## Additional Feature BC
-An additional feature – **bare constructor calls** – makes unary constructor
-calls terser. It adds a mode to bare style: if a bare-style pipeline body is
-preceded by a `new`, then instead of a function call, it is a constructor call.
-`value |> object.Constructor` is equivalent to `object.Constructor(value)`.
-This is backwards compatible with the [Core Proposal][] as well as all other
-[additional features][].
+An additional feature – **bare constructor calls** – makes constructor calls
+terser. It adds a mode to bare style: if a bare-style pipeline body is preceded
+by a `new`, then instead of a function call, it is a constructor call. `value |>
+object.Constructor` is equivalent to `object.Constructor(value)`. This is
+backwards compatible with the [Core Proposal][] as well as all other [additional
+features][].
 
 [Additional Feature BC is **formally specified in a separate draft
 specification**][formal BC].
@@ -1625,11 +1625,11 @@ console.log(
 </table>
 
 ## Additional Feature BA
-Another additional feature – **bare awaited calls** – makes unary async function
-calls terser. It adds another mode to bare style: if a bare-style pipeline body is
+Another additional feature – **bare awaited calls** – makes async function calls
+terser. It adds another mode to bare style: if a bare-style pipeline body is
 preceded by a `await`, then instead of a mere function call, it is an awaited
-function call. `value |> await object.asyncFunction` is equivalent to
-`await object.asyncFunction(value)`. This is backwards compatible with the [Core
+function call. `value |> await object.asyncFunction` is equivalent to `await
+object.asyncFunction(value)`. This is backwards compatible with the [Core
 Proposal][] as well as all other [additional features][].
 
 [Additional Feature BA is **formally specified in a separate draft
@@ -2296,9 +2296,9 @@ expressions and (with [Additional Feature BP][]) `if` `else` statements, `try`
 statements, and `switch` statements.
 
 (If [Additional Feature PF][] or [Additional Feature NP][] are active, then a
-pipeline might not be unary; it might be variadic, binary, or trinary. In those
-cases, a prefix pipeline’s tacit, default head is whatever topic references
-their pipeline bodies use. See those other two features for more information.)
+pipeline might not have only one pipeline head. In those cases, a prefix
+pipeline’s tacit, default head is whatever topic references their pipeline
+bodies use. See those other two features for more information.)
 
 [Additional Feature PP is **formally specified in a separate draft
 specification**][formal PP].
@@ -2364,7 +2364,7 @@ as the value of their topics.
   console.log(temp);
 }
 ```
-The unary pipeline `|>` still piped in the same tacit topic from the same
+The prefix pipeline `|>` still piped in the same tacit topic from the same
 lexical environment – `x` – into `predicate`, `f`, and `g`. The result is still
 the same as before.
 
@@ -2414,7 +2414,7 @@ if (predicate(x))
 else
   g(x) ** 3;
 ```
-The unary pipeline `|>` still piped in the same tacit topic from the same
+The prefix pipeline `|>` still piped in the same tacit topic from the same
 lexical environment – `x` – into `predicate`, `f`, and `g`. The result is still
 the same as before.
 
