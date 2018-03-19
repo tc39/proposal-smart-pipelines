@@ -1802,6 +1802,30 @@ input
 The same [early error rules][] that apply to any topical pipeline body apply
 also to topical bodies that are `do` expressions.
 
+<tr>
+<td>
+
+As with all other [additional features][], Additional Feature BP is [forward
+compatible][] with the [Core Proposal][]. This compatibility includes pipeline
+bodies that are object literals, which must be parenthesized.
+```js
+input |> f |> { x: #, y: # } |> g;
+input |> f |> { if (#) { x: #, y: # }; } |> g;
+```
+Of course, object literals do not have to be parenthesized inside blocks.
+
+<td>
+
+```j
+
+{
+  const _1 = f(input);
+  let _2;
+  if ($) _2 = { x: $, y: $ };
+  g(_2);
+}
+```
+
 </table>
 
 ### WHATWG Fetch Standard (Core Proposal + Additional Feature BP)
