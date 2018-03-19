@@ -4730,6 +4730,170 @@ possible – such as `value |> compose(f, g, h, i, j, k, #)`. Syntax becomes mor
 locally readable. It becomes easier to reason about code without thinking about
 code elsewhere.
 
+### Semantic clarity
+
+<table>
+<tbody>
+<tr>
+<td colspan=2>
+
+The syntax might be unambiguous, but its semantics can be more difficult to interpret.
+
+<tr>
+<td>
+
+For instance:
+```js
+input |> object.method;
+```
+…may be clear enough.
+
+<td>
+
+It means:
+```js
+object.method(input);
+```
+
+<tr>
+<td>
+
+But:
+```js
+input |> object.method(); 🚫
+```
+…is less clear.
+
+<td>
+
+It could reasonably mean either of these lines:
+```js
+object.method(input);
+object.method()(input);
+```
+
+<tr>
+<td>
+
+Adding other arguments:
+```js
+input |> object.method(x, y); 🚫
+```
+…makes it worse.
+
+<td>
+
+It could reasonably mean any of these lines:
+```js
+object.method(input, x, y);
+object.method(x, y, input);
+object.method(x, y)(input);
+```
+
+<tr>
+<td>
+
+And this is even worse:
+```js
+input |> await object.method(x, y); 🚫
+```
+
+<td>
+
+It could reasonably mean any of these lines:
+```js
+await object.method(input, x, y);
+await object.method(x, y, input);
+await object.method(x, y)(input);
+(await object.method(x, y))(input);
+```
+
+<tr>
+<td colspan=2>
+
+It is undesirable for the human reader to be uncertain which of several
+interpretations, all reasonable, of a pipeline is correct. It is both a
+distracting incidental cognitive burden and a potential source of developer
+error. [The Zen of Python][PEP 20] famously says, “Explicit is better than
+implicit,” for reasons such as these. And it is for these reasons that this
+proposal makes the unclear pipelines above [early errors][].
+
+<tr>
+<td>
+
+This pipeline:
+```js
+input |> object.method;
+```
+…is a valid [bare-style pipeline][bare style]. Bare style is designed to be
+strictly simple: it must either be a simple reference or it is not in bare style.
+
+<td>
+
+```js
+object.method(input);
+```
+
+<tr>
+<td>
+
+This:
+```js
+input |> object.method(); 🚫
+```
+…is an invalid [topic-style pipeline][topic style]. It is in topic style because
+it is not a simple reference; it has parentheses. And it is invalid because it is
+in topic style yet it does not have a topic reference.
+
+<td>
+
+The writing developer is forced by the compiler to clarify their intended
+meaning, using a topic reference:
+```js
+input |> object.method(#);
+input |> object.method()(#);
+```
+The reading developer benefits from explicitness and clarity, without
+sacrificing the benefits of [untangled flow][] that pipelines bring.
+
+<tr>
+<td>
+
+Adding other arguments:
+```js
+input |> object.method(x, y); 🚫
+```
+…is the same. This is an invalid topic-style pipeline.
+
+<td>
+
+The writer must clarify which of these reasonable interpretations is correct:
+```js
+input |> object.method(#, x, y);
+input |> object.method(x, y, #);
+input |> object.method(x, y)(#);
+```
+
+<tr>
+<td>
+
+Invalid topic-style pipeline:
+```js
+input |> await object.method(x, y); 🚫
+```
+
+<td>
+
+Valid topic-style pipelines:
+```js
+input |> await object.method(#, x, y);
+input |> await object.method(x, y, #);
+input |> await object.method(x, y)(#);
+input |> (await object.method(x, y))(#);
+```
+
+</table>
+
 ### Expressive versatility
 JavaScript is a language rich with [expressions of numerous kinds][MDN
 operator precedence], each of which may usefully transform data from one
