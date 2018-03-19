@@ -823,16 +823,20 @@ x = input
 <tr>
 <td>
 
-**Four kinds of blocks cannot** use an **outside context’s topic** in their
-expressions. These are: **non**-arrow function definitions (including those for
-async functions, generators, and async generators), class definitions, `for` and
-`while` statements (but see [Additional Feature FS][]), `catch` clauses (but see
-[Additional Feature TS][]), and `with` statements. (Arrow functions are an
-exception, as further explained below.)
+**Four kinds of statements cannot** use an **outside context’s topic** in their
+expressions. These are:
+
+* `function` definitions (including those for async functions, generators, and
+  async generators; but not arrow functions, as explained above),
+* `class` definitions,
+* `for` and `while` statements (but see [Additional Feature FS][]),
+* `catch` clauses (but see [Additional Feature TS][]), and
+* `with` statements.
 
 This behavior is in order to fulfill the [goals][] of [simple scoping][] and of
 [“don’t shoot me in the foot”][]: it prevents the origin of any topic from being
-difficult to find.
+difficult to find. It also fulfills the goal of [forward compatibility][] with
+future additional features.
 
 ```js
 x = input |> function () { return #; }
@@ -2894,10 +2898,10 @@ g (_1, 1);
 The third Additional Feature – **Pipeline Functions** – introduces a **new
 prefix operator `+> …`**, which creates a new type of function, the **pipeline
 function**. `+> …` interprets its inner expression as a **pipeline body** but
-wraps it in a **unary arrow function**, which plugs its single parameter into
-the pipeline body as if it were a pipeline head. In other words, a pipeline
-function would act as if it were `$ => $ |> …`, where `$` is a [hygienically
-unique variable][lexically hygienic].
+wraps it in an **arrow function**, which plugs its parameter(s) into the
+pipeline body as if it were a pipeline head. In other words, a pipeline function
+would act as if it were `$ => $ |> …`, where `$` is a [hygienically unique
+variable][lexically hygienic].
 
 A pipe function takes **no** a parameter list; its unary parameter is implicitly
 bound to the tacit pipeline head. And just like with regular pipelines, a
