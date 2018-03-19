@@ -672,9 +672,9 @@ f = input
 |> f
 |> (x => # + x);
 ```
-The body of a pipeline in topic style may contain an inner arrow function but no
-other type of block expression. Both versions of this example result in an arrow
-function in a closure on the previous pipeline’s result `input |> f`.
+The body of a pipeline in topic style may contain an inner arrow function. Both
+versions of this example result in an arrow function in a closure on the
+previous pipeline’s result `input |> f`.
 
 <td>
 
