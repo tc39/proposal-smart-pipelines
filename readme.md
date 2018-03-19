@@ -126,10 +126,10 @@ discussions which culminated in an [invitation by Ehrenberg to try writing a
 specification draft][littledan invitation]. A **prototype Babel plugin** will
 also be written soon.
 
-The **Additional Features** are **not part of the Stage-0 Core Proposal**. They
+The **additional features** are **not part of the Stage-0 Core Proposal**. They
 are included to illustrate possible **separate follow-up proposals** for the case
 in which the Core Proposal advances past Stage 1. Together, the Core Proposal
-and the Additional Features demonstrate a **unified vision** of a future in
+and the additional features demonstrate a **unified vision** of a future in
 which composition, partial application, method extraction, and error handling
 are all tersely expressible with the same simple pipeline/topic concept.
 
@@ -145,11 +145,11 @@ issue #91][topic-token bikeshedding].
 
 # Motivation
 This section gives a brief overview of the motivations behind the smart pipeline
-operator’s Core Proposal, as well the Additional Features listed above.
+operator’s Core Proposal, as well the additional features listed above.
 **Examples from real-world libraries** are juxtaposed with their original
 versions. The original versions have been lightly edited (e.g., breaking up
 lines, removing semicolons), in order to fit their horizontal widths into this
-table. **Examples that use Additional Features** are included **only to
+table. **Examples that use additional features** are included **only to
 illustrate** the power of the pipeline/topic concept and are always simply
 **rewritable** into forms that use **only the Core Proposal**.
 
@@ -879,7 +879,7 @@ expressions. These are:
 This behavior is in order to fulfill the [goals][] of [simple scoping][] and of
 [“don’t shoot me in the foot”][]: it prevents the origin of any topic from being
 difficult to find. It also fulfills the goal of [forward compatibility][] with
-future additional features.
+future [additional features][].
 
 ```js
 x = input |> function () { return #; }
@@ -1586,7 +1586,7 @@ calls terser. It adds a mode to bare style: if a bare-style pipeline body is
 preceded by a `new`, then instead of a function call, it is a constructor call.
 `value |> object.Constructor` is equivalent to `object.Constructor(value)`.
 This is backwards compatible with the [Core Proposal][] as well as all other
-Additional Features.
+[additional features][].
 
 [Additional Feature BC is **formally specified in a separate draft
 specification**][formal BC].
@@ -1629,7 +1629,7 @@ calls terser. It adds another mode to bare style: if a bare-style pipeline body 
 preceded by a `await`, then instead of a mere function call, it is an awaited
 function call. `value |> await object.asyncFunction` is equivalent to
 `await object.asyncFunction(value)`. This is backwards compatible with the [Core
-Proposal][] as well as all other Additional Features.
+Proposal][] as well as all other [additional features][].
 
 [Additional Feature BA is **formally specified in a separate draft
 specification**][formal BC].
@@ -3634,7 +3634,7 @@ The [WHATWG Streams Standard][] provides an efficient, standardized stream API,
 inspired by Node.js’s Streams API, but also applicable to the DOM. The
 specification contains numerous usage examples that would become more readable
 with smart pipelines. The Core Proposal alone would untangle much of this code,
-and the Additional Features would further improve its terseness.
+and the additional features would further improve its terseness.
 
 <table>
 <thead>
@@ -5272,7 +5272,7 @@ with [forward compatibility][]).
 
 This proposal’s concept of a **topic reference does not need to be coupled only
 to pipelines**. The topic concept is **generalizable to many syntactic forms**,
-as the [Additional Features][] demonstrate. They together form one unified vision
+as the [additional features][] demonstrate. They together form one unified vision
 of a future in which composition, partial application, method extraction, and
 error handling are all tersely expressible with the same simple concepts.
 
@@ -7141,7 +7141,7 @@ The pipeline chain is therefore equivalent to:\
 [Additional Feature PF]: #additional-feature-pf
 [Additional Feature PP]: #additional-feature-pp
 [Additional Feature TS]: #additional-feature-ts
-[Additional Features]: #smart-pipelines
+[additional features]: #smart-pipelines
 [annevk]: https://github.com/annevk
 [antecedent]: https://en.wikipedia.org/wiki/Antecedent_(grammar)
 [arbitrary associativity]: #arbitrary-associativity
