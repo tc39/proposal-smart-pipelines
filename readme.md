@@ -2289,9 +2289,16 @@ function castPath (value, object) {
 The next additional feature – **Prefix Pipelines** – adds a “headless” tacit
 prefix form of the pipeline operator. The tacit, default head is the topic
 reference `#` itself, which must be resolvable within the outer lexical
-environment. This feature is especially useful in ternary-conditional `?` `:`
+environment.
+
+This feature is especially useful in ternary-conditional `?` `:`
 expressions and (with [Additional Feature BP][]) `if` `else` statements, `try`
 statements, and `switch` statements.
+
+(If [Additional Feature PF][] or [Additional Feature NP][] are active, then a
+pipeline might not be unary; it might be variadic, binary, or trinary. In those
+cases, a prefix pipeline’s tacit, default head is whatever topic references
+their pipeline bodies use. See those other two features for more information.)
 
 [Additional Feature PP is **formally specified in a separate draft
 specification**][formal PP].
