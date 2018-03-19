@@ -683,11 +683,12 @@ g([0, 1, 2, ...f(input)])
 <td>
 
 The body of a pipeline in topic style may also contain object literals. However,
-they must be parenthesized in order to fulfill the goal of [forward
-compatibility][] with [Additional Feature BP][], which introduces block pipeline
-bodies. This is similar to how arrow functions distinguish between object
-literals and blocks. (It is expected that block pipelines would eventually be
-much more common than pipelines with object literals.)
+pipeline bodies that are entirely object literals must be parenthesized. This is
+in order to fulfill the goal of [forward compatibility][] with [Additional
+Feature BP][], which introduces block pipeline bodies. It is similar to how
+arrow functions distinguish between object literals and blocks. (It is expected
+that block pipelines would eventually be much more common than pipelines with
+object literals.)
 ```js
 input |> f |> { x: #, y: # } |> g
 ```
