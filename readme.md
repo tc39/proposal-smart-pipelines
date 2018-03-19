@@ -5428,11 +5428,11 @@ Proposal][] and [static analyzability][]). The proposal is as a whole designed
 to [prevent footguns][“don’t shoot me in the foot”].
 
 The topic is [conceptually general][conceptual generality] and could be extended
-to other forms. This proposal is [forward compatible][forward compatibility]
-with such extensions, which would increase its [expressive versatility][], and
-potentially multiplying its benefits toward [untangled flow][], [terse
-variables][], and [human writability][], while still preserving [simple
-scoping][] and [static analyzability][].
+to other forms. This proposal is [forward compatible][] with such extensions,
+which would increase its [expressive versatility][], and potentially multiplying
+its benefits toward [untangled flow][], [terse variables][], and [human
+writability][], while still preserving [simple scoping][] and [static
+analyzability][].
 
 ## `do` expressions
 There is a TC39 proposal for [`do` expressions][] at Stage 1. Smart pipelines do
@@ -7226,6 +7226,7 @@ The pipeline chain is therefore equivalent to:\
 [formal pipeline specification]: https://jschoi.org/18/es-smart-pipelines/spec
 [formal PP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pp
 [formal TS]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-ts
+[forward compatible]: #forward-compatibility
 [forward compatibility]: #forward-compatibility
 [function bind operator `::`]: #function-bind-operator
 [function binding]: #function-binding
