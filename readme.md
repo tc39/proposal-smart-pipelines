@@ -4811,11 +4811,11 @@ await object.method(x, y)(input);
 <tr>
 <td colspan=2>
 
-It is undesirable for the human reader to be uncertain which of several
-interpretations, all reasonable, of a pipeline is correct. It is both a
-distracting incidental cognitive burden and a potential source of developer
-error. [The Zen of Python][PEP 20] famously says, “Explicit is better than
-implicit,” for reasons such as these. And it is for these reasons that this
+It is undesirable for the human reader to be uncertain which of multiple
+interpretations of a pipeline – all which are reasonable – is correct. It is
+both a distracting incidental cognitive burden and a potential source of
+developer error. [The Zen of Python][PEP 20] famously says, “Explicit is better
+than implicit,” for reasons such as these. And it is for these reasons that this
 proposal makes the unclear pipelines above [early errors][].
 
 <tr>
