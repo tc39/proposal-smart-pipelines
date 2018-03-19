@@ -4526,7 +4526,7 @@ for await (const c of stream) {
 
 # Goals
 
-There are seventeen ordered goals that the smart body syntax tries to fulfill,
+There are eighteen ordered goals that the smart body syntax tries to fulfill,
 which may be summarized,\
 “Don’t break my code,”\
 “Don’t make me overthink,”\
