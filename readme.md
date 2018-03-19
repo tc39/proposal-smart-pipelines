@@ -668,7 +668,7 @@ requires editing the variable names in the following step.
 <td>
 
 ```js
-input |> f |> [0, 1, 2, ...#] |> g
+input |> f |> [0, 1, 2, ...#] |> g;
 ```
 The body of a pipeline in topic style may contain array literals. These may be
 flattened, just like any other sort of expression.
@@ -676,7 +676,7 @@ flattened, just like any other sort of expression.
 <td>
 
 ```js
-g([0, 1, 2, ...f(input)])
+g([0, 1, 2, ...f(input)]);
 ```
 
 <tr>
@@ -690,10 +690,10 @@ arrow functions distinguish between object literals and blocks. (It is expected
 that block pipelines would eventually be much more common than pipelines with
 object literals.)
 ```js
-input |> f |> { x: #, y: # } |> g
+input |> f |> { x: #, y: # } |> g;
 ```
 ```js
-input |> f |> { x: #, y: # } |> g
+input |> f |> { x: #, y: # } |> g;
 // 🚫 Syntax Error:
 // Unexpected token `{`.
 // Cannot parse base expression.
@@ -800,7 +800,7 @@ of its steps’ bodies, then the arrow-function expression must be parenthesized
 the pipeline operator.) The example above is being parsed as if it were:
 ```js
 (input |> f |> ()) =>
-  (# * 5 |> settimeout |> processIntervalID)
+  (# * 5 |> settimeout |> processIntervalID);
 // 🚫 Syntax Error:
 // Unexpected token `=>`.
 // Cannot parse base expression.
@@ -883,7 +883,7 @@ difficult to find. It also fulfills the goal of [forward compatibility][] with
 future [additional features][].
 
 ```js
-x = input |> function () { return #; }
+x = input |> function () { return #; };
 // 🚫 Syntax Error:
 // Lexical context `function () { return #; }`
 // contains a topic reference
@@ -898,7 +898,7 @@ x = input |> function () { return #; }
 <td>
 
 ```js
-x = input |> class { m: () { return #; } }
+x = input |> class { m: () { return #; } };
 // 🚫 Syntax Error:
 // Pipeline body `|> class { … }`
 // binds topic but contains no topic reference.
@@ -1794,7 +1794,7 @@ input
   else
     x - 10;
 }
-|> g
+|> g;
 // 🚫 Syntax Error:
 // Pipeline body `|> { if (…) … else … }`
 // binds topic but contains no topic reference.
@@ -2876,7 +2876,7 @@ value
     #.message |> capitalize;
   }
 }
-|> g(#, 1)
+|> g(#, 1);
 // 🚫 Syntax Error:
 // Lexical context `catch { … }`
 // contains a topic reference
@@ -2899,7 +2899,7 @@ value
     #.message |> capitalize;
   }
 }
-|> g(#, 1)
+|> g(#, 1);
 // 🚫 Syntax Error:
 // Lexical context `catch { … }`
 // contains a topic reference
@@ -3077,7 +3077,7 @@ array.map($ => h(g(f($))) * 2);
 <td>
 
 ```js
-+> x + 2
++> x + 2;
 // 🚫 Syntax Error:
 // Pipeline body `+> x + 2`
 // binds topic but contains no topic reference.
@@ -3092,7 +3092,7 @@ in the pipeline function’s body – just like with `… |> x + 2`.
 <td>
 
 ```js
-=> # + 2
+=> # + 2;
 // 🚫 Syntax Error:
 // Unexpected token `=>`.
 ```
@@ -3106,7 +3106,7 @@ expects to always have a parameter antecedent as its head.
 <td>
 
 ```js
-() => # + 2
+() => # + 2;
 // 🚫 Syntax Error:
 // Lexical context `() => # + 2`
 // contains a topic reference
@@ -4096,10 +4096,10 @@ number
 <td>
 
 ```js
-input |> f |> [0, 1, 2, ...#] |> g
+input |> f |> [0, 1, 2, ...#] |> g;
 ```
 ```js
-input |> f |> ...# |> [0, 1, 2, ...] |> g
+input |> f |> ...# |> [0, 1, 2, ...] |> g;
 ```
 This is an adapted example from the [Core Proposal section][Core Proposal]
 above. It is equivalent to the original example; it is shown only for
@@ -4108,7 +4108,7 @@ illustrative purposes.
 <td>
 
 ```js
-g([0, 1, 2, ...f(input)])
+g([0, 1, 2, ...f(input)]);
 ```
 ```js
 {
@@ -6012,7 +6012,7 @@ value
     #.message |> console.error;
   }
 }
-|> g(#, 1)
+|> g(#, 1);
 // 🚫 Syntax Error:
 // Lexical context `catch { … }`
 // contains a topic reference
@@ -6046,11 +6046,11 @@ boon to the proposal for [ECMAScript pattern matching][].
 |> f
 |> match (#) {
   100:
-    #;
+    #,
   Array:
-    #.length;
+    #.length,
   /(\d)(\d)(\d)/:
-    #.groups |> #[0] + #[1] + #[2];
+    #.groups |> #[0] + #[1] + #[2],
 }
 ```
 The `match` expression would **bind the topic reference** within the scope of a
@@ -6062,11 +6062,11 @@ result** of the successful **`Symbol.matches`** call.
 ```js
 match (f(…)) {
   100:
-    x;
+    x,
   Array -> a:
-    x.length;
+    x.length,
   /(\d)(\d)(\d)/ -> m:
-    m.groups |> #[0] + #[1] + #[2];
+    m.groups |> #[0] + #[1] + #[2],
 }
 ```
 With a topic binding, the `-> a` and `-> m` bindings would be unnecessary.
@@ -6080,11 +6080,11 @@ With a topic binding, the `-> a` and `-> m` bindings would be unnecessary.
 |> match {
   { x, y }:
     (x ** 2 + y ** 2)
-    |> Math.sqrt;
+    |> Math.sqrt,
   [...]:
-    #.length;
+    #.length,
   else:
-    throw new Error(#);
+    throw new Error(#),
 }
 ```
 [ECMAScript pattern matching][] could also have a **completely tacit version**,
@@ -6097,12 +6097,11 @@ omitted in favor of tacitly using the outer context’s topic.
 match (f(…)) {
   { x, y }:
     (x ** 2 + y ** 2)
-    |> Math.sqrt;
+    |> Math.sqrt,
   [...] -> a:
-    a.length;
+    a.length,
   else:
-    throw new Error(vector);
-  }
+    throw new Error(vector),
 }
 ```
 
@@ -6114,11 +6113,11 @@ try { … }
 catch
 |> match {
   SyntaxError:
-  |> f;
+  |> f,
   TypeError:
-  |> g |> h(#, {strict: true});
+  |> g |> h(#, {strict: true}),
   Error:
-  |> throw #;
+  |> throw #,
 };
 ```
 With ECMAScript pattern matching + the [Core Proposal][] + [Additional
@@ -6132,11 +6131,11 @@ try { … }
 catch (error) {
   match (error) {
     SyntaxError:
-      f(error)
+      f(error),
     TypeError:
-      h(g(error), {strict: true})
+      h(g(error), {strict: true}),
     Error:
-      throw error
+      throw error,
   };
 }
 ```
@@ -6330,25 +6329,26 @@ export function select (value, block) {
   return block(topic)
   |> match {
     CompletionRecord:
-      #.value;
+      #.value,
     else:
       throw 'Invalid clause was used in select block'
-      |> new Error;
+      |> new Error,
   };
 }
 
 export function otherwise (block) {
   return function.topic
   |> match (selectBlockTopic) {
-    CompletionRecord:
+    CompletionRecord: {
       if (#.type === undefined) {
         #.type = 'normal';
         #.value = {};
       }
       #;
+    },
     else:
       throw 'Invalid otherwise clause was used outside select block'
-      |> new Error;
+      |> new Error,
   };
 }
 
@@ -6356,10 +6356,10 @@ export function when (caseValue, block) {
   return function.topic
   |> match (selectBlockTopic) {
     CompletionRecord:
-    |> applyWhen(#, caseValue, block);
+    |> applyWhen(#, caseValue, block),
     else:
       throw 'Invalid when clause used was outside select block'
-      |> new Error;
+      |> new Error,
   };
 }
 
@@ -6367,10 +6367,10 @@ function applyWhen (selectBlockTopic, caseValue, block) {
   return match (#.value) {
     [...]:
       (selectBlockTopic, caseValue, block)
-      |> applyWhenArray;
+      |> applyWhenArray,
     else:
       (selectBlockTopic, caseValue, block)
-      |> applyWhenValue;
+      |> applyWhenValue,
   }
 }
 
