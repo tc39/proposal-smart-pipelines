@@ -575,6 +575,11 @@ object.method(input, x, y);
 object.method(x, y, input);
 object.method(x, y)(input);
 ```
+Both inserting the input as the first argument and inserting it as the last
+argument are reasonable interpretations, as evidenced by how [other programming
+languages’ pipeline operators variously do either][topic references in other
+programming languages]. Or it could be a factory method that creates a function
+that is in turn to be called with a unary input argument.
 
 <tr>
 <td>
@@ -5466,6 +5471,11 @@ input |> object.method(#, x, y);
 input |> object.method(x, y, #);
 input |> object.method(x, y)(#);
 ```
+Both inserting the input as the first argument and inserting it as the last
+argument are reasonable interpretations, as evidenced by how [other programming
+languages’ pipeline operators variously do either][topic references in other
+programming languages]. Or it could be a factory method that creates a function
+that is in turn to be called with a unary input argument.
 
 <tr>
 <td>
@@ -5845,6 +5855,10 @@ find the concept useful.
 
 <td>
 
+tacit only parameter
+
+<td>
+
 [Unix shells, PowerShell][Unix pipe]
 
 <tr>
@@ -5854,13 +5868,46 @@ find the concept useful.
 
 <td>
 
-[Elixir and Erlang][Elixir pipe], [Elm][Elm pipe], [F# / F-sharp][F# pipe],
-[Hack][Hack pipe], [Julia][Julia pipe], [LiveScript][LiveScript pipe], [OCaml][OCaml pipe],
+tacit first parameter
+
+<td>
+
+[Elixir and Erlang][Elixir pipe], [Julia][Julia pipe], [LiveScript][LiveScript pipe]
 
 <tr>
 <th>
 
-`|>` with `$$`
+`|>`
+
+<td>
+
+tacit last parameter
+
+<td>
+
+[Elm][Elm pipe], [OCaml][OCaml pipe]
+
+<tr>
+<th>
+
+`|>`
+
+<td>
+
+tacit only parameter
+
+<td>
+
+[Julia][Julia pipe], [F# / F-sharp][F# pipe]
+
+<tr>
+<th>
+
+`|>`
+
+<td>
+
+`$$` placeholder
 
 <td>
 
@@ -5873,12 +5920,20 @@ find the concept useful.
 
 <td>
 
+tacit first parameter or `.` placeholder
+
+<td>
+
 [R with magrittr][R pipe]
 
 <tr>
 <th>
 
 `==>`
+
+<td>
+
+tacit last parameter
 
 <td>
 
@@ -5894,12 +5949,20 @@ find the concept useful.
 
 <td>
 
+tacit first or last parameters or arbitrary placeholder
+
+<td>
+
 [Clojure][Clojure pipe]
 
 <tr>
 <th>
 
 [Term concatenation][concatenative programming]
+
+<td>
+
+tacit only parameter
 
 <td>
 
@@ -7725,7 +7788,7 @@ The pipeline chain is therefore equivalent to:\
 [ECMAScript Property Accessors, § RS: Evaluation]: https://tc39.github.io/ecma262/#sec-property-accessors-runtime-semantics-evaluation
 [ECMAScript Punctuators]: https://tc39.github.io/ecma262/#sec-punctuators
 [ECMAScript static semantic rules]: https://tc39.github.io/ecma262/#sec-static-semantic-rules
-[Elixir pipe]: https://elixir-lang.org/getting-started/enumerables-and-streams.html
+[Elixir pipe]: https://hexdocs.pm/elixir/Kernel.html#%7C%3E/2
 [Elm pipe]: http://elm-lang.org/docs/syntax#infix-operators
 [essential complexity]: https://en.wikipedia.org/wiki/Essential_complexity
 [examples]: #examples
@@ -7756,7 +7819,7 @@ The pipeline chain is therefore equivalent to:\
 [GitHub issue tracker]: https://github.com/tc39/proposal-pipeline-operator/issues
 [goals]: #goals
 [grammar parameters]: #grammar-parameters
-[Hack pipe]: https://docs.hhvm.com/hack/operators/pipeline-operator
+[Hack pipe]: https://docs.hhvm.com/hack/operators/pipe-operator
 [Huffman coding]: https://en.wikipedia.org/wiki/Huffman_coding
 [human writability]: #human-writability
 [i-am-tom functional composition]: https://github.com/fantasyland/ECMAScript-proposals/issues/1#issuecomment-306243513
@@ -7820,7 +7883,7 @@ The pipeline chain is therefore equivalent to:\
 [primary topic]: #core-proposal
 [private class fields]: https://github.com/tc39/proposal-class-fields/
 [pure functions]: https://en.wikipedia.org/wiki/Pure_function
-[R pipe]: https://cran.r-project.org/web/packages/magrittr/index.html
+[R pipe]: https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html
 [Ramda + CP + BP + PF + NP]: #ramda-core-proposal--additional-features-bppfmt
 [Ramda + CP + BP + PF]: #ramda-core-proposal--additional-feature-bppf
 [Ramda wiki cookbook]: https://github.com/ramda/ramda/wiki/Cookbook
