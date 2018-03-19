@@ -1582,7 +1582,7 @@ function castPath (value, object) {
 </table>
 
 ## Additional Feature BC
-An Additional Feature – **bare constructor calls** – makes unary constructor
+An additional feature – **bare constructor calls** – makes unary constructor
 calls terser. It adds a mode to bare style: if a bare-style pipeline body is
 preceded by a `new`, then instead of a function call, it is a constructor call.
 `value |> object.Constructor` is equivalent to `object.Constructor(value)`.
@@ -1625,7 +1625,7 @@ console.log(
 </table>
 
 ## Additional Feature BA
-Another Additional Feature – **bare awaited calls** – makes unary async function
+Another additional feature – **bare awaited calls** – makes unary async function
 calls terser. It adds another mode to bare style: if a bare-style pipeline body is
 preceded by a `await`, then instead of a mere function call, it is an awaited
 function call. `value |> await object.asyncFunction` is equivalent to
@@ -1686,7 +1686,7 @@ They may be made even pithier with [Additional Feature BP][], explained later.
 
 [`do` expressions][] as [topic-style][topic style] pipeline bodies might be so
 useful, in fact, that it might be worth building them into the pipeline operator
-`|>` itself as an add-on feature. This Additional Feature – **block pipelines**
+`|>` itself as an add-on feature. This additional feature – **block pipelines**
 – adds an additional [topic-style pipeline body syntax][smart body syntax],
 using blocks to stand for `do` expressions.
 
@@ -2286,7 +2286,7 @@ function castPath (value, object) {
 </table>
 
 ## Additional Feature PP
-The next Additional Feature – **Prefix Pipelines** – adds a “headless” tacit
+The next additional feature – **Prefix Pipelines** – adds a “headless” tacit
 prefix form of the pipeline operator. The tacit, default head is the topic
 reference `#` itself, which must be resolvable within the outer lexical
 environment. This feature is especially useful in ternary-conditional `?` `:`
@@ -2707,7 +2707,7 @@ prohibit the use of the topic reference within their bodies, except where the
 topic reference `#` is inside an inner pipeline inside the `catch` clause: this
 is one of the Core Proposal’s [early errors][] mentioned above.
 
-The next Additional Feature – **Pipeline `try` Statements** – adds new forms of
+The next additional feature – **Pipeline `try` Statements** – adds new forms of
 the `try` statement, the `catch` clause, and the `finally` clause, in the form
 of `try |> …`, `catch |> …`, and `finally |> …`, each followed by a [pipeline
 body with the same smart body syntax][smart body syntax].
@@ -3060,7 +3060,7 @@ array.map($ => $ + 2);
 <td>
 
 ```js
-```
+array.map(+> f |> # + 2);
 ```
 This pipeline function starts in **bare mode**. This means it is a variadic function.
 (As an aside, with [Additional Feature NP][], this would also be expressible as:
