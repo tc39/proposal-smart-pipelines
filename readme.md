@@ -472,10 +472,10 @@ indentation of any previous steps’ lines.
 ```js
 input |> x + 50 |> f |> g(x, 2);
 // 🚫 Syntax Error:
-// Pipeline body `|> x + 50`
+// Topic-style pipeline body `|> x + 50`
 // binds topic but contains no topic reference.
 // 🚫 Syntax Error:
-// Pipeline body `|> g(x, 2)`
+// Topic-style pipeline body `|> g(x, 2)`
 // binds topic but contains no topic reference.
 ```
 In order to fulfill the [goal][goals] of [“don’t shoot me in the foot”][],
@@ -486,6 +486,147 @@ body `|> f` is *not* an error. The [bare style][] is not supposed to contain any
 topic references `#`.)
 
 <td>
+
+<tr>
+<td>
+
+For instance, this code may be clear enough:
+```js
+input |> object.method;
+```
+It is a valid [bare-style pipeline][bare style]. Bare style is designed to be
+strictly simple: it must either be a simple reference or it is not in bare style.
+
+<td>
+
+It means:
+```js
+object.method(input);
+```
+
+<tr>
+<td>
+
+But this code would be less clear. That is why it is an [early Syntax
+Error][early errors]:
+```js
+input |> object.method();
+// 🚫 Syntax Error:
+// Topic-style pipeline body `|> object.method()`
+// binds topic but contains no topic reference.
+```
+It is an invalid [topic-style pipeline][topic style]. It is in topic style
+because it is not a simple reference; it has parentheses. And it is invalid
+because it is in topic style yet it does not have a topic reference.
+
+<td>
+
+Had that code not been an error, it could reasonably mean either of these lines:
+```js
+object.method(input);
+object.method()(input);
+```
+
+<tr>
+<td>
+
+Instead, the developer must clarify what they mean, using a topic reference,
+into either of these two valid topic-style pipelines:
+```js
+input |> object.method(#);
+input |> object.method()(#);
+```
+The reading developer benefits from explicitness and clarity, without
+sacrificing the benefits of [untangled flow][] that pipelines bring.
+
+<td>
+
+```js
+object.method(input);
+object.method()(input);
+```
+
+<tr>
+<td>
+
+Adding other arguments:
+```js
+input |> object.method(x, y);
+// 🚫 Syntax Error:
+// Topic-style pipeline body `|> object.method(x, y)`
+// binds topic but contains no topic reference.
+```
+…would make this problem of semantic ambiguity worse. But the reader is
+protected from this ambiguity by the same early error.
+
+<td>
+
+That code could have any of these reasonable interpretations:
+```js
+object.method(input, x, y);
+object.method(x, y, input);
+object.method(x, y)(input);
+```
+
+<tr>
+<td>
+
+The writer must clarify which of these reasonable interpretations is correct:
+```js
+input |> object.method(#, x, y);
+input |> object.method(x, y, #);
+input |> object.method(x, y)(#);
+```
+
+<td>
+
+```js
+object.method(input, x, y);
+object.method(x, y, input);
+object.method(x, y)(input);
+```
+
+<tr>
+<td>
+
+And this example’s ambiguity would be even worse:
+```js
+input |> await object.method(x, y);
+// 🚫 Syntax Error:
+// Topic-style pipeline body `|> await object.method(x, y)`
+// binds topic but contains no topic reference.
+```
+…were it not an invalid topic-style pipeline.
+
+<td>
+
+It could reasonably mean any of these lines:
+```js
+await object.method(input, x, y);
+await object.method(x, y, input);
+await object.method(x, y)(input);
+(await object.method(x, y))(input);
+```
+
+<tr>
+<td>
+
+So the developer must clarify their intent using one of these lines:
+```js
+input |> await object.method(#, x, y);
+input |> await object.method(x, y, #);
+input |> await object.method(x, y)(#);
+input |> (await object.method(x, y))(#);
+```
+
+<td>
+
+```js
+await object.method(input, x, y);
+await object.method(x, y, input);
+await object.method(x, y)(input);
+(await object.method(x, y))(input);
+```
 
 <tr>
 <td>
