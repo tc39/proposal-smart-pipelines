@@ -154,7 +154,7 @@ illustrate** the power of the pipeline/topic concept and are always simply
 **rewritable** into forms that use **only the Core Proposal**.
 
 ## Core Proposal
-The Core Proposal is [**formally specified in a separate draft
+The Core Proposal is [**formally specified in in the draft
 specification**][formal CP].
 
 <table>
@@ -1730,7 +1730,7 @@ object.Constructor` is equivalent to `object.Constructor(value)`. This is
 backwards compatible with the [Core Proposal][] as well as all other [additional
 features][].
 
-[Additional Feature BC is **formally specified in a separate draft
+[Additional Feature BC is **formally specified in in the draft
 specification**][formal BC].
 
 <table>
@@ -1773,7 +1773,7 @@ function call. `value |> await object.asyncFunction` is equivalent to `await
 object.asyncFunction(value)`. This is backwards compatible with the [Core
 Proposal][] as well as all other [additional features][].
 
-[Additional Feature BA is **formally specified in a separate draft
+[Additional Feature BA is **formally specified in in the draft
 specification**][formal BC].
 
 <table>
@@ -1831,7 +1831,7 @@ useful, in fact, that it might be worth building them into the pipeline operator
 – adds an additional [topic-style pipeline body syntax][smart body syntax],
 using blocks to stand for `do` expressions.
 
-[Additional Feature BP is **formally specified in a separate draft
+[Additional Feature BP is **formally specified in in the draft
 specification**][formal BP].
 
 <table>
@@ -2441,7 +2441,7 @@ pipeline might not have only one pipeline head. In those cases, a prefix
 pipeline’s tacit, default head is whatever topic references their pipeline
 bodies use. See those other two features for more information.)
 
-[Additional Feature PP is **formally specified in a separate draft
+[Additional Feature PP is **formally specified in in the draft
 specification**][formal PP].
 
 <table>
@@ -2888,7 +2888,7 @@ In addition, a bare `catch` form, completely lacking a parenthesized antecedent,
 has already been proposed as [optional `catch` binding][]. This bare form is
 mutually compatible with Additional Feature TS.
 
-[Additional Feature TS is **formally specified in a separate draft
+[Additional Feature TS is **formally specified in in the draft
 specification**][formal TS].
 
 <table>
@@ -3157,7 +3157,7 @@ appearance of the pipeline-function operator does not have to be `+>`. It could
 also be `~>`, `->`, `=|`, `=|>` or something else to be decided after future
 bikeshedding discussion.
 
-[Additional Feature PF is **formally specified in a separate draft
+[Additional Feature PF is **formally specified in in the draft
 specification**][formal PF].
 
 <table>
@@ -3968,7 +3968,7 @@ The precise appearances of the secondary, tertiary, and rest topic references do
 not have to be `##`, `###`, and `...`. For instance, they could instead be `#1`,
 `#2`, and `#...`; this is yet to be bikeshedded.
 
-[Additional Feature NP is **formally specified in a separate draft
+[Additional Feature NP is **formally specified in in the draft
 specification**][formal NP].
 
 <table>
@@ -5015,7 +5015,7 @@ the `for` loop. But this could be changed afterward with Additional Feature FS 
 values, which in turn would make `for` loops terser, emphasizing what happens to
 each item rather than the items’ variables themselves.
 
-[Additional Feature FS is **formally specified in a separate draft
+[Additional Feature FS is **formally specified in in the draft
 specification**][formal FS].
 
 <table>
