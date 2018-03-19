@@ -4080,7 +4080,6 @@ number
 |> ...createRange
 |> [#, ###, ...];
 ```
-As a result of these rules, `|> ... |>` collects the previous
 
 <td>
 
