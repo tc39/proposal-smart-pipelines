@@ -2963,29 +2963,46 @@ g (_1, 1);
 </table>
 
 ## Additional Feature PF
-The third Additional Feature – **Pipeline Functions** – introduces a **new
-prefix operator `+> …`**, which creates a new type of function, the **pipeline
-function**. `+> …` interprets its inner expression as a **pipeline body** but
-wraps it in an **arrow function**, which plugs its parameter(s) into the
-pipeline body as if it were a pipeline head. In other words, a pipeline function
-would act as if it were `$ => $ |> …`, where `$` is a [hygienically unique
-variable][lexically hygienic].
-
-A pipe function takes **no** a parameter list; its unary parameter is implicitly
-bound to the tacit pipeline head. And just like with regular pipelines, a
-pipeline function may be in **[bare style][] or [topic style][]**.
-
-**More than any other** possible extension in this table, pipeline functions would
-dramatically increase the potential of tacit programming. Just this single
-additional operator seems to solve\
+**More than any other** possible extension in this table, this additional
+feature – **Pipeline Functions** – would dramatically increase the usefulness of
+pipelines. It introduces just one additional operator that solves:\
 tacit unary **functional composition**,\
 tacit unary functional **partial application**,\
 and tacit **method extraction**,\
-…all with a single additional concept.
+…all at the same time.
 
-With [Additional Feature NP][], this versatility would also solve\
+And with [Additional Feature NP][], this additional feature would *also* solve\
 tacit **N-ary** functional partial application\
 and **N-ary** functional composition.
+
+The new operator is a **prefix operator `+> …`**, which creates **pipeline
+functions**, which are just **arrow functions**. `+> …` interprets its inner
+expression as a **pipeline body** but wraps it in an arrow function that applies
+its pipeline body to its arguments.
+
+A pipe function takes **no** a parameter list; no such list is needed.
+Just like with regular pipelines, a pipeline function may be in **[bare style][]
+or [topic style][]**.
+
+If the pipeline function starts with [bare style][] (like `+> f |> # + 1`), then
+the function is **variadic** and applies **all** its arguments to the function
+reference to which the bare-style body evaluates (that is,
+`(...$) => f(...$) + 1`), where `$` is a [hygienically unique
+variable][lexically hygienic]. (This is [forward compatible][] with [Additional
+Feature NP][].)
+
+If the pipeline function starts with [topic style][] (like `+> # + 1 |> # + 1`),
+then the function is unary and applies its first argument (that is,
+`$ => # + 1`, where `$` is a hygienically unique variable).
+
+As an aside, topic style can also handle multiple parameters with [Additional
+Feature NP][], such that `+> # + ##` would be a binary arrow function equivalent
+to `($, $$) => $ + $$`, and `+> [...].length` would be a variadic arrow function
+equivalent to `(...$rest) => [...$rest].length` – where `$`, `$$`, and `$rest`
+are all [hygienically unique variables][lexically hygienic].
+
+In general, Additional Feature NP would explain “`+>` _PipelineExpression_” as
+equivalent to “`(...$rest) => ...$rest |>` _PipelineExpression_”.
 
 `+>` was chosen because of its similarity both to `|>` and to `=>`. The precise
 appearance of the pipeline-function operator does not have to be `+>`. It could
@@ -3043,58 +3060,52 @@ array.map($ => $ + 2);
 <td>
 
 ```js
-array.map($ => $ |> f);
 ```
-```js
-array.map(+> f);
 ```
-These functions are also the same as each other. However, their pipelines
-are in **bare mode**, so no topic reference is needed in their bodies.
+This pipeline function starts in **bare mode**. This means it is a variadic function.
+(As an aside, with [Additional Feature NP][], this would also be expressible as:
+`array.map((...$) => ...$ |> f |> # + 2)`.)
 
 <td>
 
 ```js
-array.map($ => f($));
+array.map((...$) => f(...$));
 ```
 
 <tr>
 <td>
 
-```js
-array.map($ => $ |> f |> g |> h |> # * 2);
-```
+Pipelines may be chained within a pipeline function.
 ```js
 array.map(+> f |> g |> h |> # * 2);
 ```
-Pipelines may be chained within a pipeline function. The prefix
-pipeline-function operator `+>` would have looser precedence than the infix
+The prefix pipeline-function operator `+>` has looser precedence than the infix
 pipeline operator `|>`.
 
 <td>
 
 ```js
-array.map($ => h(g(f($))) * 2);
+array.map((...$) => h(g(f(...$))) * 2);
 ```
 
 <tr>
 <td>
 
-```js
-array.map(+> f |> g |> h |> # * 2);
-array.map(+> |> f |> g |> h |> # * 2);
-array.map(+> # |> f |> g |> h |> # * 2);
-array.map($ => $ |> # |> f |> g |> h |> # * 2);
-array.map($ => $ |> f |> g |> h |> # * 2);
-```
 When coupled with [Additional Feature PP][], the phrase `+> |>` (that is, the
 prefix pipeline-function operator `+>` immediately followed by the prefix
 pipeline operator `|>`) cancels out into simply the prefix pipeline-function
-operator `+>`. All five of these expressions here are equivalent.
+operator `+>`.
+```js
+array.map(+> f |> g |> h |> # * 2);
+array.map(+> |> f |> g |> h |> # * 2);
+```
+Both of these expressions here are equivalent, both for bare style and topic style,
+and with or without [Additional Feature NP][].
 
 <td>
 
 ```js
-array.map($ => h(g(f($))) * 2);
+array.map((...$) => h(g(f(...$))) * 2);
 ```
 
 <tr>
@@ -3159,7 +3170,7 @@ which no current proposal yet addresses.
 <td>
 
 ```js
-array.map($ => h(2, g(f($))) + 2);
+array.map((...$) => h(2, g(f(...$))) + 2);
 ```
 
 <tr>
@@ -3432,8 +3443,7 @@ Meadows][isiahmeadows functional composition].
 
 **Method extraction** can be addressed by pipeline functions alone, as a natural
 result of their pipeline-operator-like semantics.\
-`+> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
-[bare style][]. This in turn is `$ => console.log($)`…
+`+> console.log` is equivalent to `(...$) => console.log(...$)`…
 ```js
 Promise.resolve(123)
   .then(+> console.log);
@@ -3441,7 +3451,7 @@ Promise.resolve(123)
 
 <td>
 
-…and `$ => console.log($)` is equivalent to `console.log.bind(console)`.
+…and `(...$) => console.log(...$)` is equivalent to `console.log.bind(console)`.
 ```js
 Promise.resolve(123)
   .then(console.log.bind(console));
@@ -3694,17 +3704,17 @@ class LipFuzzTransformer {
         +> this.replaceTag)
     |> partialAtEndRegexp.exec
     |> {
-        if (#) {
-          this.partialChunk =
-          |> #.index
-          |> chunk.substring;
-          #
-          |> #.index
-          |> chunk.substring(0, #);
-        }
-        else
-          chunk;
+      if (#) {
+        this.partialChunk =
+        |> #.index
+        |> chunk.substring;
+        #
+        |> #.index
+        |> chunk.substring(0, #);
       }
+      else
+        chunk;
+    }
     |> controller.enqueue;
   }
 
@@ -3796,6 +3806,11 @@ enables both **n-ary application** and **n-ary partial application**.
 This is somewhat akin to [Clojure’s compact anonymous functions][Clojure compact
 function], which use `%` aka `%1`, then `%2`, `%3`, … for its parameters within
 the compact functions’ bodies.
+
+When combined with [Additional Feature PF][], Additional Feature NP would
+complete the subsumption of partial function application, addressing all its use
+cases, including using partial application to create new binary, trinary, and
+variadic functions.
 
 This explainer limits this Additional Feature to three topic references plus a
 rest topic reference. This limit could theoretically be lifted, but readability
@@ -4125,8 +4140,8 @@ input |> f |> [0, 1, 2, ...#] |> g;
 ```js
 input |> f |> ...# |> [0, 1, 2, ...] |> g;
 ```
-This is an adapted example from the [Core Proposal section][Core Proposal]
-above. It is equivalent to the original example; it is shown only for
+This is an adapted example from the [Core Proposal section above][Core
+Proposal]. It is equivalent to the original example; it is shown only for
 illustrative purposes.
 
 <td>
@@ -4150,7 +4165,7 @@ x
 |> (f, ...g, h)
 |> [...].length;
 ```
-As a result of the rules, `|> [...]` collects its pipeline head’s n-ary
+As a result of the rules, `… |> [...]` collects its pipeline head’s n-ary
 arguments into a single flattened array, to which the rest topic reference `...`
 is then bound.
 
@@ -4158,6 +4173,23 @@ is then bound.
 
 ```js
 [f(x), ...g(x), h(x)].length;
+```
+
+<tr>
+<td>
+
+```js
+[ { x: 22 }, { x: 42 } ]
+  .map(+> #.x)
+  .reduce(+> # - ##, 0);
+```
+
+<td>
+
+```js
+[ { x: 22 }, { x: 42 } ]
+  .map(el => el.x)
+  .reduce((_0, _1) => _0 - _1, 0);
 ```
 
 <tr>
@@ -4249,6 +4281,306 @@ maxGreaterThanZero(-1, -2); // 0
 ```
 In this case, the topic function version looks once again nearly identical to
 the other proposal’s code.
+
+<tr>
+<td>
+
+Additional Feature NP would explain bare style in [Additional Feature PF][]
+“`+>` _PipelineExpression_” as equivalent to a function with a variadic pipeline
+“`(...$rest) => ...$rest |>` _PipelineExpression_”.
+```js
++> g |> f |> # + 1;
+(...$rest) => ...$rest |> g |> f |> # + 1;
+```
+These two lines of code are equivalent. The first is taken from an example in
+the [Additional Feature PF section above][Additional Feature PF].
+
+<td>
+
+```js
+(...$rest) =>
+  f([...$].length) + 1;
+```
+
+<tr>
+<td>
+
+```js
++> [...].length |> f |> # + 1;
+(...$rest) =>
+  ...$rest |> [...].length |> f |> # + 1;
+```
+These two lines of code are also equivalent.
+
+<td>
+
+```js
+(...$rest) => f([...$].length) + 1;
+```
+
+<tr>
+<td colspan=2>
+
+When coupled with Additional Feature NP, the prefix pipeline operator `|>` of
+[Additional Feature PP][], would be equivalent to a pipeline whose head is
+simply the argument list of all the topic references that its body uses. The
+code statements in each of the table rows below are mutually equivalent.
+
+<tr>
+<td>
+
+```js
+// Unary topic style.
+input
+|> # && ([#] |> f |> #+1)
+|> console.log;
+input
+|> # && (|> [#] |> f |> #+1)
+|> console.log;
+input
+|> # && ((#) |> [#] |> f |> #+1)
+|> console.log;
+```
+
+<td>
+
+```js
+// Unary topic style.
+{
+  const $0 = input;
+  let $1;
+  if ($0) {
+    const $2 = [$0];
+    const $3 = f($2);
+    const $4 = $3 + 1;
+    $1 = $4;
+  }
+  console.log($1);
+}
+```
+
+<tr>
+<td>
+
+```js
+// Binary topic style.
+inputs
+|> # && ([#,##] |> f |> #+1)
+|> console.log;
+inputs
+|> # && (|> [#,##] |> f |> #+1)
+|> console.log;
+inputs
+|> # && ((#,##)|> [#,##] |> f |> #+1)
+|> console.log;
+```
+
+<td>
+
+```js
+// Binary topic style.
+{
+  const [$0, $$0] = inputs;
+  let $1;
+  if ($0) {
+    const $2 = [$0, $$0];
+    const $3 = f($2);
+    const $4 = $3 + 1;
+    $1 = $4;
+  }
+  console.log($1);
+}
+```
+
+<tr>
+<td>
+
+```js
+// Variadic topic style (1 positional topic).
+inputs
+|> # && ([#,...] |> f |> #+1)
+|> console.log;
+inputs
+|> # && (|> [#,...] |> f |> #+1)
+|> console.log;
+inputs
+|> # && ((#,...) |> [#,...] |> f |> #+1)
+|> console.log;
+```
+
+<td>
+
+```js
+// Variadic topic style (1 positional topic).
+{
+  const [$0, ...$r0] = inputs;
+  let $1;
+  if ($0) {
+    const $2 = [$0, ...$r0];
+    const $3 = f($2);
+    const $4 = $3 + 1;
+    $1 = $4;
+  }
+  console.log($1);
+}
+```
+
+<tr>
+<td>
+
+```js
+// Variadic bare style.
+inputs
+|> true && ([...] |> f |> #+1)
+|> console.log;
+inputs
+|> true && (|> [...] |> f |> #+1)
+|> console.log;
+inputs
+|> true && (... |> [...] |> f |> #+1)
+|> console.log;
+```
+
+<td>
+
+```js
+{
+  const [...$r0] = inputs;
+  let $1;
+  if ($0) {
+    const $2 = [...$r0];
+    const $3 = f($2);
+    const $4 = $3 + 1;
+    $1 = $4;
+  }
+  console.log($1);
+}
+```
+
+<tr>
+<td colspan=2>
+
+Additional Feature NP would also explain how the cancellation of [Additional
+Feature PP][] by [Additional Feature PF][] (“`+> |>` _PipelineExpression_” is
+equivalent to “`+>` _PipelineExpression_”). Each of the following table rows’
+code statements are equivalent.
+
+<tr>
+<td>
+
+```js
+// Unary topic style.
++> [#] |> f |> #+1;
+($) =>
+  $ |> [#] |> f |> #+1;
++> |> [#] |> f |> #+1;
+($) =>
+  $ |> # |> [#] |> f |> #+1;
+```
+
+<td>
+
+```js
+// Unary topic style.
+($0) => {
+  const $1 = $0;
+  return f([$1]) + 1;
+};
+($0) => {
+  const $1 = $0,
+        $2 = $1;
+  return f([$2]) + 1;
+};
+```
+
+<tr>
+<td>
+
+```js
+// Binary topic style.
++> [#,##] |> f |> #+1;
+($,$$) =>
+  ($,$$) |> [#,##] |> f |> #+1;
++> |> [#,##] |> f |> #+1;
+($,$$) =>
+  ($,$$) |> (#,##) |> [#,##] |> f |> #+1;
+```
+
+<td>
+
+```js
+// Binary topic style.
+($0, $$0) => {
+  const $1 = [$0, $$0],
+        $2 = f($1);
+  return $2 + 1;
+};
+($0, $$0) => {
+  const [$1, $$1] = [$0, $$0],
+        $2 = [$1, $$1],
+        $3 = f($1);
+  return $3 + 1;
+};
+```
+
+<tr>
+<td>
+
+```js
+// Variadic topic style (1 positional topic).
++> [#,...] |> f |> #+1;
+($,...$r) =>
+  ($,...$r) |> [#,...] |> f |> #+1;
++> |> [#,...] |> f |> #+1;
+($,...$r) =>
+  ($,...$r) |> (#,...) |> [#,...] |> f |> #+1;
+```
+
+<td>
+
+```js
+// Variadic topic style (1 positional topic).
+($0, ...$r) => {
+  const $1 = [$0, ...$0],
+        $2 = f($1);
+  return $2 + 1;
+};
+($0, ...$r) => {
+  const $1 = [$0, ...$0],
+        $2 = [$1, ...$1],
+        $3 = f($2);
+  return $3 + 1;
+};
+```
+
+<tr>
+<td>
+
+```js
+// Variadic bare style.
++> f;
+(...$rest) =>
+  ...$rest |> f |> #+1;
++> |> f;
+(...$rest) =>
+  ...$rest |> ... |> f |> #+1;
+```
+
+<td>
+
+```js
+(...$r0) => {
+  const $1 = [...$r0],
+        $2 = f($1);
+  return $2 + 1;
+};
+(...$r0) => {
+  const [...$r1] = [...$r0],
+        $2 = [...$r1],
+        $3 = f($1);
+  return $3 + 1;
+};
+```
 
 </table>
 
