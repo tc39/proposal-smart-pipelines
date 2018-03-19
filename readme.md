@@ -435,7 +435,7 @@ same goes for `o.unaryMethod`, which is a unary function call on `o.unaryMethod`
 This is the [**smart** part of the smart pipeline operator][smart body syntax],
 which can distinguish between two syntax styles (**[bare style][]** vs. **[topic
 style][]**) by using a simple rule: **bare** style uses only **identifiers and
-dots – and **never parentheses, brackets, braces**, or **other operators**. And
+dots** – and **never parentheses, brackets, braces**, or **other operators**. And
 **topic** style **always** contains at least one **topic reference**. For more
 information, see the reference below about the **[smart body syntax][]**.
 
