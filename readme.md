@@ -47,6 +47,7 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [Static analyzability](#static-analyzability)
   - [“Don’t make me overthink.”](#dont-make-me-overthink)
     - [Syntactic locality](#syntactic-locality)
+    - [Semantic clarity](#semantic-clarity)
     - [Expressive versatility](#expressive-versatility)
     - [Cyclomatic simplicity](#cyclomatic-simplicity)
   - [“Make my code easier to read.”](#make-my-code-easier-to-read)
@@ -4548,27 +4549,28 @@ and a few other goals.
 **“Don’t make me overthink.”**
 
  4. [Syntactic locality](#syntactic-locality)
- 5. [Expressive versatility](#expressive-versatility)
- 6. [Cyclomatic simplicity](#cyclomatic-simplicity)
+ 5. [Semantic clarity](#semantic-clarity)
+ 6. [Expressive versatility](#expressive-versatility)
+ 7. [Cyclomatic simplicity](#cyclomatic-simplicity)
 
 <td>
 
 **“Don’t shoot me in the foot.”**
 
- 7. [Simple scoping](#simple-scoping)
- 8. [Opt-in behavior](#opt-in-behavior)
- 9. [Static analyzability](#static-analyzability)
+ 8. [Simple scoping](#simple-scoping)
+ 9. [Opt-in behavior](#opt-in-behavior)
+10. [Static analyzability](#static-analyzability)
 
 <tr>
 <td>
 
 **“Make my code easier to read.”**
 
-10. [Untangled flow](#untangled-flow)
-11. [Distinguishability](#distinguishability)
-12. [Terse parentheses](#terse-parentheses)
-13. [Terse variables](#terse-variables)
-14. [Terse function calls](#terse-function-calls)
+11. [Untangled flow](#untangled-flow)
+12. [Distinguishability](#distinguishability)
+13. [Terse parentheses](#terse-parentheses)
+14. [Terse variables](#terse-variables)
+15. [Terse function calls](#terse-function-calls)
 
 <td>
 
