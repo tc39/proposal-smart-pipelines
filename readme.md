@@ -3607,7 +3607,7 @@ R.map(R.call,
 const renameBy = (fn, obj) =>
   [...obj]
   |> #.map(R.adjust(fn, 0)),
-  |> {...#};
+  |> ({...#});
 { A: 1, B: 2, C: 3 };
 |> renameBy(+> `a${#}`));
 // { aA: 1, aB: 2, aC: 3 }
