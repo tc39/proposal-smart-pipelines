@@ -472,11 +472,15 @@ indentation of any previous steps’ lines.
 ```js
 input |> x + 50 |> f |> g(x, 2);
 // 🚫 Syntax Error:
-// Topic-style pipeline body `|> x + 50`
-// binds topic but contains no topic reference.
+// Topic-style pipeline body
+// `|> x + 50`
+// binds topic but contains
+// no topic reference.
 // 🚫 Syntax Error:
-// Topic-style pipeline body `|> g(x, 2)`
-// binds topic but contains no topic reference.
+// Topic-style pipeline body
+// `|> g(x, 2)`
+// binds topic but contains
+// no topic reference.
 ```
 In order to fulfill the [goal][goals] of [“don’t shoot me in the foot”][],
 when a **pipeline is in [topic style][]** but its **body has no topic reference**,
@@ -512,8 +516,10 @@ Error][early errors]:
 ```js
 input |> object.method();
 // 🚫 Syntax Error:
-// Topic-style pipeline body `|> object.method()`
-// binds topic but contains no topic reference.
+// Topic-style pipeline body
+// `|> object.method()`
+// binds topic but contains
+// no topic reference.
 ```
 It is an invalid [topic-style pipeline][topic style]. It is in topic style
 because it is not a simple reference; it has parentheses. And it is invalid
@@ -553,8 +559,10 @@ Adding other arguments:
 ```js
 input |> object.method(x, y);
 // 🚫 Syntax Error:
-// Topic-style pipeline body `|> object.method(x, y)`
-// binds topic but contains no topic reference.
+// Topic-style pipeline body
+// `|> object.method(x, y)`
+// binds topic but contains
+// no topic reference.
 ```
 …would make this problem of semantic ambiguity worse. But the reader is
 protected from this ambiguity by the same early error.
@@ -593,8 +601,10 @@ And this example’s ambiguity would be even worse:
 ```js
 input |> await object.method(x, y);
 // 🚫 Syntax Error:
-// Topic-style pipeline body `|> await object.method(x, y)`
-// binds topic but contains no topic reference.
+// Topic-style pipeline body
+// `|> await object.method(x, y)`
+// binds topic but contains
+// no topic reference.
 ```
 …were it not an invalid topic-style pipeline.
 
@@ -1031,7 +1041,8 @@ x = input |> function () { return #; };
 // but has no topic binding.
 // 🚫 Syntax Error:
 // Pipeline body `|> function () { … }`
-// binds topic but contains no topic reference.
+// binds topic but contains
+// no topic reference.
 ```
 <td>
 
@@ -1042,7 +1053,8 @@ x = input |> function () { return #; };
 x = input |> class { m: () { return #; } };
 // 🚫 Syntax Error:
 // Pipeline body `|> class { … }`
-// binds topic but contains no topic reference.
+// binds topic but contains
+// no topic reference.
 ```
 
 <td>
@@ -1938,7 +1950,8 @@ input
 |> g;
 // 🚫 Syntax Error:
 // Pipeline body `|> { if (…) … else … }`
-// binds topic but contains no topic reference.
+// binds topic but contains
+// no topic reference.
 ```
 The same [early error rules][] that apply to any topical pipeline body apply
 also to topical bodies that are `do` expressions.
@@ -3263,7 +3276,8 @@ array.map((...$) => h(g(f(...$))) * 2);
 +> x + 2;
 // 🚫 Syntax Error:
 // Pipeline body `+> x + 2`
-// binds topic but contains no topic reference.
+// binds topic but contains
+// no topic reference.
 ```
 
 This is an [early error][], as usual. The topic is not used anywhere
