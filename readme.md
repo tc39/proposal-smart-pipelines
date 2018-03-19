@@ -668,6 +668,49 @@ requires editing the variable names in the following step.
 <td>
 
 ```js
+input |> f |> [0, 1, 2, ...#] |> g
+```
+The body of a pipeline in topic style may contain array literals. These may be
+flattened, just like any other sort of expression.
+
+<td>
+
+```js
+g([0, 1, 2, ...f(input)])
+```
+
+<tr>
+<td>
+
+The body of a pipeline in topic style may also contain object literals. However,
+they must be parenthesized in order to fulfill the goal of [forward
+compatibility][] with [Additional Feature BP][], which introduces block pipeline
+bodies. This is similar to how arrow functions distinguish between object
+literals and blocks. (It is expected that block pipelines would eventually be
+much more common than pipelines with object literals.)
+```js
+input |> f |> { x: #, y: # } |> g
+```
+```js
+input |> f |> { x: #, y: # } |> g
+// 🚫 Syntax Error:
+// Unexpected token `{`.
+// Cannot parse base expression.
+```
+
+<td>
+
+```js
+{
+  const $ = f(input);
+  g({ x, $: y: f($) });
+}
+```
+
+<tr>
+<td>
+
+```js
 f = input
 |> f
 |> (x => # + x);
