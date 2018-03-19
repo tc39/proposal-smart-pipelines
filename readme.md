@@ -4095,6 +4095,32 @@ number
 <td>
 
 ```js
+input |> f |> [0, 1, 2, ...#] |> g
+```
+```js
+input |> f |> ...# |> [0, 1, 2, ...] |> g
+```
+This is an adapted example from the [Core Proposal section][Core Proposal]
+above. It is equivalent to the original example; it is shown only for
+illustrative purposes.
+
+<td>
+
+```js
+g([0, 1, 2, ...f(input)])
+```
+```js
+{
+  const [..._rest] = f(input);
+  g([0, 1, 2, ..._rest]);
+}
+```
+All these code blocks are equivalent.
+
+<tr>
+<td>
+
+```js
 x
 |> (f, ...g, h)
 |> [...].length;
