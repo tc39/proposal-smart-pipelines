@@ -11,7 +11,7 @@ contributors: J. S. Choi
 
 <emu-intro id=introduction>
 <h1>Introduction</h1>
-<p>This is the formal specification for a proposed "smart pipeline operator" <code>|&gt;</code> in JavaScript. It modifies the original <a href=https://tc39.github.io/ecma262/>ECMAScript specification</a> with several new or revised clauses. The <strong>Core Proposal</strong> is at Stage 0. Additional Features are given as annexes; none of the Additional Features are at a TC39-proposal stage. See <a href=https://github.com/js-choi/proposal-smart-pipelines/blob/master/readme.md>the proposal's explainer</a> for the proposal's background, motivation, usage examples, explanation, and information on planned add-on proposals.</p>
+<p>This is the formal specification for a proposed "smart pipe operator" <code>|&gt;</code> in JavaScript. It modifies the original <a href=https://tc39.github.io/ecma262/>ECMAScript specification</a> with several new or revised clauses. The <strong>Core Proposal</strong> is at Stage 0. Additional Features are given as annexes; none of the Additional Features are at a TC39-proposal stage. See <a href=https://github.com/js-choi/proposal-smart-pipelines/blob/master/readme.md>the proposal's explainer</a> for the proposal's background, motivation, usage examples, explanation, and information on planned add-on proposals.</p>
 </emu-intro>
 
 <emu-clause id=executable-code-and-execution-contexts>
@@ -412,27 +412,27 @@ PrimaryExpression[Yield, Await] :
 </emu-clause>
 </emu-clause>
 
-<emu-clause id=sec-pipeline-operator>
-<h1><ins>Pipeline Operator</ins></h1>
+<emu-clause id=sec-pipe-operator>
+<h1><ins>Pipe Operator</ins></h1>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-conditional-operator>original Conditional Operator (`?` `:`) clause</a> and the <a href=https://tc39.github.io/ecma262/#sec-assignment-operators>original Assignment Operators clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-bp-pipeline-operator>further modifications by Additional Feature BP</emu-xref> and <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This section is a wholly new sub-clause to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-conditional-operator>original Conditional Operator (`?` `:`) clause</a> and the <a href=https://tc39.github.io/ecma262/#sec-assignment-operators>original Assignment Operators clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-bp-pipe-operator>further modifications by Additional Feature BP</emu-xref> and <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
 <emu-grammar type=definition>
-PipelineExpression[In, Yield, Await] :
+PipeExpression[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
-  ConditionalExpression[?In, ?Yield, ?Await] `|&gt;` PipelineChain[?In, ?Yield, ?Await]
+  ConditionalExpression[?In, ?Yield, ?Await] `|&gt;` Pipeline[?In, ?Yield, ?Await]
 
-PipelineChain[In, Yield, Await] :
-  PipelineStage[?In, ?Yield, ?Await]
-  PipelineStage[?In, ?Yield, ?Await] `|&gt;` PipelineChain[?In, ?Yield, ?Await]
+Pipeline[In, Yield, Await] :
+  PipelineStep[?In, ?Yield, ?Await]
+  PipelineStep[?In, ?Yield, ?Await] `|&gt;` Pipeline[?In, ?Yield, ?Await]
 
-PipelineStage[In, Yield, Await] :
-  PipelineBareFunctionCall
+PipelineStep[In, Yield, Await] :
+  PipelineBareFunction
   PipelineTopicExpression[?In, ?Yield, ?Await]
 
-PipelineBareFunctionCall :
+PipelineBareFunction :
   SimpleReference
 
 SimpleReference :
@@ -443,20 +443,20 @@ PipelineTopicExpression[In, Yield, Await] :
   [lookahead &lt;! {`{`}] ConditionalExpression[?In, ?Yield, ?Await]
 </emu-grammar>
 
-<emu-clause id=sec-pipeline-operator-static-semantics-early-errors>
+<emu-clause id=sec-pipe-operator-static-semantics-early-errors>
 <h1>Static Semantics: Early Errors</h1>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
-<emu-grammar>PipelineExpression : ConditionalExpression `|&gt;` PipelineChain</emu-grammar>
-<emu-grammar>PipelineStage : ConditionalExpression</emu-grammar>
+<emu-grammar>PipeExpression : ConditionalExpression `|&gt;` Pipeline</emu-grammar>
+<emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>
 <emu-alg>
 * It is a Syntax Error if _ConditionalExpression_ is covering |Arguments|.
 </emu-alg>
 
 <emu-note type=editor>
-<p>These early errors prohibit any pipeline heads or pipeline stages from covering comma-separated argument lists. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>These early errors prohibit any pipeline heads or pipeline steps from covering comma-separated argument lists. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
@@ -467,16 +467,16 @@ PipelineTopicExpression[In, Yield, Await] :
 </emu-alg>
 
 <emu-note type=editor>
-<p>This third early error prohibits _PipelineTopicExpression_ from covering a comma-separated expression. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This third early error prohibits _PipelineTopicExpression_ from covering a comma-separated expression. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 </emu-clause>
 
-<emu-clause id=sec-pipeline-operator-static-semantics-contains>
+<emu-clause id=sec-pipe-operator-static-semantics-contains>
 <h1>Static Semantics: Contains</h1>
 <p>With parameter _symbol_.</p>
 <emu-see-also-para op="Contains"></emu-see-also-para>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
@@ -491,10 +491,10 @@ PipelineTopicExpression[In, Yield, Await] :
 </emu-alg>
 </emu-clause>
 
-<emu-clause id=sec-pipeline-operator-runtime-semantics-topicexpressioninstantiation aoid=TopicExpressionInstantiation>
+<emu-clause id=sec-pipe-operator-runtime-semantics-topicexpressioninstantiation aoid=TopicExpressionInstantiation>
 <h1>Runtime Semantics: TopicExpressionInstantiation</h1>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 <emu-note>
 <p>This abstract operation constructs, instantiates, then returns a new declarative Lexical Environment for a topic pipeline body. It creates an immutable topic binding in that declarative environment using the given _topics_.</p>
@@ -515,11 +515,11 @@ PipelineTopicExpression[In, Yield, Await] :
 </emu-alg>
 </emu-clause>
 
-<emu-clause id=sec-pipeline-operator-runtime-semantics-pipelinechainevaluation aoid=PipelineChainEvaluation>
-<h1>Runtime Semantics: PipelineChainEvaluation</h1>
+<emu-clause id=sec-pipe-operator-runtime-semantics-pipelineevaluation aoid=PipelineEvaluation>
+<h1>Runtime Semantics: PipelineEvaluation</h1>
 <p>With parameter _inputValues_.</p>
 
-<emu-grammar>PipelineBareFunctionCall : SimpleReference</emu-grammar>
+<emu-grammar>PipelineBareFunction : SimpleReference</emu-grammar>
 <p>This algorithm is an altered version of the algorithm of <emu-xref href="#sec-function-calls-runtime-semantics-evaluation">Function Calls, Runtime Semantics: Evaluation</emu-xref>, modified as follows:</p>
 <emu-alg>
 * Steps 1 and 2 are removed.
@@ -533,32 +533,32 @@ PipelineTopicExpression[In, Yield, Await] :
 <emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
 <emu-alg>
 1. Let _oldEnv_ be the running execution context's Lexical Environment.
-2. Let _pipelineStageEnv_ be New Declarative Environment(_oldEnv_).
-3. Perform TopicExpressionInstantiation(_inputValues_, _pipelineStageEnv_).
-4. Set the running execution context's Lexical Environment to _pipelineStageEnv_.
+2. Let _pipelineStepEnv_ be New Declarative Environment(_oldEnv_).
+3. Perform TopicExpressionInstantiation(_inputValues_, _pipelineStepEnv_).
+4. Set the running execution context's Lexical Environment to _pipelineStepEnv_.
 5. Let _pipelineValue_ be the result of evaluating _ConditionalExpression_.
 6. Set the running execution context's Lexical Environment to _oldEnv_.
 7. Return _pipelineValue_.
 </emu-alg>
 
-<emu-grammar>PipelineChain : PipelineStage `|&gt;` PipelineChain</emu-grammar>
+<emu-grammar>Pipeline : PipelineStep `|&gt;` Pipeline</emu-grammar>
 <emu-alg>
-1. Let _headRef_ be PipelineChainEvaluation of |PipelineStage| with argument _inputValues_.
+1. Let _headRef_ be PipelineEvaluation of |PipelineStep| with argument _inputValues_.
 2. Let _bodyInputValues_ be a list containing the one element which is the result of ? GetValue(_headRef_).
-3. Let _bodyRef_ be PipelineChainEvaluation of |PipelineChain| with argument _bodyInputValues_.
+3. Let _bodyRef_ be PipelineEvaluation of |Pipeline| with argument _bodyInputValues_.
 5. Return ? GetValue(_bodyRef_).
 </emu-alg>
 
 </emu-clause>
 
-<emu-clause id=sec-pipeline-operator-runtime-semantics-evaluation>
+<emu-clause id=sec-pipe-operator-runtime-semantics-evaluation>
 <h1>Runtime Semantics: Evaluation</h1>
 
-<emu-grammar>PipelineExpression : ConditionalExpression `|&gt;` PipelineChain</emu-grammar>
+<emu-grammar>PipeExpression : ConditionalExpression `|&gt;` Pipeline</emu-grammar>
 <emu-alg>
 1. Let _headRef_ be the result of evaluating |ConditionalExpression|.
 2. Let _inputValues_ be a list containing the one element which is the result of ? GetValue(_headRef_).
-3. Let _bodyRef_ be PipelineChainEvaluation of |PipelineChain| with argument _inputValues_.
+3. Let _bodyRef_ be PipelineEvaluation of |Pipeline| with argument _inputValues_.
 5. Return ? GetValue(_bodyRef_).
 </emu-alg>
 </emu-clause>
@@ -577,7 +577,7 @@ PipelineTopicExpression[In, Yield, Await] :
 <emu-grammar>
 AssignmentExpression[In, Yield, Await] :
   <del>ConditionalExpression[?In, ?Yield, ?Await]</del>
-  <ins>PipelineExpression[?In, ?Yield, ?Await]</ins>
+  <ins>PipeExpression[?In, ?Yield, ?Await]</ins>
   [+Yield] YieldExpression[?In, ?Await]
   ArrowFunction[?In, ?Yield, ?Await]
   AsyncArrowFunction[?In, ?Yield, ?Await]
@@ -811,35 +811,35 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <emu-annex id=sec-additional-feature-bc-ecmascript-language-expressions>
 <h1>ECMAScript Language: Expressions</h1>
 
-<emu-annex id=sec-additional-feature-bc-pipeline-operator>
-<h1>Pipeline Operator</h1>
+<emu-annex id=sec-additional-feature-bc-pipe-operator>
+<h1>Pipe Operator</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipeline-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This section revises the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
 <emu-grammar type=definition>
-PipelineStage[In, Yield, Await] :
-  PipelineBareFunctionCall
-  <ins>PipelineBareConstructorCall</ins>
+PipelineStep[In, Yield, Await] :
+  PipelineBareFunction
+  <ins>PipelineBareConstructor</ins>
   PipelineTopicExpression[?In, ?Yield, ?Await]
 
 <ins class=block>
-PipelineBareConstructorCall :
+PipelineBareConstructor :
   `new` SimpleReference
 </ins>
 </emu-grammar>
 
-<emu-annex id=sec-additional-feature-bc-pipeline-operator-runtime-semantics-pipelinechainevaluation aoid=PipelineChainEvaluation>
-<h1>Runtime Semantics: PipelineChainEvaluation</h1>
+<emu-annex id=sec-additional-feature-bc-pipe-operator-runtime-semantics-pipelineevaluation aoid=PipelineEvaluation>
+<h1>Runtime Semantics: PipelineEvaluation</h1>
 <p>With parameter _inputValues_.</p>
 
 <emu-note type=editor>
-<p>This section appends to the <emu-xref href=#sec-pipeline-operator-runtime-semantics-pipelinechainevaluation>new clause in the core proposal</emu-xref>.</p>
+<p>This section appends to the <emu-xref href=#sec-pipe-operator-runtime-semantics-pipelineevaluation>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <ins class=block>
-<emu-grammar>PipelineBareConstructorCall : `new` SimpleReference</emu-grammar>
+<emu-grammar>PipelineBareConstructor : `new` SimpleReference</emu-grammar>
 <emu-alg>
 1. Let _constructExpr_ be the |NewExpression| that is covered by _SimpleReference_.
 2. Return ? EvaluateNew(NewExpression, _inputValues_).
@@ -864,35 +864,35 @@ PipelineBareConstructorCall :
 <emu-annex id=sec-additional-feature-ba-ecmascript-language-expressions>
 <h1>ECMAScript Language: Expressions</h1>
 
-<emu-annex id=sec-additional-feature-ba-pipeline-operator>
-<h1>Pipeline Operator</h1>
+<emu-annex id=sec-additional-feature-ba-pipe-operator>
+<h1>Pipe Operator</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipeline-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This section revises the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
 <emu-grammar type=definition>
-PipelineStage[In, Yield, Await] :
-  PipelineBareFunctionCall
-  <ins class=block>PipelineBareAwaitedFunctionCall</ins>
+PipelineStep[In, Yield, Await] :
+  PipelineBareFunction
+  <ins class=block>PipelineBareAwaitedFunction</ins>
   PipelineTopicExpression[?In, ?Yield, ?Await]
 
 <ins class=block>
-PipelineBareAwaitedFunctionCall[Await] :
+PipelineBareAwaitedFunction[Await] :
   [+Await] `await` SimpleReference
 </ins>
 </emu-grammar>
 
-<emu-annex id=sec-additional-feature-ba-pipeline-operator-runtime-semantics-pipelinechainevaluation aoid=PipelineChainEvaluation>
-<h1>Runtime Semantics: PipelineChainEvaluation</h1>
+<emu-annex id=sec-additional-feature-ba-pipe-operator-runtime-semantics-pipelineevaluation aoid=PipelineEvaluation>
+<h1>Runtime Semantics: PipelineEvaluation</h1>
 <p>With parameter _inputValues_.</p>
 
 <emu-note type=editor>
-<p>This section appends to the <emu-xref href=#sec-pipeline-operator-runtime-semantics-pipelinechainevaluation>new clause in the core proposal</emu-xref>.</p>
+<p>This section appends to the <emu-xref href=#sec-pipe-operator-runtime-semantics-pipelineevaluation>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <ins class=block>
-<emu-grammar>PipelineBareAwaitedFunctionCall : `await` SimpleReference</emu-grammar>
+<emu-grammar>PipelineBareAwaitedFunction : `await` SimpleReference</emu-grammar>
 <p>This algorithm is an altered version of the algorithm of <emu-xref href="#sec-function-calls-runtime-semantics-evaluation">Function Calls, Runtime Semantics: Evaluation</emu-xref>, modified as follows:</p>
 <emu-alg>
 1. Let _asyncFunctionExpr_ be the |MemberExpression| that is covered by _SimpleReference_.
@@ -919,16 +919,16 @@ PipelineBareAwaitedFunctionCall[Await] :
 <emu-annex id=sec-additional-feature-bp-ecmascript-language-expressions>
 <h1>ECMAScript Language: Expressions</h1>
 
-<emu-annex id=sec-additional-feature-bp-pipeline-operator>
-<h1>Pipeline Operator</h1>
+<emu-annex id=sec-additional-feature-bp-pipe-operator>
+<h1>Pipe Operator</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipeline-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This section revises the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
 <emu-grammar type=definition>
-PipelineStage[In, Yield, Await] :
-  PipelineBareFunctionCall
+PipelineStep[In, Yield, Await] :
+  PipelineBareFunction
   PipelineTopicExpression[?In, ?Yield, ?Await]
   <ins>PipelineTopicBlock[?In, ?Yield, ?Await]</ins>
 
@@ -938,10 +938,10 @@ PipelineTopicBlock[In, Yield, Await] :
 </ins>
 </emu-grammar>
 
-<emu-annex id=sec-additional-feature-bp-pipeline-operator-static-semantics-early-errors>
+<emu-annex id=sec-additional-feature-bp-pipe-operator-static-semantics-early-errors>
 <h1>Static Semantics: Early Errors</h1>
 <emu-note type=editor>
-<p>This section appends to the <emu-xref href=#sec-pipeline-operator-static-semantics-early-errors>new clause in the core proposal</emu-xref>.</p>
+<p>This section appends to the <emu-xref href=#sec-pipe-operator-static-semantics-early-errors>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <ins class=block>
@@ -952,12 +952,12 @@ PipelineTopicBlock[In, Yield, Await] :
 </ins>
 </emu-annex>
 
-<emu-annex id=sec-additional-feature-bp-pipeline-operator-static-semantics-contains>
+<emu-annex id=sec-additional-feature-bp-pipe-operator-static-semantics-contains>
 <h1>Static Semantics: Contains</h1>
 <p>With parameter _symbol_.</p>
 <emu-see-also-para op="Contains"></emu-see-also-para>
 <emu-note type=editor>
-<p>This section appends to the <emu-xref href=#sec-pipeline-operator-static-semantics-contains>new clause in the core proposal</emu-xref>.</p>
+<p>This section appends to the <emu-xref href=#sec-pipe-operator-static-semantics-contains>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
@@ -973,15 +973,15 @@ PipelineTopicBlock[In, Yield, Await] :
 </emu-alg>
 </emu-annex>
 
-<emu-annex id=sec-additional-feature-bp-pipeline-operator-runtime-semantics-topicexpressioninstantiation aoid=TopicExpressionInstantiation>
+<emu-annex id=sec-additional-feature-bp-pipe-operator-runtime-semantics-topicexpressioninstantiation aoid=TopicExpressionInstantiation>
 <h1>Runtime Semantics: TopicExpressionInstantiation</h1>
 <emu-note type=editor>
 <p>This annex has not yet been specified.</p>
 </emu-note>
 </emu-annex>
 
-<emu-annex id=sec-additional-feature-bp-pipeline-operator-runtime-semantics-pipelinechainevaluation aoid=PipelineChainEvaluation>
-<h1>Runtime Semantics: PipelineChainEvaluation</h1>
+<emu-annex id=sec-additional-feature-bp-pipe-operator-runtime-semantics-pipelineevaluation aoid=PipelineEvaluation>
+<h1>Runtime Semantics: PipelineEvaluation</h1>
 <p>With parameter _inputValues_.</p>
 
 <emu-grammar>PipelineTopicExpression : `{` StatementList `}`</emu-grammar>
@@ -1040,10 +1040,57 @@ console.log.bind(console)</code></pre></td>
 </table>
 </emu-table>
 
-<p>This annex uses a new token `+&gt;`, but this token is merely an <strong>illustrative placeholder</strong> to avoid premature bikeshedding discussion. The actual operator ideally would communicate its status as a combination of `=&gt;` and `|&gt;`. Example replacements of `+&gt;` include `-&gt;` |PipelineChain| (which both resembles the `|&gt;` operator with the `|` rotated sideways and resembles the `=&gt;` operator but with a skinnier arrow body) and `=|` |PipelineChain| (which is a blending of `=&gt;` and `|&gt;` with the `&gt;` removed).</p>
+<p>This annex uses a new token `+&gt;`, but this token is merely an <strong>illustrative placeholder</strong> to avoid premature bikeshedding discussion. The actual operator ideally would communicate its status as a combination of `=&gt;` and `|&gt;`. Example replacements of `+&gt;` include `-&gt;` |Pipeline| (which both resembles the `|&gt;` operator with the `|` rotated sideways and resembles the `=&gt;` operator but with a skinnier arrow body) and `=|` |Pipeline| (which is a blending of `=&gt;` and `|&gt;` with the `&gt;` removed).</p>
 
 <emu-annex id=sec-additional-feature-pf-ecmascript-language-expressions>
 <h1>ECMAScript Language: Expressions</h1>
+
+<emu-annex id=sec-additional-feature-pf-pipe-operator>
+<h1>Pipe Operator</h1>
+<emu-note type=editor>
+<p>This section revises the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+</emu-note>
+
+
+<emu-annex id=sec-additional-feature-pf-pipe-operator-runtime-semantics-pipelinemaxparametercount aoid=PipelineMaxParameterCount>
+<h1><ins>Runtime Semantics: PipelineMaxParameterCount</ins></h1>
+<emu-grammar>PipelineBareFunction : SimpleReference</emu-grammar>
+<emu-alg>
+1. Return *Infinity*.
+</emu-alg>
+
+<emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
+<emu-alg>
+1. Return *1*.
+</emu-alg>
+
+<emu-grammar>Pipeline : PipelineStep `|&gt;` Pipeline</emu-grammar>
+<emu-alg>
+1. Return PipelineMaxParameterCount of _PipeExpression_.
+</emu-alg>
+
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-pf-pipe-operator-runtime-semantics-pipelineminparametercount aoid=PipelineMinParameterCount>
+<h1><ins>Runtime Semantics: PipelineMinParameterCount</ins></h1>
+<emu-grammar>PipelineBareFunction : SimpleReference</emu-grammar>
+<emu-alg>
+1. Return *0*.
+</emu-alg>
+
+<emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
+<emu-alg>
+1. Return *1*.
+</emu-alg>
+
+<emu-grammar>Pipeline : PipelineStep `|&gt;` Pipeline</emu-grammar>
+<emu-alg>
+1. Return PipelineMaxParameterCount of _PipelineStep_.
+</emu-alg>
+
+</emu-annex>
+
+</emu-annex>
 
 <emu-annex id=sec-additional-feature-pf-assignment-operators>
 <h1>Assignment Operators</h1>
@@ -1056,7 +1103,7 @@ console.log.bind(console)</code></pre></td>
 
 <emu-grammar>
 AssignmentExpression[In, Yield, Await] :
-  PipelineExpression[?In, ?Yield, ?Await]
+  PipeExpression[?In, ?Yield, ?Await]
   <ins>PipelineFunction[?In, ?Yield, ?Await]</ins>
   [+Yield] YieldExpression[?In, ?Await]
   ArrowFunction[?In, ?Yield, ?Await]
@@ -1082,14 +1129,14 @@ AssignmentExpression[In, Yield, Await] :
 <h2>Syntax</h2>
 <emu-grammar type=definition>
 PipelineFunction[In, Yield, Await] :
-  `+&gt;` PipelineChain[?In, ?Yield, ?Await]
+  `+&gt;` Pipeline[?In, ?Yield, ?Await]
 </emu-grammar>
 
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-boundnames>
 <h1>Static Semantics: BoundNames</h1>
 <emu-see-also-para op="BoundNames"></emu-see-also-para>
 <emu-grammar>
-PipelineFunction : `+&gt;` PipelineChain
+PipelineFunction : `+&gt;` Pipeline
 </emu-grammar>
 <emu-alg>
 1. Return a new empty List.
@@ -1101,10 +1148,10 @@ PipelineFunction : `+&gt;` PipelineChain
 <p>With parameter _symbol_.</p>
 <emu-see-also-para op="Contains"></emu-see-also-para>
 
-<emu-grammar>PipelineFunction : `+&gt;` PipelineChain</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` Pipeline</emu-grammar>
 <emu-alg>
 1. If _symbol_ is not one of |NewTarget|, |SuperProperty|, |SuperCall|, <del>`super` or `this`</del> <ins>`super`, `this`, or `#`</ins>, return *false*.
-2. Return |PipelineChain| Contains _symbol_.
+2. Return |Pipeline| Contains _symbol_.
 </emu-alg>
 
 <emu-note>
@@ -1115,7 +1162,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-containsexpression>
 <h1>Static Semantics: ContainsExpression</h1>
 <emu-see-also-para op="ContainsExpression"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `+&gt;` PipelineChain</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` Pipeline</emu-grammar>
 <emu-alg>
 1. Return *false*.
 </emu-alg>
@@ -1124,7 +1171,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-containsusestrict>
 <h1>Static Semantics: ContainsUseStrict</h1>
 <emu-see-also-para op="ContainsUseStrict"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `+&gt;` PipelineChain</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` Pipeline</emu-grammar>
 <emu-alg>
 1. Return *false*.
 </emu-alg>
@@ -1133,7 +1180,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-expectedargumentcount>
 <h1>Static Semantics: ExpectedArgumentCount</h1>
 <emu-see-also-para op="ExpectedArgumentCount"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `+&gt;` PipelineChain</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` Pipeline</emu-grammar>
 <emu-alg>
 1. Return 1.
 </emu-alg>
@@ -1142,7 +1189,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-hasname>
 <h1>Static Semantics: HasName</h1>
 <emu-see-also-para op="HasName"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `+&gt;` PipelineChain</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` Pipeline</emu-grammar>
 <emu-alg>
 1. Return *false*.
 </emu-alg>
@@ -1151,7 +1198,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-issimpleparameterlist>
 <h1>Static Semantics: IsSimpleParameterList</h1>
 <emu-see-also-para op="IsSimpleParameterList"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `+&gt;` PipelineChain</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` Pipeline</emu-grammar>
 <emu-alg>
 1. Return *true*.
 </emu-alg>
@@ -1162,7 +1209,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <p>With parameters _iteratorRecord_ and _environment_.</p>
 <emu-see-also-para op="IteratorBindingInitialization"></emu-see-also-para>
 <emu-grammar>
-PipelineStage : PipelineTopicExpression
+PipelineStep : PipelineTopicExpression
 </emu-grammar>
 <emu-alg>
 1. Assert: _iteratorRecord_.[[Done]] is *false*.
@@ -1179,7 +1226,7 @@ PipelineStage : PipelineTopicExpression
 9. Return ? _environment_.BindTopic(_v_).
 
 <emu-note type=editor>
-<p>TODO: Update this function for new definitions of BindTopicValues and PipelineChain.</p>
+<p>TODO: Update this function for new definitions of BindTopicValues and Pipeline.</p>
 <p>TODO: Why return NormalCompletion(empty) in last step of https://tc39.github.io/ecma262/#sec-initializeboundname instead of just returning the Environment Record’s method’s result?</p>
 </emu-note>
 </emu-alg>
@@ -1188,7 +1235,7 @@ PipelineStage : PipelineTopicExpression
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-lexicallydeclarednames>
 <h1>Static Semantics: LexicallyDeclaredNames</h1>
 <emu-see-also-para op="LexicallyDeclaredNames"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `+&gt;` PipelineChain</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` Pipeline</emu-grammar>
 <emu-alg>
 1. Return a new empty List.
 </emu-alg>
@@ -1197,7 +1244,7 @@ PipelineStage : PipelineTopicExpression
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-lexicallyscopeddeclarations>
 <h1>Static Semantics: LexicallyScopedDeclarations</h1>
 <emu-see-also-para op="LexicallyScopedDeclarations"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `+&gt;` PipelineChain</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` Pipeline</emu-grammar>
 <emu-alg>
 1. Return a new empty List.
 </emu-alg>
@@ -1206,7 +1253,7 @@ PipelineStage : PipelineTopicExpression
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-vardeclarednames>
 <h1>Static Semantics: VarDeclaredNames</h1>
 <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `+&gt;` PipelineChain</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` Pipeline</emu-grammar>
 <emu-alg>
 1. Return a new empty List.
 </emu-alg>
@@ -1215,7 +1262,7 @@ PipelineStage : PipelineTopicExpression
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-static-semantics-varscopeddeclarations>
 <h1>Static Semantics: VarScopedDeclarations</h1>
 <emu-see-also-para op="VarScopedDeclarations"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `+&gt;` PipelineChain</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` Pipeline</emu-grammar>
 <emu-alg>
 1. Return a new empty List.
 </emu-alg>
@@ -1225,10 +1272,10 @@ PipelineStage : PipelineTopicExpression
 <h1>Runtime Semantics: EvaluateBody</h1>
 <p>With parameters _functionObject_ and List _argumentsList_.</p>
 <emu-see-also-para op="EvaluateBody"></emu-see-also-para>
-<emu-grammar>PipelineFunction : `+&gt;` PipelineChain</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` Pipeline</emu-grammar>
 <emu-alg>
 1. Perform ? FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
-2. Let _exprRef_ be PipelineChainEvaluation of |PipelineChain| with argument _argumentsList_.
+2. Let _exprRef_ be PipelineEvaluation of |Pipeline| with argument _argumentsList_.
 3. Let _exprValue_ be ? GetValue(_exprRef_).
 4. Return Completion{[[Type]]: ~return~, [[Value]]: _exprValue_, [[Target]]: ~empty~}.
 </emu-alg>
@@ -1236,11 +1283,11 @@ PipelineStage : PipelineTopicExpression
 
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-runtime-semantics-evaluation>
 <h1>Runtime Semantics: Evaluation</h1>
-<emu-grammar>PipelineFunction : `+&gt;` PipelineChain</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` Pipeline</emu-grammar>
 <emu-alg>
 1. If the |PipelineFunction| is declared in strict mode code then let _strict_ be *true*. Otherwise let _strict_ be *false*. [TODO: Make this more formal.]
 2. Let _scope_ be the LexicalEnvironment of the running execution context.
-3. Let _closure_ be FunctionCreate(~Arrow~, |PipelineChain|, |PipelineChain|, _scope_, _strict_).
+3. Let _closure_ be FunctionCreate(~Arrow~, |Pipeline|, |Pipeline|, _scope_, _strict_).
 4. Return _closure_.
 </emu-alg>
 <emu-note type=editor>
@@ -2021,37 +2068,37 @@ ArgumentList[Yield, Await] :
 
 </emu-annex>
 
-<emu-annex id=sec-additional-feature-np-pipeline-operator>
-<h1>Pipeline Operator</h1>
+<emu-annex id=sec-additional-feature-np-pipe-operator>
+<h1>Pipe Operator</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipeline-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-bp-pipeline-operator>further modifications by Additional Feature BP</emu-xref>.</p>
+<p>This section revises the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-bp-pipe-operator>further modifications by Additional Feature BP</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
 <p>[TODO]</p>
 <emu-grammar type=definition>
-PipelineExpression[In, Yield, Await] :
+PipeExpression[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
-  <del class=block>ConditionalExpression[?In, ?Yield, ?Await] `|&gt;` PipelineChain[?In, ?Yield, ?Await]</del>
+  <del class=block>ConditionalExpression[?In, ?Yield, ?Await] `|&gt;` Pipeline[?In, ?Yield, ?Await]</del>
   <ins class=block>
-  [lookahead &lt;! {`(`}] ConditionalExpression[?In, ?Yield, ?Await] `|&gt;` PipelineChain[?In, ?Yield, ?Await]
-  Arguments[?Yield, ?Await] `|&gt;` PipelineChain[?In, ?Yield, ?Await]
+  [lookahead &lt;! {`(`}] ConditionalExpression[?In, ?Yield, ?Await] `|&gt;` Pipeline[?In, ?Yield, ?Await]
+  Arguments[?Yield, ?Await] `|&gt;` Pipeline[?In, ?Yield, ?Await]
   </ins>
 
-PipelineStage[In, Yield, Await] :
-  PipelineBareFunctionCall
-  PipelineBareConstructorCall
-  PipelineBareAwaitedFunctionCall[?Await]
+PipelineStep[In, Yield, Await] :
+  PipelineBareFunction
+  PipelineBareConstructor
+  PipelineBareAwaitedFunction[?Await]
   PipelineTopicExpression[?In, ?Yield, ?Await]
   <ins class=block>Arguments[?Yield, ?Await]</ins>
 
-PipelineBareFunctionCall :
+PipelineBareFunction :
   SimpleReference
 
-PipelineBareConstructorCall :
+PipelineBareConstructor :
   `new` SimpleReference
 
-PipelineBareAwaitedFunctionCall[Await] :
+PipelineBareAwaitedFunction[Await] :
   [+Await] `await` SimpleReference
 
 SimpleReference :
@@ -2062,15 +2109,15 @@ PipelineTopicExpression[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
 </emu-grammar>
 
-<emu-annex id=sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>
+<emu-annex id=sec-additional-feature-np-pipe-operator-static-semantics-early-errors>
 <h1>Static Semantics: Early Errors</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipeline-operator-static-semantics-early-errors>new clause in the core proposal</emu-xref>.</p>
+<p>This section revises the <emu-xref href=#sec-pipe-operator-static-semantics-early-errors>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <del class=block>
-<emu-grammar>PipelineExpression : ConditionalExpression `|&gt;` PipelineChain</emu-grammar>
-<emu-grammar>PipelineStage : ConditionalExpression</emu-grammar>
+<emu-grammar>PipeExpression : ConditionalExpression `|&gt;` Pipeline</emu-grammar>
+<emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>
 <emu-alg>
 * It is a Syntax Error if _ConditionalExpression_ is covering |Arguments|.
 </emu-alg>
@@ -2084,15 +2131,15 @@ PipelineTopicExpression[In, Yield, Await] :
 </emu-alg>
 </emu-annex>
 
-<emu-annex id=sec-additional-feature-np-pipeline-operator-static-semantics-contains>
+<emu-annex id=sec-additional-feature-np-pipe-operator-static-semantics-contains>
 <h1>Static Semantics: Contains</h1>
 <p>With parameter _symbol_.</p>
 <emu-see-also-para op="Contains"></emu-see-also-para>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipeline-operator-static-semantics-early-errors>new clause in the core proposal</emu-xref>.</p>
+<p>This section revises the <emu-xref href=#sec-pipe-operator-static-semantics-early-errors>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
-<emu-grammar>PipelineBareFunctionCall : SimpleReference</emu-grammar>
+<emu-grammar>PipelineBareFunction : SimpleReference</emu-grammar>
 <emu-alg>
 1. If _symbol_ is <del>`#`</del><ins>|TopicExpression| or |RestTopicReference|</ins>, return *false*.
 2. For each child node _child_ of this Parse Node, do
@@ -2104,10 +2151,10 @@ PipelineTopicExpression[In, Yield, Await] :
 </emu-alg>
 </emu-annex>
 
-<emu-annex id=sec-additional-feature-np-pipeline-operator-runtime-semantics-topicexpressioninstantiation aoid=TopicExpressionInstantiation>
+<emu-annex id=sec-additional-feature-np-pipe-operator-runtime-semantics-topicexpressioninstantiation aoid=TopicExpressionInstantiation>
 <h1>Runtime Semantics: TopicExpressionInstantiation</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipeline-operator-runtime-semantics-topicexpressioninstantiation>new clause in the core proposal</emu-xref>.</p>
+<p>This section revises the <emu-xref href=#sec-pipe-operator-runtime-semantics-topicexpressioninstantiation>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <p>TopicExpressionInstantiation is performed as follows using arguments _code_, _env_, <del>and _topics_</del><ins>_topics_, and _restStartIndex_</ins>.</p>
