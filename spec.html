@@ -478,7 +478,7 @@ PipelineTopicExpression[In, Yield, Await] :
 <p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
-<emu-grammar>PipelineBareFunctionCall : SimpleReference</emu-grammar>
+<emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
 <emu-alg>
 1. If _symbol_ is `#`, return *false*.
 2. For each child node _child_ of this Parse Node, do
