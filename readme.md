@@ -78,7 +78,7 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
   - [Alternative pipeline Babel plugin](#alternative-pipeline-babel-plugin)
   - [Alternative pipeline proposals](#alternative-pipeline-proposals)
 - [Appendices](#appendices)
-  - [Smart body syntax](#smart-body-syntax)
+  - [Smart step syntax](#smart-step-syntax)
     - [Bare style](#bare-style)
     - [Topic style](#topic-style)
     - [Practical consequences](#practical-consequences)
@@ -106,7 +106,7 @@ independent-but-compatible **Additional Features**:
 |[Core Proposal][]        | Stage 0 | Infix pipelines `… \|> …`<br>Lexical topic `#`                         | **Unary** function/expression **application**                                                                   |
 |[Additional Feature BC][]| None    | Bare constructor calls `… \|> new …`                                   | Tacit application of **constructors**                                                                           |
 |[Additional Feature BA][]| None    | Bare awaited calls `… \|> await …`                                     | Tacit application of **async functions**                                                                        |
-|[Additional Feature BP][]| None    | Block pipeline bodies `… \|> {…}`                                      | Application of **statement blocks**                                                                             |
+|[Additional Feature BP][]| None    | Block pipeline steps `… \|> {…}`                                       | Application of **statement blocks**                                                                             |
 |[Additional Feature PP][]| None    | Prefix pipelines `\|> …`                                               | Tacit application **within blocks**                                                                             |
 |[Additional Feature PF][]| None    | Pipeline functions `+>  `                                              | **Partial** function/expression **application**<br>Function/expression **composition**<br>**Method extraction** |
 |[Additional Feature TS][]| None    | Pipeline `try` statements                                              | Tacit application to **caught errors**                                                                          |
@@ -409,9 +409,10 @@ promise
 |> await stream.write(#)
 |> console.log(#);
 ```
-This version is equivalent to the version above, except that the `capitalize`
-and `console.log` pipeline bodies explicitly include optional topic
-references `#`, making the expressions slightly wordier than necessary.
+This version is equivalent to the version above, except that the
+`|> capitalize(#)` and `|> console.log(#)` pipeline steps explicitly include
+optional topic references `#`, making the expressions slightly wordier than
+necessary.
 
 <td>
 
@@ -435,7 +436,7 @@ console.log(
 <td>
 
 Being able to automatically detect this **“[bare style][]”** is the [**smart**
-part of the “smart pipe operator”][smart body syntax]. The styles of
+part of the “smart pipe operator”][smart step syntax]. The styles of
 [**functional** programming][functional programming], [**dataflow**
 programming][dataflow programming], and [**tacit** programming][tacit
 programming] may particularly benefit from bare pipelines and their [terse
@@ -465,12 +466,12 @@ Note that `… |> f` is a bare unary function call. This is the same as `… |> 
 but the topic reference `#` is unnecessary; it is invisibly, tacitly implied. The
 same goes for `o.unaryMethod`, which is a unary function call on `o.unaryMethod`.
 
-This is the [**smart** part of the smart pipe operator][smart body syntax],
+This is the [**smart** part of the smart pipe operator][smart step syntax],
 which can distinguish between two syntax styles (**[bare style][]** vs. **[topic
 style][]**) by using a simple rule: **bare** style uses only **identifiers and
 dots** – and **never parentheses, brackets, braces**, or **other operators**. And
 **topic** style **always** contains at least one **topic reference**. For more
-information, see the reference below about the **[smart body syntax][]**.
+information, see the reference below about the **[smart step syntax][]**.
 
 <td>
 
@@ -516,11 +517,11 @@ input |> x + 50 |> f |> g(x, 2);
 // no topic reference.
 ```
 In order to fulfill the [goal][goals] of [“don’t shoot me in the foot”][],
-when a **pipeline is in [topic style][]** but its **body has no topic reference**,
-that is an **[early error][]**. Such a degenerate pipeline has a very good
-chance of actually being an accidental bug. (Note that the bare-style pipeline
-step `|> f` is *not* an error. The [bare style][] is not supposed to contain any
-topic references `#`.)
+when a **pipeline step is in [topic style][]** but it **contains no topic
+reference**, that is an **[early error][]**. Such a degenerate pipeline step has
+a very good chance of actually being an accidental bug. (Note that the
+bare-style pipeline step `|> f` is *not* an error. The [bare style][] is not
+supposed to contain any topic references `#`.)
 
 <td>
 
@@ -859,8 +860,8 @@ requires editing the variable names in the following step.
 ```js
 input |> f |> [0, 1, 2, ...#] |> g;
 ```
-The body of a pipeline in topic style may contain array literals. These may be
-flattened, just like any other sort of expression.
+A topic-style pipeline step may contain array literals. These may be flattened,
+just like any other sort of expression.
 
 <td>
 
@@ -871,14 +872,14 @@ g([0, 1, 2, ...f(input)]);
 <tr>
 <td>
 
-The body of a pipeline in topic style may also contain object literals. However,
-pipeline bodies that are entirely object literals must be parenthesized. It is
-similar to how arrow functions distinguish between object literals and blocks.
+A topic-style pipeline step may also contain object literals. However, pipeline
+steps that are entirely object literals must be parenthesized. It is similar to
+how arrow functions distinguish between object literals and blocks.
 ```js
 input |> f |> ({ x: #, y: # }) |> g;
 ```
 This fulfills the goal of [forward compatibility][] with [Additional
-Feature BP][], which introduces block pipeline bodies. (It is expected that
+Feature BP][], which introduces block pipeline steps. (It is expected that
 block pipelines would eventually be much more common than pipelines with object
 literals.)
 ```js
@@ -905,9 +906,9 @@ f = input
 |> f
 |> (x => # + x);
 ```
-The body of a pipeline in topic style may contain an inner arrow function. Both
-versions of this example result in an arrow function in a closure on the
-previous pipeline’s result `input |> f`.
+A topic-style pipeline step may contain an inner arrow function. Both versions
+of this example result in an arrow function in a closure on the previous
+pipeline’s result `input |> f`.
 
 <td>
 
@@ -941,9 +942,9 @@ can be useful for using callbacks in a pipeline.
   processIntervalID(intervalID);
 }
 ```
-The topic value of the second pipeline (here represented by a normal variable
-`$`) is still lexically accessible within its body, an arrow function, in both
-examples.
+The topic value of the second pipeline step (here represented by a normal
+variable `$`) is still lexically accessible within its body, an arrow function,
+in both examples.
 
 <tr>
 <td>
@@ -984,7 +985,7 @@ input
 ```
 Note, however, that arrow functions have looser precedence than the pipe
 operator. This means that if a pipeline creates an arrow function alone in one
-of its steps’ bodies, then the arrow-function expression must be parenthesized.
+of its steps, then the arrow-function expression must be parenthesized.
 (The same applies to assignment and yield operators, which are also looser than
 the pipe operator.) The example above is being parsed as if it were:
 ```js
@@ -1009,7 +1010,7 @@ input
 <tr>
 <td>
 
-Both the head and the body of a pipeline may contain nested inner pipelines.
+Both the input and the steps of a pipeline may contain nested inner pipelines.
 ```js
 x = input
 |> f(x =>
@@ -1020,7 +1021,7 @@ x = input
 <td>
 
 A nested pipeline works consistently. It merely shadows the outer context’s
-topic with the topic within its own body’s inner context.
+topic with the topic within its own steps’ inner contexts.
 ```js
 {
   const $ = input;
@@ -1125,11 +1126,11 @@ x = g(await f(input, 5) + 30);
 <tr>
 <td>
 
-A function definition that is the body of a pipeline may contain topic
-references in its default parameters’ expressions, because their scoping is
-similar to that of the outside context’s: similar enough such that also allowing
-topic references in them would fulfill the goal of [simple scoping][]. However,
-as stated above, the function body itself still may not contain topic references.
+A function definition that is a pipeline step may contain topic references in
+its default parameters’ expressions, because their scoping is similar to that of
+the outside context’s: similar enough such that also allowing topic references
+in them would fulfill the goal of [simple scoping][]. However, as stated above,
+the function body itself still may not contain topic references.
 
 ```js
 value
@@ -1862,10 +1863,10 @@ console.log(
 There is a TC39 proposal for [`do` expressions][] at Stage 1. Smart pipelines do
 **not** require `do` expressions. However, if [`do` expressions][] also become
 part of JavaScript, then, as with **any** other type of expression, a pipeline
-in [topic style][] may use a `do` as its body, as long as the `do` expression
+step in [topic style][] may be `do` expression, as long as the `do` expression
 contains the topic reference `#`. The topic reference `#` is bound to the
-pipeline head’s value, the `do` expression is evaluated, then the result of the
-`do` block becomes the final result of that pipeline, and the lexical
+input value, the `do` expression is evaluated, then the result of the
+`do` block becomes the result of that pipeline step, and the lexical
 environment is reset – all as usual.
 
 In this manner, pipelines with `do` expressions act as a way to create a
@@ -1875,10 +1876,10 @@ same value. This can be useful for embedding side effects, `if` `else`
 statements, `try` statements, and `switch` statements within pipeline chains.
 They may be made even pithier with [Additional Feature BP][], explained later.
 
-[`do` expressions][] as [topic-style][topic style] pipeline bodies might be so
+[`do` expressions][] as [topic-style][topic style] pipeline steps might be so
 useful, in fact, that it might be worth building them into the pipe operator
 `|>` itself as an add-on feature. This additional feature – **block pipelines**
-– adds an additional [topic-style pipeline step syntax][smart body syntax],
+– adds an additional [topic-style pipeline step syntax][smart step syntax],
 using blocks to stand for `do` expressions.
 
 [Additional Feature BP is **formally specified in in the draft
@@ -1900,7 +1901,7 @@ x = input
 |> { sideEffect(); #; }
 |> g;
 ```
-Side effects may easily be embedded within block pipeline bodies.
+Side effects may easily be embedded within block pipeline steps.
 
 <td>
 
@@ -1924,7 +1925,7 @@ x = input
 }
 |> g;
 ```
-`if` `else` statements may also be used within block pipeline bodies, as an
+`if` `else` statements may also be used within block pipeline steps, as an
 alternative to the ternary conditional operator `?` `:`.
 
 <td>
@@ -1955,7 +1956,7 @@ x = input
 }
 |> g;
 ```
-`try` statements would also be useful to embed in pipelines with block bodies.
+`try` statements would also be useful to embed in pipelines with block steps.
 This example becomes even pithier with [Additional Feature PP][] and [Additional
 Feature TS][].
 
@@ -1992,14 +1993,14 @@ input
 // no topic reference.
 ```
 The same [early error rules][] that apply to any topic-style pipeline step apply
-also to topic-style bodies that are `do` expressions.
+also to topic-style steps that are `do` expressions.
 
 <tr>
 <td>
 
 As with all other [additional features][], Additional Feature BP is [forward
 compatible][] with the [Core Proposal][]. This compatibility includes pipeline
-bodies that are object literals, which must be parenthesized.
+steps that are object literals, which must be parenthesized.
 ```js
 input |> f |> { x: #, y: # } |> g;
 input |> f |> { if (#) { x: #, y: # }; } |> g;
@@ -2488,9 +2489,9 @@ expressions and (with [Additional Feature BP][]) `if` `else` statements, `try`
 statements, and `switch` statements.
 
 (If [Additional Feature PF][] or [Additional Feature NP][] are active, then a
-pipeline might not have only one pipeline head. In those cases, a prefix
+pipeline might not have only one input value. In those cases, a prefix
 pipeline’s tacit, default head is whatever topic references their pipeline
-bodies use. See those other two features for more information.)
+steps use. See those other two features for more information.)
 
 [Additional Feature PP is **formally specified in in the draft
 specification**][formal PP].
@@ -2902,35 +2903,26 @@ use the outer environment’s topic: `obj`.
 
 ## Additional Feature TS
 With the [Core Proposal][] only, all `try` statements’ `catch` clauses would
-prohibit the use of the topic reference within their bodies, except where the
+prohibit the use of the topic reference within their steps, except where the
 topic reference `#` is inside an inner pipeline inside the `catch` clause: this
 is one of the Core Proposal’s [early errors][] mentioned above.
 
 The next additional feature – **Pipeline `try` Statements** – adds new forms of
 the `try` statement, the `catch` clause, and the `finally` clause, in the form
 of `try |> …`, `catch |> …`, and `finally |> …`, each followed by a [pipeline
-with the same smart body syntax][smart body syntax].
+with the same smart step syntax][smart step syntax].
 
 The developer must **[opt into this behavior][opt-in behavior]** by using a
 pipeline token `|>`, followed by the pipeline. No existing code would be
 affected. Any, some, or none of the three clauses in a `try` statement may be in
 a pipeline form versus the regular block form.
 
-The pipeline `try |> …` statement and the `finally |> …` clause would both apply
-the outer context’s topic to their pipeline bodies. As per the usual [smart body
-syntax][], if a pipeline step is in bare mode, then it will be called as a
-function call, constructor call, or awaited function call on the outer topic.
-If the pipeline step is in topic style, then the body is evaluated as an
-expression with a new lexical environment, in which the topic reference is bound
-to the outer topic.
+A pipeline `try |> …` statement or a `finally |> …` clause would apply the outer
+context’s topic to their pipelines. As usual, it would be an [early error][] if
+the outer context has no topic binding.
 
-The pipeline `catch |> …` clause would treat its caught error as if it were the
-head of a pipeline whose body is the expression following the `|>`. As per the
-usual [smart body syntax][], if the pipeline step is in bare mode, then it will
-be called as a function call, constructor call, or awaited function call on
-the error. If the pipeline step is in topic style, then the body is evaluated as
-an expression with a new lexical environment, in which the topic reference is
-bound to the caught error.
+A pipeline `catch |> …` clause would treat its caught error as if it were the
+pipeline’s input.
 
 With [Additional Feature BP][], this syntax which would naturally allow the form
 `catch |> { … }`, except, within the block, the error would be `#`.
@@ -2970,7 +2962,7 @@ value
 |> g;
 ```
 The semicolons after `1 / #` and after `processError` are optional. There is no
-ASI hazard here because pipeline bodies may never contain a `catch` or `finally`
+ASI hazard here because pipeline steps may never contain a `catch` or `finally`
 clause, unless the clause is inside a block.
 
 <td>
@@ -3185,7 +3177,7 @@ or [topic style][]**.
 
 If the pipeline function starts with [bare style][] (like `+> f |> # + 1`), then
 the function is **variadic** and applies **all** its arguments to the function
-reference to which the bare-style body evaluates (that is,
+reference to which the bare-style pipeline step evaluates (that is,
 `(...$) => f(...$) + 1`), where `$` is a [hygienically unique
 variable][lexically hygienic]. (This is [forward compatible][] with [Additional
 Feature NP][].)
@@ -3228,7 +3220,7 @@ array.map($ => $ |> #);
 array.map($ => $);
 ```
 These functions are the same. They both pipe a unary parameter into a
-topic-style pipeline whose bodies evaluate simply to the topic, unmodified.
+topic-style pipeline whose only step evaluates simply to the topic, unmodified.
 
 <td>
 
@@ -3247,7 +3239,7 @@ array.map($ => $ |> # + 2);
 array.map(+> # + 2);
 ```
 These functions are also the same with each other. They both pipe a unary
-parameter into a topic-style pipeline whose bodies are the topic plus two.
+parameter into a topic-style pipeline whose only step is the topic plus two.
 
 <td>
 
@@ -3319,7 +3311,7 @@ array.map((...$) => h(g(f(...$))) * 2);
 ```
 
 This is an [early error][], as usual. The topic is not used anywhere
-in the pipeline function’s body – just like with `… |> x + 2`.
+in the pipeline function’s only step – just like with `… |> x + 2`.
 
 <td>
 
@@ -3426,7 +3418,7 @@ const toSlug = +>
 ```
 When compared to the proposal for [syntactic functional composition by Isiah
 Meadows][isiahmeadows functional composition], this syntax does not need to
-surround each non-function expression with an arrow function. The [smart body
+surround each non-function expression with an arrow function. The [smart step
 syntax][] has more powerful [expressive versatility][], improving the
 readability of the code.
 
@@ -3560,7 +3552,7 @@ array.map(+> f(2, #));
 
 Pipeline functions look similar to the proposal for [partial function
 application][] by [Ron Buckton][], except that partial-application expressions
-are simply pipeline bodies that are prefixed by the pipeline-function operator.
+are simply pipeline steps that are prefixed by the pipeline-function operator.
 ```js
 array.map(f(2, ?));
 array.map($ => f(2, $));
@@ -4065,8 +4057,9 @@ class LipFuzzTransformer {
 
 ## Additional Feature NP
 Another Additional Feature – **n-ary pipelines** – enables the passing of
-multiple arguments from each pipeline’s head into its body. `(a, b) |> f` is
-equivalent to `f(a, b)`.
+multiple arguments from a pipeline’s input into its steps and/or from one step
+to its next step. `(a, b) |> f` is equivalent to `f(a, b)`, and
+`a |> (f(#), g(#)) |> h` is equivalent to `h(f(a), g(a))`.
 
 For [topic style][], Additional Feature NP introduces **multiple lexical
 topics**: not only the **primary** topic reference `#`, but also **secondary**
@@ -4105,8 +4098,8 @@ specification**][formal NP].
 ```js
 (a, b) |> f;
 ```
-Pipeline heads using commas would be interpreted as argument lists, which would
-then be applied to the pipeline bodies.
+A pipeline step using commas would be interpreted as an argument list. The
+arguments would then be applied to the next pipeline step as its inputs.
 
 <td>
 
@@ -4120,7 +4113,7 @@ f(a, b);
 ```js
 (a, b, ...c, d) |> f |> g;
 ```
-Spread elements are permitted within pipeline heads, with the same meaning as in
+Spread elements are permitted within pipeline steps, with the same meaning as in
 regular argument lists.
 
 <td>
@@ -4135,7 +4128,7 @@ g(f(a, b, ...c, d));
 ```js
 ...a |> f |> g;
 ```
-When a pipeline head only consists of one item, its parentheses may be omitted,
+When a pipeline step only consists of one item, its parentheses may be omitted,
 which is the usual syntax from the [Core Proposal][]. But this now goes for
 spread elements too.
 
@@ -4169,9 +4162,12 @@ g(f(a, x, b));
 ```js
 (a, b, ...c, d) |> f(#, x, ...) |> g;
 ```
-The pipeline also binds an array to a rest topic reference `...` within the
-pipeline step. The array contains the arguments of the pipeline head that were
-not bound to any other topic reference.
+A pipeline step also may bind a list of values to a rest topic reference `...`
+within the next pipeline step. The list contains the arguments of the pipeline
+step that were not bound to any other topic reference. `...` automatically
+flattens, acting as a spread operator, and it is valid only where spread
+operators are already valid (such as argument lists, array literals, and object
+literals).
 
 <td>
 
@@ -4277,13 +4273,12 @@ g(a - b);
 <tr>
 <td>
 
-N-ary pipelines may be chained by using comma expressions to make their pipeline
-bodies also n-ary.
+N-ary pipeline steps may be chained by using comma expressions, forming a
+**list-style pipeline step**. [TODO: Disallow bare style in list pipeline steps.]
 ```js
 (a, b) |> (f, g) |> h;
 ```
-Each element in an N-ary pipeline step is independently applied to each
-consecutive argument from the pipeline head.
+The results of the list will be applied to the following pipeline step as its inputs.
 
 <td>
 
@@ -4299,8 +4294,9 @@ h(f(a), g(b));
 |> (f, # ** c + ##)
 |> # - ##;
 ```
-The elements in an N-ary pipeline step may be either in bare style (like the `f`
-here) or in topic style (like the `# ** c + ##` here).
+[TODO: Delete this paragraph.] The elements in an N-ary pipeline step may be
+either in bare style (like the `f` here) or in topic style (like the `# ** c +
+##` here).
 
 <td>
 
@@ -4342,7 +4338,7 @@ f(a) - (a ** c + b);
 // but must terminate with a
 // unary pipeline step.
 ```
-It is an [early error][] for a pipeline head to end with an n-ary pipeline step,
+It is an [early error][] for a pipeline to end with an n-ary pipeline step,
 where n > 1. Such a comma expression would almost certainly be an accidental
 mistake by the developer.
 
@@ -4434,9 +4430,9 @@ x
 |> (f, ...g, h)
 |> [...].length;
 ```
-As a result of the rules, `… |> [...]` collects its pipeline head’s n-ary
-arguments into a single flattened array, to which the rest topic reference `...`
-is then bound.
+As a result of the rules, `… |> [...]` collects its input’s n-ary arguments into
+a single flattened list, to which the rest topic reference `...` is then bound,
+then spread into an array literal.
 
 <td>
 
@@ -4592,8 +4588,8 @@ These two lines of code are also equivalent.
 
 When coupled with Additional Feature NP, the prefix pipe operator `|>` of
 [Additional Feature PP][], would be equivalent to a pipeline whose head is
-simply the argument list of all the topic references that its body uses. The
-code statements in each of the table rows below are mutually equivalent.
+simply the argument list of all the topic references that its first step uses.
+The code statements in each of the table rows below are mutually equivalent.
 
 <tr>
 <td>
@@ -5224,7 +5220,7 @@ for await (const c of stream) {
 
 # Goals
 
-There are seventeen ordered goals that the smart body syntax tries to fulfill,
+There are seventeen ordered goals that the smart step syntax tries to fulfill,
 which may be summarized,\
 “Don’t break my code,”\
 “Don’t make me overthink,”\
@@ -5382,7 +5378,7 @@ forgetting these rules should result in [early, compile-time errors][early
 errors], not subtle runtime bugs.
 
 It should always be easy to find the origin of a topic binding, without looking
-deeply into the stack. Topic references are therefore bound only in the bodies
+deeply into the stack. Topic references are therefore bound only in the steps
 of pipelines, and they cannot be used within `function`, `class`, `for`,
 `while`, `catch`, and `with` statements (see [Core Proposal][]). When the
 developer wishes to trace the origin of a topic binding, they may be certain
@@ -5419,12 +5415,12 @@ dependency that pieces of code have on other code. This long lookahead in turn
 makes it more likely that the code will exhibit developer-unintended behavior.
 
 This is true particularly for [distinguishing between different styles of
-pipeline step syntax][smart body syntax]. A pipeline’s meaning would often be
+pipeline step syntax][smart step syntax]. A pipeline’s meaning would often be
 ambiguous between these styles – at least without checking the pipeline step
 carefully to see in which style it is written. And the pipeline step may be a
 very long expression.
 
-By restricting the space of valid bare-style pipeline bodies (that is, without
+By restricting the space of valid bare-style pipeline steps (that is, without
 topic references), the rule minimizes garden-path syntax that would otherwise be
 possible – such as `value |> compose(f, g, h, i, j, k, #)`. Syntax becomes more
 locally readable. It becomes easier to reason about code without thinking about
@@ -5704,7 +5700,7 @@ operator that improves readability should be versatile (this goal) but
 [conceptually and cyclomatically simple][cyclomatic simplicity]. Such an
 operator should be able to handle **all** expressions, in a **single** manner
 **uniformly** **universally** applicable to **all** expressions. It is the hope
-of this proposal’s authors that its [smart body syntax][] fulfills both criteria.
+of this proposal’s authors that its [smart step syntax][] fulfills both criteria.
 
 ### Cyclomatic simplicity
 Each edge case of the grammar increases the [cyclomatic complexity][] of parsing
@@ -5734,7 +5730,7 @@ function calls][] but also the possibility of [terse composition][] with
 
 But even with this tradeoff, not too much simplicity should be given up. The
 sacrifice of simplicity for bare style’s alternate mode can be minimized by
-ensuring that [its parsing rules are very simple][smart body syntax].
+ensuring that [its parsing rules are very simple][smart step syntax].
 
 ## “Make my code easier to read.”
 The new syntax should increase the human readability and writability of much
@@ -5855,7 +5851,7 @@ extra shortening might dramatically reduce the verbosity of unary function
 calls, but again this must be balanced with [backward compatibility][],
 [syntactic locality][], and [cyclomatic simplicity][].
 
-It is the hope of this proposal’s authors that its [smart body syntax][] reaches
+It is the hope of this proposal’s authors that its [smart step syntax][] reaches
 a good balance between this goal and [syntactic locality][] and [cyclomatic
 simplicity][], in the same manner that [Huffman coding][] optimizes textual
 symbols’ length for their frequency of use: more commonly used symbols are
@@ -6114,9 +6110,9 @@ analyzability][].
 There is a TC39 proposal for [`do` expressions][] at Stage 1. Smart pipelines do
 **not** require `do` expressions. However, if [`do` expressions][] also become
 part of JavaScript, then, as with **any** other type of expression, a pipeline
-in [topic style][] may use a `do` as its body, as long as the `do` expression
-contains the topic reference `#`. The topic reference `#` is bound to the
-pipeline head’s value, the `do` expression is evaluated, then the result of the
+step in [topic style][] may use a `do` expression, as long as the `do` expression
+contains the topic reference `#`. The topic reference `#` is bound to its
+input’s value, the `do` expression is evaluated, then the result of the
 `do` block becomes the final result of that pipeline, and the lexical
 environment is reset – all as usual.
 
@@ -6387,7 +6383,7 @@ const toSlug = +>
 ```
 When compared to the proposal for [syntactic functional composition by Isiah
 Meadows][isiahmeadows functional composition], this syntax does not need to
-surround each non-function expression with an arrow function. The [smart body
+surround each non-function expression with an arrow function. The [smart step
 syntax][] has more powerful [expressive versatility][], improving the
 readability of the code.
 
@@ -6520,7 +6516,7 @@ are resolvable topic references. (Additional Feature PF alone would only addres
 partial application into unary functions.)
 
 Pipeline functions look similar to the alternative proposal, except that
-partial-application expressions are simply pipeline bodies that are prefixed by
+partial-application expressions are simply pipeline steps that are prefixed by
 the pipeline-function operator, and consecutive `?` placeholders are instead
 consecutive topic references `#`, `##`, `###`.
 
@@ -7155,7 +7151,7 @@ select ('world') {
 ## `do` expressions
 Because pipeline [topic style][] supports [arbitrary expressions][expressive
 versatility], when [`do` expressions][] are added to JavaScript they too will be
-supported within pipeline bodies. When this occurs, topic references would be
+supported within pipeline steps. When this occurs, topic references would be
 allowed within inner `do` expressions, along with arrow functions and `if` and
 `try` statements. [Additional Feature BP][] would extend this further, also
 supporting pipeline-step blocks that act nearly identically to `do` expressions.
@@ -7179,9 +7175,9 @@ single `?` might be freed up for optional chaining.
 ## Alternative pipeline Babel plugin
 [Gajus Kuizinas wrote a Babel plugin for syntactic functional composition][gajus
 functional composition], which may be useful to compare with this proposal’s
-smart pipelines. Kuizinas’s plugin makes the choice to insert its pipeline
-heads’ values into its pipeline bodies’ last parameter, which is convenient for
-Ramda-style functions but not for Underscore-style functions.
+smart pipelines. Kuizinas’s plugin makes the choice to insert input values
+into its pipeline steps’ last parameters, which is convenient for Ramda-style
+functions but not for (equally reasonable) Underscore-style functions.
 
 <table>
 <thead>
@@ -7264,13 +7260,13 @@ coordinated more with the proposals for [function binding][] and [partial
 function application][] in a more coherent approach. Smart pipelines open the
 door to such an approach to all these use cases.
 
-Smart pipelines and their [smart body syntax][] sacrifice a small amount of
+Smart pipelines and their [smart step syntax][] sacrifice a small amount of
 [simplicity][cyclomatic simplicity] in return for a vast amount of [expressive
 versatility][] and [conceptual generality][]. And because it makes many of the
 other operator proposals above either unnecessary or possibly simpler, it may
 result in less complexity on average anyway. And thanks to its [syntactic
 locality][] and numerous [statically detectable early errors][early errors], the mental
-burden on the developer in remembering [smart body syntax][] is light.
+burden on the developer in remembering [smart step syntax][] is light.
 
 The benefits of smart pipelines on many real-world examples are well
 demonstrated in the [Motivation][] section above, and many of the examples are
@@ -7280,20 +7276,20 @@ versatile syntax would open the door to addressing the use cases of many other
 proposals in a uniform manner.
 
 # Appendices
-## Smart body syntax
-Most pipelines will use topic references in their bodies. This style of pipeline
-is called **[topic style][]**.
+## Smart step syntax
+Most pipeline steps will use topic references in their steps. This style of
+pipeline step is called **[topic style][]**.
 
 For three simple cases – unary functions, unary async functions, and unary
-constructors – you may omit the topic reference from the body. This is called
-**[bare style][]**.
+constructors – you may omit the topic reference from the pipeline step. This is
+called **[bare style][]**.
 
 When a pipe is in bare style, we refer to the pipeline as a **bare function
 call**. (If [Additional Feature BC][] or [Additional Feature BA][] are used,
 then a bare-style pipeline step may instead be a **bare awaited function call**,
-or a **bare constructor call**, depending on the rules of bare style.) The body
+or a **bare constructor call**, depending on the rules of bare style.) The step
 acts as just a simple reference to a function, such as with `… |> capitalize` or
-with `… |> console.log`. The body’s value would then be called as a unary
+with `… |> console.log`. The step’s value would then be called as a unary
 function, without having to use the topic reference as an explicit argument.
 
 The two bare-style productions require no parameters, because they can only be
@@ -7353,9 +7349,10 @@ simple property identifiers. If there are any operators, parentheses (including
 for method calls), brackets, or anything other than identifiers and dot
 punctuators, then it is in [topic style][], not in bare style.
 
-If the body is a merely a simple reference, then that identifier is interpreted
-to be a **bare function call**. The pipeline’s value will be the result of
-calling the body with the current topic as its argument.
+If the pipeline step is a merely a simple reference, then that identifier is
+interpreted to be a **bare function call**. The pipeline’s value will be the
+result of evaluating the step as an identifier or member expression, then
+calling the result as a function, with the current topics as its arguments.
 
 That is: **if a pipeline** is of the form\
 **_topic_ `|>` _identifier_**\
@@ -7391,8 +7388,8 @@ then the pipeline is a bare async function call.
 ### Topic style
 The presence or absence of topic tokens (`#`, `##`, `###`) is *not* used in the
 grammar to distinguish topic style from bare style to fulfill the goal of
-[syntactic locality][]. Instead, **if a pipeline** of the form _topic_
-|> _body_ does ***not* match the [bare style][]** (that is, it is *not* a bare
+[syntactic locality][]. Instead, **if a pipeline step** of the form
+|> _step_ does ***not* match the [bare style][]** (that is, it is *not* a bare
 function call, bare async function call, or bare constructor call), then it
 **must be in topic style**. Topic style **requires** that there be a topic
 reference in the pipeline step; otherwise it is an [early error][].
@@ -7407,15 +7404,15 @@ A pipeline step that is a block `{` … `}` containing a list of statements is
 whole pipeline, similarly to [`do` expressions][].
 
 ### Practical consequences
-Therefore, a pipeline in **[bare style][] *never*** has **parentheses `(…)` or
-brackets `[…]`** in its body. Neither `… |> object.method()` nor
+Therefore, a pipeline step in **[bare style][] *never*** contains **parentheses `(…)` or
+brackets `[…]`**. Neither `… |> object.method()` nor
 `… |> object.method(arg)` nor `… |> object[symbol]` nor `… |> object.createFunction()`
 are in bare style (in fact, they all are Syntax Errors, due to their being in
 [topic style][] without any topic references).
 
-**When a body needs parentheses or brackets**, then **don’t use bare style**,
-and instead **use a topic reference** in the body ([topic style][])…or **assign
-the body to a variable**, then **use that variable as a bare body**.
+**When a pipeline step needs parentheses or brackets**, then **don’t use bare style**,
+and instead **use a topic reference** in the step ([topic style][])…or **assign
+the step to a variable**, then **use that variable as a bare-style step**.
 
 ## Operator precedence and associativity
 As a infix operation forming compound expressions, the [operator precedence and
@@ -7425,7 +7422,7 @@ to other operations.
 Precedence is tighter than arrow functions (`=>`), assignment (`=`, `+=`, …),
 generator `yield` and `yield *`, and sequence `,`; and it is looser than every
 other type of expression. If the pipe operation were any tighter than this
-level, its body would have to be parenthesized for many frequent types of
+level, its steps would have to be parenthesized for many frequent types of
 expressions. However, the result of a pipeline is also expected to often serve
 as the body of an arrow function or a variable assignment, so it is tighter than
 both types of expressions.
@@ -7548,14 +7545,15 @@ to loosest**. Each level may contain the parse types listed for that level –
 The term [“**topic**” comes from linguistics][topic and comment] and have
 precedent in prior programming languages’ use of “topic variables”.
 
-The term “**head**” is preferred to “**topic expression**” because, in the
-future, the topic concept could be extended to other syntaxes, as with
-[Additional Feature TS][] and [Additional Feature FS][], not just pipelines.
+The term “**topic-style pipeline**” is preferred to “**topic expression**”
+because, in the future, the topic concept could be extended to other syntaxes,
+as with [Additional Feature TS][] and [Additional Feature FS][], not just
+pipelines.
 
-In addition, “head” is preferred to “**LHS**”, because “LHS” in the ECMAScript
+In addition, “**input**” is preferred to “**LHS**”, because “LHS” in the ECMAScript
 specification usually refers to the [LHS of assignments][ECMAScript LHS expressions],
-which may be confusing. However, “topic expression” and “LHS” are still fine and
-acceptable, if not imprecise, names for a pipeline’s head.
+which may be confusing. However, “LHS” is still a fine and acceptable, if not
+nonspecific, name for a pipeline’s input.
 
 The term “**topic reference**” is preferred to the phrase “**topic variable**”
 because the latter is a misnomer. The topic reference is *not* a variable
@@ -7570,9 +7568,9 @@ bound earlier in the surrounding lexical context, these **parameter
 placeholders** act as the parameter to a new function. When this new function is
 called, those parameter placeholders will be bound to multiple argument values.
 
-The term “**body**” is preferred instead of “**RHS**” because “topic” is
-preferred to “LHS”. However, “RHS” is still a fine and acceptable name for the
-body of the pipe operator.
+The term “**pipeline step**” is preferred instead of “**RHS**” just as “input”
+is preferred to “LHS”. However, “RHS” is still a fine and acceptable name for
+the right-hand side of a pipe operator.
 
 “**[Bare style][]**” can also be called “**tacit style**”, but the former is
 preferred to the latter. Eventually, certain possible future extensions to the
@@ -7861,6 +7859,10 @@ The pipeline chain is therefore equivalent to:\
   replaced by #[2], and unshadowed instances of the rest topic reference `...`
   are replaced by `...` #ₛ.
 
+## Smart body syntax
+This is a legacy section for old links. This section has been renamed to
+**“[smart step syntax][]”**.
+
 [“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 [“don’t break my code”]: #dont-break-my-code
 [“don’t make me overthink”]: #dont-make-me-overthink
@@ -8061,7 +8063,7 @@ The pipeline chain is therefore equivalent to:\
 [simonstaton functional composition]: https://github.com/simonstaton/Function.prototype.compose-TC39-Proposal
 [simple scoping]: #simple-scoping
 [sindresorhus]: https://github.com/sindresorhus
-[smart body syntax]: #smart-body-syntax
+[smart step syntax]: #smart-step-syntax
 [smart pipelines]: #smart-pipelines
 [Standard Style]: https://standardjs.com/
 [static analyzability]: #static-analyzability
