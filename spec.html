@@ -498,13 +498,12 @@ PipelineTopicExpression[In, Yield, Await] :
 <emu-note>
 <p>This abstract operation constructs, instantiates, then returns a new declarative Lexical Environment for a topic pipeline body. It creates an immutable topic binding in that declarative environment using the given _topics_.</p>
 </emu-note>
-<p>TopicPipelineInstantiation is performed as follows using arguments _code_, _env_, and _topics_.</p>
+<p>TopicPipelineInstantiation is performed as follows using arguments _env_ and _topics_.</p>
 <ul>
 <li>_env_ is the Lexical Environment in which the topic binding is to be created.</li>
 <li>_topics_ is a list of values: _env_'s primary topic reference will be bound to the first value.</li>
 </ul>
 
-<emu-grammar>PipelineExpression : PipelineExpression `|&gt;` PipelineBody</emu-grammar>
 <emu-alg>
 1. Assert: _topics_ is a list.
 2. Let _envRec_ be env's Environment Record.
