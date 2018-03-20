@@ -424,9 +424,6 @@ PipelineExpression[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
   ConditionalExpression[?In, ?Yield, ?Await] `|&gt;` PipelineChain[?In, ?Yield, ?Await]
 
-PipelineHead[?In, ?Yield, ?Await] :
-  ConditionalExpression[?In, ?Yield, ?Await]
-
 PipelineChain[In, Yield, Await] :
   PipelineStage[?In, ?Yield, ?Await]
   PipelineStage[?In, ?Yield, ?Await] `|&gt;` PipelineChain[?In, ?Yield, ?Await]
@@ -494,7 +491,7 @@ PipelineTopicExpression[In, Yield, Await] :
 </emu-alg>
 </emu-clause>
 
-<emu-clause id=sec-pipeline-operator-runtime-semantics-TopicExpressioninstantiation aoid=TopicExpressionInstantiation>
+<emu-clause id=sec-pipeline-operator-runtime-semantics-topicexpressioninstantiation aoid=TopicExpressionInstantiation>
 <h1>Runtime Semantics: TopicExpressionInstantiation</h1>
 <emu-note type=editor>
 <p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
@@ -976,7 +973,7 @@ PipelineTopicBlock[In, Yield, Await] :
 </emu-alg>
 </emu-annex>
 
-<emu-annex id=sec-additional-feature-bp-pipeline-operator-runtime-semantics-TopicExpressioninstantiation aoid=TopicExpressionInstantiation>
+<emu-annex id=sec-additional-feature-bp-pipeline-operator-runtime-semantics-topicexpressioninstantiation aoid=TopicExpressionInstantiation>
 <h1>Runtime Semantics: TopicExpressionInstantiation</h1>
 <emu-note type=editor>
 <p>This annex has not yet been specified.</p>
@@ -1043,7 +1040,7 @@ console.log.bind(console)</code></pre></td>
 </table>
 </emu-table>
 
-<p>This annex uses a new token `+&gt;`, but this token is merely an <strong>illustrative placeholder</strong> to avoid premature bikeshedding discussion. The actual operator ideally would communicate its status as a combination of `=&gt;` and `|&gt;`. Example replacements of `+&gt;` include `-&gt;` |PipelineStage| (which both resembles the `|&gt;` operator with the `|` rotated sideways and resembles the `=&gt;` operator but with a skinnier arrow body) and `=|` |PipelineStage| (which is a blending of `=&gt;` and `|&gt;` with the `&gt;` removed).</p>
+<p>This annex uses a new token `+&gt;`, but this token is merely an <strong>illustrative placeholder</strong> to avoid premature bikeshedding discussion. The actual operator ideally would communicate its status as a combination of `=&gt;` and `|&gt;`. Example replacements of `+&gt;` include `-&gt;` |PipelineChain| (which both resembles the `|&gt;` operator with the `|` rotated sideways and resembles the `=&gt;` operator but with a skinnier arrow body) and `=|` |PipelineChain| (which is a blending of `=&gt;` and `|&gt;` with the `&gt;` removed).</p>
 
 <emu-annex id=sec-additional-feature-pf-ecmascript-language-expressions>
 <h1>ECMAScript Language: Expressions</h1>
