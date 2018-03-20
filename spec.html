@@ -426,11 +426,11 @@ PipelineExpression[In, Yield, Await] :
 
 PipelineHead[?In, ?Yield, ?Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
-  PipelineExpression[?In, ?Yield, ?Await]
 
 PipelineBody[In, Yield, Await] :
   PipelineBareFunctionCall
   PipelineTopicExpression[?In, ?Yield, ?Await]
+  PipelineExpression[?In, ?Yield, ?Await]
 
 PipelineBareFunctionCall :
   SimpleReference
@@ -458,7 +458,10 @@ PipelineTopicExpression[In, Yield, Await] :
 <p>This early error prohibits _PipelineHead_ from covering a comma-separated argument list. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
-<emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
+<emu-grammar>
+PipelineTopicExpression : ConditionalExpression
+PipelineBody : PipelineExpression
+</emu-grammar>
 <emu-alg>
 * It is a Syntax Error if _ConditionalExpression_ Contains `#` is *false*.
 * It is a Syntax Error if _ConditionalExpression_ is covering a |YieldExpression|.
@@ -538,6 +541,13 @@ PipelineTopicExpression[In, Yield, Await] :
 5. Let _pipelineValue_ be the result of evaluating _ConditionalExpression_.
 6. Set the running execution context's Lexical Environment to _oldEnv_.
 7. Return _pipelineValue_.
+</emu-alg>
+
+<emu-grammar>PipelineBody : PipelineExpression</emu-grammar>
+<p>This algorithm is an altered version of the algorithm of PipelineBodyEvaluation for the production <emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>, modified as follows:</p>
+<emu-alg>
+* Step 5 is replaced by:
+  5. Let _pipelineValue_ be the result of evaluating _PipelineExpression_.
 </emu-alg>
 
 </emu-clause>
@@ -951,10 +961,8 @@ PipelineTopicBlock[In, Yield, Await] :
 <p>This section appends to the <emu-xref href=#sec-pipeline-operator-static-semantics-contains>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
-<emu-grammar>
-PipelineTopicExpression : ConditionalExpression
-<ins class=block>PipelineTopicExpression : `{` StatementList `}`</ins>
-</emu-grammar>
+<emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
+<emu-grammar><ins class=block>PipelineTopicBlock : `{` StatementList `}`</ins></emu-grammar>
 <emu-alg>
 1. If _symbol_ is `#`, return *false*.
 2. For each child node _child_ of this Parse Node, do
@@ -999,7 +1007,7 @@ PipelineTopicExpression : ConditionalExpression
 <p><strong>Not at Stage 0.</strong></p>
 <p>This annex specifies additional ECMAScript language syntax and semantics for <strong>pipeline functions</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing an additional <strong>pipeline-function operator</strong> `+&gt;`. This new <strong>unary</strong> operator creates arrow functions with an implicit parameter pipelined into a pipeline body, such that `+&gt;` |PipelineBody| is equivalent to `$=&gt;$|&gt;` |PipelineBody|. The operator brings much power: it enables terse <strong>method extraction</strong>, terse <strong>partial application</strong> of functions/expressions (into unary functions), and terse <strong>composition</strong> of functions/expressions.</p>
 
-<p><strong>This annex is unfinished.</strong> Async pipeline functions are yet to be added.</p>
+<p>TODO: <strong>This annex is unfinished.</strong> Need to update to right associativity. Async pipeline functions are yet to be added. Need to make bare-style pipeline functions variadic.</p>
 
 <p>See the <a href=https://github.com/js-choi/proposal-smart-pipelines/blob/master/readme.md#additional-feature-pf>explainer document, § Motivation, Additional Feature PF</a> for information on this feature's motivation.</p>
 
