@@ -1228,7 +1228,7 @@ PipelineStage : PipelineTopicExpression
 <emu-grammar>PipelineFunction : `+&gt;` PipelineChain</emu-grammar>
 <emu-alg>
 1. Perform ? FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
-2. Let _exprRef_ be PipelineChainEvaluation of |PipelineStage| with argument _argumentsList_.
+2. Let _exprRef_ be PipelineChainEvaluation of |PipelineChain| with argument _argumentsList_.
 3. Let _exprValue_ be ? GetValue(_exprRef_).
 4. Return Completion{[[Type]]: ~return~, [[Value]]: _exprValue_, [[Target]]: ~empty~}.
 </emu-alg>
@@ -1236,11 +1236,11 @@ PipelineStage : PipelineTopicExpression
 
 <emu-annex id=sec-additional-feature-pf-pipeline-function-definitions-runtime-semantics-evaluation>
 <h1>Runtime Semantics: Evaluation</h1>
-<emu-grammar>PipelineFunction : `+&gt;` PipelineStage</emu-grammar>
+<emu-grammar>PipelineFunction : `+&gt;` PipelineChain</emu-grammar>
 <emu-alg>
 1. If the |PipelineFunction| is declared in strict mode code then let _strict_ be *true*. Otherwise let _strict_ be *false*. [TODO: Make this more formal.]
 2. Let _scope_ be the LexicalEnvironment of the running execution context.
-3. Let _closure_ be FunctionCreate(~Arrow~, |PipelineStage|, |PipelineStage|, _scope_, _strict_).
+3. Let _closure_ be FunctionCreate(~Arrow~, |PipelineChain|, |PipelineChain|, _scope_, _strict_).
 4. Return _closure_.
 </emu-alg>
 <emu-note type=editor>
@@ -2032,15 +2032,11 @@ ArgumentList[Yield, Await] :
 <emu-grammar type=definition>
 PipelineExpression[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
-  PipelineHead[?In, ?Yield, ?Await] `|&gt;` PipelineStage[?In, ?Yield, ?Await]
-
-PipelineHead[?In, ?Yield, ?Await] :
-  <del class=block>ConditionalExpression[?In, ?Yield, ?Await]</del>
+  <del class=block>ConditionalExpression[?In, ?Yield, ?Await] `|&gt;` PipelineChain[?In, ?Yield, ?Await]</del>
   <ins class=block>
-  [lookahead &lt;! {`(`}] ConditionalExpression[?In, ?Yield, ?Await]
-  Arguments[?Yield, ?Await]
+  [lookahead &lt;! {`(`}] ConditionalExpression[?In, ?Yield, ?Await] `|&gt;` PipelineChain[?In, ?Yield, ?Await]
+  Arguments[?Yield, ?Await] `|&gt;` PipelineChain[?In, ?Yield, ?Await]
   </ins>
-  PipelineExpression[?In, ?Yield, ?Await]
 
 PipelineStage[In, Yield, Await] :
   PipelineBareFunctionCall
@@ -2066,21 +2062,6 @@ PipelineTopicExpression[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
 </emu-grammar>
 
-<del class=block>
-<h2>Supplemental Syntax</h2>
-<p>When the production <emu-grammar>ArrowParameters : ConditionalExpression</emu-grammar> is recognized the following grammar is used to refine the interpretation of |ConditionalExpression|:</p>
-
-<emu-grammar type=definition>
-PipelineTopicListHead[In, Yield, Await] :
-  `(` PipelineTopicList[?In, ?Yield, ?Await] `)`
-
-PipelineTopicList[In, Yield, Await] :
-  PipelineTopicListHead[?In, ?Yield, ?Await]
-  PipelineTopicList[?In, ?Yield, ?Await] `,` AssignmentExpression[?In, ?Yield, ?Await]
-  AssignmentExpression[?In, ?Yield, ?Await]
-</emu-grammar>
-</del>
-
 <emu-annex id=sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>
 <h1>Static Semantics: Early Errors</h1>
 <emu-note type=editor>
@@ -2088,17 +2069,16 @@ PipelineTopicList[In, Yield, Await] :
 </emu-note>
 
 <del class=block>
-<emu-grammar>PipelineHead : ConditionalExpression</emu-grammar>
+<emu-grammar>PipelineExpression : ConditionalExpression `|&gt;` PipelineChain</emu-grammar>
+<emu-grammar>PipelineStage : ConditionalExpression</emu-grammar>
 <emu-alg>
-* It is a Syntax Error if _ConditionalExpression_ is covering a |PipelineTopicListHead|.
+* It is a Syntax Error if _ConditionalExpression_ is covering |Arguments|.
 </emu-alg>
 </del>
 
 <emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
 <emu-alg>
-* It is a Syntax Error if <del>_ConditionalExpression_ Contains `#` is *false*.</del><ins>all of the following conditions are true:</ins>
-  * <ins>_ConditionalExpression_ Contains |TopicExpression| is *false*.</ins>
-  * <ins>_ConditionalExpression_ Contains |RestTopicReference| is *false*.</ins>
+* It is a Syntax Error if <del>_ConditionalExpression_ Contains `#` is *false*.</del><ins>[TO DO]</ins>
 * It is a Syntax Error if _ConditionalExpression_ is covering a |YieldExpression|.
 * It is a Syntax Error if _ConditionalExpression_ is covering a |PipelineTopicListHead|.
 </emu-alg>
@@ -2124,19 +2104,18 @@ PipelineTopicList[In, Yield, Await] :
 </emu-alg>
 </emu-annex>
 
-<emu-annex id=sec-additional-feature-np-pipeline-operator-runtime-semantics-TopicExpressioninstantiation aoid=TopicExpressionInstantiation>
+<emu-annex id=sec-additional-feature-np-pipeline-operator-runtime-semantics-topicexpressioninstantiation aoid=TopicExpressionInstantiation>
 <h1>Runtime Semantics: TopicExpressionInstantiation</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipeline-operator-static-semantics-early-errors>new clause in the core proposal</emu-xref>.</p>
+<p>This section revises the <emu-xref href=#sec-pipeline-operator-runtime-semantics-topicexpressioninstantiation>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
-<p>TopicPipelineInstantiation is performed as follows using arguments _code_, _env_, <del>and _topics_</del><ins>_topics_, and _restStartIndex_</ins>.</p>
+<p>TopicExpressionInstantiation is performed as follows using arguments _code_, _env_, <del>and _topics_</del><ins>_topics_, and _restStartIndex_</ins>.</p>
 <ul>
 <li>_topics_ is a list of values<del>: _env_'s primary topic reference will be bound to the first value</del><ins> with which _env_'s topic bindings will be established</ins>.</li>
 <li><ins>_restStartIndex_ is either ~empty~ or an integer index not exceeding the length of _topics_. If it is ~empty~, |RestTopicReference| `...` will not be bound to anything. Otherwise, |RestTopicReference| will be bound to a new Array whose elements are those of _topics_ starting at _restStartIndex_'s position.</ins></li>
 </ul>
 
-<emu-grammar>PipelineExpression : PipelineExpression `|&gt;` PipelineStage</emu-grammar>
 <emu-alg>
 1. Assert: _topics_ is a list.
 2. <ins>Assert: _restStartIndex_ is [TODO].</ins>
