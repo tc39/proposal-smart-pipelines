@@ -269,16 +269,45 @@ forming another easy-to-miss “postfix” argument.
 <tr>
 <td>
 
-Each postfix expression in a pipeline (called a **[pipeline body][]**) is in its
-own **inner lexical scope**, within which a special topic reference `#` is
-defined. This `#` is a reference to the **[lexical topic][]** of the pipeline
-(`#` itself is a **topic reference**). When the [pipeline’s **head**][pipeline
-head] (the expression at its left-hand side) is **evaluated**, it then becomes
-the pipeline’s lexical topic. A **new lexical environment** is created, within
-which `#` is immutably **bound to the topic**, and with which the pipeline’s
-body is then evaluated, using that **topic binding**. In the end, the whole
-pipe expression’s value is the end result into which the pipeline body
-evaluated with the topic binding.
+A pipeline is made of an **input** expression, followed by a chain of postfix
+expressions called **pipeline stages**. Each stage has its own **inner lexical
+scope**, within which a special topic reference `#` is defined. This `#` is a
+reference to the **[lexical topic][]** of the pipeline (`#` itself is called a
+**topic reference**).
+```js
+input
+|> # + 1 // step 1
+|> f(x, #, y) // step 2
+|> await g(#, z) // step 3
+|> console.log(`${#}!`); // step 4
+```
+0. The **input** expression to the left of the pipeline steps is **first evaluated**.
+1. It then becomes the **pipeline step 1**’s **lexical topic**. A **new lexical
+   environment** is created, scoped only to pipeline step 1, and within which
+   `#` is immutably **bound to the topic**. Using that topic binding, the first
+   pipeline step is then **evaluated**; the current lexical environment is then
+   reset back to before.
+2. The result of the first pipeline step becomes the input to step 1.
+   A new lexical environment is created, scoped only to pipeline step 2, and
+   whose topic binding is the result of evaluating step 1.
+3. And so forth, until step 4 is evaluated, with the result of step 3 as its input.
+   The result of step 4 is the result of the entire pipeline.
+
+<td>
+
+```js
+console.log(`${ // step 4
+  await g( // step 3
+    f(x, // step 2
+      input + 1, // step 1
+      y), // step 2
+    z) // step 3
+}!`); // step 4
+```
+
+<tr>
+<td>
+
 ```js
 input |> (# = 50);
 // 🚫 Reference Error:
@@ -293,7 +322,7 @@ outside a pipeline body.
 <tr>
 <td>
 
-For instance, the chained pipeline:
+This chained pipeline:
 ```js
 input
 |> # - 3
@@ -8006,9 +8035,7 @@ The pipeline chain is therefore equivalent to:\
 [Perl 6 pipe]: https://docs.perl6.org/language/operators#infix_==&gt;
 [Perl 6 topicization]: https://www.perl.com/pub/2002/10/30/topic.html/
 [Perl 6’s given block]: https://docs.perl6.org/language/control#given
-[pipeline body]: https://jschoi.org/18/es-smart-pipelines/spec#prod-PipelineBody
 [pipeline functions]: #additional-feature-pf
-[pipeline head]: https://jschoi.org/18/es-smart-pipelines/spec#prod-PipelineHead
 [Pipeline Proposal 1]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-1-f-sharp-only
 [Pipeline Proposal 4]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
 [pipeline syntax]: #pipeline-syntax
