@@ -415,7 +415,7 @@ PrimaryExpression[Yield, Await] :
 <emu-clause id=sec-pipeline-operator>
 <h1><ins>Pipeline Operator</ins></h1>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-conditional-operator>original Conditional Operator (`?` `:`) clause</a> and the <a href=https://tc39.github.io/ecma262/#sec-assignment-operators>original Assignment Operators clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This section is a wholly new sub-clause to be inserted between the <a href=https://tc39.github.io/ecma262/#sec-conditional-operator>original Conditional Operator (`?` `:`) clause</a> and the <a href=https://tc39.github.io/ecma262/#sec-assignment-operators>original Assignment Operators clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-bp-pipeline-operator>further modifications by Additional Feature BP</emu-xref> and <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
@@ -904,7 +904,91 @@ PipelineBareAwaitedFunctionCall[Await] :
 <emu-annex id=sec-additional-feature-bp>
 <h1>Additional Feature BP: Block Pipelines</h1>
 <p><strong>Not at Stage 0.</strong></p>
-<p>[TODO]</p>
+<p>This annex specifies additional ECMAScript language syntax and semantics for <strong>pipeline functions</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing an additional <strong>topic-style pipeline form</strong>: a |Block|.</p>
+
+<p>See the <a href=https://github.com/js-choi/proposal-smart-pipelines/blob/master/readme.md#additional-feature-bp>explainer document, § Motivation, Additional Feature BP</a> for information on this feature's motivation.</p>
+
+<emu-annex id=sec-additional-feature-bp-ecmascript-language-expressions>
+<h1>ECMAScript Language: Expressions</h1>
+
+<emu-annex id=sec-additional-feature-bp-pipeline-operator>
+<h1>Pipeline Operator</h1>
+<emu-note type=editor>
+<p>This section revises the <emu-xref href=#sec-pipeline-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+</emu-note>
+
+<h2>Syntax</h2>
+<emu-grammar type=definition>
+PipelineBody[In, Yield, Await] :
+  PipelineBareFunctionCall
+  PipelineTopicExpression[?In, ?Yield, ?Await]
+  <ins>PipelineTopicBlock[?In, ?Yield, ?Await]</ins>
+
+<ins class=block>
+PipelineTopicBlock[In, Yield, Await] :
+  `{` StatementList[?In, ?Yield, ?Await] `}`
+</ins>
+</emu-grammar>
+
+<emu-annex id=sec-additional-feature-bp-pipeline-operator-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+<emu-note type=editor>
+<p>This section appends to the <emu-xref href=#sec-pipeline-operator-static-semantics-early-errors>new clause in the core proposal</emu-xref>.</p>
+</emu-note>
+
+<ins class=block>
+<emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
+<emu-alg>
+* It is a Syntax Error if _ConditionalExpression_ Contains `#` is *false*.
+* It is a Syntax Error if _ConditionalExpression_ is covering a |YieldExpression|.
+* It is a Syntax Error if _ConditionalExpression_ is covering a |PipelineTopicListHead|.
+</emu-alg>
+</ins>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-bp-pipeline-operator-static-semantics-contains>
+<h1>Static Semantics: Contains</h1>
+<p>With parameter _symbol_.</p>
+<emu-see-also-para op="Contains"></emu-see-also-para>
+<emu-note type=editor>
+<p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
+</emu-note>
+
+<emu-grammar>
+PipelineTopicExpression : ConditionalExpression
+<ins class=block>PipelineTopicExpression : `{` StatementList `}`</ins>
+</emu-grammar>
+<emu-alg>
+1. If _symbol_ is `#`, return *false*.
+2. For each child node _child_ of this Parse Node, do
+  1. If _child_ is an instance of _symbol_, return *true*.
+  2. If _child_ is an instance of a nonterminal, then
+    1. Let _contained_ be the result of _child_ Contains _symbol_.
+    2. If _contained_ is *true*, return *true*.
+2. Return *false*.
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-bp-pipeline-operator-runtime-semantics-TopicExpressioninstantiation aoid=TopicExpressionInstantiation>
+<h1>Runtime Semantics: TopicExpressionInstantiation</h1>
+<emu-note type=editor>
+<p>This annex has not yet been specified.</p>
+</emu-note>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-bp-pipeline-operator-runtime-semantics-pipelinebodyevaluation aoid=PipelineBodyEvaluation>
+<h1>Runtime Semantics: PipelineBodyEvaluation</h1>
+<p>With parameter _headValues_.</p>
+
+<emu-grammar>PipelineTopicExpression : `{` StatementList `}`</emu-grammar>
+<emu-note type=editor>
+<p>This annex has not yet been specified.</p>
+</emu-note>
+</emu-annex>
+</emu-annex>
+
+</emu-annex>
+
 </emu-annex>
 
 <emu-annex id=sec-additional-feature-pp>
@@ -1962,7 +2046,7 @@ ArgumentList[Yield, Await] :
 <emu-annex id=sec-additional-feature-np-pipeline-operator>
 <h1>Pipeline Operator</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipeline-operator>new clause in the core proposal</emu-xref>.</p>
+<p>This section revises the <emu-xref href=#sec-pipeline-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-bp-pipeline-operator>further modifications by Additional Feature BP</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
