@@ -277,7 +277,7 @@ head] (the expression at its left-hand side) is **evaluated**, it then becomes
 the pipeline’s lexical topic. A **new lexical environment** is created, within
 which `#` is immutably **bound to the topic**, and with which the pipeline’s
 body is then evaluated, using that **topic binding**. In the end, the whole
-pipeline expression’s value is the end result into which the pipeline body
+pipe expression’s value is the end result into which the pipeline body
 evaluated with the topic binding.
 ```js
 input |> (# = 50);
@@ -3171,8 +3171,8 @@ to `($, $$) => $ + $$`, and `+> [...].length` would be a variadic arrow function
 equivalent to `(...$rest) => [...$rest].length` – where `$`, `$$`, and `$rest`
 are all [hygienically unique variables][lexically hygienic].
 
-In general, Additional Feature NP would explain “`+>` _PipelineExpression_” as
-equivalent to “`(...$rest) => ...$rest |>` _PipelineExpression_”.
+In general, Additional Feature NP would explain “`+>` _Pipeline_” as equivalent
+to “`(...$rest) => ...$rest |>` _Pipeline_”.
 
 `+>` was chosen because of its similarity both to `|>` and to `=>`. The precise
 appearance of the pipeline-function operator does not have to be `+>`. It could
@@ -4526,8 +4526,8 @@ the other proposal’s code.
 <td>
 
 Additional Feature NP would explain bare style in [Additional Feature PF][]
-“`+>` _PipelineExpression_” as equivalent to a function with a variadic pipeline
-“`(...$rest) => ...$rest |>` _PipelineExpression_”.
+“`+>` _Pipeline_” as equivalent to a function with a variadic pipeline
+“`(...$rest) => ...$rest |>` _Pipeline_”.
 ```js
 +> g |> f |> # + 1;
 (...$rest) => ...$rest |> g |> f |> # + 1;
@@ -4701,9 +4701,9 @@ inputs
 <td colspan=2>
 
 Additional Feature NP would also explain how the cancellation of [Additional
-Feature PP][] by [Additional Feature PF][] (“`+> |>` _PipelineExpression_” is
-equivalent to “`+>` _PipelineExpression_”). Each of the following table rows’
-code statements are equivalent.
+Feature PP][] by [Additional Feature PF][] (“`+> |>` _Pipeline_” is equivalent
+to “`+>` _Pipeline_”). Each of the following table rows’ code statements are
+equivalent.
 
 <tr>
 <td>
