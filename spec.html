@@ -572,9 +572,8 @@ PipelineTopicExpression[In, Yield, Await] :
 <emu-grammar>PipelineExpression : PipelineHead `|&gt;` PipelineBody</emu-grammar>
 <emu-alg>
 1. Let _headRef_ be the result of evaluating |PipelineHead|.
-2. Let _headValues_ be the result of ? GetValue(_headRef_).
-3. Assert: _headValues_ is a list.
-4. Let _bodyRef_ be PipelineBodyEvaluation of |PipelineBody| with argument _headValues_.
+2. Let _headValues_ be a list containing the one element which is the result of ? GetValue(_headRef_).
+3. Let _bodyRef_ be PipelineBodyEvaluation of |PipelineBody| with argument _headValues_.
 5. Return ? GetValue(_bodyRef_).
 </emu-alg>
 </emu-clause>
