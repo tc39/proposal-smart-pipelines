@@ -96,7 +96,7 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 ***
 
 This document is an **explainer for** the [**formal specification** of a proposed
-**smart pipeline operator `|>`**][formal pipeline specification] in
+**smart pipe operator `|>`**][formal pipeline specification] in
 **JavaScript**, along with several other additional features. The specification
 is divided into **one Stage-0 Core Proposal** plus **five** mutually
 independent-but-compatible **Additional Features**:
@@ -117,10 +117,10 @@ The **Core Proposal** is currently at **Stage 0** of the [TC39 process][TC39
 process] and is planned to be presented, along with a [competing
 proposal][Pipeline Proposal 1], to TC39 by [Daniel “**littledan**” Ehrenberg of
 Igalia][littledan]. The Core Proposal is a **variant** of the [first
-pipeline-operator proposal][] also championed by Ehrenberg; this variant is
+pipe-operator proposal][] also championed by Ehrenberg; this variant is
 listed as [**Proposal 4: Smart Mix** in the pipe-proposal wiki][Pipeline
 Proposal 4]. The variant resulted from [previous discussions in the previous
-pipeline-operator proposal][previous pipeline-placeholder discussions],
+pipe-operator proposal][previous pipeline-placeholder discussions],
 discussions which culminated in an [invitation by Ehrenberg to try writing a
 specification draft][littledan invitation].
 
@@ -148,7 +148,7 @@ been occurring on GitHub at [tc39/proposal-pipeline-operator
 issue #91][topic-token bikeshedding].
 
 # Motivation
-This section gives a brief overview of the motivations behind the smart pipeline
+This section gives a brief overview of the motivations behind the smart pipe
 operator’s Core Proposal, as well the additional features listed above.
 **Examples from real-world libraries** are juxtaposed with their original
 versions. The original versions have been lightly edited (e.g., breaking up
@@ -171,7 +171,7 @@ specification**][formal CP].
 <tr>
 <td>
 
-The infix “smart” pipeline operator `|>` proposed here would provide a
+The infix “smart” pipe operator `|>` proposed here would provide a
 **[backwards- and forwards-compatible][don’t break my code]** style of
 **chaining nested expressions** into a readable, **left-to-right** manner.
 
@@ -406,7 +406,7 @@ console.log(
 <td>
 
 Being able to automatically detect this **“[bare style][]”** is the [**smart**
-part of the “smart pipeline operator”][smart body syntax]. The styles of
+part of the “smart pipe operator”][smart body syntax]. The styles of
 [**functional** programming][functional programming], [**dataflow**
 programming][dataflow programming], and [**tacit** programming][tacit
 programming] may particularly benefit from bare pipelines and their [terse
@@ -436,7 +436,7 @@ Note that `… |> f` is a bare unary function call. This is the same as `… |> 
 but the topic reference `#` is unnecessary; it is invisibly, tacitly implied. The
 same goes for `o.unaryMethod`, which is a unary function call on `o.unaryMethod`.
 
-This is the [**smart** part of the smart pipeline operator][smart body syntax],
+This is the [**smart** part of the smart pipe operator][smart body syntax],
 which can distinguish between two syntax styles (**[bare style][]** vs. **[topic
 style][]**) by using a simple rule: **bare** style uses only **identifiers and
 dots** – and **never parentheses, brackets, braces**, or **other operators**. And
@@ -581,7 +581,7 @@ object.method(x, y)(input);
 ```
 Both inserting the input as the first argument and inserting it as the last
 argument are reasonable interpretations, as evidenced by how [other programming
-languages’ pipeline operators variously do either][topic references in other
+languages’ pipe operators variously do either][topic references in other
 programming languages]. Or it could be a factory method that creates a function
 that is in turn to be called with a unary input argument.
 
@@ -957,7 +957,7 @@ Note, however, that arrow functions have looser precedence than the pipe
 operator. This means that if a pipeline creates an arrow function alone in one
 of its steps’ bodies, then the arrow-function expression must be parenthesized.
 (The same applies to assignment and yield operators, which are also looser than
-the pipeline operator.) The example above is being parsed as if it were:
+the pipe operator.) The example above is being parsed as if it were:
 ```js
 (input |> f |> ()) =>
   (# * 5 |> settimeout |> processIntervalID);
@@ -1847,7 +1847,7 @@ statements, `try` statements, and `switch` statements within pipeline chains.
 They may be made even pithier with [Additional Feature BP][], explained later.
 
 [`do` expressions][] as [topic-style][topic style] pipeline bodies might be so
-useful, in fact, that it might be worth building them into the pipeline operator
+useful, in fact, that it might be worth building them into the pipe operator
 `|>` itself as an add-on feature. This additional feature – **block pipelines**
 – adds an additional [topic-style pipeline body syntax][smart body syntax],
 using blocks to stand for `do` expressions.
@@ -2450,7 +2450,7 @@ function castPath (value, object) {
 
 ## Additional Feature PP
 The next additional feature – **Prefix Pipelines** – adds a “headless” tacit
-prefix form of the pipeline operator. The tacit, default head is the topic
+prefix form of the pipe operator. The tacit, default head is the topic
 reference `#` itself, which must be resolvable within the outer lexical
 environment.
 
@@ -3250,7 +3250,7 @@ Pipelines may be chained within a pipeline function.
 array.map(+> f |> g |> h |> # * 2);
 ```
 The prefix pipeline-function operator `+>` has looser precedence than the infix
-pipeline operator `|>`.
+pipe operator `|>`.
 
 <td>
 
@@ -3263,7 +3263,7 @@ array.map((...$) => h(g(f(...$))) * 2);
 
 When coupled with [Additional Feature PP][], the phrase `+> |>` (that is, the
 prefix pipeline-function operator `+>` immediately followed by the prefix
-pipeline operator `|>`) cancels out into simply the prefix pipeline-function
+pipe operator `|>`) cancels out into simply the prefix pipeline-function
 operator `+>`.
 ```js
 array.map(+> f |> g |> h |> # * 2);
@@ -3613,7 +3613,7 @@ Meadows][isiahmeadows functional composition].
 <td>
 
 Many kinds of **method extraction** can be addressed by pipeline functions
-alone, as a natural result of their pipeline-operator-like semantics.\
+alone, as a natural result of their pipe-operator-like semantics.\
 `+> console.log` is equivalent to `(...$) => console.log(...$)`…
 ```js
 Promise.resolve(123)
@@ -4331,7 +4331,7 @@ value
 // Unexpected token `=>`.
 // Cannot parse base expression.
 ```
-Because arrow functions have looser precedence than the pipeline operator `|>`,
+Because arrow functions have looser precedence than the pipe operator `|>`,
 it is never ambiguous with the parenthesized-list syntax for N-ary pipelines.
 The above invalid code is being interpreted as if it were the below:
 ```js
@@ -4561,7 +4561,7 @@ These two lines of code are also equivalent.
 <tr>
 <td colspan=2>
 
-When coupled with Additional Feature NP, the prefix pipeline operator `|>` of
+When coupled with Additional Feature NP, the prefix pipe operator `|>` of
 [Additional Feature PP][], would be equivalent to a pipeline whose head is
 simply the argument list of all the topic references that its body uses. The
 code statements in each of the table rows below are mutually equivalent.
@@ -5330,7 +5330,7 @@ the current lexical scope’s topic. In particular, bare/tacit function calls th
 use the topic should not be easy to accidentally perform.
 
 In this proposal, the developer therefore **must explicitly opt into**
-topic-using behavior, whether binding or using, by using the pipeline operator
+topic-using behavior, whether binding or using, by using the pipe operator
 `|>`. This includes [Additional Feature TS][] and [Additional Feature FS][],
 which both require the use of `|>`.
 
@@ -5546,7 +5546,7 @@ input |> object.method(x, y)(#);
 ```
 Both inserting the input as the first argument and inserting it as the last
 argument are reasonable interpretations, as evidenced by how [other programming
-languages’ pipeline operators variously do either][topic references in other
+languages’ pipe operators variously do either][topic references in other
 programming languages]. Or it could be a factory method that creates a function
 that is in turn to be called with a unary input argument.
 
@@ -5647,7 +5647,7 @@ form to another. There is **no single type** of expression that forms a
 
 </table>
 
-The goal of the pipeline operator is to untangle deeply nested expressions into flat
+The goal of the pipe operator is to untangle deeply nested expressions into flat
 threads of postfix expressions. To limit it to only one type of expression, even
 a common type, truncates its benefits to that one type only and compromises its
 expressivity and versatility.
@@ -5670,7 +5670,7 @@ cases. It also does not fulfill this goal well either: excluding, perhaps
 arbitrarily, whatever classes its grammar’s branches do not handle.
 
 Such new [incidental complexity][] makes code less readable and distracts the
-developer from the program’s [essential logic][essential complexity]. A pipeline
+developer from the program’s [essential logic][essential complexity]. A pipe
 operator that improves readability should be versatile (this goal) but
 [conceptually and cyclomatically simple][cyclomatic simplicity]. Such an
 operator should be able to handle **all** expressions, in a **single** manner
@@ -5695,9 +5695,9 @@ Both [expressive versatility][] and simplicity are important components of
 When this happens, expressive versatility often wins: simplicity is important,
 but sometimes it may be traded off for increased expressiveness. For instance,
 [terse function calls][] are important for [tacit functional programming][tacit
-programming], one of the impetuses for the [first pipeline-operator proposal][].
+programming], one of the impetuses for the [first pipe-operator proposal][].
 
-The pipeline operator could be designed to support only [topic style][]: that
+The pipe operator could be designed to support only [topic style][]: that
 would require `x |> f` to be `x |> f(#)`. But adding a [bare style][] brings
 many expressive benefits for tacit functional programming: not just [terse
 function calls][] but also the possibility of [terse composition][] with
@@ -5908,7 +5908,7 @@ readability and comprehensibility that it might bring to code in general.
 
 # Relations to other work
 ## Pipelines in other programming languages
-The concept of a pipeline operator appears in numerous other languages, variously
+The concept of a pipe operator appears in numerous other languages, variously
 called “pipeline”, “threading”, and “feed” operators. This is because developers
 find the concept useful.
 
@@ -6035,7 +6035,7 @@ Factor, Forth, Joy, Onyx, PostScript, RPL
 
 </table>
 
-Pipeline operators are also conceptually similar to [WHATWG-stream piping][] and
+Pipe operators are also conceptually similar to [WHATWG-stream piping][] and
 [Node-stream piping][].
 
 ## Topic references in other programming languages
@@ -6067,7 +6067,7 @@ topic variable, which may affect code in surprising ways.
 However, JavaScript’s topic references are is different than this prior art. It
 is lexically bound, with [simple scoping][], and it is [statically
 analyzable][]. It also cannot be accidentally bound; [the developer must opt
-into binding it][opt-in behavior] by using the pipeline operator `|>`. (This
+into binding it][opt-in behavior] by using the pipe operator `|>`. (This
 includes [Additional Feature TS][] and [Additional Feature FS][], which both
 require the use of `|>`.) The topic also cannot be accidentally used; it is an
 [early error][] when `#` is used outside of a pipeline body (see [Core
@@ -6132,7 +6132,7 @@ With [existing proposal][ECMAScript function binding]
 <td>
 
 **Some** forms of **method extraction** can be addressed by pipeline functions
-alone, as a natural result of their pipeline-operator-like semantics.\
+alone, as a natural result of their pipe-operator-like semantics.\
 `+> console.log` is equivalent to `(...$) => console.log(...$)`.
 ```js
 Promise.resolve(123).then(+> console.log);
@@ -7134,7 +7134,7 @@ supporting pipeline-body blocks that act nearly identically to `do` expressions.
 ## Private class fields, class decorators, nullish coalescing, and optional chaining
 This proposal’s compatibility with these four proposals depends on its choice of
 tokens for its topic references, such as `#`/`##`/`###`/`...`, `@`/`@@`/`@@@`,
-or `?`/`??`/`???`. This is being bikeshedded at [tc39/proposal-pipeline-operator
+or `?`/`??`/`???`. This is being bikeshedded at [tc39/proposal-pipe-operator
 issue #91][topic-token bikeshedding].
 
 Because topic proposals are nullary operators, these are unambiguous with all
@@ -7202,24 +7202,24 @@ composition].
 </table>
 
 ## Alternative pipeline proposals
-There are several other alternative pipeline-operator proposals competing with
+There are several other alternative pipe-operator proposals competing with
 the smart-pipeline Core Proposal. The Core Proposal is only one variant of the
-[first pipeline-operator proposal][] also championed by Ehrenberg; this variant
+[first pipe-operator proposal][] also championed by Ehrenberg; this variant
 is listed as [**Proposal 4: Smart Mix** in the pipe-proposal wiki][Pipeline
 Proposal 4]. The variant resulted from [previous discussions in the previous
-pipeline-operator proposal][previous pipeline-placeholder discussions],
+pipe-operator proposal][previous pipeline-placeholder discussions],
 discussions which culminated in an [invitation by Ehrenberg to try writing a
 specification draft][littledan invitation].
 
 All variants attempt to address the goals of [untangled flow][],
 [distinguishable punctuators][], [terse function calls][], and [human
-writability][]. But the authors of this proposal believe that the smart pipeline
+writability][]. But the authors of this proposal believe that the smart pipe
 operator may be the best choice among these competing proposals at fulfilling
 all the [goals][] listed above.
 
-Only the smart pipeline operator does not need to create unnecessary one-off
+Only the smart pipe operator does not need to create unnecessary one-off
 arrow functions for non-function-call expressions, which better fulfills the
-goal of [zero runtime cost][]. Only the smart pipeline operator has the [forward
+goal of [zero runtime cost][]. Only the smart pipe operator has the [forward
 compatibility][] and [conceptual generality][] to support not only [terse unary
 function application][terse function calls] but also [terse N-ary function
 application][terse function calls], [terse expression application][terse
@@ -7543,7 +7543,7 @@ called, those parameter placeholders will be bound to multiple argument values.
 
 The term “**body**” is preferred instead of “**RHS**” because “topic” is
 preferred to “LHS”. However, “RHS” is still a fine and acceptable name for the
-body of the pipeline operator.
+body of the pipe operator.
 
 “**[Bare style][]**” can also be called “**tacit style**”, but the former is
 preferred to the latter. Eventually, certain possible future extensions to the
@@ -7927,7 +7927,7 @@ The pipeline chain is therefore equivalent to:\
 [expressions and operators (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
 [expressive versatility]: #expressive-versatility
 [F# pipe]: https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining
-[first pipeline-operator proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
+[first pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
 [footguns]: https://en.wiktionary.org/wiki/footgun
 [formal BA]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-ba
 [formal BC]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-bc
