@@ -7419,14 +7419,14 @@ to loosest**. Each level may contain the parse types listed for that level –
 | ″″             | Generators              |`function * (…) {…}`| ″″                   |
 | ″″             | Async functions         |`async function (…) {…}`| ″″               |
 | ″″             | Regular expression      |`/…/…`          | ″″                       |
-| ″″             | Templates               |`` …`…` ``      | Unchainable infix with circumfix|
+| ″″             | Templates               |`` …`…` ``      | ″″                       |
 | ″″             | Parentheses             |`(…)`           | Circumfix                |
-| LHS            | Dynamic properties      |`…[…]`          | LTR infix with circumfix |
-| ″″             | Static properties       |`….…`           | ″″                       |
-| ″″             | Tagged templates        |`` …`…` ``      | ″″                       |
+| LHS            | Static properties       |`….…`           | ″″                       |
+| ″″             | Dynamic properties      |`…[…]`          | LTR infix with circumfix |
+| ″″             | Tagged templates        |`` …`…` ``      | Unchainable infix with circumfix|
+| ″″             | Super call op.s         |`super(…)`      | Unchainable prefix       |
 | ″″             | Super properties        |`super.…`       | ″″                       |
-| ″″             | Meta properties         |`meta.…`        | Unchainable prefix       |
-| ″″             | Super call op.s         |`super(…)`      | ″″                       |
+| ″″             | Meta properties         |`meta.…`        | ″″                       |
 | ″″             | Object construction     |`new …`         | Prefix                   |
 | ″″             | Function call           |`…(…)`          | LTR infix with circumfix |
 | Postfix unary  | Postfix incrementing    |`…++`           | Postfix                  |
@@ -7466,7 +7466,7 @@ to loosest**. Each level may contain the parse types listed for that level –
 | Conditional    |                         |`… ? … : …`     | RTL ternary infix        |
 | Pipeline       | **[Pipelines][]**       |**`… \|> …`**   | LTR infix                |
 | Assignment     | **[Pipeline functions][]**|**`+> …`**    | Prefix                   |
-| ″″             | **[Async pipeline functions][]**|**`async +> …`**| Prefix                   |
+| ″″             | **[Async pipeline functions][]**|**`async +> …`**|Prefix            |
 | ″″             | Arrow functions         |`… => …`        | RTL infix                |
 | ″″             | Async arrow functions   |`async … => …`  | RTL infix                |
 | ″″             | Assignment              |`… = …`         | ″″                       |
