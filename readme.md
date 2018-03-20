@@ -132,6 +132,12 @@ and the additional features demonstrate a **unified vision** of a future in
 which composition, partial application, method extraction, and error handling
 are all tersely expressible with the same simple pipeline/topic concept.
 
+An [**update** to the existing pipeline **Babel plugin**][Babel plugin] is also
+being developed jointly between the author of this proposal and [James
+DiGioia][mAAdhaTTah], the author of the [competing proposal][Pipeline
+Proposal 1]. The [update will support both this proposal and the other proposal,
+configurable with a flag][Babel update summary].
+
 You can take part in discussions on the **[GitHub issue tracker][]**. When you
 file an issue, please note in it that you are talking **specifically** about
 **[“Proposal 4: Smart Mix”][Pipeline Proposal 4]**.
@@ -7855,6 +7861,8 @@ The pipeline chain is therefore equivalent to:\
 [ASI]: https://tc39.github.io/ecma262/#sec-automatic-semicolon-insertion
 [associative property]: https://en.wikipedia.org/wiki/Associative_property
 [async pipeline functions]: #additional-feature-pf
+[Babel plugin]: https://github.com/valtech-nyc/babel/
+[Babel update summary]: https://github.com/babel/proposals/issues/29#issuecomment-372828328
 [background]: #background
 [backward compatibility]: #backward-compatibility
 [bare awaited function call]: #bare-style
@@ -7972,6 +7980,7 @@ The pipeline chain is therefore equivalent to:\
 [Lodash + CP + BP + PP + PF + NP]: #lodash-core-proposal--additional-features-bppppfmt
 [Lodash + CP]: #lodash-core-proposal-only
 [Lodash]: https://lodash.com/
+[mAAdhaTTah]: https://github.com/mAAdhaTTah/
 [make my code easier to read]: #make-my-code-easier-to-read
 [MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
 [MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
