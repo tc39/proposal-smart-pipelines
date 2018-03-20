@@ -315,7 +315,7 @@ input |> (# = 50);
 ```
 The topic binding is immutable, established only once per lexical environment.
 It is an error to attempt to assign a value to it using `=`, whether inside or
-outside a pipeline body.
+outside a pipeline step.
 
 <td>
 
@@ -505,12 +505,12 @@ indentation of any previous steps’ lines.
 ```js
 input |> x + 50 |> f |> g(x, 2);
 // 🚫 Syntax Error:
-// Topic-style pipeline body
+// Topic-style pipeline step
 // `|> x + 50`
 // binds topic but contains
 // no topic reference.
 // 🚫 Syntax Error:
-// Topic-style pipeline body
+// Topic-style pipeline step
 // `|> g(x, 2)`
 // binds topic but contains
 // no topic reference.
@@ -519,7 +519,7 @@ In order to fulfill the [goal][goals] of [“don’t shoot me in the foot”][],
 when a **pipeline is in [topic style][]** but its **body has no topic reference**,
 that is an **[early error][]**. Such a degenerate pipeline has a very good
 chance of actually being an accidental bug. (Note that the bare-style pipeline
-body `|> f` is *not* an error. The [bare style][] is not supposed to contain any
+step `|> f` is *not* an error. The [bare style][] is not supposed to contain any
 topic references `#`.)
 
 <td>
@@ -549,7 +549,7 @@ Error][early errors]:
 ```js
 input |> object.method();
 // 🚫 Syntax Error:
-// Topic-style pipeline body
+// Topic-style pipeline step
 // `|> object.method()`
 // binds topic but contains
 // no topic reference.
@@ -592,7 +592,7 @@ Adding other arguments:
 ```js
 input |> object.method(x, y);
 // 🚫 Syntax Error:
-// Topic-style pipeline body
+// Topic-style pipeline step
 // `|> object.method(x, y)`
 // binds topic but contains
 // no topic reference.
@@ -639,7 +639,7 @@ And this example’s ambiguity would be even worse:
 ```js
 input |> await object.method(x, y);
 // 🚫 Syntax Error:
-// Topic-style pipeline body
+// Topic-style pipeline step
 // `|> await object.method(x, y)`
 // binds topic but contains
 // no topic reference.
@@ -744,7 +744,7 @@ x = … |> f(#, #);
 ```js
 x = … |> [#, # * 2, # * 3];
 ```
-The topic reference may be used multiple times in a pipeline body. Each use
+The topic reference may be used multiple times in a pipeline step. Each use
 refers to the same value (wherever the topic reference is not overridden by
 another, inner pipeline’s topic scope). Because it is bound to the result of the
 topic, the topic is still only ever evaluated once.
@@ -1078,7 +1078,7 @@ x = input |> function () { return #; };
 // contains a topic reference
 // but has no topic binding.
 // 🚫 Syntax Error:
-// Pipeline body `|> function () { … }`
+// Pipeline step `|> function () { … }`
 // binds topic but contains
 // no topic reference.
 ```
@@ -1090,7 +1090,7 @@ x = input |> function () { return #; };
 ```js
 x = input |> class { m: () { return #; } };
 // 🚫 Syntax Error:
-// Pipeline body `|> class { … }`
+// Pipeline step `|> class { … }`
 // binds topic but contains
 // no topic reference.
 ```
@@ -1774,7 +1774,7 @@ function castPath (value, object) {
 
 ## Additional Feature BC
 An additional feature – **bare constructor calls** – makes constructor calls
-terser. It adds a mode to bare style: if a bare-style pipeline body is preceded
+terser. It adds a mode to bare style: if a bare-style pipeline step is preceded
 by a `new`, then instead of a function call, it is a constructor call. `value |>
 object.Constructor` is equivalent to `object.Constructor(value)`. This is
 backwards compatible with the [Core Proposal][] as well as all other [additional
@@ -1817,7 +1817,7 @@ console.log(
 
 ## Additional Feature BA
 Another additional feature – **bare awaited calls** – makes async function calls
-terser. It adds another mode to bare style: if a bare-style pipeline body is
+terser. It adds another mode to bare style: if a bare-style pipeline step is
 preceded by a `await`, then instead of a mere function call, it is an awaited
 function call. `value |> await object.asyncFunction` is equivalent to `await
 object.asyncFunction(value)`. This is backwards compatible with the [Core
@@ -1878,7 +1878,7 @@ They may be made even pithier with [Additional Feature BP][], explained later.
 [`do` expressions][] as [topic-style][topic style] pipeline bodies might be so
 useful, in fact, that it might be worth building them into the pipe operator
 `|>` itself as an add-on feature. This additional feature – **block pipelines**
-– adds an additional [topic-style pipeline body syntax][smart body syntax],
+– adds an additional [topic-style pipeline step syntax][smart body syntax],
 using blocks to stand for `do` expressions.
 
 [Additional Feature BP is **formally specified in in the draft
@@ -1987,12 +1987,12 @@ input
 }
 |> g;
 // 🚫 Syntax Error:
-// Pipeline body `|> { if (…) … else … }`
+// Pipeline step `|> { if (…) … else … }`
 // binds topic but contains
 // no topic reference.
 ```
-The same [early error rules][] that apply to any topical pipeline body apply
-also to topical bodies that are `do` expressions.
+The same [early error rules][] that apply to any topic-style pipeline step apply
+also to topic-style bodies that are `do` expressions.
 
 <tr>
 <td>
@@ -2909,26 +2909,26 @@ is one of the Core Proposal’s [early errors][] mentioned above.
 The next additional feature – **Pipeline `try` Statements** – adds new forms of
 the `try` statement, the `catch` clause, and the `finally` clause, in the form
 of `try |> …`, `catch |> …`, and `finally |> …`, each followed by a [pipeline
-body with the same smart body syntax][smart body syntax].
+with the same smart body syntax][smart body syntax].
 
 The developer must **[opt into this behavior][opt-in behavior]** by using a
-pipeline token `|>`, followed by the pipeline body. No existing code would be
+pipeline token `|>`, followed by the pipeline. No existing code would be
 affected. Any, some, or none of the three clauses in a `try` statement may be in
 a pipeline form versus the regular block form.
 
 The pipeline `try |> …` statement and the `finally |> …` clause would both apply
 the outer context’s topic to their pipeline bodies. As per the usual [smart body
-syntax][], if a pipeline body is in bare mode, then it will be called as a
+syntax][], if a pipeline step is in bare mode, then it will be called as a
 function call, constructor call, or awaited function call on the outer topic.
-If the pipeline body is in topic style, then the body is evaluated as an
+If the pipeline step is in topic style, then the body is evaluated as an
 expression with a new lexical environment, in which the topic reference is bound
 to the outer topic.
 
 The pipeline `catch |> …` clause would treat its caught error as if it were the
 head of a pipeline whose body is the expression following the `|>`. As per the
-usual [smart body syntax][], if the pipeline body is in bare mode, then it will
+usual [smart body syntax][], if the pipeline step is in bare mode, then it will
 be called as a function call, constructor call, or awaited function call on
-the error. If the pipeline body is in topic style, then the body is evaluated as
+the error. If the pipeline step is in topic style, then the body is evaluated as
 an expression with a new lexical environment, in which the topic reference is
 bound to the caught error.
 
@@ -3176,8 +3176,8 @@ and **N-ary** functional composition.
 
 The new operator is a **prefix operator `+> …`**, which creates **pipeline
 functions**, which are just **arrow functions**. `+> …` interprets its inner
-expression as a **pipeline body** but wraps it in an arrow function that applies
-its pipeline body to its arguments.
+expression as a **pipeline** but wraps it in an arrow function that applies its
+pipeline steps to its arguments.
 
 A pipe function takes **no** a parameter list; no such list is needed.
 Just like with regular pipelines, a pipeline function may be in **[bare style][]
@@ -3313,7 +3313,7 @@ array.map((...$) => h(g(f(...$))) * 2);
 ```js
 +> x + 2;
 // 🚫 Syntax Error:
-// Pipeline body `+> x + 2`
+// Pipeline step `+> x + 2`
 // binds topic but contains
 // no topic reference.
 ```
@@ -4151,11 +4151,11 @@ g(f(...a));
 ```js
 (a, b) |> f(#, x, ##) |> g;
 ```
-When a pipeline’s body is in [topic style][], the first element in the argument
+When a pipeline step is in [topic style][], the first element in the argument
 list is bound to the primary topic reference `#`, the second element is bound to
 the secondary topic reference `##`, and the third element is bound to the
 tertiary topic reference `###`. These are resolvable as usual within the
-pipeline body.
+pipeline step.
 
 <td>
 
@@ -4170,7 +4170,7 @@ g(f(a, x, b));
 (a, b, ...c, d) |> f(#, x, ...) |> g;
 ```
 The pipeline also binds an array to a rest topic reference `...` within the
-pipeline body. The array contains the arguments of the pipeline head that were
+pipeline step. The array contains the arguments of the pipeline head that were
 not bound to any other topic reference.
 
 <td>
@@ -4186,7 +4186,7 @@ g(f(a, x, ...[b, ...c, d]));
 (a, b, c, d, e) |> f(##, x, ...) |> g;
 ```
 The rest topic reference `...` starts from beyond the furthest topic reference
-that is used within the pipeline body. Here, the furthest topic reference is the
+that is used within the pipeline step. Here, the furthest topic reference is the
 secondary topic reference `##`: the second argument item. So `[c, d, e]` is
 bound to the rest topic reference. The rest topic reference `...` may only be
 used where the spread operator `...expression` would also be valid (that is,
@@ -4212,7 +4212,7 @@ spreads its elements into whatever expression surrounds it.
 Here, the furthest topic reference is the tertiary topic reference `###`: the
 third argument item. So only the rest topic reference `...` contains `d`’s
 spread elements as well as `e`. The second argument, `b`, is skipped entirely,
-because `##` is not used at all in the pipeline body.
+because `##` is not used at all in the pipeline step.
 
 <td>
 
@@ -4282,7 +4282,7 @@ bodies also n-ary.
 ```js
 (a, b) |> (f, g) |> h;
 ```
-Each element in an N-ary pipeline body is independently applied to each
+Each element in an N-ary pipeline step is independently applied to each
 consecutive argument from the pipeline head.
 
 <td>
@@ -4299,7 +4299,7 @@ h(f(a), g(b));
 |> (f, # ** c + ##)
 |> # - ##;
 ```
-The elements in an N-ary pipeline body may be either in bare style (like the `f`
+The elements in an N-ary pipeline step may be either in bare style (like the `f`
 here) or in topic style (like the `# ** c + ##` here).
 
 <td>
@@ -4338,11 +4338,11 @@ f(a) - (a ** c + b);
 |> (h, i);
 // 🚫 Syntax Error:
 // A pipeline chain terminates
-// with a 2-ary pipeline body
+// with a 2-ary pipeline step
 // but must terminate with a
-// unary pipeline body.
+// unary pipeline step.
 ```
-It is an [early error][] for a pipeline head to end with an n-ary pipeline body,
+It is an [early error][] for a pipeline head to end with an n-ary pipeline step,
 where n > 1. Such a comma expression would almost certainly be an accidental
 mistake by the developer.
 
@@ -5150,7 +5150,7 @@ specification**][formal FS].
 <td>
 
 With Additional Feature FT, a tacit pipeline `for` loop would be added, which
-would tacitly apply a pipeline body to each iterator value.
+would tacitly apply a pipeline step to each iterator value.
 ```js
 for (range(0, 50)) |> {
   log(# ** 2);
@@ -5419,9 +5419,9 @@ dependency that pieces of code have on other code. This long lookahead in turn
 makes it more likely that the code will exhibit developer-unintended behavior.
 
 This is true particularly for [distinguishing between different styles of
-pipeline body syntax][smart body syntax]. A pipeline’s meaning would often be
-ambiguous between these styles – at least without checking the pipeline’s body
-carefully to see in which style it is written. And the pipeline body may be a
+pipeline step syntax][smart body syntax]. A pipeline’s meaning would often be
+ambiguous between these styles – at least without checking the pipeline step
+carefully to see in which style it is written. And the pipeline step may be a
 very long expression.
 
 By restricting the space of valid bare-style pipeline bodies (that is, without
@@ -6099,7 +6099,7 @@ analyzable][]. It also cannot be accidentally bound; [the developer must opt
 into binding it][opt-in behavior] by using the pipe operator `|>`. (This
 includes [Additional Feature TS][] and [Additional Feature FS][], which both
 require the use of `|>`.) The topic also cannot be accidentally used; it is an
-[early error][] when `#` is used outside of a pipeline body (see [Core
+[early error][] when `#` is used outside of a pipeline step (see [Core
 Proposal][] and [static analyzability][]). The proposal is as a whole designed
 to [prevent footguns][“don’t shoot me in the foot”].
 
@@ -6697,7 +6697,7 @@ has already been proposed as [ECMAScript optional `catch` binding][]. This bare
 form is mutually compatible with this proposal, including with [Additional
 Feature TS][]. The developer must **[opt into using Additional
 Feature TS][opt-in behavior]** by using a pipeline token `|>`, followed by the
-pipeline body. No existing code would be affected. Any, some, or none of the
+pipeline step. No existing code would be affected. Any, some, or none of the
 three clauses in a `try` statement may be in a pipeline form versus the regular
 block form or the bare block form.
 
@@ -7158,7 +7158,7 @@ versatility], when [`do` expressions][] are added to JavaScript they too will be
 supported within pipeline bodies. When this occurs, topic references would be
 allowed within inner `do` expressions, along with arrow functions and `if` and
 `try` statements. [Additional Feature BP][] would extend this further, also
-supporting pipeline-body blocks that act nearly identically to `do` expressions.
+supporting pipeline-step blocks that act nearly identically to `do` expressions.
 
 ## Private class fields, class decorators, nullish coalescing, and optional chaining
 This proposal’s compatibility with these four proposals depends on its choice of
@@ -7290,7 +7290,7 @@ constructors – you may omit the topic reference from the body. This is called
 
 When a pipe is in bare style, we refer to the pipeline as a **bare function
 call**. (If [Additional Feature BC][] or [Additional Feature BA][] are used,
-then a bare-style pipeline body may instead be a **bare async function call**,
+then a bare-style pipeline step may instead be a **bare awaited function call**,
 or a **bare constructor call**, depending on the rules of bare style.) The body
 acts as just a simple reference to a function, such as with `… |> capitalize` or
 with `… |> console.log`. The body’s value would then be called as a unary
@@ -7365,7 +7365,7 @@ or so forth,\
 then the pipeline is a bare function call.
 
 **With [Additional Feature BC][]:**\
-If a pipeline body starts with `new`, followed by a mere identifier, optionally
+If a pipeline step starts with `new`, followed by a mere identifier, optionally
 with a chain of properties, and with no parentheses or brackets, then that
 identifier is interpreted to be a **bare constructor**.
 
@@ -7377,7 +7377,7 @@ or so forth,\
 then the pipeline is a bare constructor call.
 
 **With [Additional Feature BA][]:**\
-If a pipeline body starts with `await`, followed by a mere identifier, optionally with
+If a pipeline step starts with `await`, followed by a mere identifier, optionally with
 a chain of properties, and with no parentheses or brackets, then that identifier
 is interpreted to be a **bare awaited function call**.
 
@@ -7395,14 +7395,14 @@ grammar to distinguish topic style from bare style to fulfill the goal of
 |> _body_ does ***not* match the [bare style][]** (that is, it is *not* a bare
 function call, bare async function call, or bare constructor call), then it
 **must be in topic style**. Topic style **requires** that there be a topic
-reference in the pipeline body; otherwise it is an [early error][].
+reference in the pipeline step; otherwise it is an [early error][].
 
-A pipeline body that is not in bare style is usually a **topic expression**.
+A pipeline step that is not in bare style is usually a **topic expression**.
 This is any expression at the [precedence level once tighter than pipeline-level
 expressions][operator precedence] – that is, any conditional-level expression.
 
 **With [Additional Feature BA][]:**\
-A pipeline body that is a block `{` … `}` containing a list of statements is a
+A pipeline step that is a block `{` … `}` containing a list of statements is a
 **topic block**. The last statement in the block is used as the result of the
 whole pipeline, similarly to [`do` expressions][].
 
@@ -7635,7 +7635,7 @@ do {
 ```
 Suppose that we can generate a series of new [lexically hygienic][] variables
 (`_0`, `_1`, `_2`, `_3`, …). Each autogenerated variable will replace every
-topic reference `#` in each consecutive pipeline body. These `_n` variables
+topic reference `#` in each consecutive pipeline step. These `_n` variables
 need only be unique within their lexical scopes: they must not shadow any
 outer lexical environment’s variable, and they must not be shadowed by any
 deeply inner lexical environment’s variable.
@@ -7799,7 +7799,7 @@ pipeline chain:\
   𝐸ᵢ[width(𝐸ᵢ)−1] `)`, where each element of the argument list may be an
   expression, an expression starting with `...`, or a blank elision.
 
-The last pipeline body, 𝐸ᵤ₋₁, is an exception: it must be a **single**
+The last pipeline step, 𝐸ᵤ₋₁, is an exception: it must be a **single**
 expression that does **not** start with `...`, and it cannot be a parenthesized
 argument list either.
 
