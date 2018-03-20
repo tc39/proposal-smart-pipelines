@@ -517,16 +517,16 @@ PipelineBody : PipelineExpression
 </emu-alg>
 </emu-clause>
 
-<emu-clause id=sec-pipeline-operator-runtime-semantics-pipelinebodyevaluation aoid=PipelineBodyEvaluation>
-<h1>Runtime Semantics: PipelineBodyEvaluation</h1>
-<p>With parameter _headValues_.</p>
+<emu-clause id=sec-pipeline-operator-runtime-semantics-pipelinestageevaluation aoid=PipelineStageEvaluation>
+<h1>Runtime Semantics: PipelineStageEvaluation</h1>
+<p>With parameter _inputValues_.</p>
 
 <emu-grammar>PipelineBareFunctionCall : SimpleReference</emu-grammar>
 <p>This algorithm is an altered version of the algorithm of <emu-xref href="#sec-function-calls-runtime-semantics-evaluation">Function Calls, Runtime Semantics: Evaluation</emu-xref>, modified as follows:</p>
 <emu-alg>
 * Steps 1 and 2 are removed.
 * Step 3 is replaced by:
-  1. Let _arguments_ be _headValues_.
+  1. Let _arguments_ be _inputValues_.
 * Step 4 is replaced by:
   2. Let _functionExpr_ be the |MemberExpression| that is covered by _SimpleReference_.
   3. Let _ref_ be the result of evaluating _functionExpr_.
@@ -535,19 +535,20 @@ PipelineBody : PipelineExpression
 <emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
 <emu-alg>
 1. Let _oldEnv_ be the running execution context's Lexical Environment.
-2. Let _pipelineBodyEnv_ be New Declarative Environment(_oldEnv_).
-3. Perform TopicExpressionInstantiation(_headValues_, _pipelineBodyEnv_).
-4. Set the running execution context's Lexical Environment to _pipelineBodyEnv_.
+2. Let _pipelineStageEnv_ be New Declarative Environment(_oldEnv_).
+3. Perform TopicExpressionInstantiation(_inputValues_, _pipelineStageEnv_).
+4. Set the running execution context's Lexical Environment to _pipelineStageEnv_.
 5. Let _pipelineValue_ be the result of evaluating _ConditionalExpression_.
 6. Set the running execution context's Lexical Environment to _oldEnv_.
 7. Return _pipelineValue_.
 </emu-alg>
 
-<emu-grammar>PipelineBody : PipelineExpression</emu-grammar>
-<p>This algorithm is an altered version of the algorithm of PipelineBodyEvaluation for the production <emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>, modified as follows:</p>
+<emu-grammar>PipelineExpression : PipelineHead `|&gt;` PipelineBody</emu-grammar>
 <emu-alg>
-* Step 5 is replaced by:
-  5. Let _pipelineValue_ be the result of evaluating _PipelineExpression_.
+1. Let _headRef_ be PipelineStageEvaluation of |PipelineHead| with argument _inputValues_.
+2. Let _bodyInputValues_ be a list containing the one element which is the result of ? GetValue(_headRef_).
+3. Let _bodyRef_ be PipelineStageEvaluation of |PipelineBody| with argument _bodyInputValues_.
+5. Return ? GetValue(_bodyRef_).
 </emu-alg>
 
 </emu-clause>
@@ -558,8 +559,8 @@ PipelineBody : PipelineExpression
 <emu-grammar>PipelineExpression : PipelineHead `|&gt;` PipelineBody</emu-grammar>
 <emu-alg>
 1. Let _headRef_ be the result of evaluating |PipelineHead|.
-2. Let _headValues_ be a list containing the one element which is the result of ? GetValue(_headRef_).
-3. Let _bodyRef_ be PipelineBodyEvaluation of |PipelineBody| with argument _headValues_.
+2. Let _inputValues_ be a list containing the one element which is the result of ? GetValue(_headRef_).
+3. Let _bodyRef_ be PipelineStageEvaluation of |PipelineBody| with argument _inputValues_.
 5. Return ? GetValue(_bodyRef_).
 </emu-alg>
 </emu-clause>
@@ -831,19 +832,19 @@ PipelineBareConstructorCall :
 </ins>
 </emu-grammar>
 
-<emu-annex id=sec-additional-feature-bc-pipeline-operator-runtime-semantics-pipelinebodyevaluation aoid=PipelineBodyEvaluation>
-<h1>Runtime Semantics: PipelineBodyEvaluation</h1>
-<p>With parameter _headValues_.</p>
+<emu-annex id=sec-additional-feature-bc-pipeline-operator-runtime-semantics-pipelinestageevaluation aoid=PipelineStageEvaluation>
+<h1>Runtime Semantics: PipelineStageEvaluation</h1>
+<p>With parameter _inputValues_.</p>
 
 <emu-note type=editor>
-<p>This section appends to the <emu-xref href=#sec-pipeline-operator-runtime-semantics-pipelinebodyevaluation>new clause in the core proposal</emu-xref>.</p>
+<p>This section appends to the <emu-xref href=#sec-pipeline-operator-runtime-semantics-pipelinestageevaluation>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <ins class=block>
 <emu-grammar>PipelineBareConstructorCall : `new` SimpleReference</emu-grammar>
 <emu-alg>
 1. Let _constructExpr_ be the |NewExpression| that is covered by _SimpleReference_.
-2. Return ? EvaluateNew(NewExpression, _headValues_).
+2. Return ? EvaluateNew(NewExpression, _inputValues_).
 </emu-alg>
 </ins>
 
@@ -884,12 +885,12 @@ PipelineBareAwaitedFunctionCall[Await] :
 </ins>
 </emu-grammar>
 
-<emu-annex id=sec-additional-feature-ba-pipeline-operator-runtime-semantics-pipelinebodyevaluation aoid=PipelineBodyEvaluation>
-<h1>Runtime Semantics: PipelineBodyEvaluation</h1>
-<p>With parameter _headValues_.</p>
+<emu-annex id=sec-additional-feature-ba-pipeline-operator-runtime-semantics-pipelinestageevaluation aoid=PipelineStageEvaluation>
+<h1>Runtime Semantics: PipelineStageEvaluation</h1>
+<p>With parameter _inputValues_.</p>
 
 <emu-note type=editor>
-<p>This section appends to the <emu-xref href=#sec-pipeline-operator-runtime-semantics-pipelinebodyevaluation>new clause in the core proposal</emu-xref>.</p>
+<p>This section appends to the <emu-xref href=#sec-pipeline-operator-runtime-semantics-pipelinestageevaluation>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <ins class=block>
@@ -981,9 +982,9 @@ PipelineTopicBlock[In, Yield, Await] :
 </emu-note>
 </emu-annex>
 
-<emu-annex id=sec-additional-feature-bp-pipeline-operator-runtime-semantics-pipelinebodyevaluation aoid=PipelineBodyEvaluation>
-<h1>Runtime Semantics: PipelineBodyEvaluation</h1>
-<p>With parameter _headValues_.</p>
+<emu-annex id=sec-additional-feature-bp-pipeline-operator-runtime-semantics-pipelinestageevaluation aoid=PipelineStageEvaluation>
+<h1>Runtime Semantics: PipelineStageEvaluation</h1>
+<p>With parameter _inputValues_.</p>
 
 <emu-grammar>PipelineTopicExpression : `{` StatementList `}`</emu-grammar>
 <emu-note type=editor>
@@ -1243,7 +1244,7 @@ PipelineBody : PipelineTopicExpression
 <emu-grammar>PipelineFunction : `+&gt;` PipelineBody</emu-grammar>
 <emu-alg>
 1. Perform ? FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
-2. Let _exprRef_ be PipelineBodyEvaluation of |PipelineBody| with argument _argumentsList_.
+2. Let _exprRef_ be PipelineStageEvaluation of |PipelineBody| with argument _argumentsList_.
 3. Let _exprValue_ be ? GetValue(_exprRef_).
 4. Return Completion{[[Type]]: ~return~, [[Value]]: _exprValue_, [[Target]]: ~empty~}.
 </emu-alg>
