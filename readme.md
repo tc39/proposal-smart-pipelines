@@ -58,7 +58,6 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [Terse function calls](#terse-function-calls)
     - [Terse composition](#terse-composition)
     - [Terse partial application](#terse-partial-application)
-    - [Terse method extraction](#terse-method-extraction)
   - [Other Goals](#other-goals)
     - [Conceptual generality](#conceptual-generality)
     - [Human writability](#human-writability)
@@ -3134,7 +3133,7 @@ feature – **Pipeline Functions** – would dramatically increase the usefulnes
 pipelines. It introduces just one additional operator that solves:\
 tacit unary **functional composition**,\
 tacit unary functional **partial application**,\
-and tacit **method extraction**,\
+and many kinds of tacit **method extraction**,\
 …all at the same time.
 
 And with [Additional Feature NP][], this additional feature would *also* solve\
@@ -3608,8 +3607,8 @@ Meadows][isiahmeadows functional composition].
 <tr>
 <td>
 
-**Method extraction** can be addressed by pipeline functions alone, as a natural
-result of their pipeline-operator-like semantics.\
+Many kinds of **method extraction** can be addressed by pipeline functions
+alone, as a natural result of their pipeline-operator-like semantics.\
 `+> console.log` is equivalent to `(...$) => console.log(...$)`…
 ```js
 Promise.resolve(123)
@@ -3618,7 +3617,6 @@ Promise.resolve(123)
 
 <td>
 
-…and `(...$) => console.log(...$)` is equivalent to `console.log.bind(console)`.
 ```js
 Promise.resolve(123)
   .then(console.log.bind(console));
@@ -3642,6 +3640,79 @@ $('.some-link').on('click', ::view.reset);
 <tr>
 <td>
 
+Note that this is *not* the same as `console.log.bind(console.log)`, which
+creates an exotic function that always uses whatever value `console.log`
+evaluates into – even if `console.log` is reassigned later.
+```js
+const consoleLog =
+  console.log.bind(console.log);
+const arrayFrom =
+  Array.from.bind(Array.from);
+const arrayMap =
+  Function.bind.call(Function.call,
+    Array.prototype.map);
+…
+input
+|> process
+|> consoleLog;
+input
+|> arrayFrom
+|> arrayMap(#, $ => $ + 1)
+|> consoleLog;
+```
+This [robust method extraction][] is a use case that this proposal leaves to
+another operator, such as prefix `::` or prefix `&`.
+
+<td>
+
+```js
+const consoleLog =
+  console.log.bind(console.log);
+const arrayFrom =
+  Array.from.bind(Array.from);
+const arrayMap =
+  Function.bind.call(Function.call, Array.prototype.map);
+…
+consoleLog(
+  process(input));
+consoleLog(
+  arrayMap(arrayFrom(input), $ => $ + 1));
+```
+
+<tr>
+<td>
+
+```js
+…
+input
+|> process
+|> &console.log;
+input
+|> &Array.from
+|> #::&Array.prototype.map($ => $ + 1)
+|> &console.log;
+```
+Pipeline functions would not preclude adding another operator that addresses
+[robust method extraction][] with [inline caching][method-extraction inline
+caching], such as the hypothetical prefix `&` operators (for cached method
+extraction) and infix `::` operators (for `this` binding) shown here. Such
+hypothetical notations could even be eventually accommodated by a new [bare
+style][] notation, shown here with `… |> &console.log` and `… |> &Array.from`.
+
+<td>
+
+```js
+…
+consoleLog(
+  process(input));
+consoleLog(
+  &Array.from(input)
+  ::&Array.prototype.map($ => $ + 1));
+```
+
+<tr>
+<td>
+
 ```js
 const { hasOwnProperty } =
   Object.prototype;
@@ -3649,8 +3720,8 @@ const x = { key: 5 };
 x::hasOwnProperty;
 x::hasOwnProperty('key');
 ```
-For terse **method calling/binding**, the infix `::` operator would still be
-required.
+For terse **method calling/binding**, the infix `::` operator would also still
+be required.
 
 <td>
 
@@ -3661,9 +3732,6 @@ const x = { key: 5 };
 x::hasOwnProperty;
 x::hasOwnProperty('key');
 ```
-But the `::` operator would only need to handle method calls. No operator
-overloading of `::` for method extraction (that is, `::` as a prefix operator)
-would be needed.
 
 </table>
 
@@ -5122,7 +5190,7 @@ for await (const c of stream) {
 
 # Goals
 
-There are eighteen ordered goals that the smart body syntax tries to fulfill,
+There are seventeen ordered goals that the smart body syntax tries to fulfill,
 which may be summarized,\
 “Don’t break my code,”\
 “Don’t make me overthink,”\
@@ -5768,8 +5836,8 @@ versatility] but also n-ary functions, object methods, async functions,
 generators, `if` `else` statements, and so forth – is a goal of smart pipelines.
 [Several alternative proposals also address function composition][function
 composition], but [Additional Feature PF][] holistically addresses it with
-application, partial application, and method extraction, and not only for unary
-functions but also for expressions of any type.
+application, partial application, and some forms of method extraction, and not
+only for unary functions but also for expressions of any type.
 
 ### Terse partial application
 Terse partial application of all expressions – [not only functions][expressive
@@ -5777,18 +5845,10 @@ versatility] but also object methods, async functions, generators, `if` `else`
 statements, and so forth – is a goal of smart pipelines. [An existing
 alternative proposal also addresses partial function application][partial
 function application], but [Additional Feature PF][] holistically addresses it
-with application, partial application, and method extraction, and not only for
-unary functions but also for expressions of any type. [Additional Feature NP][]
-extends this ability to N-ary expressions, including variadic expressions.
-
-### Terse method extraction
-Terse method extraction – being able to use a method as a function without
-relying on `Function.prototype.bind`, such as using `console.log` as a callback
-function – is another goal of smart pipelines. Method extraction is also
-addressed by [Additional Feature PF][]. [An existing alternative proposal for
-function binding already addresses method extraction as a special case][function
-binding], but [Additional Feature PF][] holistically addresses method binding
-with composition, application, and partial application.
+with application, partial application, and some forms of method extraction, and
+not only for unary functions but also for expressions of any type. [Additional
+Feature NP][] extends this ability to N-ary expressions, including variadic
+expressions.
 
 ## Other Goals
 Although these have been prioritized last, they are still important.
@@ -5802,8 +5862,8 @@ with [forward compatibility][]).
 This proposal’s concept of a **topic reference does not need to be coupled only
 to pipelines**. The topic concept is **generalizable to many syntactic forms**,
 as the [additional features][] demonstrate. They together form one unified vision
-of a future in which composition, partial application, method extraction, and
-error handling are all tersely expressible with the same simple concepts.
+of a future in which composition, partial application, and error handling are
+all tersely expressible with the same simple concepts.
 
 ### Human writability
 Writability of code is less important a priority than readability of code. Code
@@ -6066,22 +6126,17 @@ With [existing proposal][ECMAScript function binding]
 <tr>
 <td>
 
-**Method extraction** can be addressed by pipeline functions alone, as a natural
-result of their pipeline-operator-like semantics.\
-`+> console.log` is equivalent to `$ => $ |> console.log`, which is a pipeline in
-[bare style][]. This in turn is `$ => console.log($)`…
+**Some** forms of **method extraction** can be addressed by pipeline functions
+alone, as a natural result of their pipeline-operator-like semantics.\
+`+> console.log` is equivalent to `(...$) => console.log(...$)`.
 ```js
 Promise.resolve(123).then(+> console.log);
 ```
 
 <td>
 
-…and `$ => console.log($)` is equivalent to `console.log.bind(console)`.
 ```js
-Promise.resolve(123).then(console.log.bind(console));
-```
-```js
-Promise.resolve(123).then(::console.log);
+Promise.resolve(123).then((...$) => console.log(...$));
 ```
 
 <tr>
@@ -6100,14 +6155,87 @@ $('.some-link').on('click', ::view.reset);
 <tr>
 <td>
 
+Note that this is *not* the same as `console.log.bind(console.log)`, which
+creates an exotic function that always uses whatever value `console.log`
+evaluates into – even if `console.log` is reassigned later.
+```js
+const consoleLog =
+  console.log.bind(console.log);
+const arrayFrom =
+  Array.from.bind(Array.from);
+const arrayMap =
+  Function.bind.call(Function.call,
+    Array.prototype.map);
+…
+input
+|> process
+|> consoleLog;
+input
+|> arrayFrom
+|> arrayMap(#, $ => $ + 1)
+|> consoleLog;
+```
+This [robust method extraction][] is a use case that this proposal leaves to
+another operator, such as prefix `::` or prefix `&`.
+
+<td>
+
+```js
+const consoleLog =
+  console.log.bind(console.log);
+const arrayFrom =
+  Array.from.bind(Array.from);
+const arrayMap =
+  Function.bind.call(Function.call, Array.prototype.map);
+…
+consoleLog(
+  process(input));
+consoleLog(
+  arrayMap(arrayFrom(input), $ => $ + 1));
+```
+
+<tr>
+<td>
+
+```js
+…
+input
+|> process
+|> &console.log;
+input
+|> &Array.from
+|> #::&Array.prototype.map($ => $ + 1)
+|> &console.log;
+```
+Pipeline functions would not preclude adding another operator that addresses
+[robust method extraction][] with [inline caching][method-extraction inline
+caching], such as the hypothetical prefix `&` operators (for cached method
+extraction) and infix `::` operators (for `this` binding) shown here. Such
+hypothetical notations could even be eventually accommodated by a new [bare
+style][] notation, shown here with `… |> &console.log` and `… |> &Array.from`.
+
+<td>
+
+```js
+…
+consoleLog(
+  process(input));
+consoleLog(
+  &Array.from(input)
+  ::&Array.prototype.map($ => $ + 1));
+```
+
+<tr>
+<td>
+
 ```js
 const { hasOwnProperty } = Object.prototype;
 const x = { key: 5 };
 x::hasOwnProperty;
 x::hasOwnProperty('key');
 ```
-For terse **method calling/binding**, the infix `::` operator would still be
-required.
+For terse **method calling/binding**, the infix `::` operator would also still
+be required.
 
 <td>
 
@@ -6117,9 +6245,6 @@ const x = { key: 5 };
 x::hasOwnProperty;
 x::hasOwnProperty('key');
 ```
-But the `::` operator would only need to handle method calls. No operator
-overloading of `::` for method extraction (that is, `::` as a prefix operator)
-would be needed.
 
 <tr>
 <td>
@@ -7095,8 +7220,8 @@ function application][terse function calls] but also [terse N-ary function
 application][terse function calls], [terse expression application][terse
 function calls], [terse function composition][terse composition], [terse
 expression composition][terse composition], [terse partial application][], and
-[terse method extraction][] – all with a single [cyclomatic simplicity][] and
-unified [general concept][conceptual generality].
+[terse method extraction][] – all with a single [simple][cyclomatic simplicity]
+and unified [general concept][conceptual generality].
 
 Indeed, the original pipeline proposal was blocked from Stage 2 by TC39 during
 its [60th meeting, on September 2017][TC39 60th meeting, pipelines], for similar
@@ -7808,8 +7933,8 @@ The pipeline chain is therefore equivalent to:\
 [formal pipeline specification]: https://jschoi.org/18/es-smart-pipelines/spec
 [formal PP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pp
 [formal TS]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-ts
-[forward compatible]: #forward-compatibility
 [forward compatibility]: #forward-compatibility
+[forward compatible]: #forward-compatibility
 [function bind operator `::`]: #function-bind-operator
 [function binding]: #function-binding
 [function composition]: #function-composition
@@ -7850,6 +7975,7 @@ The pipeline chain is therefore equivalent to:\
 [make my code easier to read]: #make-my-code-easier-to-read
 [MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
 [MDN operator precedence]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
+[method-extraction inline caching]: https://github.com/tc39/proposal-bind-operator/issues/46
 [mindeavor]: https://github.com/gilbert
 [mode errors]: https://en.wikipedia.org/wiki/Mode_(computer_interface)#Mode_errors
 [motivation]: #motivation
@@ -7893,6 +8019,7 @@ The pipeline chain is therefore equivalent to:\
 [resolving topics]: #resolve-topic
 [rest topic]: #additional-feature-np
 [reverse Polish notation]: https://en.wikipedia.org/wiki/Reverse_Polish_notation
+[robust method extraction]: https://github.com/tc39/proposal-pipeline-operator/issues/110#issuecomment-374367888
 [Ron Buckton]: https://github.com/rbuckton
 [runtime semantics]: #runtime-semantics
 [secondary topic]: #additional-feature-np
