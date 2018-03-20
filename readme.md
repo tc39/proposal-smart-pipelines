@@ -122,8 +122,7 @@ listed as [**Proposal 4: Smart Mix** in the pipe-proposal wiki][Pipeline
 Proposal 4]. The variant resulted from [previous discussions in the previous
 pipeline-operator proposal][previous pipeline-placeholder discussions],
 discussions which culminated in an [invitation by Ehrenberg to try writing a
-specification draft][littledan invitation]. A **prototype Babel plugin** will
-also be written soon.
+specification draft][littledan invitation].
 
 The **additional features** are **not part of the Stage-0 Core Proposal**. They
 are included to illustrate possible **separate follow-up proposals** for the case
