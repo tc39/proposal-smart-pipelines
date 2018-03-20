@@ -795,9 +795,9 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <emu-annex id=sec-additional-feature-bc>
 <h1>Additional Feature BC: Bare Constructor Calls</h1>
 <p><strong>Not at Stage 0.</strong></p>
-<p>This annex specifies additional ECMAScript language syntax and semantics for <strong>bare awaited function calls</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing an additional <strong>bare-style pipeline form</strong>, in which a |SimpleReference| is prepended with an `await`.</p>
+<p>This annex specifies additional ECMAScript language syntax and semantics for <strong>bare constructor calls</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing an additional <strong>bare-style pipeline form</strong>, in which a |SimpleReference| is prepended with an `new`.</p>
 
-<p>See the <a href=https://github.com/js-choi/proposal-smart-pipelines/blob/master/readme.md#additional-feature-ba>explainer document, § Motivation, Additional Feature BP</a> for information on this feature's motivation.</p>
+<p>See the <a href=https://github.com/js-choi/proposal-smart-pipelines/blob/master/readme.md#additional-feature-bc>explainer document, § Motivation, Additional Feature BC</a> for information on this feature's motivation.</p>
 
 <emu-annex id=sec-additional-feature-bc-ecmascript-language-expressions>
 <h1>ECMAScript Language: Expressions</h1>
@@ -850,7 +850,7 @@ PipelineBareConstructorCall :
 <p><strong>Not at Stage 0.</strong></p>
 <p>This annex specifies additional ECMAScript language syntax and semantics for <strong>bare awaited function calls</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing an additional <strong>bare-style pipeline form</strong>, in which a |SimpleReference| is prepended with an `await`.</p>
 
-<p>See the <a href=https://github.com/js-choi/proposal-smart-pipelines/blob/master/readme.md#additional-feature-ba>explainer document, § Motivation, Additional Feature BP</a> for information on this feature's motivation.</p>
+<p>See the <a href=https://github.com/js-choi/proposal-smart-pipelines/blob/master/readme.md#additional-feature-ba>explainer document, § Motivation, Additional Feature BA</a> for information on this feature's motivation.</p>
 
 <emu-annex id=sec-additional-feature-ba-ecmascript-language-expressions>
 <h1>ECMAScript Language: Expressions</h1>
@@ -865,7 +865,7 @@ PipelineBareConstructorCall :
 <emu-grammar type=definition>
 PipelineBody[In, Yield, Await] :
   PipelineBareFunctionCall
-  <ins>PipelineBareAwaitedFunctionCall</ins>
+  <ins class=block>PipelineBareAwaitedFunctionCall</ins>
   PipelineTopicExpression[?In, ?Yield, ?Await]
 
 <ins class=block>
@@ -936,11 +936,9 @@ PipelineTopicBlock[In, Yield, Await] :
 </emu-note>
 
 <ins class=block>
-<emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
+<emu-grammar>PipelineTopicBlock : `{` StatementList `}`</emu-grammar>
 <emu-alg>
-* It is a Syntax Error if _ConditionalExpression_ Contains `#` is *false*.
-* It is a Syntax Error if _ConditionalExpression_ is covering a |YieldExpression|.
-* It is a Syntax Error if _ConditionalExpression_ is covering a |PipelineTopicListHead|.
+* It is a Syntax Error if _StatementList_ Contains `#` is *false*.
 </emu-alg>
 </ins>
 </emu-annex>
@@ -950,7 +948,7 @@ PipelineTopicBlock[In, Yield, Await] :
 <p>With parameter _symbol_.</p>
 <emu-see-also-para op="Contains"></emu-see-also-para>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipeline-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This section appends to the <emu-xref href=#sec-pipeline-operator-static-semantics-contains>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>
