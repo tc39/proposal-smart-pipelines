@@ -448,7 +448,7 @@ SimpleReference :
   SimpleReference `.` IdentifierName
 
 PipelineTopicExpression[In, Yield, Await] :
-  ConditionalExpression[?In, ?Yield, ?Await]
+  [lookahead &lt;! {`{`}] ConditionalExpression[?In, ?Yield, ?Await]
 </emu-grammar>
 
 <emu-clause id=sec-pipeline-operator-static-semantics-early-errors>
