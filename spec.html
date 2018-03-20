@@ -1010,34 +1010,28 @@ PipelineTopicExpression : ConditionalExpression
 <table>
 <tr>
 <td><pre><code language=javascript>+&gt; console.log</code></pre></td>
-<td><pre><code language=javascript>$ =&gt; $ |&gt; console.log
-$ =&gt; console.log($)
+<td><pre><code language=javascript>(...$) =&gt; console.log(...$)
 console.log.bind(console)</code></pre></td>
 </tr>
 <tr>
 <td><pre><code language=javascript>+&gt; f(#, 5)</code></pre></td>
-<td><pre><code language=javascript>$ =&gt; $ |&gt; f(#, 5)
-$ =&gt; f($, 5)</code></pre></td>
+<td><pre><code language=javascript>$ =&gt; f($, 5)</code></pre></td>
 </tr>
 <tr>
 <td><pre><code language=javascript>+&gt; # + 1</code></pre></td>
-<td><pre><code language=javascript>$ =&gt; $ |&gt; # + 1
-$ =&gt; $ + 1</code></pre></td>
+<td><pre><code language=javascript>$ =&gt; $ + 1</code></pre></td>
 </tr>
 <tr>
 <td><pre><code language=javascript>+&gt; f |&gt; g</code></pre></td>
-<td><pre><code language=javascript>$ =&gt; $ |&gt; f |&gt; g
-$ =&gt; g(f($))</code></pre></td>
+<td><pre><code language=javascript>(...$) =&gt; g(f(...$))</code></pre></td>
 </tr>
 <tr>
 <td><pre><code language=javascript>+&gt; f |&gt; o.m</code></pre></td>
-<td><pre><code language=javascript>$ =&gt; $ |&gt; f |&gt; o.m
-$ =&gt; o.m(f($))</code></pre></td>
+<td><pre><code language=javascript>(...$) =&gt; o.m(f(...$))</code></pre></td>
 </tr>
 <tr>
 <td><pre><code language=javascript>+&gt; f |&gt; # + 1 |&gt; o.m</code></pre></td>
-<td><pre><code language=javascript>$ =&gt; $ |&gt; f |&gt; # + 1 |&gt; o.m
-$ =&gt; o.m(f($) + 1)</code></pre></td>
+<td><pre><code language=javascript>(...$) =&gt; o.m(f(...$) + 1)</code></pre></td>
 </tr>
 </table>
 </emu-table>
