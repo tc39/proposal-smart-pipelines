@@ -546,10 +546,10 @@ PipelineTopicExpression[In, Yield, Await] :
 
 <emu-grammar>Pipeline : PipelineStep `|&gt;` Pipeline</emu-grammar>
 <emu-alg>
-1. Let _headRef_ be PipelineEvaluation of |PipelineStep| with argument _inputValues_.
-2. Let _bodyInputValues_ be a list containing the one element which is the result of ? GetValue(_headRef_).
-3. Let _bodyRef_ be PipelineEvaluation of |Pipeline| with argument _bodyInputValues_.
-4. Return ? GetValue(_bodyRef_).
+1. Let _inputRef_ be PipelineEvaluation of |PipelineStep| with argument _inputValues_.
+2. Let _stepOutputValues_ be a list containing the one element which is the result of ? GetValue(_inputRef_).
+3. Let _pipelineRemainderOutputRef_ be PipelineEvaluation of |Pipeline| with argument _stepOutputValues_.
+4. Return ? GetValue(_pipelineRemainderOutputRef_).
 </emu-alg>
 
 </emu-clause>
@@ -559,10 +559,10 @@ PipelineTopicExpression[In, Yield, Await] :
 
 <emu-grammar>PipeExpression : ConditionalExpression `|&gt;` Pipeline</emu-grammar>
 <emu-alg>
-1. Let _headRef_ be the result of evaluating |ConditionalExpression|.
-2. Let _inputValues_ be a list containing the one element which is the result of ? GetValue(_headRef_).
-3. Let _bodyRef_ be PipelineEvaluation of |Pipeline| with argument _inputValues_.
-4. Return ? GetValue(_bodyRef_).
+1. Let _inputRef_ be the result of evaluating |ConditionalExpression|.
+2. Let _stepOutputValues_ be a list containing the one element which is the result of ? GetValue(_inputRef_).
+3. Let _pipelineRemainderOutputRef_ be PipelineEvaluation of |Pipeline| with argument _stepOutputValues_.
+4. Return ? GetValue(_pipelineRemainderOutputRef_).
 </emu-alg>
 </emu-clause>
 
