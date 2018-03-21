@@ -4274,7 +4274,7 @@ g(a - b);
 <td>
 
 N-ary pipeline steps may be chained by using comma expressions, forming a
-**list-style pipeline step**. [TODO: Disallow bare style in list pipeline steps.]
+**list-style pipeline step**.
 ```js
 (a, b) |> (f, g) |> h;
 ```
@@ -4289,14 +4289,17 @@ h(f(a), g(b));
 <tr>
 <td>
 
+The elements in an N-ary pipeline step must be in topic style (like the `# ** c +
+##` here).
 ```js
 (a, b)
-|> (f, # ** c + ##)
+|> (f(#), # ** c + ##)
 |> # - ##;
 ```
-[TODO: Delete this paragraph.] The elements in an N-ary pipeline step may be
-either in bare style (like the `f` here) or in topic style (like the `# ** c +
-##` here).
+It would be the usual early Syntax Error if `f(#)` was instead just `f`, because
+it would be a topic-style pipeline step without a topic reference. (`f(##)` and
+`f(...)` would not be a Syntax Error, of course. But `f(###)` would also be a
+Syntax Error, because it has only two inputs from the step before it.)
 
 <td>
 
@@ -4309,9 +4312,9 @@ f(a) - (a ** c + b);
 
 ```js
 (a, b)
-|> (f, g)
+|> (f(#), g(##))
 |> h
-|> (i, # + 1, k)
+|> (i(#), # + 1, k(###))
 |> l;
 ```
 
@@ -4330,7 +4333,7 @@ f(a) - (a ** c + b);
 
 ```js
 (a, b)
-|> (f, g)
+|> (f(#), g(##))
 |> (h, i);
 // 🚫 Syntax Error:
 // A pipeline chain terminates
