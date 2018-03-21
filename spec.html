@@ -188,10 +188,10 @@ Establish the immutable topic binding (that is, the `#` binding) of this Environ
 </tr>
 <tr>
 <td>
-GetPrimaryTopicBinding()
+GetTopicBinding()
 </td>
 <td>
-Return the value of the topic binding (`#` binding) of this Environment Record. This method is never called when the HasTopicBinding method would return *false*.
+Return the values of the topic binding (`#` binding) of this Environment Record. This method is never called when the HasTopicBinding method would return *false*.
 </td>
 </tr>
 </tbody>
@@ -200,7 +200,7 @@ Return the value of the topic binding (`#` binding) of this Environment Record. 
 </ins>
 
 <emu-note type=editor>
-<p>BindTopicValues() accepts a list argument rather than a single-value argument, and GetPrimaryTopicBinding is named as such instead of merely “GetTopicBinding”, in order to be <emu-xref href=#sec-additional-feature-np-declarative-environment-records>forward compatible with Additional Feature NP</emu-xref>.</p>
+<p>BindTopicValues() accepts a list argument rather than a single-value argument, and GetTopicBinding is named as such instead of merely “GetTopicBinding”, in order to be <emu-xref href=#sec-additional-feature-np-declarative-environment-records>forward compatible with Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <p>The behaviour of the concrete <ins>and additional</ins> specification methods for declarative Environment Records is defined by the following algorithms.</p>
@@ -235,19 +235,20 @@ Return the value of the topic binding (`#` binding) of this Environment Record. 
 </emu-clause>
 </emu-clause>
 
-<emu-clause id=sec-declarative-environment-records-getprimarytopicbinding>
-<h1><ins>GetPrimaryTopicBinding ( )</ins></h1>
+<emu-clause id=sec-declarative-environment-records-gettopicbinding>
+<h1><ins>GetTopicBinding ( )</ins></h1>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-declarative-environment-records-getprimarytopicbinding>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>. It is forward compatible with <emu-xref href=#sec-additional-feature-np-declarative-environment-records-gettopicbinding>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
-<p>The method GetPrimaryTopicBinding for declarative Environment Records returns the value of the record's topic binding (`#` binding). It must not be called when the record's topic binding has not already been established.</p>
+<p>The method GetTopicBinding for declarative Environment Records returns the values of the record's topic binding (`#` binding). It must not be called when the record's topic binding has not already been established.</p>
 <emu-note>
 <p>That is, Environment Records will never be called on an Environment Record before the BindTopicValues method has been called.</p>
 </emu-note>
 <emu-alg>
 1. Let _envRec_ be the declarative Environment Record for which the method was invoked.
 2. Assert: _envRec_.[[TopicBindingStatus]] is *true*.
-3. Return _envRec_.[[TopicValues]].
+3. Assert: _envRec_.[[TopicValues]] is a list.
+4. Return _envRec_.[[TopicValues]].
 </emu-alg>
 </emu-clause>
 
@@ -384,19 +385,19 @@ PrimaryExpression[Yield, Await] :
 </emu-note>
 </emu-clause>
 
-<emu-clause id=sec-resolveprimarytopicbinding aoid=ResolvePrimaryTopicBinding>
-<h1>Runtime Semantics: ResolvePrimaryTopicBinding</h1>
+<emu-clause id=sec-resolvetopicbinding aoid=ResolveTopicBinding>
+<h1>Runtime Semantics: ResolveTopicBinding</h1>
 <emu-note type=editor>
-<p>This method is named as such instead of merely “ResolveTopicBinding” in order to be forward compatible with <emu-xref href=#sec-additional-feature-pf>Additional Feature NP</emu-xref>.</p>
+<p>This method returns a list in order to be forward compatible with <emu-xref href=#sec-additional-feature-pf>Additional Feature NP</emu-xref>.</p>
 </emu-note>
 <emu-note>
-<p>ResolvePrimaryTopicBinding returns the value to which the topic reference `#` is bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment.</p>
+<p>ResolveTopicBinding returns the value to which the topic reference `#` is bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment.</p>
 </emu-note>
 <p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
 <emu-alg>
 1. Let _envRec_ be GetTopicEnvironment().
 2. Assert: _envRec_.HasTopicBinding() is true.
-3. Return ? _envRec_.GetPrimaryTopicBinding().
+3. Return ? _envRec_.GetTopicBinding().
 </emu-alg>
 </emu-clause>
 
@@ -405,7 +406,9 @@ PrimaryExpression[Yield, Await] :
 
 <emu-grammar>PrimaryExpression : `#`</emu-grammar>
 <emu-alg>
-1. Return ? ResolvePrimaryTopicBinding().
+1. Let _topicList_ be ? ResolveTopicBinding().
+2. Assert: the length of _topicList_ is at least *1*.
+3. Return ? _topicList_[0].
 </emu-alg>
 </emu-clause>
 
@@ -1762,67 +1765,20 @@ RestTopicReference :
 </emu-alg>
 </emu-annex>
 
-<emu-annex id=sec-additional-feature-np-resolveprimarytopicbinding>
-<h1>Runtime Semantics: ResolvePrimaryTopicBinding</h1>
+<emu-annex id=sec-additional-feature-np-resolvetopicbinding>
+<h1>Runtime Semantics: ResolveTopicBinding</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-resolveprimarytopicbinding>new clause in the core proposal</emu-xref>.</p>
+<p>This section revises the <emu-xref href=#sec-resolvetopicbinding>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 <emu-note>
-<p>ResolvePrimaryTopicBinding returns the value to which the <ins>primary </ins>topic reference `#` is bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment.</p>
+<emu-note>
+<p>ResolveTopicBinding returns the value to which the <del>topic reference `#` is</del><ins>the |TopicExpression| tokens (`#`, `##`, and `###`) are</ins> bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment.</p>
 </emu-note>
 <p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
 <emu-alg>
 1. Let _envRec_ be GetTopicEnvironment().
 2. Assert: _envRec_.HasTopicBinding() is true.
-3. Return ? _envRec_.GetPrimaryTopicBinding().
-</emu-alg>
-</emu-annex>
-
-<emu-annex id=sec-additional-feature-np-resolvesecondarytopicbinding aoid=ResolveSecondaryTopicBinding>
-<h1><ins>Runtime Semantics: ResolveSecondaryTopicBinding</ins></h1>
-<emu-note type=editor>
-<p>This section is a wholly new sub-clause in addition to the revisions of the core proposal.</p>
-</emu-note>
-<emu-note>
-<p>ResolveSecondaryTopicBinding returns the value to which the secondary topic reference `##` is bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment.</p>
-</emu-note>
-<p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
-<emu-alg>
-1. Let _envRec_ be GetTopicEnvironment().
-2. Assert: _envRec_.HasTopicBinding() is true.
-3. Return ? _envRec_.GetSecondaryTopicBinding().
-</emu-alg>
-</emu-annex>
-
-<emu-annex id=sec-additional-feature-np-resolvetertiarytopicbinding aoid=ResolveTertiaryTopicBinding>
-<h1><ins>Runtime Semantics: ResolveTertiaryTopicBinding</ins></h1>
-<emu-note type=editor>
-<p>This section is a wholly new sub-clause in addition to the revisions of the core proposal.</p>
-</emu-note>
-<emu-note>
-<p>ResolveTertiaryTopicBinding returns the value to which the tertiary topic reference `###` is bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment.</p>
-</emu-note>
-<p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
-<emu-alg>
-1. Let _envRec_ be GetTopicEnvironment().
-2. Assert: _envRec_.HasTopicBinding() is true.
-3. Return ? _envRec_.GetTertiaryTopicBinding().
-</emu-alg>
-</emu-annex>
-
-<emu-annex id=sec-additional-feature-np-resolveresttopicbinding aoid=ResolveRestTopicBinding>
-<h1><ins>Runtime Semantics: ResolveRestTopicBinding</ins></h1>
-<emu-note type=editor>
-<p>This section is a wholly new sub-clause in addition to the revisions of the core proposal.</p>
-</emu-note>
-<emu-note>
-<p>ResolveRestTopicBinding returns the value to which the |RestTopicReference| `...` is bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment. Rather than being directly used during evaluation of a |TopicExpression|, it is indirectly used during the evaluation of |SpreadElement|, |PropertyDefinition|, and |ArgumentList|.</p>
-</emu-note>
-<p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
-<emu-alg>
-1. Let _envRec_ be GetTopicEnvironment().
-2. Assert: _envRec_.HasTopicBinding() is true.
-3. Return ? _envRec_.GetRestTopicBinding().
+3. Return ? _envRec_.GetTopicBinding().
 </emu-alg>
 </emu-annex>
 
@@ -1838,12 +1794,16 @@ RestTopicReference :
 
 <emu-grammar>TopicExpression : `##`</emu-grammar>
 <emu-alg>
-1. Return ? ResolveSecondaryTopicBinding().
+1. Let _topicList_ be ? ResolveTopicBinding().
+2. Assert: the length of _topicList_ is at least *2*.
+3. Return ? _topicList_[1].
 </emu-alg>
 
 <emu-grammar>TopicExpression : `###`</emu-grammar>
 <emu-alg>
-1. Return ? ResolveTertiaryTopicBinding().
+1. Let _topicList_ be ? ResolveTopicBinding().
+2. Assert: the length of _topicList_ is at least *3*.
+3. Return ? _topicList_[2].
 </emu-alg>
 </ins>
 </emu-annex>
@@ -1880,17 +1840,10 @@ SpreadElement[Yield, Await] :
 </emu-note>
 <ins class=block>
 <emu-grammar>SpreadElement : RestTopicReference</emu-grammar>
+<emu-note type=editor>
+<p>TODO.</p>
+</emu-note>
 <emu-alg>
-1. Let _spreadRef_ be ResolveRestTopicBinding().
-2. Let _spreadObj_ be ? GetValue(_spreadRef_).
-3. Let _iteratorRecord_ be ? GetIterator(_spreadObj_).
-4. Repeat,
-  1. Let _next_ be ? IteratorStep(_iteratorRecord_).
-  2. If _next_ is *false*, return _nextIndex_.
-  3. Let _nextValue_ be ? IteratorValue(_next_).
-  4. Let _status_ be CreateDataProperty(_array_, ToString(ToUint32(_nextIndex_)), _nextValue_).
-  5. Assert: _status_ is *true*.
-  6. Let _nextIndex_ be _nextIndex_ + 1.
 </emu-alg>
 <emu-note>
 <p>CreateDataProperty is used to ensure that own properties are defined for the array even if the standard built-in Array prototype object has been modified in a manner that would preclude the creation of new own properties using [[Set]].</p>
