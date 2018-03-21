@@ -35,7 +35,6 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [Lodash (Core Proposal + Additional Features BP+PP+PF+NP)](#lodash-core-proposal--additional-features-bppppfnp)
     - [Ramda (Core Proposal + Additional Features BP+PF+NP)](#ramda-core-proposal--additional-features-bppfnp)
     - [WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF+NP)](#whatwg-streams-standard-core-proposal--additional-features-bppppfnp)
-  - [Additional Feature FS](#additional-feature-fs)
 - [Goals](#goals)
   - [“Don’t break my code.”](#dont-break-my-code)
     - [Backward compatibility](#backward-compatibility)
@@ -98,7 +97,7 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 This document is an **explainer for** the [**formal specification** of a proposed
 **smart pipe operator `|>`**][formal pipeline specification] in
 **JavaScript**, along with several other additional features. The specification
-is divided into **one Stage-0 Core Proposal** plus **five** mutually
+is divided into **one Stage-0 Core Proposal** plus **seven** mutually
 independent-but-compatible **Additional Features**:
 
 |Name                     | Status  | Features                                                               | Purpose                                                                                                         |
@@ -111,7 +110,6 @@ independent-but-compatible **Additional Features**:
 |[Additional Feature PF][]| None    | Pipeline functions `+>  `                                              | **Partial** function/expression **application**<br>Function/expression **composition**<br>**Method extraction** |
 |[Additional Feature TS][]| None    | Pipeline `try` statements                                              | Tacit application to **caught errors**                                                                          |
 |[Additional Feature NP][]| None    | N-ary pipelines `(…, …) \|> …`<br>Lexical topics `##`, `###`, and `...`| **N-ary** function/expression **application**                                                                   |
-|[Additional Feature FS][]| None    | Pipeline `for` / `for await` statements                                | Tacit application within **iteration loops**                                                                    |
 
 The **Core Proposal** is currently at **Stage 0** of the [TC39 process][TC39
 process] and is planned to be presented, along with a [competing
@@ -1063,7 +1061,7 @@ expressions. These are:
 * `function` definitions (including those for async functions, generators, and
   async generators; but not arrow functions, as explained above),
 * `class` definitions,
-* `for` and `while` statements (but see [Additional Feature FS][]),
+* `for` and `while` statements,
 * `catch` clauses (but see [Additional Feature TS][]), and
 * `with` statements.
 
@@ -5127,100 +5125,6 @@ function readInto(buffer, offset = 0) {
 
 </table>
 
-## Additional Feature FS
-With the [Core Proposal][] only, `for`–`of` statements would prohibit the use
-of `#` within their bodies, except where `#` is inside an inner pipeline inside
-the `for` loop. But this could be changed afterward with Additional Feature FS –
-**Topical `for`s** – which would cause `for` loops to bind the topic to useful
-values, which in turn would make `for` loops terser, emphasizing what happens to
-each item rather than the items’ variables themselves.
-
-[Additional Feature FS is **formally specified in in the draft
-specification**][formal FS].
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-With Additional Feature FT, a tacit pipeline `for` loop would be added, which
-would tacitly apply a pipeline step to each iterator value.
-```js
-for (range(0, 50)) |> {
-  log(# ** 2);
-  log(|> Math.sqrt);
-}
-```
-This `for` loop form, completely lacking a parenthesized antecedent, would also
-be added. This example uses that tacit form, along with [Additional
-Feature PP][].
-
-<td>
-
-```js
-for (const i of range(0, 50)) {
-  log(i ** 2);
-  log(Math.sqrt(i));
-}
-```
-
-<tr>
-<td>
-
-```js
-for (const i of range(0, 50)) {
-  log(# ** 2);
-  log(|> Math.sqrt);
-}
-// 🚫 Syntax Error:
-// Lexical context `for (…) { … }`
-// contains a topic reference
-// but has no topic binding.
-```
-This implicit binding would only occur [when the developer opts into this
-behavior][opt-in behavior] with `|>`. It would never occur when a normal,
-explicit parenthesized binding exists. Attempting to use a topic reference
-in such a regular `for` block would trigger an [early error rule][].
-
-<td>
-
-<tr>
-<td>
-
-Similar additions would be made to the asynchronous `for` loop. A pipeline
-`for`–`await`–`of` loop would implicitly bind each iterator value to `#`.
-```js
-for await (stream) |> {
-  yield |>
-  |> await f(#, 1)
-  |> #.length
-  |> # + 3
-  |> g;
-}
-```
-Note that in this case, a `|>` (or a `#`) must be included after `yield` because
-– as usual – a newline after a `yield` causes [automatic semicolon
-insertion][ASI] after the `yield`.
-
-<td>
-
-```js
-for await (const c of stream) {
-  yield g(
-    (await f(c, 1))
-      .length
-      + 3
-  );
-}
-```
-
-</table>
-
 # Goals
 
 There are seventeen ordered goals that the smart step syntax tries to fulfill,
@@ -5359,8 +5263,7 @@ use the topic should not be easy to accidentally perform.
 
 In this proposal, the developer therefore **must explicitly opt into**
 topic-using behavior, whether binding or using, by using the pipe operator
-`|>`. This includes [Additional Feature TS][] and [Additional Feature FS][],
-which both require the use of `|>`.
+`|>`. This includes [Additional Feature TS][], which requires the use of `|>`.
 
 This is quite different than [much prior art in other programming
 languages][topic references in other programming languages]. Other languages
@@ -6096,11 +5999,11 @@ However, JavaScript’s topic references are is different than this prior art. I
 is lexically bound, with [simple scoping][], and it is [statically
 analyzable][]. It also cannot be accidentally bound; [the developer must opt
 into binding it][opt-in behavior] by using the pipe operator `|>`. (This
-includes [Additional Feature TS][] and [Additional Feature FS][], which both
-require the use of `|>`.) The topic also cannot be accidentally used; it is an
-[early error][] when `#` is used outside of a pipeline step (see [Core
-Proposal][] and [static analyzability][]). The proposal is as a whole designed
-to [prevent footguns][“don’t shoot me in the foot”].
+includes [Additional Feature TS][], which requires the use of `|>`.) The topic
+also cannot be accidentally used; it is an [early error][] when `#` is used
+outside of a pipeline step (see [Core Proposal][] and [static analyzability][]).
+The proposal is as a whole designed to [prevent footguns][“don’t shoot me in the
+foot”].
 
 The topic is [conceptually general][conceptual generality] and could be extended
 to other forms. This proposal is [forward compatible][] with such extensions,
@@ -7550,8 +7453,7 @@ precedent in prior programming languages’ use of “topic variables”.
 
 The term “**topic-style pipeline**” is preferred to “**topic expression**”
 because, in the future, the topic concept could be extended to other syntaxes,
-as with [Additional Feature TS][] and [Additional Feature FS][], not just
-pipelines.
+as with [Additional Feature TS][], not just pipelines.
 
 In addition, “**input**” is preferred to “**LHS**”, because “LHS” in the ECMAScript
 specification usually refers to the [LHS of assignments][ECMAScript LHS expressions],
@@ -7577,8 +7479,8 @@ the right-hand side of a pipe operator.
 
 “**[Bare style][]**” can also be called “**tacit style**”, but the former is
 preferred to the latter. Eventually, certain possible future extensions to the
-topic concept, such as [Additional Feature TS][] and [Additional Feature FS][],
-would enable [tacit programming][] even without using bare-style pipelines.
+topic concept, such as [Additional Feature TS][], would enable [tacit
+programming][] even without using bare-style pipelines.
 
 ## Term rewriting
 ### Core Proposal
@@ -7882,7 +7784,6 @@ This is a legacy section for old links. This section has been renamed to
 [Additional Feature BA]: #additional-feature-ba
 [Additional Feature BC]: #additional-feature-bc
 [Additional Feature BP]: #additional-feature-bp
-[Additional Feature FS]: #additional-feature-fs
 [Additional Feature NP]: #additional-feature-np
 [Additional Feature PF]: #additional-feature-pf
 [Additional Feature PP]: #additional-feature-pp
@@ -7967,7 +7868,6 @@ This is a legacy section for old links. This section has been renamed to
 [formal BC]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-bc
 [formal BP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-bp
 [formal CP]: https://jschoi.org/18/es-smart-pipelines/spec
-[formal FS]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-fs
 [formal grammar]: #grammar
 [formal NP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-np
 [formal PF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pf
