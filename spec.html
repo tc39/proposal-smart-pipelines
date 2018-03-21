@@ -513,7 +513,7 @@ PipelineTopicExpression[In, Yield, Await] :
 2. Let _envRec_ be env's Environment Record.
 3. Assert: _envRec_ is a declarative Environment Record.
 4. Assert: _envRec_.HasTopicBinding() is *false*.
-5. Assert: _envRec_.GetPrimaryTopicBinding() is ~empty~.
+5. Assert: _envRec_.GetTopicBinding() is ~empty~.
 6. Perform ! _envRec_.BindTopicValues(_topics_).
 </emu-alg>
 </emu-clause>
@@ -2053,12 +2053,9 @@ PipelineTopicExpression[In, Yield, Await] :
 3. Let _envRec_ be env's Environment Record.
 4. Assert: _envRec_ is a declarative Environment Record.
 5. Assert: _envRec_.HasTopicBinding() is *false*.
-6. Assert: _envRec_.GetPrimaryTopicBinding() is ~empty~.
-7. <ins>Assert: _envRec_.GetSecondaryTopicBinding() is ~empty~.</ins>
-8. <ins>Assert: _envRec_.GetTertiaryTopicBinding() is ~empty~.</ins>
-9. <ins>Assert: _envRec_.GetRestTopicBinding() is ~empty~.</ins>
-10. <ins>Let _restTopicStartIndex_ be [TODO]</ins>
-11. Perform ! _envRec_.BindTopicValues(_topics_<ins>, _restTopicStartIndex_</ins>).
+6. Assert: _envRec_.GetTopicBinding() is ~empty~.
+7. <ins>Let _restTopicStartIndex_ be [TODO]</ins>
+8. Perform ! _envRec_.BindTopicValues(_topics_<ins>, _restTopicStartIndex_</ins>).
 </emu-alg>
 </emu-annex>
 
