@@ -549,7 +549,7 @@ PipelineTopicExpression[In, Yield, Await] :
 1. Let _headRef_ be PipelineEvaluation of |PipelineStep| with argument _inputValues_.
 2. Let _bodyInputValues_ be a list containing the one element which is the result of ? GetValue(_headRef_).
 3. Let _bodyRef_ be PipelineEvaluation of |Pipeline| with argument _bodyInputValues_.
-5. Return ? GetValue(_bodyRef_).
+4. Return ? GetValue(_bodyRef_).
 </emu-alg>
 
 </emu-clause>
@@ -562,7 +562,7 @@ PipelineTopicExpression[In, Yield, Await] :
 1. Let _headRef_ be the result of evaluating |ConditionalExpression|.
 2. Let _inputValues_ be a list containing the one element which is the result of ? GetValue(_headRef_).
 3. Let _bodyRef_ be PipelineEvaluation of |Pipeline| with argument _inputValues_.
-5. Return ? GetValue(_bodyRef_).
+4. Return ? GetValue(_bodyRef_).
 </emu-alg>
 </emu-clause>
 
