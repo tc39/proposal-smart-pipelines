@@ -4129,6 +4129,7 @@ a |&gt; # + ##
 // pipeline step but pipelines
 // must terminate with a unary
 // pipeline step.
+```
 
 <td>
 
