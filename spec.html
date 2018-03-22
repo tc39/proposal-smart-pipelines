@@ -32,9 +32,9 @@ contributors: J. S. Choi
 <p>A <dfn>topic-binding environment</dfn> is a Lexical Environment that establishes a topic binding. The <dfn>topic environment</dfn> of the running execution context is its Lexical Environment's nearest outer environment that is a topic-binding environment, as defined by the abstract operator GetTopicEnvironment.</p>
 
 <emu-note>
-<p>The <strong>only</strong> Lexical Environments that are topic-binding environments are declarative environments that are associated with <strong>|PipelineStep|</strong> and which were created with the <strong>TopicExpressionInstantiation</strong> abstract operation.</p>
+<p>The <strong>only</strong> Lexical Environments that are topic-binding environments are declarative environments that are associated with <strong>|PipelineStep|</strong> and which were created with the <strong>TopicEnvironmentInstantiation</strong> abstract operation.</p>
 
-<p>There is also one syntax nonterminal that <strong>instantiates</strong> topic-binding environments with <strong>provided topic values</strong> of any ECMAScript language type. This <dfn>topic-binding nonterminal</dfn> is |ConditionalExpression| in <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, which may use the abstract operation <strong>TopicExpressionInstantiation</strong>. In addition, |PipelineStep| <strong>hides</strong> its own inner topic references from Contains. Within the scope of <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, such topic references would <strong>not</strong> trigger early error rules during program compilation. Instead, they would be evaluated at runtime into the values of the <strong>newly instantiated</strong> topic-binding environments' topic bindings.</p>
+<p>There is also one syntax nonterminal that <strong>instantiates</strong> topic-binding environments with <strong>provided topic values</strong> of any ECMAScript language type. This <dfn>topic-binding nonterminal</dfn> is |ConditionalExpression| in <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, which may use the abstract operation <strong>TopicEnvironmentInstantiation</strong>. In addition, |PipelineStep| <strong>hides</strong> its own inner topic references from Contains. Within the scope of <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, such topic references would <strong>not</strong> trigger early error rules during program compilation. Instead, they would be evaluated at runtime into the values of the <strong>newly instantiated</strong> topic-binding environments' topic bindings.</p>
 
 <p>All other Lexical Environments do not establish any topic bindings; in particular, object and global environments are never topic-binding environments.</p>
 
@@ -515,8 +515,8 @@ PipelineStep : PipelineBareFunction
 
 </emu-clause>
 
-<emu-clause id=sec-pipe-operator-runtime-semantics-topicexpressioninstantiation aoid=TopicExpressionInstantiation>
-<h1>Runtime Semantics: TopicExpressionInstantiation</h1>
+<emu-clause id=sec-pipe-operator-runtime-semantics-TopicEnvironmentInstantiation aoid=TopicEnvironmentInstantiation>
+<h1>Runtime Semantics: TopicEnvironmentInstantiation</h1>
 <emu-note type=editor>
 <p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
@@ -559,7 +559,7 @@ PipelineStep : PipelineBareFunction
 <emu-alg>
 1. Let _oldEnv_ be the running execution context's Lexical Environment.
 2. Let _pipelineStepEnv_ be New Declarative Environment(_oldEnv_).
-3. Perform TopicExpressionInstantiation(_inputValues_, _pipelineStepEnv_).
+3. Perform TopicEnvironmentInstantiation(_inputValues_, _pipelineStepEnv_).
 4. Set the running execution context's Lexical Environment to _pipelineStepEnv_.
 5. Let _pipelineValue_ be the result of evaluating _ConditionalExpression_.
 6. Set the running execution context's Lexical Environment to _oldEnv_.
@@ -1076,8 +1076,8 @@ PipelineStep :
 </emu-alg>
 </emu-annex>
 
-<emu-annex id=sec-additional-feature-bp-pipe-operator-runtime-semantics-topicexpressioninstantiation aoid=TopicExpressionInstantiation>
-<h1>Runtime Semantics: TopicExpressionInstantiation</h1>
+<emu-annex id=sec-additional-feature-bp-pipe-operator-runtime-semantics-TopicEnvironmentInstantiation aoid=TopicEnvironmentInstantiation>
+<h1>Runtime Semantics: TopicEnvironmentInstantiation</h1>
 <emu-note type=editor>
 <p>TODO: This annex has not yet been specified.</p>
 </emu-note>
@@ -2192,7 +2192,7 @@ PipelineStep :
 <emu-alg>
 1. Let _oldEnv_ be the running execution context's Lexical Environment.
 2. Let _pipelineStepEnv_ be New Declarative Environment(_oldEnv_).
-3. Perform TopicExpressionInstantiation(_inputValues_, _pipelineStepEnv_).
+3. Perform TopicEnvironmentInstantiation(_inputValues_, _pipelineStepEnv_).
 4. Set the running execution context's Lexical Environment to _pipelineStepEnv_.
 5. Let _pipelineValue_ be ArgumentListEvaluation of this _PipelineStep_.
 6. Set the running execution context's Lexical Environment to _oldEnv_.
@@ -2202,13 +2202,13 @@ PipelineStep :
 
 </emu-annex>
 
-<emu-annex id=sec-additional-feature-np-pipe-operator-runtime-semantics-topicexpressioninstantiation aoid=TopicExpressionInstantiation>
-<h1>Runtime Semantics: TopicExpressionInstantiation</h1>
+<emu-annex id=sec-additional-feature-np-pipe-operator-runtime-semantics-TopicEnvironmentInstantiation aoid=TopicEnvironmentInstantiation>
+<h1>Runtime Semantics: TopicEnvironmentInstantiation</h1>
 <emu-note type=editor>
-<p>This section augments the <emu-xref href=#sec-pipe-operator-runtime-semantics-topicexpressioninstantiation>new clause in the core proposal</emu-xref>.</p>
+<p>This section augments the <emu-xref href=#sec-pipe-operator-runtime-semantics-TopicEnvironmentInstantiation>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
-<p>TopicExpressionInstantiation is performed as follows using arguments _code_, _env_, <del>and _topicValues_</del><ins>_topicValues_, and _restTopicStartIndex_</ins>.</p>
+<p>TopicEnvironmentInstantiation is performed as follows using arguments _code_, _env_, <del>and _topicValues_</del><ins>_topicValues_, and _restTopicStartIndex_</ins>.</p>
 <ul>
 <li>_topicValues_ is a List of values<del>: _env_'s primary topic reference will be bound to the first value</del><ins> with which _env_'s topic bindings will be established</ins>.</li>
 <li><ins>_restStartIndex_ is either ~empty~ or an integer index not exceeding the number of elements of _topicValues_. If it is ~empty~, |RestTopicReference| `...` will not be bound to anything. Otherwise, |RestTopicReference| will be bound to a new Array whose elements are those of _topicValues_ starting at _restStartIndex_'s position.</ins></li>
