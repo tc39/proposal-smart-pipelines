@@ -2241,6 +2241,41 @@ PipelineStep[In, Yield, Await] :
 </emu-alg>
 </emu-annex>
 
+<emu-annex id=sec-additional-feature-np-pipe-operator-runtime-semantics-evaluation>
+<h1>Runtime Semantics: Evaluation</h1>
+<emu-note type=editor>
+<p>This section augments the <emu-xref href=#sec-pipe-operator-runtime-semantics-evaluation>new clause in the core proposal</emu-xref>.</p>
+</emu-note>
+
+<ins class=block>
+<emu-grammar>PipeExpression : Arguments `|&gt;` Pipeline</emu-grammar>
+<emu-alg>
+1. Let _inputValues_ be ? ArgumentListEvaluation of _Arguments_.
+2. Let _pipelineOutputRef_ be PipelineEvaluation of _Pipeline_ with argument _inputValues_.
+3. Let _pipelineOutputValues_ be ? GetValue(_pipelineOutputRef_).
+4. Assert: _pipelineOutputValues_ is a List containing one element.
+5. Return _pipelineOutputValues_[0].
+</emu-alg>
+
+<emu-grammar>PipeExpression : `...` AssignmentExpression `|&gt;` Pipeline</emu-grammar>
+<emu-alg>
+1. Let _inputValues_ be a new empty List.
+2. Let _spreadRef_ be the result of evaluating |AssignmentExpression|.
+3. Let _spreadObj_ be ? GetValue(_spreadRef_).
+4. Let _iteratorRecord_ be ? GetIterator(_spreadObj_).
+5. Repeat,
+  1. Let _next_ be ? IteratorStep(_iteratorRecord_).
+  2. If _next_ is *false*, return _inputValues_.
+  3. Let _nextArg_ be ? IteratorValue(_next_).
+  4. Append _nextArg_ as the last element of _inputValues_.
+6. Let _pipelineOutputRef_ be PipelineEvaluation of _Pipeline_ with argument _inputValues_.
+7. Let _pipelineOutputValues_ be ? GetValue(_pipelineOutputRef_).
+8. Assert: _pipelineOutputValues_ is a List containing one element.
+9. Return _pipelineOutputValues_[0].
+</emu-alg>
+</ins>
+</emu-annex>
+
 </emu-annex>
 </emu-annex>
 
