@@ -32,13 +32,13 @@ contributors: J. S. Choi
 <p>A <dfn>topic-binding environment</dfn> is a Lexical Environment that establishes a topic binding. The <dfn>topic environment</dfn> of the running execution context is its Lexical Environment's nearest outer environment that is a topic-binding environment, as defined by the abstract operator GetTopicEnvironment.</p>
 
 <emu-note>
-<p>The <strong>only</strong> Lexical Environments that are topic-binding environments are declarative environments that are associated with <strong>|PipelineTopicExpression|</strong> and which were created with the <strong>TopicExpressionInstantiation</strong> abstract operation.</p>
+<p>The <strong>only</strong> Lexical Environments that are topic-binding environments are declarative environments that are associated with <strong>|PipelineStep|</strong> and which were created with the <strong>TopicExpressionInstantiation</strong> abstract operation.</p>
 
-<p>There is also one syntax nonterminal that <strong>instantiates</strong> topic-binding environments with <strong>provided topic values</strong> of any ECMAScript language type. This <dfn>topic-binding nonterminal</dfn> is <strong>|PipelineTopicExpression|</strong>, which uses the abstract operation <strong>TopicExpressionInstantiation</strong>. In addition, |PipelineTopicExpression| <strong>hides</strong> its own inner topic references from Contains. Within |PipelineTopicExpression|'s scopes, such topic references would <strong>not</strong> trigger early error rules during program compilation. Instead, they would be evaluated at runtime into the values of the <strong>newly instantiated</strong> topic-binding environments' topic bindings.</p>
+<p>There is also one syntax nonterminal that <strong>instantiates</strong> topic-binding environments with <strong>provided topic values</strong> of any ECMAScript language type. This <dfn>topic-binding nonterminal</dfn> is |ConditionalExpression| in <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, which may use the abstract operation <strong>TopicExpressionInstantiation</strong>. In addition, |PipelineStep| <strong>hides</strong> its own inner topic references from Contains. Within the scope of <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, such topic references would <strong>not</strong> trigger early error rules during program compilation. Instead, they would be evaluated at runtime into the values of the <strong>newly instantiated</strong> topic-binding environments' topic bindings.</p>
 
 <p>All other Lexical Environments do not establish any topic bindings; in particular, object and global environments are never topic-binding environments.</p>
 
-<p>In addition, several syntax nonterminals associated with Lexical Environments are associated with early error rules that <strong>forbid</strong> their containing the topic reference `#`, <strong>except</strong> where the topic reference is within a |PipelineTopicExpression|. These <dfn>topic-forbidding nonterminals</dfn> are:</p>
+<p>In addition, several syntax nonterminals associated with Lexical Environments are associated with early error rules that <strong>forbid</strong> their containing the topic reference `#`, <strong>except</strong> where the topic reference is within <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>. These <dfn>topic-forbidding nonterminals</dfn> are:</p>
 
 <dl>
 <dt><strong>Top-level program scopes</strong>:</dt>
@@ -356,7 +356,7 @@ PrimaryExpression[Yield, Await] :
 
 <emu-note>
 <p>The loop in step 2 will always terminate because the List of environments will always end before reaching the global environment. GetTopicEnvironment will never be called when there is no topic-binding environment in the List of environments.</p>
-<p>This is because how, in general, syntax nonterminals that define top-level scopes (such as |Script| and |Module|) are syntactically forbidden to contain the topic reference `#`. Any use of the topic reference within those nonterminals (as detected by the static semantic rule Contains) would trigger early error rules associated with those nonterminals. It is only within nonterminals that hide the topic reference from Contains such as |PipelineTopicExpression| that the topic reference is syntactically permitted.</p>
+<p>This is because how, in general, syntax nonterminals that define top-level scopes (such as |Script| and |Module|) are syntactically forbidden to contain the topic reference `#`. Any use of the topic reference within those nonterminals (as detected by the static semantic rule Contains) would trigger early error rules associated with those nonterminals. It is only within nonterminals that hide the topic reference from Contains such as |ConditionalExpression| in <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar> that the topic reference is syntactically permitted.</p>
 </emu-note>
 </emu-clause>
 
@@ -431,7 +431,7 @@ Pipeline[In, Yield, Await] :
 
 PipelineStep[In, Yield, Await] :
   PipelineBareFunction
-  PipelineTopicExpression[?In, ?Yield, ?Await]
+  [lookahead &lt;! {`{`}] ConditionalExpression[?In, ?Yield, ?Await]
 
 PipelineBareFunction :
   SimpleReference
@@ -439,9 +439,6 @@ PipelineBareFunction :
 SimpleReference :
   IdentifierReference
   SimpleReference `.` IdentifierName
-
-PipelineTopicExpression[In, Yield, Await] :
-  [lookahead &lt;! {`{`}] ConditionalExpression[?In, ?Yield, ?Await]
 </emu-grammar>
 
 <emu-clause id=sec-pipe-operator-static-semantics-early-errors>
@@ -460,7 +457,7 @@ PipelineTopicExpression[In, Yield, Await] :
 <p>These early errors prohibit any pipeline input expressions or pipeline step expressions from covering comma-separated argument lists. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
-<emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
+<emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>
 <emu-alg>
 * It is a Syntax Error if _ConditionalExpression_ Contains `#` is *false*.
 * It is a Syntax Error if _ConditionalExpression_ is covering a |YieldExpression|.
@@ -468,7 +465,7 @@ PipelineTopicExpression[In, Yield, Await] :
 </emu-alg>
 
 <emu-note type=editor>
-<p>This third early error prohibits _PipelineTopicExpression_ from covering a comma-separated expression. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This third early error prohibits a topic-style pipeline step from covering a comma-separated expression. This in turn ensures forward compatibility with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 </emu-clause>
 
@@ -480,7 +477,7 @@ PipelineTopicExpression[In, Yield, Await] :
 <p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
-<emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
+<emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>
 <emu-alg>
 1. If _symbol_ is `#`, return *false*.
 2. For each child node _child_ of this Parse Node, do
@@ -506,7 +503,7 @@ PipelineStep : PipelineBareFunction
 1. Return *0*.
 </emu-alg>
 
-<emu-grammar>PipelineStep : PipelineTopicExpression</emu-grammar>
+<emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>
 <emu-alg>
 1. Return *1*.
 </emu-alg>
@@ -558,7 +555,7 @@ PipelineStep : PipelineBareFunction
 8. Return a List containing the one element which is _callValue_.
 </emu-alg>
 
-<emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
+<emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>
 <emu-alg>
 1. Let _oldEnv_ be the running execution context's Lexical Environment.
 2. Let _pipelineStepEnv_ be New Declarative Environment(_oldEnv_).
@@ -652,7 +649,7 @@ IterationStatement :
 
 <ins class=block>
 <emu-note>
-<p>Syntax nonterminals that establish new lexical bindings within new inner program scopes, including iteration statements, may <strong>not</strong> contain a topic reference `#`. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |PipelineTopicExpression|, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
+<p>Syntax nonterminals that establish new lexical bindings within new inner program scopes, including iteration statements, may <strong>not</strong> contain a topic reference `#`. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |ConditionalExpression| in <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
 </emu-note>
 </ins>
 </emu-clause>
@@ -678,7 +675,7 @@ IterationStatement :
 
 <ins class=block>
 <emu-note>
-<p>Syntax nonterminals that establish new lexical bindings within new inner program scopes, including |WithStatement|, may <strong>not</strong> contain a topic reference `#`. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |PipelineTopicExpression|, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
+<p>Syntax nonterminals that establish new lexical bindings within new inner program scopes, including |WithStatement|, may <strong>not</strong> contain a topic reference `#`. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |ConditionalExpression| in <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
 </emu-note>
 </ins>
 
@@ -706,7 +703,7 @@ Catch : `catch` `(` CatchParameter `)` Block
 
 <ins class=block>
 <emu-note>
-<p>Syntax nonterminals that establish new lexical bindings within new inner program scopes, including |Catch|, may <strong>not</strong> contain a topic reference `#`. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |PipelineTopicExpression|, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early errors above.</p>
+<p>Syntax nonterminals that establish new lexical bindings within new inner program scopes, including |Catch|, may <strong>not</strong> contain a topic reference `#`. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |ConditionalExpression| in <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early errors above.</p>
 <p>Furthermore, the `try` and `finally` blocks themselves (|Block| and |Finally| in |TryStatement|) <strong>may</strong> contain topic references, assuming that the |TryStatement| is contained within a parse that is also allowed to contain the topic reference. During runtime, such topic references would refer to the outer environment's topic binding. Along with arrow functions (that is, |FunctionBody| in |ConciseBody|), this behaviour is unlike that of any other syntax nonterminal containing |Statement|.</p>
 </emu-note>
 </ins>
@@ -795,7 +792,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 
 <ins class=block>
 <emu-note>
-<p>In general, a top-level program scope, including |Script|, may <strong>not</strong> contain a topic reference `#`. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |PipelineTopicExpression|, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
+<p>In general, a top-level program scope, including |Script|, may <strong>not</strong> contain a topic reference `#`. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |ConditionalExpression| in <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
 </emu-note>
 </ins>
 
@@ -821,7 +818,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 
 <ins class=block>
 <emu-note>
-<p>In general, a top-level program scope, including |Module|, may <strong>not</strong> contain a topic reference `#`. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |PipelineTopicExpression|, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
+<p>In general, a top-level program scope, including |Module|, may <strong>not</strong> contain a topic reference `#`. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |ConditionalExpression| in <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
 </emu-note>
 </ins>
 
@@ -886,7 +883,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 PipelineStep[In, Yield, Await] :
   PipelineBareFunction
   <ins>PipelineBareConstructor</ins>
-  PipelineTopicExpression[?In, ?Yield, ?Await]
+  ConditionalExpression[?In, ?Yield, ?Await]
 
 <ins class=block>
 PipelineBareConstructor :
@@ -959,7 +956,7 @@ PipelineStep :
 PipelineStep[In, Yield, Await] :
   PipelineBareFunction
   <ins class=block>PipelineBareAwaitedFunction</ins>
-  PipelineTopicExpression[?In, ?Yield, ?Await]
+  ConditionalExpression[?In, ?Yield, ?Await]
 
 <ins class=block>
 PipelineBareAwaitedFunction[Await] :
@@ -1037,13 +1034,8 @@ PipelineStep :
 <emu-grammar type=definition>
 PipelineStep[In, Yield, Await] :
   PipelineBareFunction
-  PipelineTopicExpression[?In, ?Yield, ?Await]
-  <ins>PipelineTopicBlock[?In, ?Yield, ?Await]</ins>
-
-<ins class=block>
-PipelineTopicBlock[In, Yield, Await] :
-  `{` StatementList[?In, ?Yield, ?Await] `}`
-</ins>
+  ConditionalExpression[?In, ?Yield, ?Await]
+  <ins>Block[?In, ?Yield, ?Await]</ins>
 </emu-grammar>
 
 <emu-annex id=sec-additional-feature-bp-pipe-operator-static-semantics-early-errors>
@@ -1053,7 +1045,7 @@ PipelineTopicBlock[In, Yield, Await] :
 </emu-note>
 
 <ins class=block>
-<emu-grammar>PipelineTopicBlock : `{` StatementList `}`</emu-grammar>
+<emu-grammar>PipelineStep : Block</emu-grammar>
 <emu-alg>
 * It is a Syntax Error if _StatementList_ Contains `#` is *false*.
 </emu-alg>
@@ -1068,8 +1060,11 @@ PipelineTopicBlock[In, Yield, Await] :
 <p>This section augments the <emu-xref href=#sec-pipe-operator-static-semantics-contains>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
-<emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
-<emu-grammar><ins class=block>PipelineTopicBlock : `{` StatementList `}`</ins></emu-grammar>
+<emu-grammar>
+PipelineStep :
+  ConditionalExpression
+  <ins class=block>PipelineStep : Block</ins>
+</emu-grammar>
 <emu-alg>
 1. If _symbol_ is `#`, return *false*.
 2. For each child node _child_ of this Parse Node, do
@@ -1084,7 +1079,7 @@ PipelineTopicBlock[In, Yield, Await] :
 <emu-annex id=sec-additional-feature-bp-pipe-operator-runtime-semantics-topicexpressioninstantiation aoid=TopicExpressionInstantiation>
 <h1>Runtime Semantics: TopicExpressionInstantiation</h1>
 <emu-note type=editor>
-<p>This annex has not yet been specified.</p>
+<p>TODO: This annex has not yet been specified.</p>
 </emu-note>
 </emu-annex>
 
@@ -1092,9 +1087,9 @@ PipelineTopicBlock[In, Yield, Await] :
 <h1>Runtime Semantics: PipelineEvaluation</h1>
 <p>With parameter _inputValues_.</p>
 
-<emu-grammar>PipelineTopicExpression : `{` StatementList `}`</emu-grammar>
+<emu-grammar>PipelineStep : Block</emu-grammar>
 <emu-note type=editor>
-<p>This annex has not yet been specified.</p>
+<p>TODO: This annex has not yet been specified.</p>
 </emu-note>
 </emu-annex>
 </emu-annex>
@@ -1184,7 +1179,7 @@ PipelineStep :
 <p>Likewise, the production above <emu-grammar>PipelineStep : PipelineBareAwaitedFunction</emu-grammar> is included only if <emu-xref href=#sec-additional-feature-ba>Additional Feature BA</emu-xref> is also included.</p>
 </emu-note>
 
-<emu-grammar>PipelineStep : PipelineTopicExpression</emu-grammar>
+<emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>
 <emu-alg>
 1. Return *1*.
 </emu-alg>
@@ -1554,7 +1549,7 @@ Pipeline :
 <p>A <dfn>topic-binding environment</dfn> is a Lexical Environment that establishes a topic binding. The <dfn>topic environment</dfn> of the running execution context is its Lexical Environment's nearest outer environment that is a topic-binding environment, as defined by the abstract operator GetTopicEnvironment.</p>
 
 <emu-note>
-<p>In addition, several syntax productions associated with Lexical Environments are associated with early error rules that <strong>forbid</strong> their containing the topic reference<ins>s</ins> `#`<ins>, `##`, `###`, or `...`</ins>, <strong>except</strong> where that topic reference<del> is</del><ins>s are</ins> within a |PipelineTopicExpression|. These <strong>topic-forbidding</strong> productions are:</p>
+<p>In addition, several syntax productions associated with Lexical Environments are associated with early error rules that <strong>forbid</strong> their containing the topic reference<ins>s</ins> `#`<ins>, `##`, `###`, or `...`</ins>, <strong>except</strong> where that topic reference<del> is</del><ins>s are</ins> within a |PipelineStep|. These <strong>topic-forbidding</strong> productions are:</p>
 
 <dl>
 <dt><strong>Top-level program scopes</strong>:</dt>
@@ -2083,19 +2078,15 @@ Pipeline[In, Yield, Await] :
 
 PipelineStep[In, Yield, Await] :
   PipelineBareFunction
-  PipelineTopicExpression[?In, ?Yield, ?Await]
-  <ins class=block>
-  Arguments[?Yield, ?Await]
-  `...` AssignmentExpression[+In, ?Yield, ?Await]
-  RestTopicReference
-  </ins>
-
-PipelineTopicExpression[In, Yield, Await] :
+  ConditionalExpression[?In, ?Yield, ?Await]
   <del class=block>
   [lookahead &lt;! {`{`}] ConditionalExpression[?In, ?Yield, ?Await]
   </del>
   <ins class=block>
   [lookahead &lt;! {`{` `(`}] ConditionalExpression[?In, ?Yield, ?Await]
+  Arguments[?Yield, ?Await]
+  `...` AssignmentExpression[+In, ?Yield, ?Await]
+  RestTopicReference
   </ins>
 </emu-grammar>
 
@@ -2113,7 +2104,7 @@ PipelineTopicExpression[In, Yield, Await] :
 </emu-alg>
 </del>
 
-<emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
+<emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>
 <emu-alg>
 * It is a Syntax Error if <del>_ConditionalExpression_ Contains `#` is *false*.</del><ins>[TO DO]</ins>
 * It is a Syntax Error if _ConditionalExpression_ is covering a |YieldExpression|.
@@ -2192,29 +2183,22 @@ PipelineTopicExpression[In, Yield, Await] :
 </emu-note>
 
 <ins class=block>
-<emu-grammar>PipelineStep : Arguments</emu-grammar>
-<emu-note type=editor>
-<p>TODO</p>
-</emu-note>
-
-<emu-grammar>PipelineStep : `...` AssignmentExpression</emu-grammar>
-<emu-note type=editor>
-<p>TODO</p>
-</emu-note>
-
-<emu-grammar>PipelineStep : `...`</emu-grammar>
-<emu-note type=editor>
-<p>TODO</p>
-</emu-note>
-</ins>
-
-<emu-grammar>Pipeline : PipelineStep `|&gt;` Pipeline</emu-grammar>
+<emu-grammar>
+PipelineStep :
+  Arguments
+  `...`
+  `...` AssignmentExpression
+</emu-grammar>
 <emu-alg>
-1. Let _inputRef_ be PipelineEvaluation of |PipelineStep| with argument _inputValues_.
-2. Let _stepOutputValues_ be a List containing the one element which is the result of ? GetValue(_inputRef_).
-3. Let _pipelineRemainderOutputRef_ be PipelineEvaluation of |Pipeline| with argument _stepOutputValues_.
-4. Return ? GetValue(_pipelineRemainderOutputRef_).
+1. Let _oldEnv_ be the running execution context's Lexical Environment.
+2. Let _pipelineStepEnv_ be New Declarative Environment(_oldEnv_).
+3. Perform TopicExpressionInstantiation(_inputValues_, _pipelineStepEnv_).
+4. Set the running execution context's Lexical Environment to _pipelineStepEnv_.
+5. Let _pipelineValue_ be ArgumentListEvaluation of this _PipelineStep_.
+6. Set the running execution context's Lexical Environment to _oldEnv_.
+7. Return a List containing the one element which is _pipelineValue_.
 </emu-alg>
+</ins>
 
 </emu-annex>
 
@@ -2297,7 +2281,7 @@ IterationStatement :
 </emu-alg>
 
 <emu-note>
-<p>Syntax nonterminals that establish new lexical bindings within new inner program scopes, including iteration statements, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>|TopicExpression| (`#`, `##`, or `###`) or a |RestTopicReference| (`...`)</ins>. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |PipelineTopicExpression|, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
+<p>Syntax nonterminals that establish new lexical bindings within new inner program scopes, including iteration statements, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>|TopicExpression| (`#`, `##`, or `###`) or a |RestTopicReference| (`...`)</ins>. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |ConditionalExpression| in <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
 </emu-note>
 </emu-annex>
 
@@ -2321,7 +2305,7 @@ IterationStatement :
 </emu-alg>
 
 <emu-note>
-<p>Syntax nonterminals that establish new lexical bindings within new inner program scopes, including |WithStatement|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>|TopicExpression| (`#`, `##`, or `###`) or a |RestTopicReference| (`...`)</ins>. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |PipelineTopicExpression|, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
+<p>Syntax nonterminals that establish new lexical bindings within new inner program scopes, including |WithStatement|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>|TopicExpression| (`#`, `##`, or `###`) or a |RestTopicReference| (`...`)</ins>. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |ConditionalExpression| in <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
 </emu-note>
 
 </emu-annex>
@@ -2346,7 +2330,7 @@ Catch : `catch` `(` CatchParameter `)` Block</emu-grammar>
 </emu-alg>
 
 <emu-note>
-<p>Syntax nonterminals that establish new lexical bindings within new inner program scopes, including |Catch|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>|TopicExpression| (`#`, `##`, or `###`) or a |RestTopicReference| (`...`)</ins>. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |PipelineTopicExpression|, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early errors above.</p>
+<p>Syntax nonterminals that establish new lexical bindings within new inner program scopes, including |Catch|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>|TopicExpression| (`#`, `##`, or `###`) or a |RestTopicReference| (`...`)</ins>. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |ConditionalExpression| in <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early errors above.</p>
 </emu-note>
 </emu-annex>
 
@@ -2427,7 +2411,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 </emu-alg>
 
 <emu-note>
-<p>In general, a top-level program scope, including |Script|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>|TopicExpression| (`#`, `##`, or `###`) or a |RestTopicReference| (`...`)</ins>. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |PipelineTopicExpression|, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
+<p>In general, a top-level program scope, including |Script|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>|TopicExpression| (`#`, `##`, or `###`) or a |RestTopicReference| (`...`)</ins>. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |ConditionalExpression| in <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
 </emu-note>
 
 </emu-annex>
@@ -2451,7 +2435,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 </emu-alg>
 
 <emu-note>
-<p>In general, a top-level program scope, including |Module|, may <strong>not</strong> contain a topic reference `#`. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |PipelineTopicExpression|, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
+<p>In general, a top-level program scope, including |Module|, may <strong>not</strong> contain a topic reference `#`. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |ConditionalExpression| in <emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early error above.</p>
 </emu-note>
 
 </emu-annex>
