@@ -2067,10 +2067,15 @@ PipeExpression[In, Yield, Await] :
   ConditionalExpression[?In, ?Yield, ?Await]
   <del class=block>ConditionalExpression[?In, ?Yield, ?Await] `|&gt;` Pipeline[?In, ?Yield, ?Await]</del>
   <ins class=block>
-  [lookahead &lt;! {`(`}] ConditionalExpression[?In, ?Yield, ?Await] `|&gt;` Pipeline[?In, ?Yield, ?Await]
-  Arguments[?Yield, ?Await] `|&gt;` Pipeline[?In, ?Yield, ?Await]
-  `...` AssignmentExpression[+In, ?Yield, ?Await] `|&gt;` Pipeline[?In, ?Yield, ?Await]
+  PipelineHead[?In, ?Yield, ?Await] `|&gt;` Pipeline[?In, ?Yield, ?Await]
   </ins>
+
+<ins class=block>
+PipelineHead[In, Yield, Await] :
+  [lookahead &lt;! {`(`}] ConditionalExpression[?In, ?Yield, ?Await]
+  Arguments[?Yield, ?Await]
+  `...` AssignmentExpression[+In, ?Yield, ?Await]
+</ins>
 
 Pipeline[In, Yield, Await] :
   PipelineStep[?In, ?Yield, ?Await]
@@ -2078,13 +2083,19 @@ Pipeline[In, Yield, Await] :
 
 PipelineStep[In, Yield, Await] :
   PipelineBareFunction
-  PipelineBareConstructor
-  PipelineBareAwaitedFunction[?Await]
   PipelineTopicExpression[?In, ?Yield, ?Await]
   <ins class=block>
   Arguments[?Yield, ?Await]
   `...` AssignmentExpression[+In, ?Yield, ?Await]
   RestTopicReference
+  </ins>
+
+PipelineTopicExpression[In, Yield, Await] :
+  <del class=block>
+  [lookahead &lt;! {`{`}] ConditionalExpression[?In, ?Yield, ?Await]
+  </del>
+  <ins class=block>
+  [lookahead &lt;! {`{` `(`}] ConditionalExpression[?In, ?Yield, ?Await]
   </ins>
 </emu-grammar>
 
@@ -2220,33 +2231,15 @@ PipelineStep[In, Yield, Await] :
 <p>This section augments the <emu-xref href=#sec-pipe-operator-runtime-semantics-evaluation>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
-<ins class=block>
-<emu-grammar>PipeExpression : Arguments `|&gt;` Pipeline</emu-grammar>
+<emu-grammar>PipeExpression : <del>ConditionalExpression</del><ins>PipelineHead</ins> `|&gt;` Pipeline</emu-grammar>
 <emu-alg>
-1. Let _inputValues_ be ? ArgumentListEvaluation of _Arguments_.
-2. Let _pipelineOutputRef_ be PipelineEvaluation of _Pipeline_ with argument _inputValues_.
-3. Let _pipelineOutputValues_ be ? GetValue(_pipelineOutputRef_).
-4. Assert: _pipelineOutputValues_ is a List containing one element.
-5. Return _pipelineOutputValues_[0].
+1. Let <del>_inputRef_ be the result of evaluating _ConditionalExpression_</del><ins>_inputValues_ be ? ArgumentListEvaluation of _PipelineHead_</ins>.
+2. <del>Let _inputValues_ be a List containing the one element which is the result of ? GetValue(_inputRef_).</del>
+3. Let _pipelineOutputRef_ be ? PipelineEvaluation of _Pipeline_ with argument _inputValues_.
+4. Let _pipelineOutputValues_ be ? GetValue(_pipelineOutputRef_).
+5. Assert: _pipelineOutputValues_ is a List containing one element.
+6. Return _pipelineOutputValues_[0].
 </emu-alg>
-
-<emu-grammar>PipeExpression : `...` AssignmentExpression `|&gt;` Pipeline</emu-grammar>
-<emu-alg>
-1. Let _inputValues_ be a new empty List.
-2. Let _spreadRef_ be the result of evaluating |AssignmentExpression|.
-3. Let _spreadObj_ be ? GetValue(_spreadRef_).
-4. Let _iteratorRecord_ be ? GetIterator(_spreadObj_).
-5. Repeat,
-  1. Let _next_ be ? IteratorStep(_iteratorRecord_).
-  2. If _next_ is *false*, return _inputValues_.
-  3. Let _nextArg_ be ? IteratorValue(_next_).
-  4. Append _nextArg_ as the last element of _inputValues_.
-6. Let _pipelineOutputRef_ be PipelineEvaluation of _Pipeline_ with argument _inputValues_.
-7. Let _pipelineOutputValues_ be ? GetValue(_pipelineOutputRef_).
-8. Assert: _pipelineOutputValues_ is a List containing one element.
-9. Return _pipelineOutputValues_[0].
-</emu-alg>
-</ins>
 </emu-annex>
 
 </emu-annex>
