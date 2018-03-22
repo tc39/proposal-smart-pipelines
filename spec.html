@@ -1688,14 +1688,6 @@ BindTopicValues(V<ins>, VRestStartIndex</ins>)
 Establish the immutable topic binding of this Environment Record and set the topic binding<del>s'</del><ins>'s</ins> value<ins>s</ins>. <del>_V_ is the value for the binding and is a value of any ECMAScript language type.</del><ins>_V_ is a List with elements of any ECMAScript language type. _VRestStartIndex_ is either ~empty~ or an Array whose elements are of any ECMAScript language type.</ins> Afterward, the value returned by the Environment Record's HasTopicBinding method is *true*. This method cannot be called more than once on any single Environment Record.
 </td>
 </tr>
-<tr>
-<td>
-<ins>GetTopicBinding(Index)</ins>
-</td>
-<td>
-<ins>Return the value of the topic binding of this Environment Record at the given _Index_, which must be less than [[RestTopicStartIndex]]. This method is never called when the HasTopicBinding method would return *false*.</ins>
-</td>
-</tr>
 </tbody>
 </table>
 </emu-table>
@@ -1717,25 +1709,6 @@ Establish the immutable topic binding of this Environment Record and set the top
 6. Set _envRec_.[[RestTopicStartIndex]] to _VRestStartIndex_.
 7. Set _envRec_.[[TopicBindingStatus]] to *true*.
 8. Return NormalCompletion(~empty~).
-</emu-alg>
-</emu-annex>
-
-<emu-annex id=sec-additional-feature-np-declarative-environment-records-getresttopicstartindex>
-<h1><ins>GetRestTopicStartIndex ( )</ins></h1>
-<emu-note type=editor>
-<p>This section is a wholly new sub-clause in addition to the revisions of the core proposal.</p>
-</emu-note>
-<p>The method GetRestTopicBinding for declarative Environment Records returns the value of the index, within its topic binding of this Environment Record, at which its rest topic reference `...` begins. The method must not be called when the record's topic binding has not already been established.</p>
-<emu-note>
-<p>That is, Environment Records will never be called on an Environment Record before the BindTopicValues method has been called.</p>
-<p>The index returned may be equal to *0*, in which case the rest topic reference `...` consists of the entire topic binding's values. Or it may be equal to the number of elements of the topic binding, in which case the rest topic reference `...` is empty.</p>
-</emu-note>
-<emu-alg>
-1. Let _envRec_ be the declarative Environment Record for which the method was invoked.
-2. Assert: _envRec_.[[TopicBindingStatus]] is *true*.
-3. Let _restTopicStartIndex_ be _envRec_.[[RestTopicStartIndex]].
-4. Assert: _restTopicStartIndex_ is an integer inclusively between 0 and the number of elements of _envRec_.[[TopicValues]].
-5. Return _restTopicStartIndex_.
 </emu-alg>
 </emu-annex>
 </emu-annex>
