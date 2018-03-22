@@ -879,7 +879,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <emu-annex id=sec-additional-feature-bc-pipe-operator>
 <h1>Pipe Operator</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This section augments the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
@@ -899,7 +899,7 @@ PipelineBareConstructor :
 <h1>Static Semantics: ExpectedArgumentCount</h1>
 <emu-see-also-para op=ExpectedArgumentCount></emu-see-also-para>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipe-operator-static-semantics-expectedargumentcount>new clause in the core proposal</emu-xref>. It is mutually compatible with further modifications by other additional features.</p>
+<p>This section augments the <emu-xref href=#sec-pipe-operator-static-semantics-expectedargumentcount>new clause in the core proposal</emu-xref>. It is mutually compatible with further modifications by other additional features.</p>
 </emu-note>
 
 <emu-grammar>
@@ -952,7 +952,7 @@ PipelineStep :
 <emu-annex id=sec-additional-feature-ba-pipe-operator>
 <h1>Pipe Operator</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This section augments the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
@@ -972,7 +972,7 @@ PipelineBareAwaitedFunction[Await] :
 <h1>Static Semantics: ExpectedArgumentCount</h1>
 <emu-see-also-para op=ExpectedArgumentCount></emu-see-also-para>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipe-operator-static-semantics-expectedargumentcount>new clause in the core proposal</emu-xref>. It is mutually compatible with further modifications by other additional features.</p>
+<p>This section augments the <emu-xref href=#sec-pipe-operator-static-semantics-expectedargumentcount>new clause in the core proposal</emu-xref>. It is mutually compatible with further modifications by other additional features.</p>
 </emu-note>
 
 <emu-grammar>
@@ -1031,7 +1031,7 @@ PipelineStep :
 <emu-annex id=sec-additional-feature-bp-pipe-operator>
 <h1>Pipe Operator</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This section augments the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
@@ -1151,7 +1151,7 @@ console.log.bind(console)</code></pre></td>
 <emu-annex id=sec-additional-feature-pf-pipe-operator>
 <h1>Pipe Operator</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
+<p>This section augments the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <emu-annex id=sec-additional-feature-pf-pipe-operator-static-semantics-expectedargumentcount>
@@ -1203,7 +1203,7 @@ PipelineStep :
 <h1>Assignment Operators</h1>
 
 <emu-note type=editor>
-<p>This section further revises the <emu-xref href=#sec-assignment-operators>amendments in the core proposal to the original Ecma262 clause</emu-xref>.</p>
+<p>This section further augments the <emu-xref href=#sec-assignment-operators>amendments in the core proposal to the original Ecma262 clause</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
@@ -1547,7 +1547,7 @@ Pipeline :
 <h1>Lexical Topics</h1>
 
 <emu-note type=editor>
-<p>This section further revises the <emu-xref href=#sec-lexical-environments>corresponding new clause in the core proposal</emu-xref>.</p>
+<p>This section further augments the <emu-xref href=#sec-lexical-environments>corresponding new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <p>The <dfn>topic binding</dfn> of a Lexical Environment immutably binds the <del>topic reference `#` to one value of any ECMAScript language type (called the <dfn>topic value</dfn> or simply the <dfn>topic</dfn>), within that Lexical Environment, at the time of the Lexical Environment's instantiation</del><ins>topic references `#`, `##`, `###`, and `...`, each to a respective <dfn>topic value</dfn> of any ECMAScript language type. The token `#` is termed the <dfn>primary topic reference</dfn>, `##` is termed the <dfn>secondary topic reference</dfn>, and `###` is termed the <dfn>tertiary topic reference</dfn>; together, they form the |TopicExpression|s. In addition, `...` alone forms the |RestTopicReference|, which represents a List of topic values of any ECMAScript language type. A single topic binding will bind all of a Lexical Environment's topic references at once at the time of the Lexical Environment's instantiation, after which the binding cannot change</ins>. The topic<ins>s</ins> of a Lexical Environment conceptually serve<del>s</del> as the value<ins>s</ins> that the lexical context is "about".</p>
@@ -1578,7 +1578,7 @@ Pipeline :
 <h1>Environment Records</h1>
 
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-declarative-environment-records>new clause in the core proposal</emu-xref>.</p>
+<p>This section augments the <emu-xref href=#sec-declarative-environment-records>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <emu-table id=table-additional-feature-np-15 caption="Abstract Methods of Environment Records">
@@ -1706,7 +1706,7 @@ Establish the immutable topic binding of this Environment Record and set the top
 <emu-annex id=sec-additional-feature-np-declarative-environment-records-bindtopicvalues>
 <h1>BindTopicValues ( _V_<ins>, _VRestStartIndex_</ins> )</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-declarative-environment-records-bindtopicvalues>new clause in the core proposal</emu-xref>.</p>
+<p>This section augments the <emu-xref href=#sec-declarative-environment-records-bindtopicvalues>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 <p>The method BindTopicValues for declarative Environment Records is guaranteed to be called only when the Environment Records do not yet have established topic bindings.</p>
 <emu-alg>
@@ -1804,7 +1804,7 @@ PrimaryExpression[Yield, Await] :
 <h1>The Topic Reference<ins>s</ins></h1>
 
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-topic-references>new clause in the core proposal</emu-xref>.</p>
+<p>This section augments the <emu-xref href=#sec-topic-references>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <ins class=block>
@@ -1874,7 +1874,7 @@ RestTopicReference :
 <emu-annex id=sec-additional-feature-np-topic-reference-runtime-semantics-evaluation>
 <h1>Runtime Semantics: Evaluation</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-topic-references-runtime-semantics-evaluation>new clause in the core proposal</emu-xref>.</p>
+<p>This section augments the <emu-xref href=#sec-topic-references-runtime-semantics-evaluation>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 <ins class=block>
 <emu-note>
@@ -2086,7 +2086,7 @@ ArgumentList[Yield, Await] :
 <emu-annex id=sec-additional-feature-np-pipe-operator>
 <h1>Pipe Operator</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>.</p>
+<p>This section augments the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
@@ -2119,7 +2119,7 @@ PipelineStep[In, Yield, Await] :
 <emu-annex id=sec-additional-feature-np-pipe-operator-static-semantics-early-errors>
 <h1>Static Semantics: Early Errors</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipe-operator-static-semantics-early-errors>new clause in the core proposal</emu-xref>.</p>
+<p>This section augments the <emu-xref href=#sec-pipe-operator-static-semantics-early-errors>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <del class=block>
@@ -2143,7 +2143,7 @@ PipelineStep[In, Yield, Await] :
 <p>With parameter _symbol_.</p>
 <emu-see-also-para op="Contains"></emu-see-also-para>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipe-operator-static-semantics-early-errors>new clause in the core proposal</emu-xref>.</p>
+<p>This section augments the <emu-xref href=#sec-pipe-operator-static-semantics-early-errors>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>PipelineBareFunction : SimpleReference</emu-grammar>
@@ -2162,7 +2162,7 @@ PipelineStep[In, Yield, Await] :
 <h1>Static Semantics: ExpectedArgumentCount</h1>
 <emu-see-also-para op=ExpectedArgumentCount></emu-see-also-para>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipe-operator-static-semantics-expectedargumentcount>new clause in the core proposal</emu-xref>. It is mutually compatible with further modifications by other additional features.</p>
+<p>This section augments the <emu-xref href=#sec-pipe-operator-static-semantics-expectedargumentcount>new clause in the core proposal</emu-xref>. It is mutually compatible with further modifications by other additional features.</p>
 </emu-note>
 
 <ins class=block>
@@ -2222,7 +2222,7 @@ PipelineStep[In, Yield, Await] :
 <emu-annex id=sec-additional-feature-np-pipe-operator-runtime-semantics-topicexpressioninstantiation aoid=TopicExpressionInstantiation>
 <h1>Runtime Semantics: TopicExpressionInstantiation</h1>
 <emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipe-operator-runtime-semantics-topicexpressioninstantiation>new clause in the core proposal</emu-xref>.</p>
+<p>This section augments the <emu-xref href=#sec-pipe-operator-runtime-semantics-topicexpressioninstantiation>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
 <p>TopicExpressionInstantiation is performed as follows using arguments _code_, _env_, <del>and _topicValues_</del><ins>_topicValues_, and _restTopicStartIndex_</ins>.</p>
