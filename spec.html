@@ -2063,28 +2063,20 @@ PipeExpression[In, Yield, Await] :
   Arguments[?Yield, ?Await] `|&gt;` Pipeline[?In, ?Yield, ?Await]
   </ins>
 
+Pipeline[In, Yield, Await] :
+  PipelineStep[?In, ?Yield, ?Await]
+  PipelineStep[?In, ?Yield, ?Await] `|&gt;` Pipeline[?In, ?Yield, ?Await]
+
 PipelineStep[In, Yield, Await] :
   PipelineBareFunction
   PipelineBareConstructor
   PipelineBareAwaitedFunction[?Await]
   PipelineTopicExpression[?In, ?Yield, ?Await]
-  <ins class=block>Arguments[?Yield, ?Await]</ins>
-
-PipelineBareFunction :
-  SimpleReference
-
-PipelineBareConstructor :
-  `new` SimpleReference
-
-PipelineBareAwaitedFunction[Await] :
-  [+Await] `await` SimpleReference
-
-SimpleReference :
-  IdentifierReference
-  SimpleReference `.` IdentifierName
-
-PipelineTopicExpression[In, Yield, Await] :
-  ConditionalExpression[?In, ?Yield, ?Await]
+  <ins class=block>
+  Arguments[?Yield, ?Await]
+  `...` AssignmentExpression[+In, ?Yield, ?Await]
+  RestTopicReference
+  </ins>
 </emu-grammar>
 
 <emu-annex id=sec-additional-feature-np-pipe-operator-static-semantics-early-errors>
