@@ -566,13 +566,13 @@ PipelineStep : PipelineBareFunction
 4. Set the running execution context's Lexical Environment to _pipelineStepEnv_.
 5. Let _pipelineValue_ be the result of evaluating _ConditionalExpression_.
 6. Set the running execution context's Lexical Environment to _oldEnv_.
-7. Return _pipelineValue_.
+7. Return a list containing the one element which is _pipelineValue_.
 </emu-alg>
 
 <emu-grammar>Pipeline : PipelineStep `|&gt;` Pipeline</emu-grammar>
 <emu-alg>
 1. Let _inputRef_ be PipelineEvaluation of |PipelineStep| with argument _inputValues_.
-2. Let _stepOutputValues_ be a list containing the one element which is the result of ? GetValue(_inputRef_).
+2. Let _stepOutputValues_ be the result of ? GetValue(_inputRef_).
 3. Let _pipelineRemainderOutputRef_ be PipelineEvaluation of |Pipeline| with argument _stepOutputValues_.
 4. Return ? GetValue(_pipelineRemainderOutputRef_).
 </emu-alg>
@@ -587,7 +587,9 @@ PipelineStep : PipelineBareFunction
 1. Let _inputRef_ be the result of evaluating |ConditionalExpression|.
 2. Let _stepOutputValues_ be a list containing the one element which is the result of ? GetValue(_inputRef_).
 3. Let _pipelineRemainderOutputRef_ be PipelineEvaluation of |Pipeline| with argument _stepOutputValues_.
-4. Return ? GetValue(_pipelineRemainderOutputRef_).
+4. Let _pipelineRemainderOutputValues_ be ? GetValue(_pipelineRemainderOutputRef_).
+5. Assert: _pipelineRemainderOutputValues_ is a list containing one element.
+6. Return _pipelineRemainderOutputValues_[0].
 </emu-alg>
 </emu-clause>
 
