@@ -3879,10 +3879,10 @@ f(a) - (a ** c + b);
 |> (f(#), g(##))
 |> (h, i);
 // 🚫 Syntax Error:
-// A pipeline terminates with
-// a 2-ary pipeline step
-// but must terminate with a
-// unary pipeline step.
+// Pipeline terminates with a
+// 2-ary pipeline step but
+// pipelines must terminate
+// with a unary pipeline step.
 ```
 It is an [early error][] for a pipeline to end with an n-ary pipeline step,
 where n > 1. Such a comma expression would almost certainly be an accidental
@@ -3920,6 +3920,215 @@ value
 |> ((x, y) => # * x + ## * y)
 |> settimeout;
 ```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b) |&gt; f
+```
+
+<td>
+
+```js
+f(a, b)
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |&gt; # + ##
+```
+
+<td>
+
+```js
+a + b
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |&gt; f(#, 0, ##)
+```
+
+<td>
+
+```js
+f(a, 0, b)
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |&gt; f(0, ##)
+```
+
+<td>
+
+```js
+f(0, b)
+```
+
+<tr>
+<td>
+
+```js
+(a, b, c, d) |&gt; f(#, 0, ...)
+```
+
+<td>
+
+```js
+f(a, 0, b, c, d)
+```
+
+<tr>
+<td>
+
+```js
+(a, b, c, d) |&gt; f(##, 0, ...)
+```
+
+<td>
+
+```js
+f(b, 0, c, d)
+```
+
+<tr>
+<td>
+
+```js
+(a, b, c, d) |&gt; f(##, 0, [...])
+```
+
+<td>
+
+```js
+f(b, 0, [c, d])
+```
+
+<tr>
+<td>
+
+```js
+(a, ...[b, c, d]) |&gt; f(##, 0, [...])
+```
+
+<td>
+
+```js
+f(b, 0, [c, d])
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |&gt; (# * b, ##) |&gt; f
+```
+
+<td>
+
+```js
+g(a * b, f(b))
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |&gt; (## * b, ##) |&gt; f
+```
+
+<td>
+
+```js
+g(b * b, f(b))
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |&gt; (# * b, #) |&gt; f
+// 🚫 Syntax Error: Pipeline
+// step binds 2 topic values
+// `(a, b)` but following step
+// expects 1 topic value.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b) |&gt; (# * b, f) |&gt; f
+// 🚫 Syntax Error:
+// Topic-style pipeline step
+// `f` in `(# * b, f)` binds
+// topic but contains no topic
+// reference.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b) |&gt; #
+// 🚫 Syntax Error: Pipeline
+// step binds 2 topic values
+// `(a, b)` but following step
+// expects 1 topic value.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+a |&gt; # + ##
+// 🚫 Syntax Error: Pipeline
+// step binds 2 topic values
+// `(a, b)` but following step
+// expects 2 topic values.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b) |&gt; f(#, 0)
+// 🚫 Syntax Error: Pipeline
+// step binds 2 topic values
+// `(a, b)` but following step
+// expects 1 topic value.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b) |&gt; (#, ##)
+// 🚫 Syntax Error: Pipeline
+// terminates with a 2-ary
+// pipeline step but pipelines
+// must terminate with a unary
+// pipeline step.
 
 <td>
 
