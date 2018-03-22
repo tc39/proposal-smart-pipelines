@@ -1907,10 +1907,8 @@ SpreadElement[Yield, Await] :
 <ins class=block>
 <emu-grammar>SpreadElement : RestTopicReference</emu-grammar>
 <emu-alg>
-1. Let _spreadRef_ be the result of evaluating |AssignmentExpression|.
-2. Let _spreadObj_ be ? GetValue(_spreadRef_).
-3. Let _iteratorRecord_ be ? GetIterator(_spreadObj_).
-4. Repeat,
+1. Let _iteratorRecord_ be ? CreateRestTopicIteratorRecord().
+2. Repeat,
   1. Let _next_ be ? IteratorStep(_iteratorRecord_).
   2. If _next_ is *false*, return _nextIndex_.
   3. Let _nextValue_ be ? IteratorValue(_next_).
@@ -2054,11 +2052,8 @@ ArgumentList[Yield, Await] :
 <ins class=block>
 <emu-grammar>ArgumentList : RestTopicReference</emu-grammar>
 <emu-alg>
-1. Let _list_ be a new empty List.
-2. Let _spreadRef_ be ResolveRestTopic().
-3. Let _spreadObj_ be ? GetValue(_spreadRef_).
-4. Let _iteratorRecord_ be ? GetIterator(_spreadObj_).
-5. Repeat,
+1. Let _iteratorRecord_ be ? CreateRestTopicIteratorRecord().
+2. Repeat,
   1. Let _next_ be ? IteratorStep(_iteratorRecord_).
   2. If _next_ is *false*, return _list_.
   3. Let _nextArg_ be ? IteratorValue(_next_).
@@ -2082,9 +2077,8 @@ ArgumentList[Yield, Await] :
 <emu-alg>
 1. Let _precedingArgs_ be ArgumentListEvaluation of |ArgumentList|.
 2. ReturnIfAbrupt(_precedingArgs_).
-3. Let _spreadRef_ be ResolveRestTopic().
-4. Let _iteratorRecord_ be ? GetIterator(? GetValue(_spreadRef_)).
-5. Repeat,
+3. Let _iteratorRecord_ be ? CreateRestTopicIteratorRecord().
+4. Repeat,
   1. Let _next_ be ? IteratorStep(_iteratorRecord_).
   2. If _next_ is *false*, return _precedingArgs_.
   3. Let _nextArg_ be ? IteratorValue(_next_).
