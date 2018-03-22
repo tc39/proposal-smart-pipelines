@@ -841,6 +841,41 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <emu-annex id=sec-additional-feature-bc-ecmascript-language-expressions>
 <h1>ECMAScript Language: Expressions</h1>
 
+<emu-annex id=sec-additional-feature-bc-primary-expression>
+<h1>Primary Expression</h1>
+
+<emu-annex id="sec-new-operator">
+<h1>The `new` Operator</h1>
+
+<emu-annex id="sec-new-operator-runtime-semantics-evaluation">
+<h1>Runtime Semantics: Evaluation</h1>
+
+<emu-annex id="sec-evaluatenew" aoid="EvaluateNew">
+<h1>Runtime Semantics: EvaluateNew ( _constructExpr_, _arguments_ )</h1>
+
+<emu-note type=editor>
+<p>This section is an augmentation of the <a href=https://tc39.github.io/ecma262/#sec-evaluatenew>original EvaluateNew clause</a> such that its _arguments_ parameter may be a list, rather than a Parse Node that will undergo ArgumentListEvaluation into a list.</p>
+</emu-note>
+
+<p>The abstract operation EvaluateNew with arguments _constructExpr_, and _arguments_ performs the following steps:</p>
+<emu-alg>
+1. Assert: _constructExpr_ is either a |NewExpression| or a |MemberExpression|.
+1. Assert: _arguments_ is either ~empty~, a list, or an |Arguments|.
+1. Let _ref_ be the result of evaluating _constructExpr_.
+1. Let _constructor_ be ? GetValue(_ref_).
+1. If _arguments_ is ~empty~, let _argList_ be a new empty List.
+1. <ins>Else if _arguments_ is a list, let _argList_ be _arguments_.</ins>
+1. Else,
+  1. Let _argList_ be ArgumentListEvaluation of _arguments_.
+  1. ReturnIfAbrupt(_argList_).
+1. If IsConstructor(_constructor_) is *false*, throw a *TypeError* exception.
+1. Return ? Construct(_constructor_, _argList_).
+</emu-alg>
+</emu-annex>
+</emu-annex>
+</emu-annex>
+</emu-annex>
+
 <emu-annex id=sec-additional-feature-bc-pipe-operator>
 <h1>Pipe Operator</h1>
 <emu-note type=editor>
