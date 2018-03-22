@@ -571,10 +571,9 @@ PipelineStep : PipelineBareFunction
 
 <emu-grammar>Pipeline : PipelineStep `|&gt;` Pipeline</emu-grammar>
 <emu-alg>
-1. Let _inputRef_ be PipelineEvaluation of |PipelineStep| with argument _inputValues_.
-2. Let _stepOutputValues_ be the result of ? GetValue(_inputRef_).
-3. Let _pipelineRemainderOutputRef_ be PipelineEvaluation of |Pipeline| with argument _stepOutputValues_.
-4. Return ? GetValue(_pipelineRemainderOutputRef_).
+1. Let _stepOutputValues_ be PipelineEvaluation of |PipelineStep| with argument _inputValues_.
+2. Let _pipelineRemainderOutputRef_ be PipelineEvaluation of |Pipeline| with argument _stepOutputValues_.
+3. Return ? GetValue(_pipelineRemainderOutputRef_).
 </emu-alg>
 
 </emu-clause>
