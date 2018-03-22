@@ -2121,6 +2121,67 @@ PipelineStep[In, Yield, Await] :
 </emu-alg>
 </emu-annex>
 
+<emu-annex id=sec-additional-feature-np-pipe-operator-static-semantics-expectedargumentcount>
+<h1>Static Semantics: ExpectedArgumentCount</h1>
+<emu-see-also-para op=ExpectedArgumentCount></emu-see-also-para>
+<emu-note type=editor>
+<p>This section revises the <emu-xref href=#sec-pipe-operator-static-semantics-expectedargumentcount>new clause in the core proposal</emu-xref>. It is mutually compatible with further modifications by other additional features.</p>
+</emu-note>
+
+<ins class=block>
+<emu-grammar>PipelineStep : Arguments</emu-grammar>
+<emu-alg>
+1. Return ArgumentListMaxWidth of _Arguments_.
+</emu-alg>
+
+<emu-grammar>PipelineStep : `...` AssignmentExpression</emu-grammar>
+<emu-alg>
+1. Return *1*.
+</emu-alg>
+
+<emu-grammar>PipelineStep : `...`</emu-grammar>
+<emu-alg>
+1. Return *1*.
+</emu-alg>
+</ins>
+
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-np-pipe-operator-runtime-semantics-pipelineevaluation aoid=PipelineEvaluation>
+<h1>Runtime Semantics: PipelineEvaluation</h1>
+<p>With parameter _inputValues_.</p>
+
+<emu-note type=editor>
+<p>This section appends to the <emu-xref href=#sec-pipe-operator-runtime-semantics-pipelineevaluation>new clause in the core proposal</emu-xref>.</p>
+</emu-note>
+
+<ins class=block>
+<emu-grammar>PipelineStep : Arguments</emu-grammar>
+<emu-note type=editor>
+<p>TODO</p>
+</emu-note>
+
+<emu-grammar>PipelineStep : `...` AssignmentExpression</emu-grammar>
+<emu-note type=editor>
+<p>TODO</p>
+</emu-note>
+
+<emu-grammar>PipelineStep : `...`</emu-grammar>
+<emu-note type=editor>
+<p>TODO</p>
+</emu-note>
+</ins>
+
+<emu-grammar>Pipeline : PipelineStep `|&gt;` Pipeline</emu-grammar>
+<emu-alg>
+1. Let _inputRef_ be PipelineEvaluation of |PipelineStep| with argument _inputValues_.
+2. Let _stepOutputValues_ be a List containing the one element which is the result of ? GetValue(_inputRef_).
+3. Let _pipelineRemainderOutputRef_ be PipelineEvaluation of |Pipeline| with argument _stepOutputValues_.
+4. Return ? GetValue(_pipelineRemainderOutputRef_).
+</emu-alg>
+
+</emu-annex>
+
 <emu-annex id=sec-additional-feature-np-pipe-operator-runtime-semantics-topicexpressioninstantiation aoid=TopicExpressionInstantiation>
 <h1>Runtime Semantics: TopicExpressionInstantiation</h1>
 <emu-note type=editor>
