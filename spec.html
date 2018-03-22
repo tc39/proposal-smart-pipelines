@@ -511,14 +511,15 @@ PipelineStep : PipelineBareFunction
 <p>With parameter _inputValues_.</p>
 
 <emu-grammar>PipelineBareFunction : SimpleReference</emu-grammar>
-<p>This algorithm is an altered version of the algorithm of <emu-xref href="#sec-function-calls-runtime-semantics-evaluation">Function Calls, Runtime Semantics: Evaluation</emu-xref>, modified as follows:</p>
 <emu-alg>
-* Steps 1 and 2 are removed.
-* Step 3 is replaced by:
-  1. Let _arguments_ be _inputValues_.
-* Step 4 is replaced by:
-  2. Let _functionExpr_ be the |MemberExpression| that is covered by _SimpleReference_.
-  3. Let _ref_ be the result of evaluating _functionExpr_.
+1. Let _memberExpr_ be the |MemberExpression| that is covered by _SimpleReference_.
+2. Let _funcRef_ be the result of evaluating _memberExpr_.
+3. Let _funcValue_ be ? GetValue(_ref_).
+4. Let _thisCall_ be this |PipelineBareFunction|.
+5. Let _tailCall_ be IsInTailPosition(_thisCall_).
+6. Let _callRef_ be ? EvaluateCall(_funcValue_, _ref_, _inputValues_, _tailCall_).
+7. Let _callValue_ be ? GetValue(_callRef_).
+8. Return a list containing the one element which is _callValue_.
 </emu-alg>
 
 <emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
