@@ -186,21 +186,13 @@ BindTopicValues(V)
 Establish the immutable topic binding of this Environment Record and set the topic binding's value. _V_ is a list containing the one element which is the topic value and is a value of any ECMAScript language type. Afterward, the value returned by the Environment Record's HasTopicBinding method is *true*. This method cannot be called more than once on any single Environment Record.
 </td>
 </tr>
-<tr>
-<td>
-GetTopicBinding()
-</td>
-<td>
-Return the values of the topic binding of this Environment Record. This method is never called when the HasTopicBinding method would return *false*.
-</td>
-</tr>
 </tbody>
 </table>
 </emu-table>
 </ins>
 
 <emu-note type=editor>
-<p>BindTopicValues() accepts a list argument rather than a single-value argument, and GetTopicBinding is named as such instead of merely “GetTopicBinding”, in order to be <emu-xref href=#sec-additional-feature-np-declarative-environment-records>forward compatible with Additional Feature NP</emu-xref>.</p>
+<p>BindTopicValues() accepts a list argument rather than a single-value argument in order to be <emu-xref href=#sec-additional-feature-np-declarative-environment-records>forward compatible with Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <p>The behaviour of the concrete <ins>and additional</ins> specification methods for declarative Environment Records is defined by the following algorithms.</p>
@@ -233,23 +225,6 @@ Return the values of the topic binding of this Environment Record. This method i
 6. Return NormalCompletion(~empty~).
 </emu-alg>
 </emu-clause>
-</emu-clause>
-
-<emu-clause id=sec-declarative-environment-records-gettopicbinding>
-<h1><ins>GetTopicBinding ( )</ins></h1>
-<emu-note type=editor>
-<p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-declarative-environment-records>original Declarative Environment Records clause</a>.</p>
-</emu-note>
-<p>The method GetTopicBinding for declarative Environment Records returns the values of the record's topic binding. It must not be called when the record's topic binding has not already been established.</p>
-<emu-note>
-<p>That is, Environment Records will never be called on an Environment Record before the BindTopicValues method has been called.</p>
-</emu-note>
-<emu-alg>
-1. Let _envRec_ be the declarative Environment Record for which the method was invoked.
-2. Assert: _envRec_.[[TopicBindingStatus]] is *true*.
-3. Assert: _envRec_.[[TopicValues]] is a list.
-4. Return _envRec_.[[TopicValues]].
-</emu-alg>
 </emu-clause>
 
 <emu-clause id=sec-object-environment-records>
@@ -388,16 +363,16 @@ PrimaryExpression[Yield, Await] :
 <emu-clause id=sec-resolvetopicbinding aoid=ResolveTopicBinding>
 <h1>Runtime Semantics: ResolveTopicBinding</h1>
 <emu-note type=editor>
-<p>This method returns a list in order to be forward compatible with <emu-xref href=#sec-additional-feature-pf>Additional Feature NP</emu-xref>.</p>
 </emu-note>
 <emu-note>
 <p>ResolveTopicBinding returns the value to which the topic reference `#` is bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment.</p>
 </emu-note>
-<p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
+<p>When the abstract operation ResolveTopicBinding is called the following steps are performed:</p>
 <emu-alg>
 1. Let _envRec_ be GetTopicEnvironment().
-2. Assert: _envRec_.HasTopicBinding() is true.
-3. Return ? _envRec_.GetTopicBinding().
+2. Assert: _envRec_ is a declarative Environment Record.
+3. Assert: _envRec_.HasTopicBinding() is true.
+4. Return _envRec_.[[TopicValues]].
 </emu-alg>
 </emu-clause>
 
@@ -406,9 +381,9 @@ PrimaryExpression[Yield, Await] :
 
 <emu-grammar>PrimaryExpression : `#`</emu-grammar>
 <emu-alg>
-1. Let _topicList_ be ? ResolveTopicBinding().
-2. Assert: the length of _topicList_ is at least *1*.
-3. Return ? _topicList_[0].
+1. Let _topicValues_ be ? ResolveTopicBinding().
+2. Assert: _topicValues_ has at least one element.
+3. Return topicValues_[0].
 </emu-alg>
 </emu-clause>
 
@@ -526,21 +501,21 @@ PipelineStep : PipelineBareFunction
 <p>This section is a wholly new sub-clause. It is forward compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator-static-semantics-early-errors>further modifications by Additional Feature NP</emu-xref>.</p>
 </emu-note>
 <emu-note>
-<p>This abstract operation constructs, instantiates, then returns a new declarative Lexical Environment for a topic-style pipeline step. It creates an immutable topic binding in that declarative environment using the given _topics_.</p>
+<p>This abstract operation constructs, instantiates, then returns a new declarative Lexical Environment for a topic-style pipeline step. It creates an immutable topic binding in that declarative environment using the given _topicValues_.</p>
 </emu-note>
-<p>TopicPipelineInstantiation is performed as follows using arguments _env_ and _topics_.</p>
+<p>TopicPipelineInstantiation is performed as follows using arguments _env_ and _topicValues_.</p>
 <ul>
 <li>_env_ is the Lexical Environment in which the topic binding is to be created.</li>
-<li>_topics_ is a list of values: _env_'s primary topic reference will be bound to the first value.</li>
+<li>_topicValues_ is a list of values: _env_'s primary topic reference will be bound to the first value.</li>
 </ul>
 
 <emu-alg>
-1. Assert: _topics_ is a list.
+1. Assert: _topicValues_ is a list.
 2. Let _envRec_ be env's Environment Record.
 3. Assert: _envRec_ is a declarative Environment Record.
 4. Assert: _envRec_.HasTopicBinding() is *false*.
-5. Assert: _envRec_.GetTopicBinding() is ~empty~.
-6. Perform ! _envRec_.BindTopicValues(_topics_).
+5. Assert: _envRec_.[[TopicValues]] is ~empty~.
+6. Perform ! _envRec_.BindTopicValues(_topicValues_).
 </emu-alg>
 </emu-clause>
 
@@ -1090,11 +1065,10 @@ PipeExpression[In, Yield, Await] :
 <ins class=block>
 <emu-grammar>PipeExpression : `|&gt;` Pipeline</emu-grammar>
 <emu-alg>
-1. Let _envRec_ be GetTopicEnvironment().
-2. Assert: _envRec_.HasTopicBinding() is true.
-3. Let _inputValues_ be _envRec_.GetTopicBinding().
-4. Let _outputRef_ be PipelineEvaluation of |Pipeline| with argument _inputValues_.
-5. Return ? GetValue(_outputRef_).
+1. Let _inputValues_ be ResolveTopicBinding().
+2. Assert: _inputValues_ is a list.
+3. Let _outputRef_ be PipelineEvaluation of |Pipeline| with argument _inputValues_.
+4. Return ? GetValue(_outputRef_).
 </emu-alg>
 </ins>
 </emu-annex>
@@ -1626,7 +1600,7 @@ If the value of [[TopicBindingStatus]] is *true*, [[TopicValues]] is a list cont
 <ins>Integer index | ~empty~</ins>
 </td>
 <td>
-<ins>If the value of [[TopicBindingStatus]] is *true*, [[RestTopicStartIndex]] is the first index  in [[TopicValues]] of its Lexical Environment's rest topic reference `...`; if so, this index must be an integer inclusively between 0 and the length of [[TopicValues]]. If the value of [[TopicBindingStatus]] is *false*, the value of [[RestTopicStartIndex]] is ~empty~.</ins>
+<ins>If the value of [[TopicBindingStatus]] is *true*, [[RestTopicStartIndex]] is the first index  in [[TopicValues]] of its Lexical Environment's rest topic reference `...`; if so, this index must be an integer inclusively between 0 and the number of elements of [[TopicValues]]. If the value of [[TopicBindingStatus]] is *false*, the value of [[RestTopicStartIndex]] is ~empty~.</ins>
 </td>
 </tr>
 </tbody>
@@ -1658,18 +1632,10 @@ Establish the immutable topic binding of this Environment Record and set the top
 </tr>
 <tr>
 <td>
-GetTopicBinding()
+<ins>GetTopicBinding(Index)</ins>
 </td>
 <td>
-Return the value of the <ins>primary </ins>topic binding of this Environment Record. This method is never called when the HasTopicBinding method would return *false*.
-</td>
-</tr>
-<tr>
-<td>
-<ins>GetRestTopicStartIndex()</ins>
-</td>
-<td>
-<ins>Return the value of the index, within its topic binding of this Environment Record, at which its rest topic reference `...` begins. The index may be equal to the length of the topic binding, in which case the rest topic reference `...` is empty. This method is never called when the HasTopicBinding method would return *false*.</ins>
+<ins>Return the value of the topic binding of this Environment Record at the given _Index_, which must be less than [[RestTopicStartIndex]]. This method is never called when the HasTopicBinding method would return *false*.</ins>
 </td>
 </tr>
 </tbody>
@@ -1704,13 +1670,13 @@ Return the value of the <ins>primary </ins>topic binding of this Environment Rec
 <p>The method GetRestTopicBinding for declarative Environment Records returns the value of the index, within its topic binding of this Environment Record, at which its rest topic reference `...` begins. The method must not be called when the record's topic binding has not already been established.</p>
 <emu-note>
 <p>That is, Environment Records will never be called on an Environment Record before the BindTopicValues method has been called.</p>
-<p>The index returned may be equal to *0*, in which case the rest topic reference `...` consists of the entire topic binding's values. Or it may be equal to the length of the topic binding, in which case the rest topic reference `...` is empty.</p>
+<p>The index returned may be equal to *0*, in which case the rest topic reference `...` consists of the entire topic binding's values. Or it may be equal to the number of elements of the topic binding, in which case the rest topic reference `...` is empty.</p>
 </emu-note>
 <emu-alg>
 1. Let _envRec_ be the declarative Environment Record for which the method was invoked.
 2. Assert: _envRec_.[[TopicBindingStatus]] is *true*.
 3. Let _restTopicStartIndex_ be _envRec_.[[RestTopicStartIndex]].
-4. Assert: _restTopicStartIndex_ is an integer inclusively between 0 and the length of _envRec_.[[TopicValues]].
+4. Assert: _restTopicStartIndex_ is an integer inclusively between 0 and the number of elements of _envRec_.[[TopicValues]].
 5. Return _restTopicStartIndex_.
 </emu-alg>
 </emu-annex>
@@ -1798,50 +1764,51 @@ RestTopicReference :
 </emu-note>
 </ins>
 
-<emu-annex id=sec-additional-feature-np-topicindex>
-<h1><ins>Static Semantics: TopicIndex</ins></h1>
+<emu-annex id=sec-additional-feature-np-runtime-semantics-resolvetopicexpression aoid=ResolveTopicExpression>
+<h1><ins>Runtime Semantics: ResolveTopicExpression</ins></h1>
+<emu-note type=editor>
+<p>This section is a wholly new sub-clause in addition to the revisions of the core proposal.</p>
+</emu-note>
+
+<p>With parameter _topicIndex_.</p>
+<emu-note>
+<p>This abstract operation constructs, instantiates, then returns a new declarative Lexical Environment for a topic-style pipeline step. It creates an immutable topic binding in that declarative environment using the given _topicValues_.</p>
+</emu-note>
+
+<emu-alg>
+1. Assert: _topicIndex_ is an integer at least *0*.
+2. Let _envRec_ be GetTopicEnvironment().
+3. Assert: _envRec_ is a declarative Environment Record.
+4. Assert: _envRec_.HasTopicBinding() is true.
+5. Assert: _topicIndex_ is less than _envRec_.[[RestTopicStartIndex]].
+6. Let _topicValues_ be _envRec_.[[TopicValues]].
+7. Assert: _topicValues_ is a list.
+8. Assert: _topicIndex_ is less than the number of elements of _topicValues_.
+9. Return _envRec_.[[TopicValues]].
+</emu-alg>
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-np-runtime-semantics-resolvetopicexpression aoid=CreateRestTopicIteratorRecord>
+<h1><ins>Runtime Semantics: CreateRestTopicIteratorRecord</ins></h1>
 <emu-note type=editor>
 <p>This section is a wholly new sub-clause in addition to the revisions of the core proposal.</p>
 </emu-note>
 <emu-note>
-<p>TopicIndex returns the integer index to which a topic reference corresponds: *0* for primary, *1* for secondary, *2* for tertiary, or *Infinity* for rest.</p>
+<p>The |RestTopicReference| `...` is not itself evaluated as a |TopicExpression|; instead, it is used by |SpreadElement|, |PropertyDefinition|, and |ArgumentList|, by way of calling the CreateRestTopicIteratorRecord abstract operation and using its values.</p>
 </emu-note>
 
-<emu-grammar>TopicExpression : `#`</emu-grammar>
-<emu-alg>
-1. Return *0*.
-</emu-alg>
-
-<emu-grammar>TopicExpression : `##`</emu-grammar>
-<emu-alg>
-1. Return *1*.
-</emu-alg>
-
-<emu-grammar>TopicExpression : `###`</emu-grammar>
-<emu-alg>
-1. Return *2*.
-</emu-alg>
-
-<emu-grammar>RestTopicReference : `...`</emu-grammar>
-<emu-alg>
-1. Return *Infinity*.
-</emu-alg>
-</emu-annex>
-
-<emu-annex id=sec-additional-feature-np-resolvetopicbinding>
-<h1>Runtime Semantics: ResolveTopicBinding</h1>
-<emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-resolvetopicbinding>new clause in the core proposal</emu-xref>.</p>
-</emu-note>
-<emu-note>
-<emu-note>
-<p>ResolveTopicBinding returns the value to which the <del>topic reference `#` is</del><ins>the |TopicExpression| tokens (`#`, `##`, and `###`) are</ins> bound, using the Lexical Environment of the running execution context. It is <strong>never</strong> called when there is no topic environment.</p>
-</emu-note>
-<p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
 <emu-alg>
 1. Let _envRec_ be GetTopicEnvironment().
-2. Assert: _envRec_.HasTopicBinding() is true.
-3. Return ? _envRec_.GetTopicBinding().
+2. Assert: _envRec_ is a declarative Environment Record.
+3. Assert: _envRec_.HasTopicBinding() is true.
+4. Let _restTopicStartIndex_ be _envRec_.[[RestTopicStartIndex]].
+5. Assert: _restTopicStartIndex_ is an integer at least *0*.
+6. Let _topicValues_ be _envRec_.[[TopicValues]].
+7. Assert: _topicValues_ is a list.
+8. Assert: _restTopicStartIndex_ is no more than the number of elements of _topicValues_.
+9. Let _iteratorRecord_ be CreateListIteratorRecord(_topicValues_).
+10. Set _iteratorRecord_.[[Iterator]].[[ListIteratorNextIndex]] to _restTopicStartIndex_.
+11. Return _iteratorRecord_.
 </emu-alg>
 </emu-annex>
 
@@ -1852,21 +1819,31 @@ RestTopicReference :
 </emu-note>
 <ins class=block>
 <emu-note>
-<p>The |RestTopicReference| `...` is not itself evaluated as a |TopicExpression|; instead, it is used by |SpreadElement|, |PropertyDefinition|, and |ArgumentList|.</p>
+<p>The |RestTopicReference| `...` is not itself evaluated as a |TopicExpression|; instead, it is used by |SpreadElement|, |PropertyDefinition|, and |ArgumentList|, using CreateRestTopicIteratorRecord.</p>
 </emu-note>
+</ins>
+
+<emu-grammar>PrimaryExpression : `#`</emu-grammar>
+<del class=block>
+<emu-alg>
+1. Let _topicValues_ be ? ResolveTopicBinding().
+2. Assert: _topicValues_ has at least one element.
+3. Return topicValues_[0].
+</emu-alg>
+</del>
+<ins class=block>
+<emu-alg>
+1. Return ? ResolveTopicExpression(*0*).
+</emu-alg>
 
 <emu-grammar>TopicExpression : `##`</emu-grammar>
 <emu-alg>
-1. Let _topicList_ be ? ResolveTopicBinding().
-2. Assert: the length of _topicList_ is at least *2*.
-3. Return ? _topicList_[1].
+1. Return ? ResolveTopicExpression(*1*).
 </emu-alg>
 
 <emu-grammar>TopicExpression : `###`</emu-grammar>
 <emu-alg>
-1. Let _topicList_ be ? ResolveTopicBinding().
-2. Assert: the length of _topicList_ is at least *3*.
-3. Return ? _topicList_[2].
+1. Return ? ResolveTopicExpression(*2*).
 </emu-alg>
 </ins>
 </emu-annex>
@@ -1903,9 +1880,18 @@ SpreadElement[Yield, Await] :
 </emu-note>
 <ins class=block>
 <emu-grammar>SpreadElement : RestTopicReference</emu-grammar>
-<emu-note type=editor>
-<p>TODO.</p>
-</emu-note>
+<emu-alg>
+1. Let _spreadRef_ be the result of evaluating |AssignmentExpression|.
+2. Let _spreadObj_ be ? GetValue(_spreadRef_).
+3. Let _iteratorRecord_ be ? GetIterator(_spreadObj_).
+4. Repeat,
+  1. Let _next_ be ? IteratorStep(_iteratorRecord_).
+  2. If _next_ is *false*, return _nextIndex_.
+  3. Let _nextValue_ be ? IteratorValue(_next_).
+  4. Let _status_ be CreateDataProperty(_array_, ToString(ToUint32(_nextIndex_)), _nextValue_).
+  5. Assert: _status_ is *true*.
+  6. Let _nextIndex_ be _nextIndex_ + 1.
+</emu-alg>
 <emu-alg>
 </emu-alg>
 <emu-note>
@@ -2173,21 +2159,20 @@ PipelineTopicExpression[In, Yield, Await] :
 <p>This section revises the <emu-xref href=#sec-pipe-operator-runtime-semantics-topicexpressioninstantiation>new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
-<p>TopicExpressionInstantiation is performed as follows using arguments _code_, _env_, <del>and _topics_</del><ins>_topics_, and _restStartIndex_</ins>.</p>
+<p>TopicExpressionInstantiation is performed as follows using arguments _code_, _env_, <del>and _topicValues_</del><ins>_topicValues_, and _restTopicStartIndex_</ins>.</p>
 <ul>
-<li>_topics_ is a list of values<del>: _env_'s primary topic reference will be bound to the first value</del><ins> with which _env_'s topic bindings will be established</ins>.</li>
-<li><ins>_restStartIndex_ is either ~empty~ or an integer index not exceeding the length of _topics_. If it is ~empty~, |RestTopicReference| `...` will not be bound to anything. Otherwise, |RestTopicReference| will be bound to a new Array whose elements are those of _topics_ starting at _restStartIndex_'s position.</ins></li>
+<li>_topicValues_ is a list of values<del>: _env_'s primary topic reference will be bound to the first value</del><ins> with which _env_'s topic bindings will be established</ins>.</li>
+<li><ins>_restStartIndex_ is either ~empty~ or an integer index not exceeding the number of elements of _topicValues_. If it is ~empty~, |RestTopicReference| `...` will not be bound to anything. Otherwise, |RestTopicReference| will be bound to a new Array whose elements are those of _topicValues_ starting at _restStartIndex_'s position.</ins></li>
 </ul>
 
 <emu-alg>
-1. Assert: _topics_ is a list.
-2. <ins>Assert: _restStartIndex_ is [TODO].</ins>
+1. Assert: _topicValues_ is a list.
+2. <ins>Assert: _restTopicStartIndex_ is an integer, at least zero, and less than the number of elements of _topicValues_.</ins>
 3. Let _envRec_ be env's Environment Record.
 4. Assert: _envRec_ is a declarative Environment Record.
 5. Assert: _envRec_.HasTopicBinding() is *false*.
-6. Assert: _envRec_.GetTopicBinding() is ~empty~.
-7. <ins>Let _restTopicStartIndex_ be [TODO]</ins>
-8. Perform ! _envRec_.BindTopicValues(_topics_<ins>, _restTopicStartIndex_</ins>).
+6. Assert: _envRec_.[[TopicValues]] is ~empty~.
+7. Perform ! _envRec_.BindTopicValues(_topicValues_<ins>, _restTopicStartIndex_</ins>).
 </emu-alg>
 </emu-annex>
 
