@@ -3721,6 +3721,295 @@ g(f(a, x, ...[b, ...c, d]));
 <tr>
 <td>
 
+<tr>
+<td>
+
+```js
+a |> f
+```
+
+<td>
+
+```js
+f(a)
+```
+
+
+```js
+(a) |> f
+```
+
+<td>
+
+```js
+f(a)
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |> f
+```
+
+<td>
+
+```js
+f(a, b)
+```
+
+<tr>
+<td>
+
+```js
+(...a) |> f
+```
+
+<td>
+
+```js
+f(...a)
+```
+
+<tr>
+<td>
+
+```js
+...a |> f
+```
+
+<td>
+
+```js
+f(...a)
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |> # + ##
+```
+
+<td>
+
+```js
+a + b
+```
+
+<tr>
+<td>
+
+```js
+() |> # + ##
+// 🚫 Syntax Error: Pipeline
+// step binds 0 topic values
+// `()` but following step
+// expects 1 topic value.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b) |> f(#, 0, ##)
+```
+
+<td>
+
+```js
+f(a, 0, b)
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |> f(0, ##)
+```
+
+<td>
+
+```js
+f(0, b)
+```
+
+<tr>
+<td>
+
+```js
+(a, b, c, d) |> f(#, 0, ...)
+```
+
+<td>
+
+```js
+f(a, 0, b, c, d)
+```
+
+<tr>
+<td>
+
+```js
+(a, b, c, d) |> f(##, 0, ...)
+```
+
+<td>
+
+```js
+f(b, 0, c, d)
+```
+
+<tr>
+<td>
+
+```js
+(a, b, c, d) |> f(##, 0, [...])
+```
+
+<td>
+
+```js
+f(b, 0, [c, d])
+```
+
+<tr>
+<td>
+
+```js
+(a, ...[b, c, d]) |> f(##, 0, [...])
+```
+
+<td>
+
+```js
+f(b, 0, [c, d])
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |> (# * b, ##) |> f
+```
+
+<td>
+
+```js
+g(a * b, f(b))
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |> (## * b, ##) |> f
+```
+
+<td>
+
+```js
+g(b * b, f(b))
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |> (# * b, #) |> f
+// 🚫 Syntax Error: Pipeline
+// step binds 2 topic values
+// `(a, b)` but following step
+// expects 1 topic value.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b) |> (# * b, f) |> f
+// 🚫 Syntax Error:
+// Topic-style pipeline step
+// `f` in `(# * b, f)` binds
+// topic but contains no topic
+// reference.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b) |> #
+// 🚫 Syntax Error: Pipeline
+// step binds 2 topic values
+// `(a, b)` but following step
+// expects 1 topic value.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+a |> # + ##
+// 🚫 Syntax Error: Pipeline
+// step binds 1 topic value
+// `a` but following step
+// expects 2 topic values.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+() |> # + 1
+// 🚫 Syntax Error: Pipeline
+// step binds 0 topic values
+// `()` but following step
+// expects 1 topic value.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b) |> f(#, 0)
+// 🚫 Syntax Error: Pipeline
+// step binds 2 topic values
+// `(a, b)` but following step
+// expects 1 topic value.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b) |> (#, ##)
+// 🚫 Syntax Error: Pipeline
+// terminates with a 2-ary
+// pipeline step but pipelines
+// must terminate with a unary
+// pipeline step.
+```
+
+<td>
+
+<tr>
+<td>
+
 ```js
 (a, b, c, d, e) |> f(##, x, ...) |> g;
 ```
@@ -3919,216 +4208,6 @@ value
 |> (f, g)
 |> ((x, y) => # * x + ## * y)
 |> settimeout;
-```
-
-<td>
-
-<tr>
-<td>
-
-```js
-(a, b) |> f
-```
-
-<td>
-
-```js
-f(a, b)
-```
-
-<tr>
-<td>
-
-```js
-(a, b) |> # + ##
-```
-
-<td>
-
-```js
-a + b
-```
-
-<tr>
-<td>
-
-```js
-(a, b) |> f(#, 0, ##)
-```
-
-<td>
-
-```js
-f(a, 0, b)
-```
-
-<tr>
-<td>
-
-```js
-(a, b) |> f(0, ##)
-```
-
-<td>
-
-```js
-f(0, b)
-```
-
-<tr>
-<td>
-
-```js
-(a, b, c, d) |> f(#, 0, ...)
-```
-
-<td>
-
-```js
-f(a, 0, b, c, d)
-```
-
-<tr>
-<td>
-
-```js
-(a, b, c, d) |> f(##, 0, ...)
-```
-
-<td>
-
-```js
-f(b, 0, c, d)
-```
-
-<tr>
-<td>
-
-```js
-(a, b, c, d) |> f(##, 0, [...])
-```
-
-<td>
-
-```js
-f(b, 0, [c, d])
-```
-
-<tr>
-<td>
-
-```js
-(a, ...[b, c, d]) |> f(##, 0, [...])
-```
-
-<td>
-
-```js
-f(b, 0, [c, d])
-```
-
-<tr>
-<td>
-
-```js
-(a, b) |> (# * b, ##) |> f
-```
-
-<td>
-
-```js
-g(a * b, f(b))
-```
-
-<tr>
-<td>
-
-```js
-(a, b) |> (## * b, ##) |> f
-```
-
-<td>
-
-```js
-g(b * b, f(b))
-```
-
-<tr>
-<td>
-
-```js
-(a, b) |> (# * b, #) |> f
-// 🚫 Syntax Error: Pipeline
-// step binds 2 topic values
-// `(a, b)` but following step
-// expects 1 topic value.
-```
-
-<td>
-
-<tr>
-<td>
-
-```js
-(a, b) |> (# * b, f) |> f
-// 🚫 Syntax Error:
-// Topic-style pipeline step
-// `f` in `(# * b, f)` binds
-// topic but contains no topic
-// reference.
-```
-
-<td>
-
-<tr>
-<td>
-
-```js
-(a, b) |> #
-// 🚫 Syntax Error: Pipeline
-// step binds 2 topic values
-// `(a, b)` but following step
-// expects 1 topic value.
-```
-
-<td>
-
-<tr>
-<td>
-
-```js
-a |> # + ##
-// 🚫 Syntax Error: Pipeline
-// step binds 2 topic values
-// `(a, b)` but following step
-// expects 2 topic values.
-```
-
-<td>
-
-<tr>
-<td>
-
-```js
-(a, b) |> f(#, 0)
-// 🚫 Syntax Error: Pipeline
-// step binds 2 topic values
-// `(a, b)` but following step
-// expects 1 topic value.
-```
-
-<td>
-
-<tr>
-<td>
-
-```js
-(a, b) |> (#, ##)
-// 🚫 Syntax Error: Pipeline
-// terminates with a 2-ary
-// pipeline step but pipelines
-// must terminate with a unary
-// pipeline step.
 ```
 
 <td>

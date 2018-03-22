@@ -1446,12 +1446,36 @@ Pipeline :
 <emu-table id=table-additional-feature-np-examples caption="Examples of Multiple Lexical Topics">
 <table>
 <tr>
+<td><pre><code language=javascript>a |&gt; f</code></pre></td>
+<td><pre><code language=javascript>f(a)</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>(a) |&gt; f</code></pre></td>
+<td><pre><code language=javascript>f(a)</code></pre></td>
+</tr>
+<tr>
 <td><pre><code language=javascript>(a, b) |&gt; f</code></pre></td>
 <td><pre><code language=javascript>f(a, b)</code></pre></td>
 </tr>
 <tr>
+<td><pre><code language=javascript>(...a) |&gt; f</code></pre></td>
+<td><pre><code language=javascript>f(...a)</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>...a |&gt; f</code></pre></td>
+<td><pre><code language=javascript>f(...a)</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>() |&gt; f</code></pre></td>
+<td><pre><code language=javascript>f()</code></pre></td>
+</tr>
+<tr>
 <td><pre><code language=javascript>(a, b) |&gt; # + ##</code></pre></td>
 <td><pre><code language=javascript>a + b</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>() |&gt; # + ##</code></pre></td>
+<td>Syntax Error: Pipeline step binds 0 topic values `()` but following step expects 2 topic values.</td>
 </tr>
 <tr>
 <td><pre><code language=javascript>(a, b) |&gt; f(#, 0, ##)</code></pre></td>
@@ -1478,24 +1502,36 @@ Pipeline :
 <td><pre><code language=javascript>f(b, 0, [c, d])</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a, b) |&gt; (# * b, f) |&gt; f</code></pre></td>
+<td><pre><code language=javascript>(a, b) |&gt; (# * b, ##) |&gt; f</code></pre></td>
 <td><pre><code language=javascript>g(a * b, f(b))</code></pre></td>
 </tr>
 <tr>
+<td><pre><code language=javascript>(a, b) |&gt; (# * b, #) |&gt; f</code></pre></td>
+<td>Syntax Error: Pipeline step binds 2 topic values `(a, b)` but following step expects 1 topic value.</td>
+</tr>
+<tr>
+<td><pre><code language=javascript>(a, b) |&gt; (# * b, f) |&gt; f</code></pre></td>
+<td>Syntax Error: Topic-style pipeline step `f` in `(# * b, f)` binds topic but contains no topic reference.</td>
+</tr>
+<tr>
 <td><pre><code language=javascript>(a, b) |&gt; #</code></pre></td>
-<td>Syntax Error</td>
+<td>Syntax Error: Pipeline step binds 2 topic values `(a, b)` but following step expects 1 topic value.</td>
 </tr>
 <tr>
 <td><pre><code language=javascript>a |&gt; # + ##</code></pre></td>
-<td>Syntax Error</td>
+<td>Syntax Error: Pipeline step binds 1 topic values `a` but following step expects 2 topic values.</td>
+</tr>
+<tr>
+<td><pre><code language=javascript>() |&gt; # * 5</code></pre></td>
+<td>Syntax Error: Pipeline step binds 0 topic values `()` but following step expects 1 topic value.</td>
 </tr>
 <tr>
 <td><pre><code language=javascript>(a, b) |&gt; f(#, 0)</code></pre></td>
-<td>Syntax Error</td>
+<td>Syntax Error: Pipeline step binds 2 topic values `(a, b)` but following step expects 1 topic value.</td>
 </tr>
 <tr>
 <td><pre><code language=javascript>(a, b) |&gt; (#, ##)</code></pre></td>
-<td>Syntax Error</td>
+<td>Syntax Error: Pipeline terminates with a 2-ary pipeline step but must terminate with a unary pipeline step.</td>
 </tr>
 </table>
 </emu-table>
