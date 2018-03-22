@@ -3803,8 +3803,8 @@ a + b
 ```js
 () |> # + ##
 // 🚫 Syntax Error: Pipeline
-// step binds 0 topic values
-// `()` but following step
+// head inputs 0 topic values
+// `()` into following step that
 // expects 1 topic value.
 ```
 
@@ -3920,8 +3920,8 @@ g(b * b, f(b))
 ```js
 (a, b) |> (# * b, #) |> f
 // 🚫 Syntax Error: Pipeline
-// step binds 2 topic values
-// `(a, b)` but following step
+// head inputs 2 topic values
+// `(a, b)` into following step that
 // expects 1 topic value.
 ```
 
@@ -3947,8 +3947,8 @@ g(b * b, f(b))
 ```js
 (a, b) |> #
 // 🚫 Syntax Error: Pipeline
-// step binds 2 topic values
-// `(a, b)` but following step
+// head inputs 2 topic values
+// `(a, b)` into following step that
 // expects 1 topic value.
 ```
 
@@ -3960,8 +3960,8 @@ g(b * b, f(b))
 ```js
 a |> # + ##
 // 🚫 Syntax Error: Pipeline
-// step binds 1 topic value
-// `a` but following step
+// head inputs 1 topic value
+// `a` into following step that
 // expects 2 topic values.
 ```
 
@@ -3973,8 +3973,8 @@ a |> # + ##
 ```js
 () |> # + 1
 // 🚫 Syntax Error: Pipeline
-// step binds 0 topic values
-// `()` but following step
+// head inputs 0 topic values
+// `()` into following step that
 // expects 1 topic value.
 ```
 
@@ -3986,8 +3986,8 @@ a |> # + ##
 ```js
 (a, b) |> f(#, 0)
 // 🚫 Syntax Error: Pipeline
-// step binds 2 topic values
-// `(a, b)` but following step
+// head inputs 2 topic values
+// `(a, b)` into following step that
 // expects 1 topic value.
 ```
 

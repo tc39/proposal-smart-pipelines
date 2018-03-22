@@ -1469,7 +1469,7 @@ Pipeline :
 </tr>
 <tr>
 <td><pre><code language=javascript>() |&gt; # + ##</code></pre></td>
-<td>Syntax Error: Pipeline step binds 0 topic values `()` but following step expects 2 topic values.</td>
+<td>Syntax Error: Pipeline head inputs 0 topic values `()` into a following step that expects 2 topic values.</td>
 </tr>
 <tr>
 <td><pre><code language=javascript>(a, b) |&gt; f(#, 0, ##)</code></pre></td>
@@ -1501,7 +1501,7 @@ Pipeline :
 </tr>
 <tr>
 <td><pre><code language=javascript>(a, b) |&gt; (# * b, #) |&gt; f</code></pre></td>
-<td>Syntax Error: Pipeline step binds 2 topic values `(a, b)` but following step expects 1 topic value.</td>
+<td>Syntax Error: Pipeline head inputs 2 topic values `(a, b)` into following step that expects 1 topic value.</td>
 </tr>
 <tr>
 <td><pre><code language=javascript>(a, b) |&gt; (# * b, f) |&gt; f</code></pre></td>
@@ -1509,19 +1509,19 @@ Pipeline :
 </tr>
 <tr>
 <td><pre><code language=javascript>(a, b) |&gt; #</code></pre></td>
-<td>Syntax Error: Pipeline step binds 2 topic values `(a, b)` but following step expects 1 topic value.</td>
+<td>Syntax Error: Pipeline head inputs 2 topic values `(a, b)` into following step that expects 1 topic value.</td>
 </tr>
 <tr>
 <td><pre><code language=javascript>a |&gt; # + ##</code></pre></td>
-<td>Syntax Error: Pipeline step binds 1 topic values `a` but following step expects 2 topic values.</td>
+<td>Syntax Error: Pipeline head inputs 1 topic values `a` into following step that expects 2 topic values.</td>
 </tr>
 <tr>
 <td><pre><code language=javascript>() |&gt; # * 5</code></pre></td>
-<td>Syntax Error: Pipeline step binds 0 topic values `()` but following step expects 1 topic value.</td>
+<td>Syntax Error: Pipeline head inputs 0 topic values `()` into following step that expects 1 topic value.</td>
 </tr>
 <tr>
 <td><pre><code language=javascript>(a, b) |&gt; f(#, 0)</code></pre></td>
-<td>Syntax Error: Pipeline step binds 2 topic values `(a, b)` but following step expects 1 topic value.</td>
+<td>Syntax Error: Pipeline head inputs 2 topic values `(a, b)` into following step that expects 1 topic value.</td>
 </tr>
 <tr>
 <td><pre><code language=javascript>(a, b) |&gt; (#, ##)</code></pre></td>
