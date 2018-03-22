@@ -2141,9 +2141,14 @@ PipelineStep[In, Yield, Await] :
 </emu-note>
 
 <ins class=block>
-<emu-grammar>PipelineStep : Arguments</emu-grammar>
+<emu-grammar>PipelineStep : PipelineBareFunction</emu-grammar>
 <emu-alg>
-1. Return ArgumentListMinWidth of _Arguments_.
+1. Return *1*.
+</emu-alg>
+
+<emu-grammar>PipelineStep : ConditionalExpression</emu-grammar>
+<emu-alg>
+1. Return *1*.
 </emu-alg>
 
 <emu-grammar>PipelineStep : `...` AssignmentExpression</emu-grammar>
