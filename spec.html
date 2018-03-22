@@ -152,7 +152,7 @@ If [[TopicBindingStatus]]'s value is *true*, the Environment Record binds the En
 List of any | ~empty~
 </td>
 <td>
-If the value of [[TopicBindingStatus]] is *true*, [[TopicValues]] is a list containing the one element which is the environment's topic value (that is, the value of `#` within its program scope). Otherwise, the value of [[TopicValues]] is ~empty~.
+If the value of [[TopicBindingStatus]] is *true*, [[TopicValues]] is a List containing the one element which is the environment's topic value (that is, the value of `#` within its program scope). Otherwise, the value of [[TopicValues]] is ~empty~.
 </td>
 </tr>
 </tbody>
@@ -160,7 +160,7 @@ If the value of [[TopicBindingStatus]] is *true*, [[TopicValues]] is a list cont
 </emu-table>
 
 <emu-note type=editor>
-<p>[[TopicValues]] is a list in order to be <emu-xref href=#sec-additional-feature-np-declarative-environment-records>forward compatible with Additional Feature NP</emu-xref>.</p>
+<p>[[TopicValues]] is a List in order to be <emu-xref href=#sec-additional-feature-np-declarative-environment-records>forward compatible with Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <p>Declarative Environment Records support all of the abstract methods of Environment Records listed in <emu-xref href="#table-15"></emu-xref>. In addition, declarative Environment Records support the methods listed in <emu-xref href="#table-62"></emu-xref>.</p>
@@ -183,7 +183,7 @@ Purpose
 BindTopicValues(V)
 </td>
 <td>
-Establish the immutable topic binding of this Environment Record and set the topic binding's value. _V_ is a list containing the one element which is the topic value and is a value of any ECMAScript language type. Afterward, the value returned by the Environment Record's HasTopicBinding method is *true*. This method cannot be called more than once on any single Environment Record.
+Establish the immutable topic binding of this Environment Record and set the topic binding's value. _V_ is a List containing the one element which is the topic value and is a value of any ECMAScript language type. Afterward, the value returned by the Environment Record's HasTopicBinding method is *true*. This method cannot be called more than once on any single Environment Record.
 </td>
 </tr>
 </tbody>
@@ -192,7 +192,7 @@ Establish the immutable topic binding of this Environment Record and set the top
 </ins>
 
 <emu-note type=editor>
-<p>BindTopicValues() accepts a list argument rather than a single-value argument in order to be <emu-xref href=#sec-additional-feature-np-declarative-environment-records>forward compatible with Additional Feature NP</emu-xref>.</p>
+<p>BindTopicValues() accepts a List argument rather than a single-value argument in order to be <emu-xref href=#sec-additional-feature-np-declarative-environment-records>forward compatible with Additional Feature NP</emu-xref>.</p>
 </emu-note>
 
 <p>The behaviour of the concrete <ins>and additional</ins> specification methods for declarative Environment Records is defined by the following algorithms.</p>
@@ -217,7 +217,7 @@ Establish the immutable topic binding of this Environment Record and set the top
 </emu-note>
 <p>The method BindTopicValues for declarative Environment Records is guaranteed to be called only when the Environment Records do not yet have established topic bindings.</p>
 <emu-alg>
-1. <ins>Assert: _V_ is a list.</ins>
+1. <ins>Assert: _V_ is a List.</ins>
 2. Let _envRec_ be the declarative Environment Record for which the method was invoked.
 3. Assert: _envRec_.[[TopicBindingStatus]] is *false*.
 4. Set _envRec_.[[TopicValues]] to _V_.
@@ -355,7 +355,7 @@ PrimaryExpression[Yield, Await] :
 </emu-alg>
 
 <emu-note>
-<p>The loop in step 2 will always terminate because the list of environments will always end before reaching the global environment. GetTopicEnvironment will never be called when there is no topic-binding environment in the list of environments.</p>
+<p>The loop in step 2 will always terminate because the List of environments will always end before reaching the global environment. GetTopicEnvironment will never be called when there is no topic-binding environment in the List of environments.</p>
 <p>This is because how, in general, syntax nonterminals that define top-level scopes (such as |Script| and |Module|) are syntactically forbidden to contain the topic reference `#`. Any use of the topic reference within those nonterminals (as detected by the static semantic rule Contains) would trigger early error rules associated with those nonterminals. It is only within nonterminals that hide the topic reference from Contains such as |PipelineTopicExpression| that the topic reference is syntactically permitted.</p>
 </emu-note>
 </emu-clause>
@@ -383,12 +383,12 @@ PrimaryExpression[Yield, Await] :
 <h1>Runtime Semantics: EvaluateCall(_func_, _ref_, _arguments_, _tailPosition_ )</h1>
 
 <emu-note type=editor>
-<p>This section is an augmentation of the <a href=https://tc39.github.io/ecma262/#sec-evaluatecall>original EvaluateCall clause</a> such that its _arguments_ parameter may be a list, rather than a Parse Node that will undergo ArgumentListEvaluation into a list.</p>
+<p>This section is an augmentation of the <a href=https://tc39.github.io/ecma262/#sec-evaluatecall>original EvaluateCall clause</a> such that its _arguments_ parameter may be a List, rather than a Parse Node that will undergo ArgumentListEvaluation into a List.</p>
 </emu-note>
 
-<p>The abstract operation EvaluateCall takes as arguments a value _func_, a value _ref_, a Parse Node <ins>or list</ins> _arguments_, and a Boolean argument _tailPosition_. It performs the following steps:</p>
+<p>The abstract operation EvaluateCall takes as arguments a value _func_, a value _ref_, a Parse Node <ins>or List</ins> _arguments_, and a Boolean argument _tailPosition_. It performs the following steps:</p>
 <emu-alg>
-1. <ins>Assert: _arguments_ is either a Parse Node or a list.</ins>
+1. <ins>Assert: _arguments_ is either a Parse Node or a List.</ins>
 1. If Type(_ref_) is Reference, then
   1. If IsPropertyReference(_ref_) is *true*, then
     1. Let _thisValue_ be GetThisValue(_ref_).
@@ -397,7 +397,7 @@ PrimaryExpression[Yield, Await] :
     1. Let _thisValue_ be _refEnv_.WithBaseObject().
 1. Else Type(_ref_) is not Reference,
   1. Let _thisValue_ be *undefined*.
-1. <ins>If _arguments_ is a list, let _argList_ be _arguments_.</ins>
+1. <ins>If _arguments_ is a List, let _argList_ be _arguments_.</ins>
 1. <ins>Else l</ins><del>L</del>et _argList_ be ArgumentListEvaluation of _arguments_.
 1. ReturnIfAbrupt(_argList_).
 1. If Type(_func_) is not Object, throw a *TypeError* exception.
@@ -529,11 +529,11 @@ PipelineStep : PipelineBareFunction
 <p>TopicPipelineInstantiation is performed as follows using arguments _env_ and _topicValues_.</p>
 <ul>
 <li>_env_ is the Lexical Environment in which the topic binding is to be created.</li>
-<li>_topicValues_ is a list of values: _env_'s primary topic reference will be bound to the first value.</li>
+<li>_topicValues_ is a List of values: _env_'s primary topic reference will be bound to the first value.</li>
 </ul>
 
 <emu-alg>
-1. Assert: _topicValues_ is a list.
+1. Assert: _topicValues_ is a List.
 2. Let _envRec_ be env's Environment Record.
 3. Assert: _envRec_ is a declarative Environment Record.
 4. Assert: _envRec_.HasTopicBinding() is *false*.
@@ -555,7 +555,7 @@ PipelineStep : PipelineBareFunction
 5. Let _tailCall_ be IsInTailPosition(_thisCall_).
 6. Let _callRef_ be ? EvaluateCall(_funcValue_, _ref_, _inputValues_, _tailCall_).
 7. Let _callValue_ be ? GetValue(_callRef_).
-8. Return a list containing the one element which is _callValue_.
+8. Return a List containing the one element which is _callValue_.
 </emu-alg>
 
 <emu-grammar>PipelineTopicExpression : ConditionalExpression</emu-grammar>
@@ -566,7 +566,7 @@ PipelineStep : PipelineBareFunction
 4. Set the running execution context's Lexical Environment to _pipelineStepEnv_.
 5. Let _pipelineValue_ be the result of evaluating _ConditionalExpression_.
 6. Set the running execution context's Lexical Environment to _oldEnv_.
-7. Return a list containing the one element which is _pipelineValue_.
+7. Return a List containing the one element which is _pipelineValue_.
 </emu-alg>
 
 <emu-grammar>Pipeline : PipelineStep `|&gt;` Pipeline</emu-grammar>
@@ -585,10 +585,10 @@ PipelineStep : PipelineBareFunction
 <emu-grammar>PipeExpression : ConditionalExpression `|&gt;` Pipeline</emu-grammar>
 <emu-alg>
 1. Let _inputRef_ be the result of evaluating |ConditionalExpression|.
-2. Let _stepOutputValues_ be a list containing the one element which is the result of ? GetValue(_inputRef_).
+2. Let _stepOutputValues_ be a List containing the one element which is the result of ? GetValue(_inputRef_).
 3. Let _pipelineRemainderOutputRef_ be PipelineEvaluation of |Pipeline| with argument _stepOutputValues_.
 4. Let _pipelineRemainderOutputValues_ be ? GetValue(_pipelineRemainderOutputRef_).
-5. Assert: _pipelineRemainderOutputValues_ is a list containing one element.
+5. Assert: _pipelineRemainderOutputValues_ is a List containing one element.
 6. Return _pipelineRemainderOutputValues_[0].
 </emu-alg>
 </emu-clause>
@@ -854,17 +854,17 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <h1>Runtime Semantics: EvaluateNew ( _constructExpr_, _arguments_ )</h1>
 
 <emu-note type=editor>
-<p>This section is an augmentation of the <a href=https://tc39.github.io/ecma262/#sec-evaluatenew>original EvaluateNew clause</a> such that its _arguments_ parameter may be a list, rather than a Parse Node that will undergo ArgumentListEvaluation into a list.</p>
+<p>This section is an augmentation of the <a href=https://tc39.github.io/ecma262/#sec-evaluatenew>original EvaluateNew clause</a> such that its _arguments_ parameter may be a List, rather than a Parse Node that will undergo ArgumentListEvaluation into a List.</p>
 </emu-note>
 
 <p>The abstract operation EvaluateNew with arguments _constructExpr_, and _arguments_ performs the following steps:</p>
 <emu-alg>
 1. Assert: _constructExpr_ is either a |NewExpression| or a |MemberExpression|.
-1. Assert: _arguments_ is either ~empty~, a list, or an |Arguments|.
+1. Assert: _arguments_ is either ~empty~, a List, or an |Arguments|.
 1. Let _ref_ be the result of evaluating _constructExpr_.
 1. Let _constructor_ be ? GetValue(_ref_).
 1. If _arguments_ is ~empty~, let _argList_ be a new empty List.
-1. <ins>Else if _arguments_ is a list, let _argList_ be _arguments_.</ins>
+1. <ins>Else if _arguments_ is a List, let _argList_ be _arguments_.</ins>
 1. Else,
   1. Let _argList_ be ArgumentListEvaluation of _arguments_.
   1. ReturnIfAbrupt(_argList_).
@@ -927,7 +927,7 @@ PipelineStep :
 1. Let _constructExpr_ be the |MemberExpression| that is covered by _SimpleReference_.
 2. Let _newRef_ be ? EvaluateNew(NewExpression, _inputValues_).
 3. Let _newValue_ be ? GetValue(_newRef_).
-4. Return a list containing the one element which is _newValue_.
+4. Return a List containing the one element which is _newValue_.
 </emu-alg>
 </ins>
 
@@ -1007,7 +1007,7 @@ PipelineStep :
 7. Let _callValue_ be ? GetValue(_exprRef_).
 8. Let _awaitRef_ be ? Await(_callValue_).
 9. Let _awaitValue_ be ? GetValue(_awaitRef_).
-10. Return a list containing the one element which is _awaitValue_.
+10. Return a List containing the one element which is _awaitValue_.
 </emu-alg>
 </ins>
 
@@ -1339,7 +1339,7 @@ Pipeline :
 </emu-alg>
 
 <emu-note>
-<p>This syntax-directed operation is defined for <emu-xref href=#sec-destructuring-binding-patterns-runtime-semantics-iteratorbindinginitialization>array destructuring</emu-xref>, <emu-xref href=#sec-function-definitions-runtime-semantics-iteratorbindinginitialization>function parameters</emu-xref>, <emu-xref href=#sec-arrow-function-definitions-runtime-semantics-iteratorbindinginitialization>arrow-function parameters</emu-xref>, and <emu-xref href=#sec-arrow-function-definitions-runtime-semantics-iteratorbindinginitialization>async-arrow-function parameters</emu-xref>, and it is used by <emu-xref href=#sec-functiondeclarationinstantiation>FunctionDeclarationInstantiation</emu-xref> to bind function parameters to function arguments during a function call. _iteratorRecord_ is an <emu-xref href=#sec-iterator-interface>Iterator</emu-xref> object of the argument list created with <emu xref href=#sec-createlistiteratorRecord>CreateListIteratorRecord</emu-xref>. _environment_ is the Environment Record within which the parameter bindings are to be established.</p>
+<p>This syntax-directed operation is defined for <emu-xref href=#sec-destructuring-binding-patterns-runtime-semantics-iteratorbindinginitialization>array destructuring</emu-xref>, <emu-xref href=#sec-function-definitions-runtime-semantics-iteratorbindinginitialization>function parameters</emu-xref>, <emu-xref href=#sec-arrow-function-definitions-runtime-semantics-iteratorbindinginitialization>arrow-function parameters</emu-xref>, and <emu-xref href=#sec-arrow-function-definitions-runtime-semantics-iteratorbindinginitialization>async-arrow-function parameters</emu-xref>, and it is used by <emu-xref href=#sec-functiondeclarationinstantiation>FunctionDeclarationInstantiation</emu-xref> to bind function parameters to function arguments during a function call. _iteratorRecord_ is an <emu-xref href=#sec-iterator-interface>Iterator</emu-xref> object of the argument List created with <emu xref href=#sec-createlistiteratorRecord>CreateListIteratorRecord</emu-xref>. _environment_ is the Environment Record within which the parameter bindings are to be established.</p>
 <p>However, pipeline functions do not use IteratorBindingInitialization to create parameter bindings; instead, they pass their arguments directly into PipelineEvaluation, as specified in their algorithm for <emu-xref href=#sec-additional-feature-pf-pipeline-function-definitions-runtime-semantics-evaluatebody>EvaluateBody</emu-xref>.</p>
 </emu-note>
 </emu-annex>
@@ -1437,7 +1437,7 @@ Pipeline :
 <emu-annex id=sec-additional-feature-np>
 <h1>Additional Feature NP: N-ary Pipelines</h1>
 <p><strong>Not at Stage 0.</strong></p>
-<p>This annex specifies additional ECMAScript language syntax and semantics for <strong>n-ary smart pipelines</strong> and <strong>multiple lexical topics</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing n-ary pipeline forms `inputList |> …` and `… |> stepList |> …`, an additional secondary topic reference `##`, a tertiary topic reference `###`, a |RestTopicReference| `...`, and an argument-list syntax to bind the new references [TODO: xref]. When combined with the <emu-xref href=#sec-additional-feature-pf>additional feature PF</emu-xref>, the resulting additional feature PF+NP enables <strong>partial application</strong> of functions/expressions into n-ary functions. [TODO: xref with PF+NP]</p>
+<p>This annex specifies additional ECMAScript language syntax and semantics for <strong>n-ary smart pipelines</strong> and <strong>multiple lexical topics</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing n-ary pipeline forms `inputList |> …` and `… |> stepList |> …`, an additional secondary topic reference `##`, a tertiary topic reference `###`, a |RestTopicReference| `...`, and an argument-List syntax to bind the new references [TODO: xref]. When combined with the <emu-xref href=#sec-additional-feature-pf>additional feature PF</emu-xref>, the resulting additional feature PF+NP enables <strong>partial application</strong> of functions/expressions into n-ary functions. [TODO: xref with PF+NP]</p>
 
 <p><strong>This annex is unfinished.</strong></p>
 
@@ -1514,7 +1514,7 @@ Pipeline :
 <p>This section further revises the <emu-xref href=#sec-lexical-environments>corresponding new clause in the core proposal</emu-xref>.</p>
 </emu-note>
 
-<p>The <dfn>topic binding</dfn> of a Lexical Environment immutably binds the <del>topic reference `#` to one value of any ECMAScript language type (called the <dfn>topic value</dfn> or simply the <dfn>topic</dfn>), within that Lexical Environment, at the time of the Lexical Environment's instantiation</del><ins>topic references `#`, `##`, `###`, and `...`, each to a respective <dfn>topic value</dfn> of any ECMAScript language type. The token `#` is termed the <dfn>primary topic reference</dfn>, `##` is termed the <dfn>secondary topic reference</dfn>, and `###` is termed the <dfn>tertiary topic reference</dfn>; together, they form the |TopicExpression|s. In addition, `...` alone forms the |RestTopicReference|, which represents a list of topic values topic of any ECMAScript language type. A single topic binding will bind all of a Lexical Environment's topic references at once at the time of the Lexical Environment's instantiation, after which the binding cannot change</ins>. The topic<ins>s</ins> of a Lexical Environment conceptually serve<del>s</del> as the value<ins>s</ins> that the lexical context is "about".</p>
+<p>The <dfn>topic binding</dfn> of a Lexical Environment immutably binds the <del>topic reference `#` to one value of any ECMAScript language type (called the <dfn>topic value</dfn> or simply the <dfn>topic</dfn>), within that Lexical Environment, at the time of the Lexical Environment's instantiation</del><ins>topic references `#`, `##`, `###`, and `...`, each to a respective <dfn>topic value</dfn> of any ECMAScript language type. The token `#` is termed the <dfn>primary topic reference</dfn>, `##` is termed the <dfn>secondary topic reference</dfn>, and `###` is termed the <dfn>tertiary topic reference</dfn>; together, they form the |TopicExpression|s. In addition, `...` alone forms the |RestTopicReference|, which represents a List of topic values topic of any ECMAScript language type. A single topic binding will bind all of a Lexical Environment's topic references at once at the time of the Lexical Environment's instantiation, after which the binding cannot change</ins>. The topic<ins>s</ins> of a Lexical Environment conceptually serve<del>s</del> as the value<ins>s</ins> that the lexical context is "about".</p>
 
 <p>A <dfn>topic-binding environment</dfn> is a Lexical Environment that establishes a topic binding. The <dfn>topic environment</dfn> of the running execution context is its Lexical Environment's nearest outer environment that is a topic-binding environment, as defined by the abstract operator GetTopicEnvironment.</p>
 
@@ -1612,7 +1612,7 @@ If [[TopicBindingStatus]]'s value is *true*, the Environment Record establishes 
 Any | ~empty~
 </td>
 <td>
-If the value of [[TopicBindingStatus]] is *true*, [[TopicValues]] is a list containing is the values of the Environment Record's topic binding (that is, the values of `#`, `##`, and `###` within its program scope). Otherwise, the value of [[TopicValues]] is ~empty~.
+If the value of [[TopicBindingStatus]] is *true*, [[TopicValues]] is a List containing is the values of the Environment Record's topic binding (that is, the values of `#`, `##`, and `###` within its program scope). Otherwise, the value of [[TopicValues]] is ~empty~.
 </td>
 </tr>
 <tr>
@@ -1650,7 +1650,7 @@ Purpose
 BindTopicValues(V<ins>, VRestStartIndex</ins>)
 </td>
 <td>
-Establish the immutable topic binding of this Environment Record and set the topic binding<del>s'</del><ins>'s</ins> value<ins>s</ins>. <del>_V_ is the value for the binding and is a value of any ECMAScript language type.</del><ins>_V_ is a list with elements of any ECMAScript language type. _VRestStartIndex_ is either ~empty~ or an Array whose elements are of any ECMAScript language type.</ins> Afterward, the value returned by the Environment Record's HasTopicBinding method is *true*. This method cannot be called more than once on any single Environment Record.
+Establish the immutable topic binding of this Environment Record and set the topic binding<del>s'</del><ins>'s</ins> value<ins>s</ins>. <del>_V_ is the value for the binding and is a value of any ECMAScript language type.</del><ins>_V_ is a List with elements of any ECMAScript language type. _VRestStartIndex_ is either ~empty~ or an Array whose elements are of any ECMAScript language type.</ins> Afterward, the value returned by the Environment Record's HasTopicBinding method is *true*. This method cannot be called more than once on any single Environment Record.
 </td>
 </tr>
 <tr>
@@ -1674,7 +1674,7 @@ Establish the immutable topic binding of this Environment Record and set the top
 </emu-note>
 <p>The method BindTopicValues for declarative Environment Records is guaranteed to be called only when the Environment Records do not yet have established topic bindings.</p>
 <emu-alg>
-1. <ins>Assert: _V_ is a list.</ins>
+1. <ins>Assert: _V_ is a List.</ins>
 2. <ins>Assert: _VRest_ is either ~empty~ or an Array.</ins>
 3. Let _envRec_ be the declarative Environment Record for which the method was invoked.
 4. Assert: _envRec_.[[TopicBindingStatus]] is *false*.
@@ -1805,7 +1805,7 @@ RestTopicReference :
 4. Assert: _envRec_.HasTopicBinding() is true.
 5. Assert: _topicIndex_ is less than _envRec_.[[RestTopicStartIndex]].
 6. Let _topicValues_ be _envRec_.[[TopicValues]].
-7. Assert: _topicValues_ is a list.
+7. Assert: _topicValues_ is a List.
 8. Assert: _topicIndex_ is less than the number of elements of _topicValues_.
 9. Return _envRec_.[[TopicValues]].
 </emu-alg>
@@ -1827,7 +1827,7 @@ RestTopicReference :
 4. Let _restTopicStartIndex_ be _envRec_.[[RestTopicStartIndex]].
 5. Assert: _restTopicStartIndex_ is an integer at least *0*.
 6. Let _topicValues_ be _envRec_.[[TopicValues]].
-7. Assert: _topicValues_ is a list.
+7. Assert: _topicValues_ is a List.
 8. Assert: _restTopicStartIndex_ is no more than the number of elements of _topicValues_.
 9. Let _iteratorRecord_ be CreateListIteratorRecord(_topicValues_).
 10. Set _iteratorRecord_.[[Iterator]].[[ListIteratorNextIndex]] to _restTopicStartIndex_.
@@ -2129,12 +2129,12 @@ PipelineStep[In, Yield, Await] :
 
 <p>TopicExpressionInstantiation is performed as follows using arguments _code_, _env_, <del>and _topicValues_</del><ins>_topicValues_, and _restTopicStartIndex_</ins>.</p>
 <ul>
-<li>_topicValues_ is a list of values<del>: _env_'s primary topic reference will be bound to the first value</del><ins> with which _env_'s topic bindings will be established</ins>.</li>
+<li>_topicValues_ is a List of values<del>: _env_'s primary topic reference will be bound to the first value</del><ins> with which _env_'s topic bindings will be established</ins>.</li>
 <li><ins>_restStartIndex_ is either ~empty~ or an integer index not exceeding the number of elements of _topicValues_. If it is ~empty~, |RestTopicReference| `...` will not be bound to anything. Otherwise, |RestTopicReference| will be bound to a new Array whose elements are those of _topicValues_ starting at _restStartIndex_'s position.</ins></li>
 </ul>
 
 <emu-alg>
-1. Assert: _topicValues_ is a list.
+1. Assert: _topicValues_ is a List.
 2. <ins>Assert: _restTopicStartIndex_ is an integer, at least zero, and less than the number of elements of _topicValues_.</ins>
 3. Let _envRec_ be env's Environment Record.
 4. Assert: _envRec_ is a declarative Environment Record.
