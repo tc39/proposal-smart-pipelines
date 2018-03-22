@@ -2167,6 +2167,22 @@ PipelineTopicExpression[In, Yield, Await] :
 
 </emu-annex>
 
+<emu-annex id=sec-additional-feature-np-pipe-operator-runtime-semantics-argumentlistevaluation>
+<h1><ins>Runtime Semantics: ArgumentListEvaluation</ins></h1>
+<emu-see-also-para op=ArgumentListEvaluation></emu-see-also-para>
+<emu-note type=editor>
+<p>This section is a wholly new sub-clause in addition to the sub-clauses of the core proposal that extends the syntax-directed operation ArgumentListEvaluation defined in Ecma262.</p>
+</emu-note>
+
+<emu-grammar>PipelineHead : ConditionalExpression</emu-grammar>
+<emu-alg>
+1. Let _inputRef_ be the result of evaluating _ConditionalExpression_.
+2. Let _inputValue_ be ? GetValue(inputRef).
+2. Return a List containing the one element which is _inputValue_.
+</emu-alg>
+
+</emu-annex>
+
 <emu-annex id=sec-additional-feature-np-pipe-operator-runtime-semantics-pipelineevaluation aoid=PipelineEvaluation>
 <h1>Runtime Semantics: PipelineEvaluation</h1>
 <p>With parameter _inputValues_.</p>
