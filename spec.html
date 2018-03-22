@@ -1931,6 +1931,11 @@ SpreadElement[Yield, Await] :
 <h1>Left-Hand-Side Expressions</h1>
 <h2>Syntax</h2>
 <emu-grammar type="definition">
+Arguments[Yield, Await] :
+  `(` `)`
+  `(` ArgumentList[?Yield, ?Await] `)`
+  `(` ArgumentList[?Yield, ?Await] `,` `)`
+
 ArgumentList[Yield, Await] :
   AssignmentExpression[+In, ?Yield, ?Await]
   `...` AssignmentExpression[+In, ?Yield, ?Await]
