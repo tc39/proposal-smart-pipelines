@@ -1939,7 +1939,9 @@ Arguments[Yield, Await] :
 ArgumentList[Yield, Await] :
   AssignmentExpression[+In, ?Yield, ?Await]
   `...` AssignmentExpression[+In, ?Yield, ?Await]
+  <ins class=block>
   RestTopicReference
+  </ins>
   ArgumentList[?Yield, ?Await] `,` AssignmentExpression[+In, ?Yield, ?Await]
   ArgumentList[?Yield, ?Await] `,` `...` AssignmentExpression[+In, ?Yield, ?Await]
   ArgumentList[?Yield, ?Await] `,` RestTopicReference
