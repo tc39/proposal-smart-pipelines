@@ -1953,9 +1953,9 @@ ArgumentList[Yield, Await] :
 <emu-annex id=sec-additional-feature-np-argument-lists>
 <h1>Argument Lists</h1>
 
-<emu-annex id=sec-additional-feature-np-argument-lists-runtime-semantics-argumentlistmaxwidth>
-<h1><ins>Static Semantics: ArgumentListMaxWidth</ins></h1>
-<emu-see-also-para op="ArgumentListMaxWidth"></emu-see-also-para>
+<emu-annex id=sec-additional-feature-np-argument-lists-runtime-semantics-argumentlistminwidth>
+<h1><ins>Static Semantics: ArgumentListMinWidth</ins></h1>
+<emu-see-also-para op="ArgumentListMinWidth"></emu-see-also-para>
 
 <emu-note type=editor>
 <p>This section is a wholly new sub-clause of the <a href=https://tc39.github.io/ecma262/#sec-argument-lists>original Argument Lists clause</a>.</p>
@@ -1973,18 +1973,19 @@ ArgumentList[Yield, Await] :
 
 <emu-grammar>ArgumentList : `...` AssignmentExpression</emu-grammar>
 <emu-alg>
-1. Return the numeric value *Infinity*.
+1. Return the numeric value *0*.
 </emu-alg>
 
 <emu-grammar>ArgumentList : ArgumentList `,` ArgumentExpression</emu-grammar>
 <emu-alg>
-1. Let _preceding_ be the ArgumentListMaxWidth of _ArgumentList_.
+1. Let _preceding_ be the ArgumentListMinWidth of _ArgumentList_.
 2. Return _preceding_ + *1*.
 </emu-alg>
 
 <emu-grammar>ArgumentList : ArgumentList `,` `...` AssignmentExpression</emu-grammar>
 <emu-alg>
-1. Return the numeric value *Infinity*.
+1. Let _preceding_ be the ArgumentListMinWidth of _ArgumentList_.
+2. Return _preceding_ + *1*.
 </emu-alg>
 
 </emu-annex>
@@ -2142,17 +2143,17 @@ PipelineStep[In, Yield, Await] :
 <ins class=block>
 <emu-grammar>PipelineStep : Arguments</emu-grammar>
 <emu-alg>
-1. Return ArgumentListMaxWidth of _Arguments_.
+1. Return ArgumentListMinWidth of _Arguments_.
 </emu-alg>
 
 <emu-grammar>PipelineStep : `...` AssignmentExpression</emu-grammar>
 <emu-alg>
-1. Return *1*.
+1. Return *0*.
 </emu-alg>
 
 <emu-grammar>PipelineStep : `...`</emu-grammar>
 <emu-alg>
-1. Return *1*.
+1. Return *0*.
 </emu-alg>
 </ins>
 
