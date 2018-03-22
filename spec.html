@@ -924,8 +924,10 @@ PipelineStep :
 <ins class=block>
 <emu-grammar>PipelineBareConstructor : `new` SimpleReference</emu-grammar>
 <emu-alg>
-1. Let _constructExpr_ be the |NewExpression| that is covered by _SimpleReference_.
-2. Return ? EvaluateNew(NewExpression, _inputValues_).
+1. Let _constructExpr_ be the |MemberExpression| that is covered by _SimpleReference_.
+2. Let _newRef_ be ? EvaluateNew(NewExpression, _inputValues_).
+3. Let _newValue_ be ? GetValue(_newRef_).
+4. Return a list containing the one element which is _newValue_.
 </emu-alg>
 </ins>
 
