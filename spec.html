@@ -1035,52 +1035,6 @@ PipelineTopicBlock[In, Yield, Await] :
 
 </emu-annex>
 
-<emu-annex id=sec-additional-feature-pp>
-<h1>Additional Feature PP: Prefix Pipelines</h1>
-<p><strong>Not at Stage 0.</strong></p>
-<p>This annex specifies additional ECMAScript language syntax and semantics for <strong>bare constructor calls</strong>. It amends the <emu-xref href=#introduction>core proposal</emu-xref> by introducing an additional <strong>bare-style pipeline form</strong>, in which a |SimpleReference| is prepended with an `new`.</p>
-
-<p>See the <a href=https://github.com/js-choi/proposal-smart-pipelines/blob/master/readme.md#additional-feature-pp>explainer document, § Motivation, Additional Feature BC</a> for information on this feature's motivation.</p>
-
-<emu-annex id=sec-additional-feature-pp-ecmascript-language-expressions>
-<h1>ECMAScript Language: Expressions</h1>
-
-<emu-annex id=sec-additional-feature-pp-pipe-operator>
-<h1>Pipe Operator</h1>
-<emu-note type=editor>
-<p>This section revises the <emu-xref href=#sec-pipe-operator>new clause in the core proposal</emu-xref>. It is mutually compatible with <emu-xref href=#sec-additional-feature-np-pipe-operator>further modifications by Additional Feature NP</emu-xref>.</p>
-</emu-note>
-
-<h2>Syntax</h2>
-<emu-grammar type=definition>
-PipeExpression[In, Yield, Await] :
-  ConditionalExpression[?In, ?Yield, ?Await]
-  ConditionalExpression[?In, ?Yield, ?Await] `|>` Pipeline[?In, ?Yield, ?Await]
-  <ins class=block>`|>` Pipeline[?In, ?Yield, ?Await]</ins>
-</emu-grammar>
-
-<emu-annex id=sec-additional-feature-pp-pipe-operator-runtime-semantics-evaluation>
-<h1>Runtime Semantics: Evaluation</h1>
-
-<ins class=block>
-<emu-grammar>PipeExpression : `|&gt;` Pipeline</emu-grammar>
-<emu-alg>
-1. Let _inputValues_ be ResolveTopicBinding().
-2. Assert: _inputValues_ is a list.
-3. Let _outputRef_ be PipelineEvaluation of |Pipeline| with argument _inputValues_.
-4. Return ? GetValue(_outputRef_).
-</emu-alg>
-</ins>
-</emu-annex>
-
-</emu-annex>
-
-</emu-annex>
-
-</emu-annex>
-
-</emu-annex>
-
 <emu-annex id=sec-additional-feature-pf>
 <h1>Additional Feature PF: Pipeline Functions</h1>
 <p><strong>Not at Stage 0.</strong></p>

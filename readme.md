@@ -24,9 +24,6 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [WHATWG Fetch Standard (Core Proposal + Additional Feature BP)](#whatwg-fetch-standard-core-proposal--additional-feature-bp)
     - [jQuery (Core Proposal + Additional Feature BP)](#jquery-core-proposal--additional-feature-bp)
     - [Lodash (Core Proposal + Additional Feature BP)](#lodash-core-proposal--additional-feature-bp)
-  - [Additional Feature PP](#additional-feature-pp)
-    - [jQuery (Core Proposal + Additional Feature BP+PP)](#jquery-core-proposal--additional-feature-bppp)
-    - [Underscore.js (Core Proposal + Additional Feature BP+PP)](#underscorejs-core-proposal--additional-feature-bppp)
   - [Additional Feature TS](#additional-feature-ts)
   - [Additional Feature PF](#additional-feature-pf)
     - [Ramda (Core Proposal + Additional Feature BP+PF)](#ramda-core-proposal--additional-feature-bppf)
@@ -86,7 +83,6 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
   - [Term rewriting](#term-rewriting)
     - [Core Proposal](#core-proposal-1)
     - [Additional Feature BP](#additional-feature-bp-1)
-    - [Additional Feature PP](#additional-feature-pp-1)
     - [Additional Feature NP](#additional-feature-np-1)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -106,7 +102,6 @@ independent-but-compatible **Additional Features**:
 |[Additional Feature BC][]| None    | Bare constructor calls `… \|> new …`                                   | Tacit application of **constructors**                                                                           |
 |[Additional Feature BA][]| None    | Bare awaited calls `… \|> await …`                                     | Tacit application of **async functions**                                                                        |
 |[Additional Feature BP][]| None    | Block pipeline steps `… \|> {…}`                                       | Application of **statement blocks**                                                                             |
-|[Additional Feature PP][]| None    | Prefix pipelines `\|> …`                                               | Tacit application **within blocks**                                                                             |
 |[Additional Feature PF][]| None    | Pipeline functions `+>  `                                              | **Partial** function/expression **application**<br>Function/expression **composition**<br>**Method extraction** |
 |[Additional Feature TS][]| None    | Pipeline `try` statements                                              | Tacit application to **caught errors**                                                                          |
 |[Additional Feature NP][]| None    | N-ary pipelines `(…, …) \|> …`<br>Lexical topics `##`, `###`, and `...`| **N-ary** function/expression **application**                                                                   |
@@ -1636,7 +1631,7 @@ Smart pipelines make parallelism between all three clauses becomes clearer:\
 this redundant form in order to emphasis its parallelism with the other branch.)
 
 [This particular example becomes even clearer][Underscore.js + CP + BP + PP]
-when paired with [Additional Feature BP][] and [Additional Feature PP][].
+when paired with [Additional Feature BP][].
 
 <td>
 
@@ -1955,8 +1950,7 @@ x = input
 |> g;
 ```
 `try` statements would also be useful to embed in pipelines with block steps.
-This example becomes even pithier with [Additional Feature PP][] and [Additional
-Feature TS][].
+This example becomes even pithier with [Additional Feature TS][].
 
 <td>
 
@@ -2115,8 +2109,7 @@ fetch('https://pk.example/berlin-calling',
 
 ### jQuery (Core Proposal + Additional Feature BP)
 Revisiting the [examples above from jQuery][jQuery + CP] with [Additional
-Feature BP][] and [Additional Feature PP][] shows how terseness could be further
-improved.
+Feature BP][] shows how terseness could be further improved.
 
 <table>
 <thead>
@@ -2476,429 +2469,6 @@ function castPath (value, object) {
 
 </table>
 
-## Additional Feature PP
-The next additional feature – **Prefix Pipelines** – adds a “headless” tacit
-prefix form of the pipe operator. The tacit, default head is the topic
-reference `#` itself, which must be resolvable within the outer lexical
-environment.
-
-This feature is especially useful in ternary-conditional `?` `:`
-expressions and (with [Additional Feature BP][]) `if` `else` statements, `try`
-statements, and `switch` statements.
-
-(If [Additional Feature PF][] or [Additional Feature NP][] are active, then a
-pipeline might not have only one input value. In those cases, a prefix
-pipeline’s tacit, default head is whatever topic references their pipeline
-steps use. See those other two features for more information.)
-
-[Additional Feature PP is **formally specified in in the draft
-specification**][formal PP].
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-input
-|> (# |> predicate)
-  ? (# |> f |> # ** 2;)
-  : (# |> g |> # ** 3)
-|> console.log;
-```
-In this version, which uses Core Proposal syntax only, several pipelines start
-with the phrase `# |>`.
-
-<td>
-
-```js
-{
-  let temp;
-  if (predicate(input))
-    temp = f(input) ** 2;
-  else
-    temp = g(input) ** 3;
-  console.log(temp);
-}
-```
-Note that the topic reference in the repeated `# |>` here all refer to the same
-topic value – `input` – into `predicate`, `f`, and `g`.
-
-<tr>
-<td>
-
-```js
-input
-|> (|> predicate)
-  ? (|> f |> # ** 2;)
-  : (|> g |> # ** 3)
-|> console.log;
-```
-In this version, which also uses Additional Feature PP, those pipelines omit the
-phrase `# |>`, using a tacit prefix pipeline `|>`, which is implied to use `#`
-as the value of their topics.
-
-<td>
-
-```js
-{
-  let temp;
-  if (predicate(input))
-    temp = f(input) ** 2;
-  else
-    temp = g(input) ** 3;
-  console.log(temp);
-}
-```
-The prefix pipeline `|>` still piped in the same tacit topic from the same
-lexical environment – `x` – into `predicate`, `f`, and `g`. The result is still
-the same as before.
-
-<tr>
-<td>
-
-```js
-x |> {
-  if (# |> predicate)
-    # |> f |> # ** 2;
-  else
-    # |> g |> # ** 3;
-}
-```
-In this version, which also uses [Additional Feature BP][] but not Additional
-Feature PP, several pipelines also start with the phrase `# |>`.
-
-<td>
-
-```js
-if (predicate(x))
-  f(x) ** 2;
-else
-  g(x) ** 3;
-```
-
-<tr>
-<td>
-
-```js
-x |> {
-  if (|> predicate)
-  |> f |> # ** 2;
-  else
-  |> g |> # ** 3;
-}
-```
-In this version, which also uses Additional Feature PP, those pipelines omit the
-phrase `# |>`, using a tacit prefix pipeline `|>`, which is implied to use `#`
-as the value of their topics.
-
-<td>
-
-```js
-if (predicate(x))
-  f(x) ** 2;
-else
-  g(x) ** 3;
-```
-The prefix pipeline `|>` still piped in the same tacit topic from the same
-lexical environment – `x` – into `predicate`, `f`, and `g`. The result is still
-the same as before.
-
-<tr>
-<td>
-
-```js
-value
-|> f
-|> {
-  try {
-  |> JSON.parse;
-    catch (error) {
-      { message: error.message };
-    }
-  }
-}
-|> g;
-```
-This example becomes even pithier with [Additional Feature TS][].
-
-<td>
-
-```js
-const _1 = f(value);
-let _2;
-try {
-  _2 = JSON.parse(#);
-  catch (error) {
-    _2 = { message: error.message };
-  }
-}
-g(_2);
-```
-
-<tr>
-<td>
-
-```js
-function () {
-|> f |> g;
-}
-// 🚫 Syntax Error:
-// Lexical context `function () { |> f |> g }`
-// contains a prefix pipeline `|> f`
-// but has no topic binding.
-```
-If a prefix pipeline is used within a context in which the topic is not
-resolvable, then this is an [early error][]. This is just like how it is an
-error to use explicit topic references within a context without a topic:
-
-```js
-function () {
-  # |> f |> g;
-}
-// 🚫 Syntax Error:
-// Lexical context `function () { # |> f |> g }`
-// contains a topic reference
-// but has no topic binding.
-```
-
-<td>
-
-</table>
-
-### jQuery (Core Proposal + Additional Feature BP+PP)
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-return context |> {
-  // Handle HTML strings
-  if (…)
-    …
-  // Handle $(expr, $(...))
-  else if (!# || #.jquery)
-    # || root;
-  // Handle $(expr, context)
-  else
-    # |> this.constructor;
-}
-|> #.find(selector);
-```
-This pipeline version uses [Core Proposal][] syntax plus [Additional Feature BP][].
-With [Additional Feature PP][], the `#` in `# |> this.constructor` can be elided.
-
-<td>
-
-```js
-// Handle HTML strings
-if (…) {
-  …
-// Handle $(expr, $(...))
-} else if (!context || context.jquery) {
-  return (context || root).find(selector);
-// Handle $(expr, context)
-} else {
-  return this.constructor(context)
-    .find(selector);
-}
-```
-From [jquery/src/core/init.js][].
-
-<tr>
-<td>
-
-```js
-return context |> {
-  // Handle HTML strings
-  if (…)
-    …
-  // Handle $(expr, $(...))
-  else if (!# || #.jquery)
-    # || root;
-  // Handle $(expr, context)
-  else
-  |> this.constructor;
-}
-|> #.find(selector);
-```
-This pipeline version uses [Additional Feature BP][] and [Additional
-Feature PP][]. The `#` in `# |> this.constructor` has been elided, but it is
-still tacitly there.
-
-<td>
-
-```js
-// Handle HTML strings
-if (…) {
-  …
-// Handle $(expr, $(...))
-} else if (!context || context.jquery) {
-  return (context || root).find(selector);
-// Handle $(expr, context)
-} else {
-  return this.constructor(context)
-    .find(selector);
-}
-```
-From [jquery/src/core/init.js][].
-
-<tr>
-<td>
-
-```js
-return selector |> {
-  if (typeof # === 'string')
-    …
-  else if (# |> isFunction)
-    root.ready !== undefined
-      ? root.ready(#)
-      : #(jQuery);
-  else
-    jQuery.makeArray(#, this);
-};
-```
-This pipeline version uses [Core Proposal][] syntax plus [Additional Feature BP][].
-With [Additional Feature PP][], the `#` in `# |> isFunction` can be elided.
-
-<td>
-
-```js
-if (typeof selector === 'string') {
-  …
-} else if (isFunction(selector)) {
-  return root.ready !== undefined
-    ? root.ready(selector)
-    : selector(jQuery);
-}
-return jQuery.makeArray(selector, this);
-```
-From [jquery/src/core/access.js][].
-
-<tr>
-<td>
-
-```js
-return selector |> {
-  if (typeof # === 'string')
-    …
-  else if (|> isFunction)
-    root.ready !== undefined
-      ? root.ready(#)
-      : #(jQuery);
-  else
-    jQuery.makeArray(#, this);
-};
-```
-This pipeline version uses [Additional Feature BP][] and [Additional
-Feature PP][]. The `#` in `# |> isFunction` has been elided, but it is still
-tacitly there.
-
-<td>
-
-```js
-if (typeof selector === 'string') {
-  …
-} else if (isFunction(selector)) {
-  return root.ready !== undefined
-    ? root.ready(selector)
-    : selector(jQuery);
-}
-return jQuery.makeArray(selector, this);
-```
-From [jquery/src/core/access.js][].
-
-</table>
-
-### Underscore.js (Core Proposal + Additional Feature BP+PP)
-One of the [examples above from Underscore.js][Underscore.js + CP]
-with [Additional Feature PP][] improves the visual parallelism of its code.
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-function (obj) {
-  return obj
-  |> # == null
-    ? 0
-    : # |> isArrayLike
-    ? # |> #.length
-    : # |> _.keys |> #.length;
-  };
-}
-```
-Smart pipelines make parallelism between all three clauses becomes clearer. This
-pipeline version uses [Core Proposal][] syntax only. Note that several
-expressions start with `# |>`.
-
-<td>
-
-```js
-function (obj) {
-  if (obj == null) return 0;
-  return isArrayLike(obj)
-    ? obj.length
-    : _.keys(obj).length;
-}
-```
-
-<tr>
-<td>
-
-```js
-function (obj) {
-  return obj
-  |>  # == null
-    ? 0
-    : |> isArrayLike
-    ? |> #.length
-    : |> _.keys |> #.length;
-  };
-}
-```
-By removing `# |>` clutter, [Additional Feature PP][] makes this parallelism even
-clearer for the human reader:\
-`0` if it is nullish,\
-`|> #.length` if it is array-like, and\
-`|> something |> #.length` otherwise.\
-(Technically, `|> #.length` could simply be `#.length`, but it is written in
-this redundant form in order to emphasis its parallelism with the other branch.)
-
-<td>
-
-```js
-function (obj) {
-  if (obj == null) return 0;
-  return isArrayLike(obj)
-    ? obj.length
-    : _.keys(obj).length;
-}
-```
-The behavior of the code remains the same. All tacit prefix pipelines `|>` here
-use the outer environment’s topic: `obj`.
-
-</table>
-
 ## Additional Feature TS
 With the [Core Proposal][] only, all `try` statements’ `catch` clauses would
 prohibit the use of the topic reference within their steps, except where the
@@ -3039,18 +2609,14 @@ g (_1, 1);
 <td>
 
 This pipeline `try` statement’s `catch` clause is using the topic-block style
-from [Additional Feature BP][], as well as [Additional Feature PP][] to
-abbreviate both `# |> 1 / #` and `# |> #.message`.
+from [Additional Feature BP][].
 ```js
 value
 |> f
 |> {
-  try {
-    |> 1 / #;
-  }
+  try |> 1 / #;
   catch |> {
-    |> #.message
-    |> capitalize;
+    #.message |> capitalize;
   }
 }
 |> g;
@@ -3280,26 +2846,6 @@ array.map((...$) => h(g(f(...$))) * 2);
 <tr>
 <td>
 
-When coupled with [Additional Feature PP][], the phrase `+> |>` (that is, the
-prefix pipeline-function operator `+>` immediately followed by the prefix
-pipe operator `|>`) cancels out into simply the prefix pipeline-function
-operator `+>`.
-```js
-array.map(+> f |> g |> h |> # * 2);
-array.map(+> |> f |> g |> h |> # * 2);
-```
-Both of these expressions here are equivalent, both for bare style and topic style,
-and with or without [Additional Feature NP][].
-
-<td>
-
-```js
-array.map((...$) => h(g(f(...$))) * 2);
-```
-
-<tr>
-<td>
-
 ```js
 +> x + 2;
 // 🚫 Syntax Error:
@@ -3406,10 +2952,9 @@ const toSlug =
   |> #.join('-')
   |> encodeURIComponent;
 ```
-This example also uses [Additional Feature PP][] for its second line:
 ```js
-const toSlug = +>
-|> #.split(' ')
+const toSlug =
++> #.split(' ')
 |> #.map(+> #.toLowerCase())
 |> #.join('-')
 |> encodeURIComponent;
@@ -4582,270 +4127,6 @@ These two lines of code are also equivalent.
 
 ```js
 (...$rest) => f([...$].length) + 1;
-```
-
-<tr>
-<td colspan=2>
-
-When coupled with Additional Feature NP, the prefix pipe operator `|>` of
-[Additional Feature PP][], would be equivalent to a pipeline whose head is
-simply the argument list of all the topic references that its first step uses.
-The code statements in each of the table rows below are mutually equivalent.
-
-<tr>
-<td>
-
-```js
-// Unary topic style.
-input
-|> # && ([#] |> f |> #+1)
-|> console.log;
-input
-|> # && (|> [#] |> f |> #+1)
-|> console.log;
-input
-|> # && ((#) |> [#] |> f |> #+1)
-|> console.log;
-```
-
-<td>
-
-```js
-// Unary topic style.
-{
-  const $0 = input;
-  let $1;
-  if ($0) {
-    const $2 = [$0];
-    const $3 = f($2);
-    const $4 = $3 + 1;
-    $1 = $4;
-  }
-  console.log($1);
-}
-```
-
-<tr>
-<td>
-
-```js
-// Binary topic style.
-inputs
-|> # && ([#,##] |> f |> #+1)
-|> console.log;
-inputs
-|> # && (|> [#,##] |> f |> #+1)
-|> console.log;
-inputs
-|> # && ((#,##)|> [#,##] |> f |> #+1)
-|> console.log;
-```
-
-<td>
-
-```js
-// Binary topic style.
-{
-  const [$0, $$0] = inputs;
-  let $1;
-  if ($0) {
-    const $2 = [$0, $$0];
-    const $3 = f($2);
-    const $4 = $3 + 1;
-    $1 = $4;
-  }
-  console.log($1);
-}
-```
-
-<tr>
-<td>
-
-```js
-// Variadic topic style (1 positional topic).
-inputs
-|> # && ([#,...] |> f |> #+1)
-|> console.log;
-inputs
-|> # && (|> [#,...] |> f |> #+1)
-|> console.log;
-inputs
-|> # && ((#,...) |> [#,...] |> f |> #+1)
-|> console.log;
-```
-
-<td>
-
-```js
-// Variadic topic style (1 positional topic).
-{
-  const [$0, ...$r0] = inputs;
-  let $1;
-  if ($0) {
-    const $2 = [$0, ...$r0];
-    const $3 = f($2);
-    const $4 = $3 + 1;
-    $1 = $4;
-  }
-  console.log($1);
-}
-```
-
-<tr>
-<td>
-
-```js
-// Variadic bare style.
-inputs
-|> true && ([...] |> f |> #+1)
-|> console.log;
-inputs
-|> true && (|> [...] |> f |> #+1)
-|> console.log;
-inputs
-|> true && (... |> [...] |> f |> #+1)
-|> console.log;
-```
-
-<td>
-
-```js
-{
-  const [...$r0] = inputs;
-  let $1;
-  if ($0) {
-    const $2 = [...$r0];
-    const $3 = f($2);
-    const $4 = $3 + 1;
-    $1 = $4;
-  }
-  console.log($1);
-}
-```
-
-<tr>
-<td colspan=2>
-
-Additional Feature NP would also explain how the cancellation of [Additional
-Feature PP][] by [Additional Feature PF][] (“`+> |>` _Pipeline_” is equivalent
-to “`+>` _Pipeline_”). Each of the following table rows’ code statements are
-equivalent.
-
-<tr>
-<td>
-
-```js
-// Unary topic style.
-+> [#] |> f |> #+1;
-($) =>
-  $ |> [#] |> f |> #+1;
-+> |> [#] |> f |> #+1;
-($) =>
-  $ |> # |> [#] |> f |> #+1;
-```
-
-<td>
-
-```js
-// Unary topic style.
-($0) => {
-  const $1 = $0;
-  return f([$1]) + 1;
-};
-($0) => {
-  const $1 = $0,
-        $2 = $1;
-  return f([$2]) + 1;
-};
-```
-
-<tr>
-<td>
-
-```js
-// Binary topic style.
-+> [#,##] |> f |> #+1;
-($,$$) =>
-  ($,$$) |> [#,##] |> f |> #+1;
-+> |> [#,##] |> f |> #+1;
-($,$$) =>
-  ($,$$) |> (#,##) |> [#,##] |> f |> #+1;
-```
-
-<td>
-
-```js
-// Binary topic style.
-($0, $$0) => {
-  const $1 = [$0, $$0],
-        $2 = f($1);
-  return $2 + 1;
-};
-($0, $$0) => {
-  const [$1, $$1] = [$0, $$0],
-        $2 = [$1, $$1],
-        $3 = f($1);
-  return $3 + 1;
-};
-```
-
-<tr>
-<td>
-
-```js
-// Variadic topic style (1 positional topic).
-+> [#,...] |> f |> #+1;
-($,...$r) =>
-  ($,...$r) |> [#,...] |> f |> #+1;
-+> |> [#,...] |> f |> #+1;
-($,...$r) =>
-  ($,...$r) |> (#,...) |> [#,...] |> f |> #+1;
-```
-
-<td>
-
-```js
-// Variadic topic style (1 positional topic).
-($0, ...$r) => {
-  const $1 = [$0, ...$0],
-        $2 = f($1);
-  return $2 + 1;
-};
-($0, ...$r) => {
-  const $1 = [$0, ...$0],
-        $2 = [$1, ...$1],
-        $3 = f($2);
-  return $3 + 1;
-};
-```
-
-<tr>
-<td>
-
-```js
-// Variadic bare style.
-+> f;
-(...$rest) =>
-  ...$rest |> f |> #+1;
-+> |> f;
-(...$rest) =>
-  ...$rest |> ... |> f |> #+1;
-```
-
-<td>
-
-```js
-(...$r0) => {
-  const $1 = [...$r0],
-        $2 = f($1);
-  return $2 + 1;
-};
-(...$r0) => {
-  const [...$r1] = [...$r0],
-        $2 = [...$r1],
-        $3 = f($1);
-  return $3 + 1;
-};
 ```
 
 </table>
@@ -6279,10 +5560,9 @@ const toSlug =
   |> #.join('-')
   |> encodeURIComponent;
 ```
-This example also uses [Additional Feature PP][] for its second line:
 ```js
-const toSlug = +>
-|> #.split(' ')
+const toSlug =
++> #.split(' ')
 |> #.map(+> #.toLowerCase())
 |> #.join('-')
 |> encodeURIComponent;
@@ -6755,16 +6035,16 @@ try { … }
 catch
 |> match {
   SyntaxError:
-  |> f,
+    # |> f,
   TypeError:
-  |> g |> h(#, {strict: true}),
+    # |> g |> h(#, {strict: true}),
   Error:
-  |> throw #,
+    throw #,
 };
 ```
-With ECMAScript pattern matching + the [Core Proposal][] + [Additional
-Feature PP][] + [Additional Feature TS][], handling caught errors (and promise
-rejections) based on error type becomes more ergonomic.
+With ECMAScript pattern matching + the smart-pipelines [Core Proposal][] +
+[Additional Feature TS][], handling caught errors (and promise rejections) based
+on error type becomes more ergonomic.
 
 <td>
 
@@ -6809,11 +6089,11 @@ desired behavior.
 <td>
 
 ```js
-materials.map { |> f |> .length; }
+materials.map { # |> f |> .length; }
 ```
-This example uses [Additional Feature PP][]. The first parameter of the arrow
-function that the block parameter implicitly creates is bound to the topic,
-which in turn is fed into the pipeline `|> f |> .length`.
+The first parameter of the arrow function that the block parameter implicitly
+creates is bound to the primary topic, which in turn is fed into the pipeline:
+`# |> f |> .length`.
 
 <td>
 
@@ -7575,21 +6855,6 @@ Using the same notation from the first subsection, then in general:
 * **If 𝑃 is in the form `{` 𝑆₀ `;` 𝑆₁ `;` … `;` 𝑆ᵥ₋₂ `;` 𝑆ᵥ₋₁ `;` `}` – then sub(𝑃, #) is
   `do {` sub(𝑆₀, #) `;` sub(𝑆₁, #) `;` … `;` sub(𝑆ᵥ₋₂, #) `;` sub(𝑆ᵥ₋₁, #) `;` `}`**.
 
-### Additional Feature PP
-Using the same notation from the first subsection, then in general, given a
-pipeline chain:\
-`|>` 𝐸₁ `|>` 𝐸₂ `|>` … `|>` 𝐸ᵤ₋₂ `|>` 𝐸ᵤ₋₁,\
-…then that pipeline chain is equivalent to:\
-`do` `{`\
-  `const `\
-    **#₀ `=` `#` `,`**\
-    #₁ `=` sub(𝐸₁, #₀) `,`\
-    #₂ `=` sub(𝐸₂, #₁) `,`\
-    … `,`\
-    #ᵤ₋₂ `=` sub(𝐸ᵤ₋₂, #ᵤ₋₃) `;`\
-  sub(𝐸ᵤ₋₁, #ᵤ₋₂) `;`\
-`}`.
-
 ### Additional Feature NP
 Adapted from a [previous example][Additional Feature NP]:
 ```js
@@ -7786,7 +7051,6 @@ This is a legacy section for old links. This section has been renamed to
 [Additional Feature BP]: #additional-feature-bp
 [Additional Feature NP]: #additional-feature-np
 [Additional Feature PF]: #additional-feature-pf
-[Additional Feature PP]: #additional-feature-pp
 [Additional Feature TS]: #additional-feature-ts
 [additional features]: #smart-pipelines
 [annevk]: https://github.com/annevk
@@ -7872,7 +7136,6 @@ This is a legacy section for old links. This section has been renamed to
 [formal NP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-np
 [formal PF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pf
 [formal pipeline specification]: https://jschoi.org/18/es-smart-pipelines/spec
-[formal PP]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pp
 [formal TS]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-ts
 [forward compatibility]: #forward-compatibility
 [forward compatible]: #forward-compatibility
