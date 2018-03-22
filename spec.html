@@ -584,12 +584,12 @@ PipelineStep : PipelineBareFunction
 
 <emu-grammar>PipeExpression : ConditionalExpression `|&gt;` Pipeline</emu-grammar>
 <emu-alg>
-1. Let _inputRef_ be the result of evaluating |ConditionalExpression|.
-2. Let _stepOutputValues_ be a List containing the one element which is the result of ? GetValue(_inputRef_).
-3. Let _pipelineRemainderOutputRef_ be PipelineEvaluation of |Pipeline| with argument _stepOutputValues_.
-4. Let _pipelineRemainderOutputValues_ be ? GetValue(_pipelineRemainderOutputRef_).
-5. Assert: _pipelineRemainderOutputValues_ is a List containing one element.
-6. Return _pipelineRemainderOutputValues_[0].
+1. Let _inputRef_ be the result of evaluating _ConditionalExpression_.
+2. Let _inputValues_ be a List containing the one element which is the result of ? GetValue(_inputRef_).
+3. Let _pipelineOutputRef_ be PipelineEvaluation of _Pipeline_ with argument _inputValues_.
+4. Let _pipelineOutputValues_ be ? GetValue(_pipelineOutputRef_).
+5. Assert: _pipelineOutputValues_ is a List containing one element.
+6. Return _pipelineOutputValues_[0].
 </emu-alg>
 </emu-clause>
 
