@@ -93,7 +93,7 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 This document is an **explainer for** the [**formal specification** of a proposed
 **smart pipe operator `|>`**][formal pipeline specification] in
 **JavaScript**, along with several other additional features. The specification
-is divided into **one Stage-0 Core Proposal** plus **seven** mutually
+is divided into **one Stage-0 Core Proposal** plus **six** mutually
 independent-but-compatible **Additional Features**:
 
 |Name                     | Status  | Features                                                               | Purpose                                                                                                         |
