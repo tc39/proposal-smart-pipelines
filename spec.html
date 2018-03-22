@@ -1925,56 +1925,6 @@ SpreadElement[Yield, Await] :
 </emu-annex>
 </emu-annex>
 
-<emu-annex id=sec-additional-feature-np-object-initializer>
-<h1>Object Initializer</h1>
-<h2>Syntax</h2>
-<emu-grammar type="definition">
-PropertyDefinition[Yield, Await] :
-  IdentifierReference[?Yield, ?Await]
-  CoverInitializedName[?Yield, ?Await]
-  PropertyName[?Yield, ?Await] `:` AssignmentExpression[+In, ?Yield, ?Await]
-  MethodDefinition[?Yield, ?Await]
-  `...` AssignmentExpression[+In, ?Yield, ?Await]
-  <ins class=block>RestTopicReference</ins>
-</emu-grammar>
-
-<emu-annex id=sec-additional-feature-np-object-initializer-static-semantics-propname>
-<h1>Static Semantics: PropName</h1>
-<emu-see-also-para op="PropName"></emu-see-also-para>
-<emu-grammar>PropertyDefinition : `...` AssignmentExpression</emu-grammar>
-<emu-alg>
-  1. Return ~empty~.
-</emu-alg>
-<ins class=block>
-<emu-grammar>PropertyDefinition : RestTopicReference</emu-grammar>
-<emu-alg>
-  1. Return ~empty~.
-</emu-alg>
-</ins>
-</emu-annex>
-
-<emu-annex id=sec-additional-feature-np-object-initializer-runtime-semantics-propertydefinitionevaluation>
-<h1>Runtime Semantics: PropertyDefinitionEvaluation</h1>
-<p>With parameters _object_ and _enumerable_.</p>
-<emu-see-also-para op="PropertyDefinitionEvaluation"></emu-see-also-para>
-<emu-grammar>PropertyDefinition : `...` AssignmentExpression</emu-grammar>
-<emu-alg>
-  1. Let _exprValue_ be the result of evaluating |AssignmentExpression|.
-  2. Let _fromValue_ be ? GetValue(_exprValue_).
-  3. Let _excludedNames_ be a new empty List.
-  4. Return ? CopyDataProperties(_object_, _fromValue_, _excludedNames_).
-</emu-alg>
-<ins class=block>
-<emu-grammar>PropertyDefinition : RestTopicReference</emu-grammar>
-<emu-alg>
-  1. Let _exprValue_ be ResolveRestTopic().
-  2. Let _fromValue_ be ? GetValue(_exprValue_).
-  3. Let _excludedNames_ be a new empty List.
-  4. Return ? CopyDataProperties(_object_, _fromValue_, _excludedNames_).
-</emu-alg>
-</ins>
-</emu-annex>
-</emu-annex>
 </emu-annex>
 
 <emu-annex id=sec-additional-feature-np-left-hand-side-expressions>
