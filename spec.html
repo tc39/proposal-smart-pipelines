@@ -998,10 +998,16 @@ PipelineStep :
 <emu-grammar>PipelineBareAwaitedFunction : `await` SimpleReference</emu-grammar>
 <p>This algorithm is an altered version of the algorithm of <emu-xref href="#sec-function-calls-runtime-semantics-evaluation">Function Calls, Runtime Semantics: Evaluation</emu-xref>, modified as follows:</p>
 <emu-alg>
-1. Let _asyncFunctionExpr_ be the |MemberExpression| that is covered by _SimpleReference_.
-2. Let _exprRef_ be the result of evaluating _asyncFunctionExpr_.
-3. Let _value_ be ? GetValue(_exprRef_).
-4. Return ? Await(_value_).
+1. Let _memberExpr_ be the |MemberExpression| that is covered by _SimpleReference_.
+2. Let _ref_ be the result of evaluating _memberExpr_.
+3. Let _func_ be ? GetValue(_ref_).
+4. Let _thisCall_ be this |PipelineBareFunction|.
+5. Let _tailCall_ be IsInTailPosition(_thisCall_).
+6. Let _callRef_ be ? EvaluateCall(_func_, _ref_, _inputValues_, _tailCall_).
+7. Let _callValue_ be ? GetValue(_exprRef_).
+8. Let _awaitRef_ be ? Await(_callValue_).
+9. Let _awaitValue_ be ? GetValue(_awaitRef_).
+10. Return a list containing the one element which is _awaitValue_.
 </emu-alg>
 </ins>
 
