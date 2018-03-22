@@ -3927,7 +3927,7 @@ value
 <td>
 
 ```js
-(a, b) |&gt; f
+(a, b) |> f
 ```
 
 <td>
@@ -3940,7 +3940,7 @@ f(a, b)
 <td>
 
 ```js
-(a, b) |&gt; # + ##
+(a, b) |> # + ##
 ```
 
 <td>
@@ -3953,7 +3953,7 @@ a + b
 <td>
 
 ```js
-(a, b) |&gt; f(#, 0, ##)
+(a, b) |> f(#, 0, ##)
 ```
 
 <td>
@@ -3966,7 +3966,7 @@ f(a, 0, b)
 <td>
 
 ```js
-(a, b) |&gt; f(0, ##)
+(a, b) |> f(0, ##)
 ```
 
 <td>
@@ -3979,7 +3979,7 @@ f(0, b)
 <td>
 
 ```js
-(a, b, c, d) |&gt; f(#, 0, ...)
+(a, b, c, d) |> f(#, 0, ...)
 ```
 
 <td>
@@ -3992,7 +3992,7 @@ f(a, 0, b, c, d)
 <td>
 
 ```js
-(a, b, c, d) |&gt; f(##, 0, ...)
+(a, b, c, d) |> f(##, 0, ...)
 ```
 
 <td>
@@ -4005,7 +4005,7 @@ f(b, 0, c, d)
 <td>
 
 ```js
-(a, b, c, d) |&gt; f(##, 0, [...])
+(a, b, c, d) |> f(##, 0, [...])
 ```
 
 <td>
@@ -4018,7 +4018,7 @@ f(b, 0, [c, d])
 <td>
 
 ```js
-(a, ...[b, c, d]) |&gt; f(##, 0, [...])
+(a, ...[b, c, d]) |> f(##, 0, [...])
 ```
 
 <td>
@@ -4031,7 +4031,7 @@ f(b, 0, [c, d])
 <td>
 
 ```js
-(a, b) |&gt; (# * b, ##) |&gt; f
+(a, b) |> (# * b, ##) |> f
 ```
 
 <td>
@@ -4044,7 +4044,7 @@ g(a * b, f(b))
 <td>
 
 ```js
-(a, b) |&gt; (## * b, ##) |&gt; f
+(a, b) |> (## * b, ##) |> f
 ```
 
 <td>
@@ -4057,7 +4057,7 @@ g(b * b, f(b))
 <td>
 
 ```js
-(a, b) |&gt; (# * b, #) |&gt; f
+(a, b) |> (# * b, #) |> f
 // 🚫 Syntax Error: Pipeline
 // step binds 2 topic values
 // `(a, b)` but following step
@@ -4070,7 +4070,7 @@ g(b * b, f(b))
 <td>
 
 ```js
-(a, b) |&gt; (# * b, f) |&gt; f
+(a, b) |> (# * b, f) |> f
 // 🚫 Syntax Error:
 // Topic-style pipeline step
 // `f` in `(# * b, f)` binds
@@ -4084,7 +4084,7 @@ g(b * b, f(b))
 <td>
 
 ```js
-(a, b) |&gt; #
+(a, b) |> #
 // 🚫 Syntax Error: Pipeline
 // step binds 2 topic values
 // `(a, b)` but following step
@@ -4097,7 +4097,7 @@ g(b * b, f(b))
 <td>
 
 ```js
-a |&gt; # + ##
+a |> # + ##
 // 🚫 Syntax Error: Pipeline
 // step binds 2 topic values
 // `(a, b)` but following step
@@ -4110,7 +4110,7 @@ a |&gt; # + ##
 <td>
 
 ```js
-(a, b) |&gt; f(#, 0)
+(a, b) |> f(#, 0)
 // 🚫 Syntax Error: Pipeline
 // step binds 2 topic values
 // `(a, b)` but following step
@@ -4123,7 +4123,7 @@ a |&gt; # + ##
 <td>
 
 ```js
-(a, b) |&gt; (#, ##)
+(a, b) |> (#, ##)
 // 🚫 Syntax Error: Pipeline
 // terminates with a 2-ary
 // pipeline step but pipelines
