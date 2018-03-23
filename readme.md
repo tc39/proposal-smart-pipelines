@@ -2447,8 +2447,8 @@ function castPath (value, object) {
       #;
     else if (# |> isKey(#, object))
       [#];
-    else
       # |> toString |> stringToPath;
+    else #
   };
 }
 ```
@@ -4441,14 +4441,14 @@ function createRound (methodName) {
     precision = precision |> {
       if (# == null)
         0;
-      else
       |> toInteger |> nativeMin(#, 292);
     }
+      else #
     return number |> {
-      if (precision)
         // Shift with exponential notation
         // to avoid floating-point issues.
         // See https://mdn.io/round#Examples.
+      if (precision) #
       |> `${#}e`
       |> ...#.split('e')
       |> `${#}e${+## + precision}`
@@ -4457,7 +4457,7 @@ function createRound (methodName) {
       |> ...#.split('e')
       |> `${#}e${+## - precision}`
       |> +#;
-      else
+      else #
       |> func;
     };
   };
@@ -4655,7 +4655,7 @@ async function readInto(buffer, offset = 0) {
   return buffer |> {
     if (#.byteLength === offset)
       #;
-    else
+    else #
     |> (#, offset, #.byteLength - offset)
     |> new Uint8Array
     |> await reader.read
