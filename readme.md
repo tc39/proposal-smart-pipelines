@@ -262,7 +262,7 @@ forming another easy-to-miss “postfix” argument.
 <tr>
 <td>
 
-A pipeline is made of an **input** expression, followed by a chain of postfix
+A pipeline is made of a **head** expression, followed by a chain of postfix
 expressions called **pipeline stages**. Each stage has its own **inner lexical
 scope**, within which a special topic reference `#` is defined. This `#` is a
 reference to the **[lexical topic][]** of the pipeline (`#` itself is called a
@@ -274,12 +274,12 @@ input
 |> await g(#, z) // step 3
 |> console.log(`${#}!`); // step 4
 ```
-0. The **input** expression to the left of the pipeline steps is **first evaluated**.
-1. It then becomes the **pipeline step 1**’s **lexical topic**. A **new lexical
-   environment** is created, scoped only to pipeline step 1, and within which
-   `#` is immutably **bound to the topic**. Using that topic binding, the first
-   pipeline step is then **evaluated**; the current lexical environment is then
-   reset back to before.
+0. The **head** expression to the left of the pipeline steps is **first evaluated**.
+1. It then is inputted into **pipeline step 1**, becoming that step’s **lexical
+   topic**. A **new lexical environment** is created, scoped only to pipeline
+   step 1, and within which `#` is immutably **bound to the topic**. Using that
+   topic binding, the first pipeline step is then **evaluated**; the current
+   lexical environment is then reset back to before.
 2. The result of the first pipeline step becomes the input to step 1.
    A new lexical environment is created, scoped only to pipeline step 2, and
    whose topic binding is the result of evaluating step 1.
@@ -1003,7 +1003,7 @@ input
 <tr>
 <td>
 
-Both the input and the steps of a pipeline may contain nested inner pipelines.
+Both the head and the steps of a pipeline may contain nested inner pipelines.
 ```js
 x = input
 |> f(x =>
@@ -1857,10 +1857,10 @@ There is a TC39 proposal for [`do` expressions][] at Stage 1. Smart pipelines d
 **not** require `do` expressions. However, if [`do` expressions][] also become
 part of JavaScript, then, as with **any** other type of expression, a pipeline
 step in [topic style][] may be `do` expression, as long as the `do` expression
-contains the topic reference `#`. The topic reference `#` is bound to the
-input value, the `do` expression is evaluated, then the result of the
-`do` block becomes the result of that pipeline step, and the lexical
-environment is reset – all as usual.
+contains the topic reference `#`. The topic reference `#` is bound to the input
+value, the `do` expression is evaluated, then the result of the `do` block
+becomes the result of that pipeline step, and the lexical environment is reset –
+all as usual.
 
 In this manner, pipelines with `do` expressions act as a way to create a
 “topic-context block”, similarly to [Perl 6’s given block][]. Within this block,
@@ -2490,7 +2490,7 @@ context’s topic to their pipelines. As usual, it would be an [early error][] i
 the outer context has no topic binding.
 
 A pipeline `catch |> …` clause would treat its caught error as if it were the
-pipeline’s input.
+pipeline’s head value.
 
 With [Additional Feature BP][], this syntax which would naturally allow the form
 `catch |> { … }`, except, within the block, the error would be `#`.
@@ -3600,9 +3600,8 @@ class LipFuzzTransformer {
 
 ## Additional Feature NP
 Another Additional Feature – **n-ary pipelines** – enables the passing of
-multiple arguments from a pipeline’s input into its steps and/or from one step
-to its next step. `(a, b) |> f` is equivalent to `f(a, b)`, and
-`a |> (f(#), g(#)) |> h` is equivalent to `h(f(a), g(a))`.
+multiple arguments into a pipeline’s steps. `(a, b) |> f` is equivalent to
+`f(a, b)`, and `a |> (f(#), g(#)) |> h` is equivalent to `h(f(a), g(a))`.
 
 For [topic style][], Additional Feature NP introduces **multiple lexical
 topics**: not only the **primary** topic reference `#`, but also **secondary**
@@ -7142,10 +7141,14 @@ The term “**topic-style pipeline**” is preferred to “**topic expression**�
 because, in the future, the topic concept could be extended to other syntaxes,
 as with [Additional Feature TS][], not just pipelines.
 
-In addition, “**input**” is preferred to “**LHS**”, because “LHS” in the ECMAScript
-specification usually refers to the [LHS of assignments][ECMAScript LHS expressions],
-which may be confusing. However, “LHS” is still a fine and acceptable, if not
-nonspecific, name for a pipeline’s input.
+In addition, “**input** values of a pipeline step” is preferred to “pipeline
+**LHS**”, because “LHS” in the ECMAScript specification usually refers to the
+[LHS of assignments][ECMAScript LHS expressions], which may be confusing.
+However, “LHS” is still a fine and acceptable, if not nonspecific, name for a
+pipeline step’s input. The **head** of a pipeline – the input of a pipeline’s
+first step – is distinguished from the pipeline itself. A pipeline head cannot
+contain any topic references, and it is completely omitted in [pipeline
+functions][].
 
 The term “**topic reference**” is preferred to the phrase “**topic variable**”
 because the latter is a misnomer. The topic reference is *not* a variable
@@ -7160,14 +7163,20 @@ bound earlier in the surrounding lexical context, these **parameter
 placeholders** act as the parameter to a new function. When this new function is
 called, those parameter placeholders will be bound to multiple argument values.
 
-The term “**pipeline step**” is preferred instead of “**RHS**” just as “input”
-is preferred to “LHS”. However, “RHS” is still a fine and acceptable name for
-the right-hand side of a pipe operator.
+The terms “**pipeline step**” and “**output** values of a pipeline step” is
+preferred instead of “**RHS** of a pipeline”, just as how “input values” is
+preferred to “LHS”. However, “RHS” is still a fine and acceptable name for the
+right-hand side of a pipe operator. The **step** is the expression itself; it
+evaluates into one or output values. The output values in turn either are fed
+into the following pipeline step as its inputs or become the value of the entire
+pipeline. (All pipelines are allowed to result in at most one output; it is an
+[early error][] if it could ever return zero or more than one outputs.)
 
-“**[Bare style][]**” can also be called “**tacit style**”, but the former is
+“**[Bare style][]**” could also be called “**tacit style**”, but the former is
 preferred to the latter. Eventually, certain possible future extensions to the
 topic concept, such as [Additional Feature TS][], would enable [tacit
-programming][] even without using bare-style pipelines.
+programming][] even without using bare-style pipelines. **Bare style** could
+also have been called **plain style**.
 
 ## Term rewriting
 ### Core Proposal
