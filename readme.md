@@ -4024,9 +4024,9 @@ spreads its elements into whatever expression surrounds it.
 
 ```js
 {
-  const [_primary, _secondary, _tertiary, ..._rest]
+  const [$, $$, $$$, ...$r]
     = [a, b, c, d, e];
-  g(f(a, _secondary, x, ..._rest));
+  g(f(a, $$, x, ...$r));
 }
 ```
 
@@ -4045,8 +4045,8 @@ because `##` is not used at all in the pipeline step.
 
 ```js
 {
-  const _rest = [...d, e];
-  g(f(a, _tertiary, x, ..._rest));
+  const $r = [...d, e];
+  g(f(a, $$$, x, ...$r));
 }
 ```
 
@@ -4063,9 +4063,9 @@ because `##` is not used at all in the pipeline step.
 
 ```js
 {
-  const [_secondary, _tertiary, ..._rest] =
+  const [$$, $$$, ...$r] =
     [...b, c, ...d, e];
-  g(f(a, _secondary, _tertiary, x, ..._rest));
+  g(f(a, $$, $$$, x, ...$r));
 }
 ```
 
@@ -4082,9 +4082,9 @@ because `##` is not used at all in the pipeline step.
 
 ```js
 {
-  const [_secondary, ..._rest] =
+  const [$$, ...$r] =
     [...b, c, ...d, e];
-  g(f(a, _secondary, x, ..._rest));
+  g(f(a, $$, x, ...$r));
 }
 ```
 
@@ -4224,9 +4224,9 @@ number
 
 ```js
 {
-  const [_primary, , _tertiary, ..._rest] =
+  const [$, , $$$, ...$r] =
     createRange(number);
-  [_primary, _tertiary, _rest];
+  [$, $$$, $r];
 }
 ```
 
@@ -4250,8 +4250,8 @@ g([0, 1, 2, ...f(input)]);
 ```
 ```js
 {
-  const [..._rest] = f(input);
-  g([0, 1, 2, ..._rest]);
+  const [...$r] = f(input);
+  g([0, 1, 2, ...$r]);
 }
 ```
 All these code blocks are equivalent.
