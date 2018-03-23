@@ -1617,17 +1617,17 @@ function (obj) {
   return obj
   |>  # == null
     ? 0
-    : # |> isArrayLike
-    ? # |> #.length
-    : # |> _.keys |> #.length;
+    : #|> isArrayLike
+    ? #|> #.length
+    : #|> _.keys |> #.length;
   };
 }
 ```
 Smart pipelines make parallelism between all three clauses becomes clearer:\
 `0` if it is nullish,\
-`# |> #.length` if it is array-like, and\
-`# |> something |> #.length` otherwise.\
-(Technically, `# |> #.length` could simply be `#.length`, but it is written in
+`#|> #.length` if it is array-like, and\
+`#|> something |> #.length` otherwise.\
+(Technically, `#|> #.length` could simply be `#.length`, but it is written in
 this redundant form in order to emphasis its parallelism with the other branch.)
 
 [This particular example becomes even clearer][Underscore.js + CP + BP + PP]
@@ -1743,11 +1743,11 @@ function mapCacheDelete (key) {
 ```js
 function castPath (value, object) {
   return value |>
-    # |> isArray
+    #|> isArray
     ? #
-    : (# |> isKey(#, object))
+    : (#|> isKey(#, object))
     ? [#]
-    : # |> toString |> stringToPath;
+    : #|> toString |> stringToPath;
 }
 ```
 
@@ -1941,7 +1941,7 @@ x = input
 |> f
 |> {
   try {
-    # |> JSON.parse;
+    #|> JSON.parse;
     catch (error) {
       { message: error.message };
     }
@@ -2220,7 +2220,7 @@ return context
     # || root;
   // Handle $(expr, context)
   else
-    # |> this.constructor;
+    #|> this.constructor;
 }
 |> #.find(selector);
 ```
@@ -2254,7 +2254,7 @@ From [jquery/src/core/init.js][].
 return selector |> {
   if (typeof # === 'string')
     …
-  else if (# |> isFunction)
+  else if (#|> isFunction)
     root.ready !== undefined
       ? root.ready(#)
       : #(jQuery);
@@ -2415,11 +2415,11 @@ function mapCacheDelete (key) {
 ```js
 function castPath (value, object) {
   return value |>
-    # |> isArray
+    #|> isArray
     ? #
-    : (# |> isKey(#, object))
+    : (#|> isKey(#, object))
     ? [#]
-    : # |> toString |> stringToPath;
+    : #|> toString |> stringToPath;
 }
 ```
 This pipeline version uses [Core Proposal][] syntax only.
@@ -2443,12 +2443,12 @@ function castPath (value, object) {
 ```js
 function castPath (value, object) {
   return value |> {
-    if (# |> isArray)
+    if (#|> isArray)
       #;
-    else if (# |> isKey(#, object))
+    else if (#|> isKey(#, object))
       [#];
-      # |> toString |> stringToPath;
     else #
+    |> toString |> stringToPath;
   };
 }
 ```
@@ -6333,9 +6333,9 @@ try { … }
 catch
 |> match {
   SyntaxError:
-    # |> f,
+    #|> f,
   TypeError:
-    # |> g |> h(#, {strict: true}),
+    #|> g |> h(#, {strict: true}),
   Error:
     throw #,
 };
@@ -6387,11 +6387,11 @@ desired behavior.
 <td>
 
 ```js
-materials.map { # |> f |> .length; }
+materials.map { #|> f |> .length; }
 ```
 The first parameter of the arrow function that the block parameter implicitly
 creates is bound to the primary topic, which in turn is fed into the pipeline:
-`# |> f |> .length`.
+`#|> f |> .length`.
 
 <td>
 
