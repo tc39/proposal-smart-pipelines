@@ -2092,13 +2092,14 @@ PipelineTopicStep[In, Yield, Await] :
 <ins class=block>
 <emu-grammar>Pipeline : PipelineHead `|&gt;` Pipeline</emu-grammar>
 <emu-alg>
-* TODO: Error for mismatch between _PipelineHead_ maximum output length and _Pipeline_ expected input length.
-* TODO: Error for _Pipeline_ expected output length not equal to 1.
+* It is a Syntax Error if the ArgumentListMaxWidth of _PipelineHead_ is less than the ExpectedArgumentCount of _Pipeline_.
+* It is a Syntax Error if the ArgumentListMinWidth of _Pipeline_ is not *1*.
+* It is a Syntax Error if the ArgumentListMaxWidth of _Pipeline_ is not *1*.
 </emu-alg>
 
 <emu-grammar>Pipeline : CoverPipelineBareStepAndTopicStep `|&gt;` Pipeline</emu-grammar>
 <emu-alg>
-* TODO: Error for mismatch between _CoverPipelineBareStepAndTopicStep_ minimum output length and _Pipeline_ expected input length.
+* It is a Syntax Error if the ArgumentListMaxWidth of the CoveredPipelineStep of _CoverPipelineBareStepAndTopicStep_ is less than the ExpectedArgumentCount of _Pipeline_.
 </emu-alg>
 </ins>
 
@@ -2109,7 +2110,7 @@ PipelineTopicStep :
 </emu-grammar>
 <emu-alg>
 * It is a Syntax Error if <del>this _PipelineTopicStep_ Contains `#` is *false*.</del><ins>all of the following are true:</ins>
-  * <ins>ExpectedArgumentCount of this _PipelineTopicStep_ is *0*.</ins>
+  * <ins>The ExpectedArgumentCount of this _PipelineTopicStep_ is the numeric value *0*.</ins>
   * <ins>This _PipelineTopicStep_ Contains `...` is *false*.</ins>
 * It is a Syntax Error if this _PipelineTopicStep_ is covering a |YieldExpression|.
 * It is a Syntax Error if this _PipelineTopicStep_ is covering a |PipelineTopicListHead|.
