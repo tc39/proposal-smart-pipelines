@@ -2102,12 +2102,19 @@ PipelineTopicStep[In, Yield, Await] :
 </emu-alg>
 </ins>
 
-<emu-grammar>PipelineTopicStep : ConditionalExpression</emu-grammar>
+<emu-grammar>
+PipelineTopicStep :
+  ConditionalExpression
+  Block
+</emu-grammar>
 <emu-alg>
 * <del>It is a Syntax Error if _ConditionalExpression_ Contains `#` is *false*.</del>
 * It is a Syntax Error if _ConditionalExpression_ is covering a |YieldExpression|.
 * It is a Syntax Error if _ConditionalExpression_ is covering a |PipelineTopicListHead|.
 </emu-alg>
+<emu-note type=editor>
+<p>The production <emu-grammar>PipelineTopicStep : Block</emu-grammar> above is included only when <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> is also included.</p>
+</emu-note>
 </emu-annex>
 
 <emu-annex id=sec-additional-feature-np-pipe-operator-static-semantics-contains>
@@ -2137,13 +2144,20 @@ PipelineTopicStep[In, Yield, Await] :
 <p>This section augments the <emu-xref href=#sec-pipe-operator-static-semantics-expectedargumentcount>new clause in the core proposal</emu-xref>. It is mutually compatible with further modifications by other additional features.</p>
 </emu-note>
 
-<emu-grammar>PipelineTopicStep : ConditionalExpression</emu-grammar>
+<emu-grammar>
+PipelineTopicStep :
+  ConditionalExpression
+  Block
+</emu-grammar>
 <emu-alg>
 1. <ins>If this _PipelineTopicStep_ Contains `###`, then return *3*.</ins>
 2. <ins>Else if this _PipelineTopicStep_ Contains `##`, then return *2*.</ins>
 3. <ins>Else if this _PipelineTopicStep_ Contains `#`, then return *1*.</ins><del>Return *1*.</del>
 4. <ins>Else, return *0*.</ins>
 </emu-alg>
+<emu-note type=editor>
+<p>The production <emu-grammar>PipelineTopicStep : Block</emu-grammar> above is included only when <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> is also included.</p>
+</emu-note>
 
 <ins class=block>
 <emu-grammar>PipelineTopicStep : ConditionalExpression</emu-grammar>
