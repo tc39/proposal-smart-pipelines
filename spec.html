@@ -1533,7 +1533,7 @@ Determine the status of an Environment Record's topic binding (<ins>that is, the
 <h1>Declarative Environment Records</h1>
 
 <emu-note type=editor>
-<p>This section adds onto the <emu-xref href=#sec-declarative-environment-records>revisions in the core proposal to an existing clause</emu-xref>.</p>
+<p>This section adds onto the <emu-xref href=#sec-declarative-environment-records>augmentations in the core proposal to an existing clause</emu-xref>.</p>
 </emu-note>
 
 <emu-table id=table-additional-feature-np-61 caption="Additional Fields of Declarative Environment Records">
@@ -1646,7 +1646,7 @@ Establish the immutable topic binding of this Environment Record and set the top
 <h1>Punctuators</h1>
 
 <emu-note type=editor>
-<p>This section adds onto the <emu-xref href=#sec-punctuators>revisions in the core proposal to an existing clause</emu-xref>.</p>
+<p>This section adds onto the <emu-xref href=#sec-punctuators>augmentations in the core proposal to an existing clause</emu-xref>.</p>
 </emu-note>
 
 <ins class=block>
@@ -1673,7 +1673,7 @@ Punctuator :: one of
 <h1>Primary Expression</h1>
 
 <emu-note type=editor>
-<p>This section adds onto the <emu-xref href=#sec-primary-expression>revisions in the core proposal to an existing clause</emu-xref>.</p>
+<p>This section adds onto the <emu-xref href=#sec-primary-expression>augmentations in the core proposal to an existing clause</emu-xref>.</p>
 </emu-note>
 
 <h2>Syntax</h2>
@@ -1722,7 +1722,7 @@ RestTopicReference :
 <emu-annex id=sec-additional-feature-np-runtime-semantics-resolvetopicexpression aoid=ResolveTopicExpression>
 <h1><ins>Runtime Semantics: ResolveTopicExpression</ins></h1>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause in addition to the revisions of the core proposal.</p>
+<p>This section is a wholly new sub-clause in addition to the augmentations of the core proposal.</p>
 </emu-note>
 
 <p>With parameter _topicIndex_.</p>
@@ -1746,7 +1746,7 @@ RestTopicReference :
 <emu-annex id=sec-additional-feature-np-runtime-semantics-resolvetopicexpression aoid=CreateRestTopicIteratorRecord>
 <h1><ins>Runtime Semantics: CreateRestTopicIteratorRecord</ins></h1>
 <emu-note type=editor>
-<p>This section is a wholly new sub-clause in addition to the revisions of the core proposal.</p>
+<p>This section is a wholly new sub-clause in addition to the augmentations of the core proposal.</p>
 </emu-note>
 <emu-note>
 <p>The |RestTopicReference| `...` is not itself evaluated as a |TopicExpression|; instead, it is used by |SpreadElement|, |PropertyDefinition|, and |ArgumentList|, by way of calling the CreateRestTopicIteratorRecord abstract operation and using its values.</p>
@@ -2314,7 +2314,7 @@ PipelineTopicStep :
 <h1>Iteration Statements</h1>
 
 <emu-note type=editor>
-<p>This section adds onto the <emu-xref href=#sec-iteration-statements-static-semantics-early-errors>revisions in the core proposal to an existing clause</emu-xref>.</p>
+<p>This section adds onto the <emu-xref href=#sec-iteration-statements-static-semantics-early-errors>augmentations in the core proposal to an existing clause</emu-xref>.</p>
 </emu-note>
 
 <emu-annex id=sec-additional-feature-np-iteration-statements-static-semantics-early-errors>
@@ -2356,7 +2356,7 @@ IterationStatement :
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section adds onto the <emu-xref href=#sec-with-statement-static-semantics-early-errors>revisions in the core proposal to an existing clause</emu-xref>.</p>
+<p>This section adds onto the <emu-xref href=#sec-with-statement-static-semantics-early-errors>augmentations in the core proposal to an existing clause</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>WithStatement : `with` `(` Expression `)` Statement</emu-grammar>
@@ -2380,7 +2380,7 @@ IterationStatement :
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section adds onto the <emu-xref href=#sec-try-statement-static-semantics-early-errors>revisions in the core proposal to an existing clause</emu-xref>.</p>
+<p>This section adds onto the <emu-xref href=#sec-try-statement-static-semantics-early-errors>augmentations in the core proposal to an existing clause</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>
@@ -2409,7 +2409,7 @@ Catch : `catch` `(` CatchParameter `)` Block</emu-grammar>
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section adds onto the <emu-xref href=#sec-function-definitions-static-semantics-early-errors>revisions in the core proposal to an existing clause</emu-xref>.</p>
+<p>This section adds onto the <emu-xref href=#sec-function-definitions-static-semantics-early-errors>augmentations in the core proposal to an existing clause</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>FunctionBody : FunctionStatementList</emu-grammar>
@@ -2435,7 +2435,7 @@ If |FunctionStatementList| is not the |FunctionBody| of a |ConciseBody|, it is a
 <emu-see-also-para op="Contains"></emu-see-also-para>
 
 <emu-note type=editor>
-<p>This section adds onto the <emu-xref href=#sec-arrow-function-definitions-static-semantics-contains>revisions in the core proposal to an existing clause</emu-xref>.</p>
+<p>This section adds onto the <emu-xref href=#sec-arrow-function-definitions-static-semantics-contains>augmentations in the core proposal to an existing clause</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>ArrowFunction : ArrowParameters `=&gt;` ConciseBody</emu-grammar>
@@ -2462,7 +2462,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section adds onto the <emu-xref href=#sec-scripts-static-semantics-early-errors>revisions in the core proposal to an existing clause</emu-xref>.</p>
+<p>This section adds onto the <emu-xref href=#sec-scripts-static-semantics-early-errors>augmentations in the core proposal to an existing clause</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>ScriptBody : StatementList</emu-grammar>
@@ -2486,7 +2486,7 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <h1>Static Semantics: Early Errors</h1>
 
 <emu-note type=editor>
-<p>This section adds onto the <emu-xref href=#sec-modules-static-semantics-early-errors>revisions in the core proposal to an existing clause</emu-xref>.</p>
+<p>This section adds onto the <emu-xref href=#sec-modules-static-semantics-early-errors>augmentations in the core proposal to an existing clause</emu-xref>.</p>
 </emu-note>
 
 <emu-grammar>ModuleItem : StatementListItem</emu-grammar>
