@@ -1074,9 +1074,11 @@ PipelineTopicStep[In, Yield, Await] :
 </emu-note>
 
 <emu-grammar>
-PipelineStep :
+PipelineTopicStep :
   ConditionalExpression
-  <ins class=block>PipelineStep : Block</ins>
+  <ins class=block>
+  Block
+  </ins>
 </emu-grammar>
 <emu-alg>
 1. If _symbol_ is `#`, return *false*.
