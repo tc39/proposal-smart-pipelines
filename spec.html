@@ -2119,6 +2119,48 @@ PipelineTopicStep :
 </emu-note>
 </emu-annex>
 
+<emu-annex id=sec-additional-feature-np-pipe-operator-static-semantics-argumentlistminwidth>
+<h1><ins>Static Semantics: ArgumentListMinWidth</ins></h1>
+<emu-see-also-para op="ArgumentListMaxWidth"></emu-see-also-para>
+
+<emu-note type=editor>
+<p>This section is a wholly new sub-clause of the <emu-xref href=#sec-pipe-operator>Pipe Operator clause in the core proposal</emu-xref>.</p>
+</emu-note>
+
+<emu-grammar>Pipeline : CoverPipelineBareStepAndTopicStep</emu-grammar>
+<emu-alg>
+1. Let _pipelineStep_ be ? CoveredPipelineStep of _CoverPipelineBareStepAndTopicStep_.
+2. Return ? ArgumentListMinWidth of _pipelineStep_.
+</emu-alg>
+
+<emu-grammar>Pipeline : CoverPipelineBareStepAndTopicStep `|&gt;` Pipeline</emu-grammar>
+<emu-alg>
+1. Return ? ArgumentListMinWidth of _Pipeline_.
+</emu-alg>
+
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-np-pipe-operator-static-semantics-argumentlistmaxwidth>
+<h1><ins>Static Semantics: ArgumentListMaxWidth</ins></h1>
+<emu-see-also-para op="ArgumentListMaxWidth"></emu-see-also-para>
+
+<emu-note type=editor>
+<p>This section is a wholly new sub-clause of the <emu-xref href=#sec-pipe-operator>Pipe Operator clause in the core proposal</emu-xref>.</p>
+</emu-note>
+
+<emu-grammar>Pipeline : CoverPipelineBareStepAndTopicStep</emu-grammar>
+<emu-alg>
+1. Let _pipelineStep_ be ? CoveredPipelineStep of _CoverPipelineBareStepAndTopicStep_.
+2. Return ? ArgumentListMaxWidth of _pipelineStep_.
+</emu-alg>
+
+<emu-grammar>Pipeline : CoverPipelineBareStepAndTopicStep `|&gt;` Pipeline</emu-grammar>
+<emu-alg>
+1. Return ? ArgumentListMaxWidth of _Pipeline_.
+</emu-alg>
+
+</emu-annex>
+
 <emu-annex id=sec-additional-feature-np-pipe-operator-static-semantics-contains>
 <h1>Static Semantics: Contains</h1>
 <p>With parameter _symbol_.</p>
