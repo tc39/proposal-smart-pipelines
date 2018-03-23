@@ -1123,29 +1123,29 @@ PipelineStep :
 <emu-table id=table-additional-feature-pf-examples caption="Examples of Pipeline Functions">
 <table>
 <tr>
-<td><pre><code language=javascript>+&gt; console.log</code></pre></td>
+<td><pre><code language=javascript>+&gt; console.log;</code></pre></td>
 <td><pre><code language=javascript>(...$) =&gt; console.log(...$)
-console.log.bind(console)</code></pre></td>
+console.log.bind(console);</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>+&gt; f(#, 5)</code></pre></td>
-<td><pre><code language=javascript>$ =&gt; f($, 5)</code></pre></td>
+<td><pre><code language=javascript>+&gt; f(#, 5);</code></pre></td>
+<td><pre><code language=javascript>$ =&gt; f($, 5);</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>+&gt; # + 1</code></pre></td>
-<td><pre><code language=javascript>$ =&gt; $ + 1</code></pre></td>
+<td><pre><code language=javascript>+&gt; # + 1;</code></pre></td>
+<td><pre><code language=javascript>$ =&gt; $ + 1;</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>+&gt; f |&gt; g</code></pre></td>
-<td><pre><code language=javascript>(...$) =&gt; g(f(...$))</code></pre></td>
+<td><pre><code language=javascript>+&gt; f |&gt; g;</code></pre></td>
+<td><pre><code language=javascript>(...$) =&gt; g(f(...$));</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>+&gt; f |&gt; o.m</code></pre></td>
-<td><pre><code language=javascript>(...$) =&gt; o.m(f(...$))</code></pre></td>
+<td><pre><code language=javascript>+&gt; f |&gt; o.m;</code></pre></td>
+<td><pre><code language=javascript>(...$) =&gt; o.m(f(...$));</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>+&gt; f |&gt; # + 1 |&gt; o.m</code></pre></td>
-<td><pre><code language=javascript>(...$) =&gt; o.m(f(...$) + 1)</code></pre></td>
+<td><pre><code language=javascript>+&gt; f |&gt; # + 1 |&gt; o.m;</code></pre></td>
+<td><pre><code language=javascript>(...$) =&gt; o.m(f(...$) + 1);</code></pre></td>
 </tr>
 </table>
 </emu-table>
@@ -1359,91 +1359,102 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <emu-table id=table-additional-feature-np-examples caption="Examples of Multiple Lexical Topics">
 <table>
 <tr>
-<td><pre><code language=javascript>a |&gt; f</code></pre></td>
-<td><pre><code language=javascript>f(a)</code></pre></td>
+<td><pre><code language=javascript>a |&gt; f;</code></pre></td>
+<td><pre><code language=javascript>f(a);</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a) |&gt; f</code></pre></td>
-<td><pre><code language=javascript>f(a)</code></pre></td>
+<td><pre><code language=javascript>(a) |&gt; f;</code></pre></td>
+<td><pre><code language=javascript>f(a);</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a, b) |&gt; f</code></pre></td>
-<td><pre><code language=javascript>f(a, b)</code></pre></td>
+<td><pre><code language=javascript>(a, b) |&gt; f;</code></pre></td>
+<td><pre><code language=javascript>f(a, b);</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(...a) |&gt; f</code></pre></td>
-<td><pre><code language=javascript>f(...a)</code></pre></td>
+<td><pre><code language=javascript>(...a) |&gt; f;</code></pre></td>
+<td><pre><code language=javascript>f(...a);</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>...a |&gt; f</code></pre></td>
-<td><pre><code language=javascript>f(...a)</code></pre></td>
+<td><pre><code language=javascript>...a |&gt; f;</code></pre>
+<pre><code language=javascript>...a |&gt; f(...);</code></pre></td>
+<td><pre><code language=javascript>f(...a);</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>() |&gt; f</code></pre></td>
-<td><pre><code language=javascript>f()</code></pre></td>
+<td><pre><code language=javascript>...a |&gt; f(x, ...);</code></pre></td>
+<td><pre><code language=javascript>f(x, ...a);</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a, b) |&gt; # + ##</code></pre></td>
-<td><pre><code language=javascript>a + b</code></pre></td>
+<td><pre><code language=javascript>() |&gt; f;</code></pre>
+<pre><code language=javascript>() |&gt; f(...);</code></pre></td>
+<td><pre><code language=javascript>f();</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>() |&gt; # + ##</code></pre></td>
+<td><pre><code language=javascript>(a, b) |&gt; # + ##;</code></pre></td>
+<td><pre><code language=javascript>a + b;</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>...a |&gt; # + ##;</code></pre>
+<pre><code language=javascript>a |&gt; ... |&gt; # + ##;</code></pre></td>
+<td><pre><code language=javascript>{ const [$, $$] = [...a]; $ + $$; }</code></pre></td>
+</tr>
+<tr>
+<td><pre><code language=javascript>() |&gt; # + ##;</code></pre></td>
 <td>Syntax Error: Pipeline head inputs 0 topic values `()` into a following step that expects 2 topic values.</td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a, b) |&gt; f(#, 0, ##)</code></pre></td>
-<td><pre><code language=javascript>f(a, 0, b)</code></pre></td>
+<td><pre><code language=javascript>(a, b) |&gt; f(#, 0, ##);</code></pre></td>
+<td><pre><code language=javascript>f(a, 0, b);</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a, b) |&gt; f(0, ##)</code></pre></td>
-<td><pre><code language=javascript>f(0, b)</code></pre></td>
+<td><pre><code language=javascript>(a, b) |&gt; f(0, ##);</code></pre></td>
+<td><pre><code language=javascript>f(0, b);</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a, b, c, d) |&gt; f(#, 0, ...)</code></pre></td>
-<td><pre><code language=javascript>f(a, 0, b, c, d)</code></pre></td>
+<td><pre><code language=javascript>(a, b, c, d) |&gt; f(#, 0, ...);</code></pre></td>
+<td><pre><code language=javascript>f(a, 0, b, c, d);</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a, b, c, d) |&gt; f(##, 0, ...)</code></pre></td>
-<td><pre><code language=javascript>f(b, 0, c, d)</code></pre></td>
+<td><pre><code language=javascript>(a, b, c, d) |&gt; f(##, 0, ...);</code></pre></td>
+<td><pre><code language=javascript>f(b, 0, c, d);</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a, b, c, d) |&gt; f(##, 0, [...])</code></pre></td>
-<td><pre><code language=javascript>f(b, 0, [c, d])</code></pre></td>
+<td><pre><code language=javascript>(a, b, c, d) |&gt; f(##, 0, [...]);</code></pre></td>
+<td><pre><code language=javascript>f(b, 0, [c, d]);</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a, ...[b, c, d]) |&gt; f(##, 0, [...])</code></pre></td>
-<td><pre><code language=javascript>f(b, 0, [c, d])</code></pre></td>
+<td><pre><code language=javascript>(a, ...[b, c, d]) |&gt; f(##, 0, [...]);</code></pre></td>
+<td><pre><code language=javascript>f(b, 0, [c, d]);</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a, b) |&gt; (# * b, ##) |&gt; f</code></pre></td>
-<td><pre><code language=javascript>g(a * b, f(b))</code></pre></td>
+<td><pre><code language=javascript>(a, b) |&gt; (# * b, ##) |&gt; f;</code></pre></td>
+<td><pre><code language=javascript>g(a * b, f(b));</code></pre></td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a, b) |&gt; (# * b, #) |&gt; f</code></pre></td>
+<td><pre><code language=javascript>(a, b) |&gt; (# * b, #) |&gt; f;</code></pre></td>
 <td>Syntax Error: Pipeline head inputs 2 topic values `(a, b)` into following step that expects 1 topic value.</td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a, b) |&gt; (# * b, f) |&gt; f</code></pre></td>
+<td><pre><code language=javascript>(a, b) |&gt; (# * b, f) |&gt; f;</code></pre></td>
 <td>Syntax Error: Topic-style pipeline step `f` in `(# * b, f)` binds topic but contains no topic reference.</td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a, b) |&gt; #</code></pre></td>
+<td><pre><code language=javascript>(a, b) |&gt; #;</code></pre></td>
 <td>Syntax Error: Pipeline head inputs 2 topic values `(a, b)` into following step that expects 1 topic value.</td>
 </tr>
 <tr>
-<td><pre><code language=javascript>a |&gt; # + ##</code></pre></td>
+<td><pre><code language=javascript>a |&gt; # + ##;</code></pre></td>
 <td>Syntax Error: Pipeline head inputs 1 topic values `a` into following step that expects 2 topic values.</td>
 </tr>
 <tr>
-<td><pre><code language=javascript>() |&gt; # * 5</code></pre></td>
+<td><pre><code language=javascript>() |&gt; # * 5;</code></pre></td>
 <td>Syntax Error: Pipeline head inputs 0 topic values `()` into following step that expects 1 topic value.</td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a, b) |&gt; f(#, 0)</code></pre></td>
+<td><pre><code language=javascript>(a, b) |&gt; f(#, 0);</code></pre></td>
 <td>Syntax Error: Pipeline head inputs 2 topic values `(a, b)` into following step that expects 1 topic value.</td>
 </tr>
 <tr>
-<td><pre><code language=javascript>(a, b) |&gt; (#, ##)</code></pre></td>
+<td><pre><code language=javascript>(a, b) |&gt; (#, ##);</code></pre></td>
 <td>Syntax Error: Pipeline terminates with a 2-ary pipeline step but must terminate with a unary pipeline step.</td>
 </tr>
 </table>
@@ -2039,7 +2050,7 @@ PipelineTopicStep[In, Yield, Await] :
 <ins class=block>
 <emu-grammar>Pipeline : PipelineHead `|&gt;` Pipeline</emu-grammar>
 <emu-alg>
-* TODO: Error for mismatch between _PipelineHead_ minimum output length and _Pipeline_ expected input length.
+* TODO: Error for mismatch between _PipelineHead_ maximum output length and _Pipeline_ expected input length.
 * TODO: Error for _Pipeline_ expected output length not equal to 1.
 </emu-alg>
 

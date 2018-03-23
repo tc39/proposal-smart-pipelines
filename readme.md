@@ -3703,7 +3703,7 @@ g(f(a, x, b));
 <td>
 
 ```js
-(a, b, ...c, d) |> f(#, x, ...) |> g;
+...a |> f(x, ...) |> g;
 ```
 A pipeline step also may bind a list of values to a rest topic reference `...`
 within the next pipeline step. The list contains the arguments of the pipeline
@@ -3715,7 +3715,116 @@ literals).
 <td>
 
 ```js
+g(f(x, ...a));
+```
+
+<tr>
+<td>
+
+```js
+a |> f(#, x, ...) |> g;
+```
+
+<td>
+
+```js
+{
+  const [$, ...$r] = a;
+  f($, x, ...$r);
+}
+```
+
+<tr>
+<td>
+
+```js
+(a, b, ...c, d) |> f(#, x, ...) |> g;
+```
+
+<td>
+
+```js
 g(f(a, x, ...[b, ...c, d]));
+```
+
+<tr>
+<td>
+
+```js
+...a |> f;
+...a |> f(...); // Equivalent
+```
+Bare-style pipeline heads are now equivalent to spreading the rest topic
+reference into the function’s arguments.
+
+<td>
+
+```js
+f(...a);
+```
+
+<tr>
+<td>
+
+```js
+x + 1 |> (f(#), g(#)) |> h;
+x + 1 |> (f(#), g(#)) |> h(...); // Equivalent
+```
+A topic-style pipeline step can be n-ary itself. By taking the form of an
+argument list, the step `(f(#), g(#))` passes multiple values into the following
+step `h`. Each element of the argument list is itself an expression that may
+use any of the topic references `#`, `##`, `###`, or `...` that were bound by
+its own input (in the case of `x + 1`, only `#` and `...` are bound).
+
+<td>
+
+```js
+{
+  const $0 = x + 1;
+  const $1 = f($0);
+  const $$1 = g($0);
+  h($1, $$1);
+}
+```
+
+<tr>
+<td>
+
+```js
+(x + 1, y + 1) |> (f(#), g(#, ##)) |> h;
+```
+
+<td>
+
+```js
+{
+  const [$0, $$0] = [x + 1, y + 1];
+  const [$1, $$1] = [f($0), g($0, $$0)];
+  h($1, $$1);
+}
+```
+
+<tr>
+<td>
+
+```js
+...array |> (f(#), g(#, ##)) |> h;
+array |> ... |> (f(#), g(#, ##)) |> h; // Equivalent
+```
+In the second (equivalent) line, the `...` (topic-style) step spreads the values
+of `array` into the step’s topic values. Those topic values are in turn inputted
+into the next step `(f(#), g(#, ##))`. Before that next step is evaluated, the
+first topic value (which is the first value of `array`) is bound to `#`, and the
+second topic value (which is the second value of `array`) is bound to `##`. The
+result of `(f(#), g(#, ##))` in turn is inputted into `h`.
+
+<td>
+
+```js
+{
+  const [$, $$] = [...array];
+  h(f($) + g($, $$));
+}
 ```
 
 <tr>
