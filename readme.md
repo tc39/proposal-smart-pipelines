@@ -3721,9 +3721,6 @@ g(f(a, x, ...[b, ...c, d]));
 <tr>
 <td>
 
-<tr>
-<td>
-
 ```js
 a |> f
 ```
@@ -3734,6 +3731,8 @@ a |> f
 f(a)
 ```
 
+<tr>
+<td>
 
 ```js
 (a) |> f
@@ -4358,6 +4357,8 @@ essentially `(x, y) => f(x, 4, y)`. The latter refers to a **unary** function
 that passes the same one argument into both the first and third parameters of
 the original function `f`: `x => f(x, 4, x)`. The same symbol refers to the same
 value in the same lexical environment.
+
+<td>
 
 <tr>
 <td>
