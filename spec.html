@@ -2108,9 +2108,11 @@ PipelineTopicStep :
   Block
 </emu-grammar>
 <emu-alg>
-* <del>It is a Syntax Error if _ConditionalExpression_ Contains `#` is *false*.</del>
-* It is a Syntax Error if _ConditionalExpression_ is covering a |YieldExpression|.
-* It is a Syntax Error if _ConditionalExpression_ is covering a |PipelineTopicListHead|.
+* It is a Syntax Error if <del>this _PipelineTopicStep_ Contains `#` is *false*.</del><ins>all of the following are true:</ins>
+  * <ins>ExpectedArgumentCount of this _PipelineTopicStep_ is *0*.</ins>
+  * <ins>This _PipelineTopicStep_ Contains `...` is *false*.</ins>
+* It is a Syntax Error if this _PipelineTopicStep_ is covering a |YieldExpression|.
+* It is a Syntax Error if this _PipelineTopicStep_ is covering a |PipelineTopicListHead|.
 </emu-alg>
 <emu-note type=editor>
 <p>The production <emu-grammar>PipelineTopicStep : Block</emu-grammar> above is included only when <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> is also included.</p>
