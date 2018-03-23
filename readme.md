@@ -4441,14 +4441,18 @@ function createRound (methodName) {
     precision = precision |> {
       if (# == null)
         0;
-      |> toInteger |> nativeMin(#, 292);
-    }
       else #
+      |> toInteger
+      |> nativeMin(#, 292);
+    };
     return number |> {
-        // Shift with exponential notation
-        // to avoid floating-point issues.
-        // See https://mdn.io/round#Examples.
       if (precision) #
+      // Shift with
+      // exponential notation
+      // to avoid
+      // floating-point
+      // issues. See
+      // https://mdn.io/round.
       |> `${#}e`
       |> ...#.split('e')
       |> `${#}e${+## + precision}`
@@ -4475,17 +4479,21 @@ function createRound (methodName) {
     number = toNumber(number)
     precision = precision == null
       ? 0
-      : nativeMin(toInteger(precision), 292)
+      : nativeMin(
+        toInteger(precision), 292)
     if (precision) {
-      // Shift with exponential notation
-      // to avoid floating-point issues.
-      // See https://mdn.io/round#Examples.
-      var
-        pair = (toString(number) + 'e')
-          .split('e'),
-        value = func(
-          pair[0] + 'e' + (
-            +pair[1] + precision));
+      // Shift with
+      // exponential notation
+      // to avoid
+      // floating-point
+      // issues. See
+      // https://mdn.io/round.
+      var pair =
+          (toString(number) + 'e')
+            .split('e'),
+          value = func(
+            pair[0] + 'e' + (
+              +pair[1] + precision));
 
       pair = (toString(value) + 'e')
         .split('e');
