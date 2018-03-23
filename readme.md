@@ -4659,8 +4659,8 @@ async function readInto(buffer, offset = 0) {
     |> (#, offset, #.byteLength - offset)
     |> new Uint8Array
     |> await reader.read
-    |> (#.buffer, #.byteLength)
-    |> readInto(#, offset + ##);
+    |> (#.buffer, #.byteLength + offset)
+    |> readInto;
   };
 }
 ```
