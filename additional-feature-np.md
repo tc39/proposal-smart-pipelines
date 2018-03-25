@@ -1,3 +1,1217 @@
+## Additional Feature NP
+Another Additional Feature – **n-ary pipelines** – enables the passing of
+multiple arguments into a pipeline’s steps. `(a, b) |> f` is equivalent to
+`f(a, b)`, and `a |> (f(#), g(#)) |> h` is equivalent to `h(f(a), g(a))`.
+
+For [topic style][], Additional Feature NP introduces **multiple lexical
+topics**: not only the **primary** topic reference `#`, but also **secondary**
+`##`, **tertiary** `###`, and **rest** `...` **topic references**. It also
+enables both **n-ary application** and **n-ary partial application**.
+This is somewhat akin to [Clojure’s compact anonymous functions][Clojure compact
+function], which use `%` aka `%1`, then `%2`, `%3`, … for its parameters within
+the compact functions’ bodies.
+
+When combined with [Additional Feature PF][], Additional Feature NP would
+complete the subsumption of partial function application, addressing all its use
+cases, including using partial application to create new binary, trinary, and
+variadic functions.
+
+This explainer limits this Additional Feature to three topic references plus a
+rest topic reference. This limit could theoretically be lifted, but readability
+would rapidly suffer with five, six, seven different topics at once. Arrow
+functions could always be used instead for such many-parameter functions.\
+The precise appearances of the secondary, tertiary, and rest topic references do
+not have to be `##`, `###`, and `...`. For instance, they could instead be `#1`,
+`#2`, and `#...`; this is yet to be bikeshedded.
+
+[Additional Feature NP is **formally specified in in the draft
+specification**][formal NP].
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+(a, b) |> f;
+```
+A pipeline step using commas would be interpreted as an argument list. The
+arguments would then be applied to the next pipeline step as its inputs.
+
+<td>
+
+```js
+f(a, b);
+```
+
+<tr>
+<td>
+
+```js
+(a, b, ...c, d) |> f |> g;
+```
+Spread elements are permitted within pipeline steps, with the same meaning as in
+regular argument lists.
+
+<td>
+
+```js
+g(f(a, b, ...c, d));
+```
+
+<tr>
+<td>
+
+```js
+...a |> f |> g;
+```
+When a pipeline step only consists of one item, its parentheses may be omitted,
+which is the usual syntax from the [Core Proposal][]. But this now goes for
+spread elements too.
+
+<td>
+
+```js
+g(f(...a));
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |> f(#, x, ##) |> g;
+```
+When a pipeline step is in [topic style][], the first element in the argument
+list is bound to the primary topic reference `#`, the second element is bound to
+the secondary topic reference `##`, and the third element is bound to the
+tertiary topic reference `###`. These are resolvable as usual within the
+pipeline step.
+
+<td>
+
+```js
+g(f(a, x, b));
+```
+
+<tr>
+<td>
+
+```js
+...a |> f(x, ...) |> g;
+```
+A pipeline step also may bind a list of values to a rest topic reference `...`
+within the next pipeline step. The list contains the arguments of the pipeline
+step that were not bound to any other topic reference. `...` automatically
+flattens, acting as a spread operator, and it is valid only where spread
+operators are already valid (such as argument lists, array literals, and object
+literals).
+
+<td>
+
+```js
+g(f(x, ...a));
+```
+
+<tr>
+<td>
+
+```js
+a |> f(#, x, ...) |> g;
+```
+
+<td>
+
+```js
+{
+  const [$, ...$r] = a;
+  f($, x, ...$r);
+}
+```
+
+<tr>
+<td>
+
+```js
+(a, b, ...c, d) |> f(#, x, ...) |> g;
+```
+
+<td>
+
+```js
+g(f(a, x, ...[b, ...c, d]));
+```
+
+<tr>
+<td>
+
+```js
+...a |> f;
+...a |> f(...); // Equivalent
+```
+Bare-style pipeline heads are now equivalent to spreading the rest topic
+reference into the function’s arguments.
+
+<td>
+
+```js
+f(...a);
+```
+
+<tr>
+<td>
+
+```js
+x + 1 |> (f(#), g(#)) |> h;
+x + 1 |> (f(#), g(#)) |> h(...); // Equivalent
+```
+A topic-style pipeline step can be n-ary itself. By taking the form of an
+argument list, the step `(f(#), g(#))` passes multiple values into the following
+step `h`. Each element of the argument list is itself an expression that may
+use any of the topic references `#`, `##`, `###`, or `...` that were bound by
+its own input (in the case of `x + 1`, only `#` and `...` are bound).
+
+<td>
+
+```js
+{
+  const $0 = x + 1;
+  const $1 = f($0);
+  const $$1 = g($0);
+  h($1, $$1);
+}
+```
+
+<tr>
+<td>
+
+```js
+(x + 1, y + 1) |> (f(#), g(#, ##)) |> h;
+```
+
+<td>
+
+```js
+{
+  const [$0, $$0] = [x + 1, y + 1];
+  const [$1, $$1] = [f($0), g($0, $$0)];
+  h($1, $$1);
+}
+```
+
+<tr>
+<td>
+
+```js
+...array |> (f(#), g(#, ##)) |> h;
+array |> ... |> (f(#), g(#, ##)) |> h; // Equivalent
+```
+In the second (equivalent) line, the `...` (topic-style) step spreads the values
+of `array` into the step’s topic values. Those topic values are in turn inputted
+into the next step `(f(#), g(#, ##))`. Before that next step is evaluated, the
+first topic value (which is the first value of `array`) is bound to `#`, and the
+second topic value (which is the second value of `array`) is bound to `##`. The
+result of `(f(#), g(#, ##))` in turn is inputted into `h`.
+
+<td>
+
+```js
+{
+  const [$, $$] = [...array];
+  h(f($) + g($, $$));
+}
+```
+
+<tr>
+<td>
+
+```js
+a |> f
+```
+
+<td>
+
+```js
+f(a)
+```
+
+<tr>
+<td>
+
+```js
+(a) |> f
+```
+
+<td>
+
+```js
+f(a)
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |> f
+```
+
+<td>
+
+```js
+f(a, b)
+```
+
+<tr>
+<td>
+
+```js
+(...a) |> f
+```
+
+<td>
+
+```js
+f(...a)
+```
+
+<tr>
+<td>
+
+```js
+...a |> f
+```
+
+<td>
+
+```js
+f(...a)
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |> # + ##
+```
+
+<td>
+
+```js
+a + b
+```
+
+<tr>
+<td>
+
+```js
+() |> # + ##
+// 🚫 Syntax Error: Pipeline
+// head inputs 0 topic values
+// `()` into following step that
+// expects 1 topic value.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b) |> f(#, 0, ##)
+```
+
+<td>
+
+```js
+f(a, 0, b)
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |> f(0, ##)
+```
+
+<td>
+
+```js
+f(0, b)
+```
+
+<tr>
+<td>
+
+```js
+(a, b, c, d) |> f(#, 0, ...)
+```
+
+<td>
+
+```js
+f(a, 0, b, c, d)
+```
+
+<tr>
+<td>
+
+```js
+(a, b, c, d) |> f(##, 0, ...)
+```
+
+<td>
+
+```js
+f(b, 0, c, d)
+```
+
+<tr>
+<td>
+
+```js
+(a, b, c, d) |> f(##, 0, [...])
+```
+
+<td>
+
+```js
+f(b, 0, [c, d])
+```
+
+<tr>
+<td>
+
+```js
+(a, ...[b, c, d]) |> f(##, 0, [...])
+```
+
+<td>
+
+```js
+f(b, 0, [c, d])
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |> (# * b, ##) |> f
+```
+
+<td>
+
+```js
+g(a * b, f(b))
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |> (## * b, ##) |> f
+```
+
+<td>
+
+```js
+g(b * b, f(b))
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |> (# * b, #) |> f
+// 🚫 Syntax Error: Pipeline
+// head inputs 2 topic values
+// `(a, b)` into following step that
+// expects 1 topic value.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b) |> (# * b, f) |> f
+// 🚫 Syntax Error:
+// Topic-style pipeline step
+// `f` in `(# * b, f)` binds
+// topic but contains no topic
+// reference.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b) |> #
+// 🚫 Syntax Error: Pipeline
+// head inputs 2 topic values
+// `(a, b)` into following step that
+// expects 1 topic value.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+a |> # + ##
+// 🚫 Syntax Error: Pipeline
+// head inputs 1 topic value
+// `a` into following step that
+// expects 2 topic values.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+() |> # + 1
+// 🚫 Syntax Error: Pipeline
+// head inputs 0 topic values
+// `()` into following step that
+// expects 1 topic value.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b) |> f(#, 0)
+// 🚫 Syntax Error: Pipeline
+// head inputs 2 topic values
+// `(a, b)` into following step that
+// expects 1 topic value.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b) |> (#, ##)
+// 🚫 Syntax Error: Pipeline
+// terminates with a 2-ary
+// pipeline step but pipelines
+// must terminate with a unary
+// pipeline step.
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+(a, b, c, d, e) |> f(##, x, ...) |> g;
+```
+The rest topic reference `...` starts from beyond the furthest topic reference
+that is used within the pipeline step. Here, the furthest topic reference is the
+secondary topic reference `##`: the second argument item. So `[c, d, e]` is
+bound to the rest topic reference. The rest topic reference `...` may only be
+used where the spread operator `...expression` would also be valid (that is,
+argument lists, array literals, and object literals), and it automatically
+spreads its elements into whatever expression surrounds it.
+
+<td>
+
+```js
+{
+  const [$, $$, $$$, ...$r]
+    = [a, b, c, d, e];
+  g(f(a, $$, x, ...$r));
+}
+```
+
+<tr>
+<td>
+
+```js
+(a, b, c, ...d, e) |> f(#, ###, x, ...) |> g;
+```
+Here, the furthest topic reference is the tertiary topic reference `###`: the
+third argument item. So only the rest topic reference `...` contains `d`’s
+spread elements as well as `e`. The second argument, `b`, is skipped entirely,
+because `##` is not used at all in the pipeline step.
+
+<td>
+
+```js
+{
+  const $r = [...d, e];
+  g(f(a, $$$, x, ...$r));
+}
+```
+
+<tr>
+<td>
+
+```js
+(a, ...b, c, ...d, e)
+|> f(#, ##, ###, x, ...)
+|> g;
+```
+
+<td>
+
+```js
+{
+  const [$$, $$$, ...$r] =
+    [...b, c, ...d, e];
+  g(f(a, $$, $$$, x, ...$r));
+}
+```
+
+<tr>
+<td>
+
+```js
+(a, ...b, c, ...d, e)
+|> f(#, ##, x, ...)
+|> g;
+```
+
+<td>
+
+```js
+{
+  const [$$, ...$r] =
+    [...b, c, ...d, e];
+  g(f(a, $$, x, ...$r));
+}
+```
+
+<tr>
+<td>
+
+```js
+(a, b) |> # - ## |> g;
+```
+
+<td>
+
+```js
+g(a - b);
+```
+
+<tr>
+<td>
+
+N-ary pipeline steps may be chained by using comma expressions, forming a
+**list-style pipeline step**.
+```js
+(a, b) |> (f, g) |> h;
+```
+The results of the list will be applied to the following pipeline step as its inputs.
+
+<td>
+
+```js
+h(f(a), g(b));
+```
+
+<tr>
+<td>
+
+The elements in an N-ary pipeline step must be in topic style (like the `# ** c +
+##` here).
+```js
+(a, b)
+|> (f(#), # ** c + ##)
+|> # - ##;
+```
+It would be the usual early Syntax Error if `f(#)` was instead just `f`, because
+it would be a topic-style pipeline step without a topic reference. (`f(##)` and
+`f(...)` would not be a Syntax Error, of course. But `f(###)` would also be a
+Syntax Error, because it has only two inputs from the step before it.)
+
+<td>
+
+```js
+f(a) - (a ** c + b);
+```
+
+<tr>
+<td>
+
+```js
+(a, b)
+|> (f(#), g(##))
+|> h
+|> (i(#), # + 1, k(###))
+|> l;
+```
+
+
+<td>
+
+```js
+{
+  const $ = h(f(a), g(b));
+  l(i($), $ + 1, k($));
+}
+```
+
+<tr>
+<td>
+
+```js
+(a, b)
+|> (f(#), g(##))
+|> (h, i);
+// 🚫 Syntax Error:
+// Pipeline terminates with a
+// 2-ary pipeline step but
+// pipelines must terminate
+// with a unary pipeline step.
+```
+It is an [early error][] for a pipeline to end with an n-ary pipeline step,
+where n > 1. Such a comma expression would almost certainly be an accidental
+mistake by the developer.
+
+<td>
+
+<tr>
+<td>
+
+```js
+value
+|> (f, g)
+|> (x, y) => # * x + ## * y
+|> settimeout
+// 🚫 Syntax Error:
+// Unexpected token `=>`.
+// Cannot parse base expression.
+```
+Because arrow functions have looser precedence than the pipe operator `|>`,
+it is never ambiguous with the parenthesized-list syntax for N-ary pipelines.
+The above invalid code is being interpreted as if it were the below:
+```js
+(value |> (f, g) |> (x, y)) =>
+  (# * 5 |> settimeout);
+// 🚫 Syntax Error:
+// Unexpected token `=>`.
+// Cannot parse base expression.
+```
+The arrow function must be parenthesized, simply as with any other
+looser-precedence expression:
+```js
+value
+|> (f, g)
+|> ((x, y) => # * x + ## * y)
+|> settimeout;
+```
+
+<td>
+
+<tr>
+<td>
+
+```js
+number
+|> ...createRange
+|> [#, ###, ...];
+```
+
+<td>
+
+```js
+{
+  const [$, , $$$, ...$r] =
+    createRange(number);
+  [$, $$$, $r];
+}
+```
+
+<tr>
+<td>
+
+```js
+input |> f |> [0, 1, 2, ...#] |> g;
+```
+```js
+input |> f |> ...# |> [0, 1, 2, ...] |> g;
+```
+This is an adapted example from the [Core Proposal section above][Core
+Proposal]. It is equivalent to the original example; it is shown only for
+illustrative purposes.
+
+<td>
+
+```js
+g([0, 1, 2, ...f(input)]);
+```
+```js
+{
+  const [...$r] = f(input);
+  g([0, 1, 2, ...$r]);
+}
+```
+All these code blocks are equivalent.
+
+<tr>
+<td>
+
+```js
+x
+|> (f, ...g, h)
+|> [...].length;
+```
+As a result of the rules, `… |> [...]` collects its input’s n-ary arguments into
+a single flattened list, to which the rest topic reference `...` is then bound,
+then spread into an array literal.
+
+<td>
+
+```js
+[f(x), ...g(x), h(x)].length;
+```
+
+<tr>
+<td>
+
+```js
+[ { x: 22 }, { x: 42 } ]
+  .map(+> #.x)
+  .reduce(+> # - ##, 0);
+```
+
+<td>
+
+```js
+[ { x: 22 }, { x: 42 } ]
+  .map(el => el.x)
+  .reduce((_0, _1) => _0 - _1, 0);
+```
+
+<tr>
+<td>
+
+```js
+array.sort(+> # - ##);
+```
+Additional Feature NP, when coupled with [Additional Feature PF][], would
+enable very terse callback functions.
+
+<td>
+
+```js
+array.sort((_0, _1) => _0 - _1);
+```
+
+<tr>
+<td>
+
+```js
+[ { x: 22 }, { x: 42 } ]
+  .map(+> #.x)
+  .reduce(+> # - ##, 0);
+```
+
+<td>
+
+```js
+[ { x: 22 }, { x: 42 } ]
+  .map(el => el.x)
+  .reduce((_0, _1) => _0 - _1, 0);
+```
+
+<tr>
+<td>
+
+```js
+const f = (x, y, z) => [x, y, z];
+const g = +> f(#, 4, ##);
+g(1, 2); // [1, 4, 2]
+```
+Additional Feature NP, when coupled with [Additional Feature PF][], would also
+solve **partial application into n-ary functions**. (Additional Feature PF would
+only address partial application into unary functions.)
+
+<td>
+
+```js
+const f = (x, y, z) => [x, y, z];
+const g = f(?, 4, ?);
+g(1, 2); // [1, 4, 2]
+```
+The current proposal for [partial function application][] assumes that each use
+of the same `?` placeholder token represents a different parameter. In contrast,
+each use of `#` within the same scope always refers to the same value. This is
+why additional topic parameters are required.
+
+<tr>
+<td>
+
+The resulting model is more flexible: with Additional Feature NP with
+[Additional Feature PF][], `+> f(#, 4, ##)` is different from `+> f(#, 4, #)`.
+The former refers to a **binary** function: a function with two parameters,
+essentially `(x, y) => f(x, 4, y)`. The latter refers to a **unary** function
+that passes the same one argument into both the first and third parameters of
+the original function `f`: `x => f(x, 4, x)`. The same symbol refers to the same
+value in the same lexical environment.
+
+<td>
+
+<tr>
+<td>
+
+```js
+const maxGreaterThanZero =
+  +> Math.max(0, ...);
+maxGreaterThanZero(1, 2); // 2
+maxGreaterThanZero(-1, -2); // 0
+```
+Partial application into a variadic function is also naturally handled by
+Additional Feature NP with [Additional Feature PF][].
+
+<td>
+
+```js
+const maxGreaterThanZero =
+  Math.max(0, ...);
+maxGreaterThanZero(1, 2); // 2
+maxGreaterThanZero(-1, -2); // 0
+```
+In this case, the topic function version looks once again nearly identical to
+the other proposal’s code.
+
+<tr>
+<td>
+
+Additional Feature NP would explain bare style in [Additional Feature PF][]
+“`+>` _Pipeline_” as equivalent to a function with a variadic pipeline
+“`(...$rest) => ...$rest |>` _Pipeline_”.
+```js
++> g |> f |> # + 1;
+(...$rest) => ...$rest |> g |> f |> # + 1;
+```
+These two lines of code are equivalent. The first is taken from an example in
+the [Additional Feature PF section above][Additional Feature PF].
+
+<td>
+
+```js
+(...$rest) =>
+  f([...$].length) + 1;
+```
+
+<tr>
+<td>
+
+```js
++> [...].length |> f |> # + 1;
+(...$rest) =>
+  ...$rest |> [...].length |> f |> # + 1;
+```
+These two lines of code are also equivalent.
+
+<td>
+
+```js
+(...$rest) => f([...$].length) + 1;
+```
+
+</table>
+
+### Lodash (Core Proposal + Additional Features BP+PP+PF+NP)
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+function createRound (methodName) {
+  var func = Math[methodName];
+  return function (number, precision) {
+    number = number |> toNumber;
+    precision = precision |> {
+      if (# == null)
+        0;
+      else #
+      |> toInteger
+      |> nativeMin(#, 292);
+    };
+    return number |> {
+      if (precision) #
+      // Shift with
+      // exponential notation
+      // to avoid
+      // floating-point
+      // issues. See
+      // https://mdn.io/round.
+      |> `${#}e`
+      |> ...#.split('e')
+      |> `${#}e${+## + precision}`
+      |> func
+      |> `${#}e`
+      |> ...#.split('e')
+      |> `${#}e${+## - precision}`
+      |> +#;
+      else #
+      |> func;
+    };
+  };
+}
+```
+The parallelism between the `if` clause’s `|> shift |> func |> shiftBack` and
+the `else` clause’s `|> func` becomes visually clearer with smart pipelines.
+
+<td>
+
+```js
+function createRound (methodName) {
+  var func = Math[methodName];
+  return function (number, precision) {
+    number = toNumber(number)
+    precision = precision == null
+      ? 0
+      : nativeMin(
+        toInteger(precision), 292)
+    if (precision) {
+      // Shift with
+      // exponential notation
+      // to avoid
+      // floating-point
+      // issues. See
+      // https://mdn.io/round.
+      var pair =
+          (toString(number) + 'e')
+            .split('e'),
+          value = func(
+            pair[0] + 'e' + (
+              +pair[1] + precision));
+
+      pair = (toString(value) + 'e')
+        .split('e');
+      return +(
+        pair[0] + 'e' + (
+          +pair[1] - precision));
+    }
+    return func(number);
+  }
+}
+```
+
+</table>
+
+### Ramda (Core Proposal + Additional Features BP+PF+NP)
+[Many examples above using Ramda][Ramda + CP + BP + PF] benefited from pipeline
+functions with Additional Feature PF. Even more use cases are covered by
+pipeline functions when [Additional Feature NP][] syntax is supported.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+const cssQuery = +> ##.querySelectorAll(#);
+const setStyle = +> { ##.style = # };
+document
+|> cssQuery('a, p', #)
+|> #.map(+> setStyle({ color: 'red' }));
+```
+
+<td>
+
+```js
+const cssQuery = R.invoker(1,
+  'querySelectorAll');
+const setStyle = R.assoc('style');
+R.pipe(
+  cssQuery('a, p'),
+  R.map(setStyle({ color: 'red' }))
+)(document);
+```
+
+<tr>
+<td>
+
+```js
+const disco = +>
+|> R.zipWith(+> #(##),
+    [ red, green, blue ])
+|> #.join(' ');
+[ 'foo', 'bar', 'xyz' ]
+|> disco
+|> console.log;
+```
+
+<td>
+
+```js
+const disco = R.pipe(
+  R.zipWith(
+    R.call,
+    [ red, green, blue ]),
+  R.join(' '));
+console.log(
+  disco([ 'foo', 'bar', 'xyz' ]));
+```
+
+<tr>
+<td>
+
+```js
+const dotPath = +>
+|> (#.split('.'), ##)
+|> R.path(#, ##);
+const propsDotPath = +>
+|> (R.map(dotPath), [##])
+|> R.ap;
+const obj = {
+  a: { b: { c: 1 } },
+  x: 2
+};
+propsDotPath(['a.b.c', 'x'], obj);
+// [ 1, 2 ]
+```
+
+<td>
+
+```js
+const dotPath = R.useWith(
+  R.path,
+  [R.split('.')]);
+const propsDotPath = R.useWith(
+  R.ap,
+  [R.map(dotPath), R.of]);
+const obj = {
+  a: { b: { c: 1 } },
+  x: 2
+};
+propsDotPath(['a.b.c', 'x'], obj);
+// [ 1, 2 ]
+```
+
+</table>
+
+### WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF+NP)
+[Many examples above using WHATWG Streams][WHATWG Streams + CP + BP + PF]
+benefited from pipeline functions with Additional Features CP + PF. Even more
+use cases are covered by pipeline functions with [Additional Feature NP][].
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+try {
+  readableStream
+  |> await #.pipeTo(writableStream);
+
+  "Success"
+  |> console.log;
+}
+catch
+|> ("Error", #)
+|> console.error;
+```
+This example also uses [Additional Feature TS][] for terse `catch` clauses.
+
+<td>
+
+```js
+readableStream.pipeTo(writableStream)
+  .then(() => console.log("Success"))
+  .catch(e => console.error("Error", e));
+```
+
+<tr>
+<td>
+
+```js
+const reader = readableStream
+  .getReader({ mode: "byob" });
+
+try {
+  new ArrayBuffer(1024)
+  |> await readInto
+  |> ("The first 1024 bytes:", #)
+  |> console.log;
+}
+catch
+|> ("Something went wrong!", #)
+|> console.error;
+
+async function readInto(buffer, offset = 0) {
+  return buffer |> {
+    if (#.byteLength === offset)
+      #;
+    else #
+    |> (#, offset, #.byteLength - offset)
+    |> new Uint8Array
+    |> await reader.read
+    |> (#.buffer, #.byteLength + offset)
+    |> readInto;
+  };
+}
+```
+This example also uses [Additional Feature TS][] for terse `catch` clauses,
+[Additional Feature BC][] for a terse constructor call on `Uint8Array`, and
+[Additional Feature BA][] for a terse async function call on `readInto`.
+
+<td>
+
+```js
+const reader = readableStream
+  .getReader({ mode: "byob" });
+
+let startingAB = new ArrayBuffer(1024);
+readInto(startingAB)
+  .then(buffer =>
+    console.log("The first 1024 bytes:", buffer))
+  .catch(e =>
+    console.error("Something went wrong!", e));
+
+function readInto(buffer, offset = 0) {
+  if (offset === buffer.byteLength) {
+    return Promise.resolve(buffer);
+  }
+  const view = new Uint8Array(
+    buffer, offset, buffer.byteLength - offset)
+  return reader.read(view).then(newView => {
+    return readInto(newView.buffer,
+      offset + newView.byteLength);
+  });
+}
+```
+
+</table>
+
 [“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 [“don’t break my code”]: ./goals.md#dont-break-my-code
 [“don’t make me overthink”]: ./goals.md#dont-make-me-overthink
