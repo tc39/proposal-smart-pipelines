@@ -2519,4 +2519,555 @@ Normally, Contains does not look inside most function forms. However, Contains i
 <h1>Additional Feature TS: Pipeline `try` Statements</h1>
 <p><strong>Not at Stage 0.</strong></p>
 <p>[TODO]</p>
+
+<emu-annex id=sec-additional-feature-ts-ecmascript-language-statements-and-declarations>
+<h1>ECMAScript Language: Statements and Declarations</h1>
+
+<emu-annex id=sec-additional-feature-ts-try-statement>
+<h1>The `try` statement</h1>
+
+<emu-note type=editor>
+<p>This section adds onto the <emu-xref href=#sec-try-statement>augmentations in the core proposal to an existing clause</emu-xref>. It is also mutually compatible with the <a href=https://tc39.github.io/proposal-optional-catch-binding/>specification for optional `catch` binding</a>.</p>
+</emu-note>
+
+<h2>Syntax</h2>
+<emu-grammar type="definition">
+TryStatement[Yield, Await, Return] :
+  `try` Block[?Yield, ?Await, ?Return] Catch[?Yield, ?Await, ?Return]
+  `try` Block[?Yield, ?Await, ?Return] Finally[?Yield, ?Await, ?Return]
+  `try` Block[?Yield, ?Await, ?Return] Catch[?Yield, ?Await, ?Return] Finally[?Yield, ?Await, ?Return]
+  <ins class=block>
+  `try` `|&gt;` Pipeline[?Yield, ?Await, ?Return] `;` Catch[?Yield, ?Await, ?Return]
+  `try` `|&gt;` Pipeline[?Yield, ?Await, ?Return] `;` Finally[?Yield, ?Await, ?Return]
+  `try` `|&gt;` Pipeline[?Yield, ?Await, ?Return] `;` Catch[?Yield, ?Await, ?Return] Finally[?Yield, ?Await, ?Return]
+  </ins>
+
+Catch[Yield, Await, Return] :
+  `catch` `(` CatchParameter[?Yield, ?Await] `)` Block[?Yield, ?Await, ?Return]
+  <ins class=block>
+  `catch` `|&gt;` Pipeline[?Yield, ?Await, ?Return] Pipeline[?Yield, ?Await, ?Return] `;`
+  </ins>
+
+Finally[Yield, Await, Return] :
+  `finally` Block[?Yield, ?Await, ?Return]
+  <ins class=block>
+  `finally` `|&gt;` Pipeline[?Yield, ?Await, ?Return] Pipeline[?Yield, ?Await, ?Return] `;`
+  </ins>
+</emu-grammar>
+<emu-note>
+<p>The `try` statement encloses a block of code <ins>or a pipeline</ins> in which an exceptional condition can occur, such as a runtime error or a `throw` statement. The `catch` clause provides the exception-handling code. When a catch clause <ins>with a |Block| </ins>catches an exception, its |CatchParameter| is bound to that exception. <ins>When a catch clause with a |Pipeline| catches an exception, that exception is passed into its |Pipeline| as its input value.</ins></p>
+</emu-note>
+
+<emu-annex id=sec-additional-feature-ts-try-statement-static-semantics-early-errors>
+<h1>Static Semantics: Early Errors</h1>
+
+<emu-note type=editor>
+<p>This section augments the <emu-xref href=#sec-try-statement-static-semantics-early-errors>augmentations in the core proposal to an existing clause</emu-xref>.</p>
+</emu-note>
+
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<del class=block>
+<emu-grammar>
+Catch : `catch` `(` CatchParameter `)` Block</emu-grammar>
+<emu-alg>
+* It is a Syntax Error if _Block_ Contains `#` is *true*.
+</emu-alg>
+</del>
+
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<del class=block>
+<emu-grammar>
+Catch : `catch` `(` CatchParameter `)` Block</emu-grammar>
+<emu-alg>
+* It is a Syntax Error if <del>_Block_ Contains `#` is *true*.</del>any of the following conditions are true:
+  * _Block_ Contains |TopicExpression| is *true*.
+  * _Block_ Contains |RestTopicReference| is *true*.
+</emu-alg>
+</del>
+
+<del class=block>
+
+<emu-note>
+<p>Syntax nonterminals that establish new lexical bindings within new inner program scopes, including |Catch|, may <strong>not</strong> contain a <del>topic reference `#`</del><ins>|TopicExpression| (`#`, `##`, or `###`) or a |RestTopicReference| (`...`)</ins>. However, such topic-forbidding nonterminals may also contain topic-binding nonterminals such as |ConditionalExpression| in <emu-grammar>PipelineTopicStep : ConditionalExpression</emu-grammar>, which would, in turn, hide their own inner topic references from the Contains abstract operation. Within those topic-binding nonterminals, such topic references would therefore not trigger the early errors above.</p>
+</emu-note>
+</del>
+
+<emu-note type=editor>
+<p>The following early errors are inserted only if the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed.</p>
+</emu-note>
+
+<ins class=block>
+<emu-grammar>
+TryStatement :
+  `try` `|&gt;` Pipeline `;` Catch
+  `try` `|&gt;` Pipeline `;` Finally
+  `try` `|&gt;` Pipeline `;` Catch Finally
+</emu-grammar>
+<emu-alg>
+* It is a Syntax Error if the ArgumentListMinWidth of _Pipeline_ is not *1*.
+* It is a Syntax Error if the ArgumentListMaxWidth of _Pipeline_ is not *1*.
+</emu-alg>
+
+<emu-grammar>Catch : `catch` `|&gt;` Pipeline</emu-grammar>
+<emu-alg>
+* It is a Syntax Error if the ArgumentListMaxWidth of _PipelineHead_ is less than the ExpectedArgumentCount of _Pipeline_.
+* It is a Syntax Error if the ArgumentListMinWidth of _Pipeline_ is not *1*.
+* It is a Syntax Error if the ArgumentListMaxWidth of _Pipeline_ is not *1*.
+</emu-alg>
+
+<emu-grammar>Finally : `finally` `|&gt;` Pipeline</emu-grammar>
+<emu-alg>
+* It is a Syntax Error if the ArgumentListMinWidth of _Pipeline_ is not *1*.
+* It is a Syntax Error if the ArgumentListMaxWidth of _Pipeline_ is not *1*.
+</emu-alg>
+</ins>
+
+</emu-annex>
+
+<emu-annex id=sec-additional-feature-ts-try-statement-static-semantics-contains>
+<h1>Static Semantics: Contains</h1>
+<p>With parameter _symbol_.</p>
+<emu-see-also-para op="Contains"></emu-see-also-para>
+<emu-note type=editor>
+<p>This section is a wholly new sub-clause.</p>
+</emu-note>
+
+<emu-grammar>Catch : `catch` `|&gt;` Pipeline</emu-grammar>
+<emu-alg>
+1. If _symbol_ is `#`, return *false*.
+2. For each child node _child_ of this Parse Node, do
+  1. If _child_ is an instance of _symbol_, return *true*.
+  2. If _child_ is an instance of a nonterminal, then
+    1. Let _contained_ be the result of _child_ Contains _symbol_.
+    2. If _contained_ is *true*, return *true*.
+2. Return *false*.
+</emu-alg>
+</emu-annex>
+
+<emu-annex id="sec-additional-feature-ts-try-statement-static-semantics-containsduplicatelabels">
+<h1>Static Semantics: ContainsDuplicateLabels</h1>
+<p>With parameter _labelSet_.</p>
+<emu-see-also-para op="ContainsDuplicateLabels"></emu-see-also-para>
+<emu-note type=editor>
+<p>This section augments the <a href=https://tc39.github.io/ecma262/#sec-try-statement-static-semantics-containsduplicatelabels>original `try` Statement, Static Semantics: ContainsDuplicateLabels clause</a>.</p>
+</emu-note>
+
+<ins class=block>
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Catch</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return ContainsDuplicateLabels of |Catch| with argument _labelSet_.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _hasDuplicates_ be ContainsDuplicateLabels of |Pipeline| with argument _labelSet_.
+2. If _hasDuplicates_ is *true*, return *true*.
+3. Return ContainsDuplicateLabels of |Catch| with argument _labelSet_.
+</emu-alg>
+
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Finally</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return ContainsDuplicateLabels of |Finally| with argument _labelSet_.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _hasDuplicates_ be ContainsDuplicateLabels of |Pipeline| with argument _labelSet_.
+2. If _hasDuplicates_ is *true*, return *true*.
+3. Return ContainsDuplicateLabels of |Finally| with argument _labelSet_.
+</emu-alg>
+
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Catch Finally</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _hasDuplicates_ be ContainsDuplicateLabels of |Catch| with argument _labelSet_.
+1. If _hasDuplicates_ is *true*, return *true*.
+1. Return ContainsDuplicateLabels of |Finally| with argument _labelSet_.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _hasDuplicates_ be ContainsDuplicateLabels of |Pipeline| with argument _labelSet_.
+2. If _hasDuplicates_ is *true*, return *true*.
+3. Let _hasDuplicates_ be ContainsDuplicateLabels of |Catch| with argument _labelSet_.
+4. If _hasDuplicates_ is *true*, return *true*.
+5. Return ContainsDuplicateLabels of |Finally| with argument _labelSet_.
+</emu-alg>
+
+<emu-grammar>Catch : `catch` `|&gt;` Pipeline</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return *false*.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return ContainsDuplicateLabels of |Pipeline| with argument _labelSet_.
+</emu-alg>
+</ins>
+</emu-annex>
+
+<emu-annex id="sec-additional-feature-ts-try-statement-static-semantics-containsundefinedbreaktarget">
+<h1>Static Semantics: ContainsUndefinedBreakTarget</h1>
+<p>With parameter _labelSet_.</p>
+<emu-see-also-para op="ContainsUndefinedBreakTarget"></emu-see-also-para>
+<emu-note type=editor>
+<p>This section augments the <a href=https://tc39.github.io/ecma262/#sec-try-statement-static-semantics-containsundefinedbreaktarget>original `try` Statement, Static Semantics: ContainsUndefinedBreakTarget clause</a>.</p>
+</emu-note>
+<ins class=block>
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline Catch</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return ContainsUndefinedBreakTarget of |Catch| with argument _labelSet_.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _hasUndefinedLabels_ be ContainsUndefinedBreakTarget of |Pipeline| with argument _labelSet_.
+1. If _hasUndefinedLabels_ is *true*, return *true*.
+1. Return ContainsUndefinedBreakTarget of |Catch| with argument _labelSet_.
+</emu-alg>
+
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Finally</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return ContainsUndefinedBreakTarget of |Finally| with argument _labelSet_.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _hasUndefinedLabels_ be ContainsUndefinedBreakTarget of |Pipeline| with argument _labelSet_.
+1. If _hasUndefinedLabels_ is *true*, return *true*.
+1. Return ContainsUndefinedBreakTarget of |Finally| with argument _labelSet_.
+</emu-alg>
+
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Catch Finally</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _hasUndefinedLabels_ be ContainsUndefinedBreakTarget of |Catch| with argument _labelSet_.
+1. If _hasUndefinedLabels_ is *true*, return *true*.
+1. Return ContainsUndefinedBreakTarget of |Finally| with argument _labelSet_.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _hasUndefinedLabels_ be ContainsUndefinedBreakTarget of |Pipeline| with argument _labelSet_.
+1. If _hasUndefinedLabels_ is *true*, return *true*.
+1. Let _hasUndefinedLabels_ be ContainsUndefinedBreakTarget of |Catch| with argument _labelSet_.
+1. If _hasUndefinedLabels_ is *true*, return *true*.
+1. Return ContainsUndefinedBreakTarget of |Finally| with argument _labelSet_.
+</emu-alg>
+
+<emu-grammar>Catch : `catch` `|&gt;` Pipeline</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return *false*.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return ContainsUndefinedBreakTarget of |Pipeline| with argument _labelSet_.
+</emu-alg>
+</ins>
+</emu-annex>
+
+<emu-annex id="sec-additional-feature-ts-try-statement-static-semantics-containsundefinedcontinuetarget">
+<h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
+<p>With parameters _iterationSet_ and _labelSet_.</p>
+<emu-see-also-para op="ContainsUndefinedContinueTarget"></emu-see-also-para>
+<emu-note type=editor>
+<p>This section augments the <a href=https://tc39.github.io/ecma262/#sec-try-statement-static-semantics-containsundefinedcontinuetarget>original `try` Statement, Static Semantics: ContainsUndefinedContinueTarget clause</a>.</p>
+</emu-note>
+<ins class=block>
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Catch</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return ContainsUndefinedContinueTarget of |Catch| with arguments _iterationSet_ and &laquo; &raquo;.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |Pipeline| with arguments _iterationSet_ and &laquo; &raquo;.
+1. If _hasUndefinedLabels_ is *true*, return *true*.
+1. Return ContainsUndefinedContinueTarget of |Catch| with arguments _iterationSet_ and &laquo; &raquo;.
+</emu-alg>
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Finally</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return ContainsUndefinedContinueTarget of |Finally| with arguments _iterationSet_ and &laquo; &raquo;.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |Pipeline| with arguments _iterationSet_ and &laquo; &raquo;.
+1. If _hasUndefinedLabels_ is *true*, return *true*.
+1. Return ContainsUndefinedContinueTarget of |Finally| with arguments _iterationSet_ and &laquo; &raquo;.
+</emu-alg>
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Catch Finally</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |Catch| with arguments _iterationSet_ and &laquo; &raquo;.
+1. If _hasUndefinedLabels_ is *true*, return *true*.
+1. Return ContainsUndefinedContinueTarget of |Finally| with arguments _iterationSet_ and &laquo; &raquo;.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |Pipeline| with arguments _iterationSet_ and &laquo; &raquo;.
+1. If _hasUndefinedLabels_ is *true*, return *true*.
+1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |Catch| with arguments _iterationSet_ and &laquo; &raquo;.
+1. If _hasUndefinedLabels_ is *true*, return *true*.
+1. Return ContainsUndefinedContinueTarget of |Finally| with arguments _iterationSet_ and &laquo; &raquo;.
+</emu-alg>
+<emu-grammar>Catch : `catch` `|&gt;` Pipeline `;`</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return *false*.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return ContainsUndefinedContinueTarget of |Pipeline| with arguments _iterationSet_ and &laquo; &raquo;.
+</emu-alg>
+</ins>
+</emu-annex>
+
+<emu-annex id="sec-additional-feature-ts-try-statement-static-semantics-vardeclarednames">
+<h1>Static Semantics: VarDeclaredNames</h1>
+<emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
+<emu-note type=editor>
+<p>This section augments the <a href=https://tc39.github.io/ecma262/#sec-try-statement-static-semantics-vardeclarednames>original `try` Statement, Static Semantics: VarDeclaredNames clause</a>.</p>
+</emu-note>
+<ins class=block>
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Catch</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return VarDeclaredNames of |Catch|.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _names_ be VarDeclaredNames of |Pipeline|.
+1. Append to _names_ the elements of the VarDeclaredNames of |Catch|.
+1. Return _names_.
+</emu-alg>
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Finally</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return the VarDeclaredNames of |Finally|.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _names_ be VarDeclaredNames of |Pipeline|.
+1. Append to _names_ the elements of the VarDeclaredNames of |Finally|.
+1. Return _names_.
+</emu-alg>
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Catch Finally</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _names_ be the VarDeclaredNames of |Catch|.
+1. Append to _names_ the elements of the VarDeclaredNames of |Finally|.
+1. Return _names_.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _names_ be VarDeclaredNames of |Pipeline|.
+1. Append to _names_ the elements of the VarDeclaredNames of |Catch|.
+1. Append to _names_ the elements of the VarDeclaredNames of |Finally|.
+1. Return _names_.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return « ».
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return the VarDeclaredNames of |Pipeline|.
+</emu-alg>
+</ins>
+</emu-annex>
+
+<emu-annex id="sec-additional-feature-ts-try-statement-static-semantics-varscopeddeclarations">
+<h1>Static Semantics: VarScopedDeclarations</h1>
+<emu-see-also-para op="VarScopedDeclarations"></emu-see-also-para>
+<emu-note type=editor>
+<p>This section augments the <a href=https://tc39.github.io/ecma262/#sec-try-statement-static-semantics-varscopeddeclarations>original `try` Statement, Static Semantics: VarScopedDeclarations clause</a>.</p>
+</emu-note>
+<ins class=block>
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Catch</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return the VarScopedDeclarations of |Catch|.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _declarations_ be VarScopedDeclarations of |Pipeline|.
+1. Append to _declarations_ the elements of the VarScopedDeclarations of |Catch|.
+1. Return _declarations_.
+</emu-alg>
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Finally</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return the VarScopedDeclarations of |Finally|.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _declarations_ be VarScopedDeclarations of |Pipeline|.
+1. Append to _declarations_ the elements of the VarScopedDeclarations of |Finally|.
+1. Return _declarations_.
+</emu-alg>
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Catch Finally</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _declarations_ be the VarScopedDeclarations of |Catch|.
+1. Append to _declarations_ the elements of the VarScopedDeclarations of |Finally|.
+1. Return _declarations_.
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Let _declarations_ be VarScopedDeclarations of |Pipeline|.
+1. Append to _declarations_ the elements of the VarScopedDeclarations of |Catch|.
+1. Append to _declarations_ the elements of the VarScopedDeclarations of |Finally|.
+1. Return _declarations_.
+</emu-alg>
+<emu-grammar>Catch : `catch` `|&gt;` Pipeline `;`</emu-grammar>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> are <strong>not</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return « ».
+</emu-alg>
+<emu-note type=editor>
+<p>If the augmentations of <emu-xref href=#sec-additional-feature-bp>Additional Feature BP</emu-xref> <strong>are</strong> also performed, then the algorithm for this production is the following.</p>
+</emu-note>
+<emu-alg>
+1. Return the VarScopedDeclarations of |Pipeline|.
+</emu-alg>
+</ins>
+</emu-annex>
+
+<emu-annex id="sec-runtime-semantics-catchclauseevaluation">
+<h1>Runtime Semantics: CatchClauseEvaluation</h1>
+<emu-note type=editor>
+<p>This section augments the <a href=https://tc39.github.io/ecma262/#sec-runtime-semantics-catchclauseevaluation>original CatchClauseEvaluation clause</a>.</p>
+</emu-note>
+<p>With parameter _thrownValue_.</p>
+<ins class=block>
+<emu-grammar>Catch : `catch` `|>` Pipeline `;`</emu-grammar>
+<emu-alg>
+1. Let _inputValues_ be a List containing the one element which is _thrownValue_.
+2. Let _pipelineOutputValues_ be ? PipelineEvaluation of _Pipeline_ with argument _inputValues_.
+5. Assert: _pipelineOutputValues_ is a List containing one element.
+6. Return Completion(_pipelineOutputValues_[0]).
+</emu-alg>
+</ins>
+
+</emu-annex>
+
+<emu-annex id="sec-additional-feature-ts-try-statement-runtime-semantics-evaluation">
+<h1>Runtime Semantics: Evaluation</h1>
+<emu-note type=editor>
+<p>This section augments the <a href=https://tc39.github.io/ecma262/#sec-try-statement-static-semantics-evaluation>original `try` Statement, Static Semantics: Evaluation clause</a>.</p>
+</emu-note>
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Catch</emu-grammar>
+<emu-alg>
+1. Let _inputValues_ be ? GetTopicValues().
+2. Let _B_ be PipelineEvaluation |Pipeline| with argument _inputValues_.
+3. If _B_.[[Type]] is ~throw~, let _C_ be CatchClauseEvaluation of |Catch| with argument _B_.[[Value]].
+4. Else, let _C_ be _B_.
+5. Return Completion(UpdateEmpty(_C_, *undefined*)).
+</emu-alg>
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Finally</emu-grammar>
+<emu-alg>
+1. Let _inputValues_ be ? GetTopicValues().
+2. Let _B_ be PipelineEvaluation |Pipeline| with argument _inputValues_.
+3. Let _F_ be the result of evaluating |Finally|.
+4. If _F_.[[Type]] is ~normal~, set _F_ to _B_.
+5. Return Completion(UpdateEmpty(_F_, *undefined*)).
+</emu-alg>
+<emu-grammar>TryStatement : `try` `|&gt;` Pipeline `;` Catch Finally</emu-grammar>
+<emu-alg>
+1. Let _inputValues_ be ? GetTopicValues().
+2. Let _B_ be PipelineEvaluation |Pipeline| with argument _inputValues_.
+3. If _B_.[[Type]] is ~throw~, let _C_ be CatchClauseEvaluation of |Catch| with argument _B_.[[Value]].
+4. Else, let _C_ be _B_.
+5. Let _F_ be the result of evaluating |Finally|.
+6. If _F_.[[Type]] is ~normal~, set _F_ to _C_.
+7. Return Completion(UpdateEmpty(_F_, *undefined*)).
+</emu-alg>
+</emu-annex>
+
+</emu-annex>
+
+</emu-annex>
+
 </emu-annex>
