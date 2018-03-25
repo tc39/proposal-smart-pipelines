@@ -360,17 +360,29 @@ PrimaryExpression[Yield, Await] :
 </emu-note>
 </emu-clause>
 
-<emu-clause id=sec-topic-references-runtime-semantics-evaluation>
-<h1>Runtime Semantics: Evaluation</h1>
-
-<emu-grammar>PrimaryExpression : `#`</emu-grammar>
+<emu-clause id=sec-gettopicvalues aoid=GetTopicValues>
+<h1>Runtime Semantics: GetTopicValues</h1>
+<emu-note>
+<p>GetTopicValues gets the values of the topic environment’s current topic binding. It is <strong>never</strong> called when there is no topic environment.</p>
+</emu-note>
+<p>When the abstract operation GetTopicEnvironment is called the following steps are performed:</p>
 <emu-alg>
 1. Let _envRec_ be GetTopicEnvironment().
 2. Assert: _envRec_ is a declarative Environment Record.
 3. Assert: _envRec_.HasTopicBinding() is true.
 4. Let _topicValues_ be _envRec_.[[TopicValues]].
 5. Assert: _topicValues_ has at least one element.
-6. Return topicValues_[0].
+6. Return topicValues.
+</emu-alg>
+</emu-clause>
+
+<emu-clause id=sec-topic-references-runtime-semantics-evaluation>
+<h1>Runtime Semantics: Evaluation</h1>
+
+<emu-grammar>PrimaryExpression : `#`</emu-grammar>
+<emu-alg>
+1. Let _topicValues_ be GetTopicValues().
+2. Return topicValues_[0].
 </emu-alg>
 </emu-clause>
 
@@ -1781,12 +1793,8 @@ RestTopicReference :
 <emu-grammar>PrimaryExpression : `#`</emu-grammar>
 <del class=block>
 <emu-alg>
-1. Let _envRec_ be GetTopicEnvironment().
-2. Assert: _envRec_ is a declarative Environment Record.
-3. Assert: _envRec_.HasTopicBinding() is true.
-4. Let _topicValues_ be _envRec_.[[TopicValues]].
-5. Assert: _topicValues_ has at least one element.
-6. Return topicValues_[0].
+1. Let _topicValues_ be GetTopicValues().
+2. Return topicValues_[0].
 </emu-alg>
 </del>
 <ins class=block>
