@@ -1,3 +1,48 @@
+## Explanation of nomenclature
+The term [“**topic**” comes from linguistics][topic and comment] and have
+precedent in prior programming languages’ use of “topic variables”.
+
+The term “**topic-style pipeline**” is preferred to “**topic expression**”
+because, in the future, the topic concept could be extended to other syntaxes,
+as with [Additional Feature TS][], not just pipelines.
+
+In addition, “**input** values of a pipeline step” is preferred to “pipeline
+**LHS**”, because “LHS” in the ECMAScript specification usually refers to the
+[LHS of assignments][ECMAScript LHS expressions], which may be confusing.
+However, “LHS” is still a fine and acceptable, if not nonspecific, name for a
+pipeline step’s input. The **head** of a pipeline – the input of a pipeline’s
+first step – is distinguished from the pipeline itself. A pipeline head cannot
+contain any topic references, and it is completely omitted in [pipeline
+functions][].
+
+The term “**topic reference**” is preferred to the phrase “**topic variable**”
+because the latter is a misnomer. The topic reference is *not* a variable
+identifier. Unlike variables, it cannot be manually declared (`const #` is a
+syntax error), nor can it be assigned with a value (`# = 3` is a syntax error).
+
+“Topic reference” is also preferred to “**topic placeholder**”, to avoid
+confusion with the placeholders of another TC39 proposal – [partial function
+application][]. These placeholders (currently denoted by nullary `?`) are of a
+different nature than topic references. Instead of referring to a single value
+bound earlier in the surrounding lexical context, these **parameter
+placeholders** act as the parameter to a new function. When this new function is
+called, those parameter placeholders will be bound to multiple argument values.
+
+The terms “**pipeline step**” and “**output** values of a pipeline step” is
+preferred instead of “**RHS** of a pipeline”, just as how “input values” is
+preferred to “LHS”. However, “RHS” is still a fine and acceptable name for the
+right-hand side of a pipe operator. The **step** is the expression itself; it
+evaluates into one or output values. The output values in turn either are fed
+into the following pipeline step as its inputs or become the value of the entire
+pipeline. (All pipelines are allowed to result in at most one output; it is an
+[early error][] if it could ever return zero or more than one outputs.)
+
+“**[Bare style][]**” could also be called “**tacit style**”, but the former is
+preferred to the latter. Eventually, certain possible future extensions to the
+topic concept, such as [Additional Feature TS][], would enable [tacit
+programming][] even without using bare-style pipelines. **Bare style** could
+also have been called **plain style**.
+
 [“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 [“don’t break my code”]: ./goals.md#dont-break-my-code
 [“don’t make me overthink”]: ./goals.md#dont-make-me-overthink
