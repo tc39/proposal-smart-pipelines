@@ -1,3 +1,884 @@
+## Additional Feature PF
+**More than any other** possible extension in this table, this additional
+feature – **Pipeline Functions** – would dramatically increase the usefulness of
+pipelines. It introduces just one additional operator that solves:\
+tacit unary **functional composition**,\
+tacit unary functional **partial application**,\
+and many kinds of tacit **method extraction**,\
+…all at the same time.
+
+And with [Additional Feature NP][], this additional feature would *also* solve\
+tacit **N-ary** functional partial application\
+and **N-ary** functional composition.
+
+The new operator is a **prefix operator `+> …`**, which creates **pipeline
+functions**, which are just **arrow functions**. `+> …` interprets its inner
+expression as a **pipeline** but wraps it in an arrow function that applies its
+pipeline steps to its arguments.
+
+A pipe function takes **no** a parameter list; no such list is needed.
+Just like with regular pipelines, a pipeline function may be in **[bare style][]
+or [topic style][]**.
+
+If the pipeline function starts with [bare style][] (like `+> f |> # + 1`), then
+the function is **variadic** and applies **all** its arguments to the function
+reference to which the bare-style pipeline step evaluates (that is,
+`(...$) => f(...$) + 1`), where `$` is a [hygienically unique
+variable][lexically hygienic]. (This is [forward compatible][] with [Additional
+Feature NP][].)
+
+If the pipeline function starts with [topic style][] (like `+> # + 1 |> # + 1`),
+then the function is unary and applies its first argument (that is,
+`$ => # + 1`, where `$` is a hygienically unique variable).
+
+As an aside, topic style can also handle multiple parameters with [Additional
+Feature NP][], such that `+> # + ##` would be a binary arrow function equivalent
+to `($, $$) => $ + $$`, and `+> [...].length` would be a variadic arrow function
+equivalent to `(...$rest) => [...$rest].length` – where `$`, `$$`, and `$rest`
+are all [hygienically unique variables][lexically hygienic].
+
+In general, Additional Feature NP would explain “`+>` _Pipeline_” as equivalent
+to “`(...$rest) => ...$rest |>` _Pipeline_”.
+
+`+>` was chosen because of its similarity both to `|>` and to `=>`. The precise
+appearance of the pipeline-function operator does not have to be `+>`. It could
+also be `~>`, `->`, `=|`, `=|>` or something else to be decided after future
+bikeshedding discussion.
+
+[Additional Feature PF is **formally specified in in the draft
+specification**][formal PF].
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+array.map($ => $ |> #);
+```
+```js
+array.map($ => $);
+```
+These functions are the same. They both pipe a unary parameter into a
+topic-style pipeline whose only step evaluates simply to the topic, unmodified.
+
+<td>
+
+```js
+array.map($ => $);
+```
+In other words, they are both [identity function][]s.
+
+<tr>
+<td>
+
+```js
+array.map($ => $ |> # + 2);
+```
+```js
+array.map(+> # + 2);
+```
+These functions are also the same with each other. They both pipe a unary
+parameter into a topic-style pipeline whose only step is the topic plus two.
+
+<td>
+
+```js
+array.map($ => $ + 2);
+```
+
+<tr>
+<td>
+
+```js
+array.map(+> f |> # + 2);
+```
+This pipeline function starts in **bare mode**. This means it is a variadic function.
+(As an aside, with [Additional Feature NP][], this would also be expressible as:
+`array.map((...$) => ...$ |> f |> # + 2)`.)
+
+<td>
+
+```js
+array.map((...$) => f(...$));
+```
+
+<tr>
+<td>
+
+Pipelines may be chained within a pipeline function.
+```js
+array.map(+> f |> g |> h |> # * 2);
+```
+The prefix pipeline-function operator `+>` has looser precedence than the infix
+pipe operator `|>`.
+
+<td>
+
+```js
+array.map((...$) => h(g(f(...$))) * 2);
+```
+
+<tr>
+<td>
+
+```js
++> x + 2;
+// 🚫 Syntax Error:
+// Pipeline step `+> x + 2`
+// binds topic but contains
+// no topic reference.
+```
+
+This is an [early error][], as usual. The topic is not used anywhere
+in the pipeline function’s only step – just like with `… |> x + 2`.
+
+<td>
+
+<tr>
+<td>
+
+```js
+=> # + 2;
+// 🚫 Syntax Error:
+// Unexpected token `=>`.
+```
+If the pipeline-function operator `+>` is typoed as an arrow function `=>`
+instead, then this is another syntax error, because the arrow function `=>`
+expects to always have a parameter antecedent as its head.
+
+<td>
+
+<tr>
+<td>
+
+```js
+() => # + 2;
+// 🚫 Syntax Error:
+// Lexical context `() => # + 2`
+// contains a topic reference
+// but has no topic binding.
+```
+But even if that typo also includes a parameter head for the arrow function
+`=>`, this is would still be an [early error][]…unless the outer lexical
+environment does have its own topic binding.
+
+<td>
+
+<tr>
+<td>
+
+**[Terse composition][]** of unary functions is a goal of smart pipelines. It is
+equivalent to piping a value through several function calls, within a unary
+function, starting with the outer function’s tacit unary parameter.
+```js
+array.map(+> f |> g |> h(2, #) |> # + 2);
+```
+There are [several existing proposals for unary functional composition][function
+composition], which Additional Feature PF would all subsume. And with
+[Additional Feature NP][], even n-ary functional composition would be supported,
+which no current proposal yet addresses.
+
+<td>
+
+```js
+array.map((...$) => h(2, g(f(...$))) + 2);
+```
+
+<tr>
+<td>
+
+```js
+const doubleThenSquareThenHalfAsync =
+  async $ => $
+    |> double |> await squareAsync |> half;
+```
+```js
+const doubleThenSquareThenHalfAsync =
+  async +> double |> await squareAsync |> half;
+```
+When compared to the proposal for [syntactic functional composition by
+TheNavigateur][TheNavigateur functional composition], this syntax does not need
+to give implicit special treatment to async functions. There is instead an async
+version of the pipe-function operator, within which `await` may be used, simply
+as usual.
+
+<td>
+
+```js
+const doubleThenSquareThenHalfAsync =
+  async $ =>
+    half(await squareAsync(double($)));
+```
+```js
+const doubleThenSquareThenHalfAsync =
+  double +> squareAsync +> half;
+```
+From the proposal for [syntactic functional composition by
+TheNavigateur][TheNavigateur functional composition].
+
+<tr>
+<td>
+
+```js
+const toSlug =
+  $ => $
+  |> #.split(' ')
+  |> #.map($ => $.toLowerCase())
+  |> #.join('-')
+  |> encodeURIComponent;
+```
+```js
+const toSlug =
++> #.split(' ')
+|> #.map(+> #.toLowerCase())
+|> #.join('-')
+|> encodeURIComponent;
+```
+When compared to the proposal for [syntactic functional composition by Isiah
+Meadows][isiahmeadows functional composition], this syntax does not need to
+surround each non-function expression with an arrow function. The [smart step
+syntax][] has more powerful [expressive versatility][], improving the
+readability of the code.
+
+<td>
+
+```js
+const toSlug = $ =>
+  encodeURIComponent(
+    $.split(' ')
+      .map(str =>
+        str.toLowerCase())
+      .join('-'));
+```
+```js
+const toSlug =
+  _ => _.split(" ")
+  :> _ => _.map(str =>
+    str.toLowerCase())
+  :> _ => _.join("-")
+  :> encodeURIComponent;
+```
+From the proposal for [syntactic functional composition by Isiah
+Meadows][isiahmeadows functional composition].
+
+<tr>
+<td>
+
+```js
+const getTemperatureFromServerInLocalUnits =
+  async +>
+  |> await getTemperatureKelvinFromServerAsync
+  |> convertTemperatureKelvinToLocalUnits;
+```
+Lifting of non-sync-function expressions into function expressions is
+unnecessary for composition with Additional Feature PF. [Additional
+Feature BA][] is also useful here.
+
+<td>
+
+```js
+Promise.prototype[Symbol.lift] =
+  f => x => x.then(f)
+const getTemperatureFromServerInLocalUnits =
+  getTemperatureKelvinFromServerAsync
+  :> convertTemperatureKelvinToLocalUnits;
+```
+From the proposal for [syntactic functional composition by Isiah
+Meadows][isiahmeadows functional composition].
+
+<tr>
+<td>
+
+```js
+// Functional Building Blocks
+const car = +>
+|> startMotor
+|> useFuel
+|> turnKey;
+const electricCar = +>
+|> startMotor
+|> usePower
+|> turnKey;
+
+// Control Flow Management
+const getData = +>
+|> truncate
+|> sort
+|> filter
+|> request;
+
+// Argument Assignment
+const sortBy = 'date';
+const getData = +>
+  |> truncate
+  |> sort
+  |> #::filter(sortBy)
+  |> request;
+```
+This example also uses [function binding][].
+
+<td>
+
+```js
+// Functional Building Blocks
+const car = startMotor.compose(
+  useFuel, turnKey);
+const electricCar = startMotor.compose(
+  usePower, turnKey);
+
+// Control Flow Management
+const getData = truncate.compose(
+  sort, filter, request);
+
+// Argument Assignment
+const sortBy = 'date';
+const getData = truncate.compose(
+  sort,
+  $ => filter.bind($, sortBy),
+  request);
+```
+From the proposal for [syntactic functional composition by Simon
+Staton][simonstaton functional composition].
+
+<tr>
+<td>
+
+```js
+const pluck = +> map |> prop;
+```
+
+<td>
+
+```js
+const pluck = compose(map)(prop);
+```
+From a [comment about syntactic functional composition by Tom Harding][i-am-tom
+functional composition].
+
+<tr>
+<td>
+
+**[Terse partial application][] into a unary function** is equivalent to piping
+a tacit parameter into a function-call expression, within which the one
+parameter is resolvable.
+```js
+array.map($ => $ |> f(2, #));
+array.map(+> f(2, #));
+```
+
+<td>
+
+Pipeline functions look similar to the proposal for [partial function
+application][] by [Ron Buckton][], except that partial-application expressions
+are simply pipeline steps that are prefixed by the pipeline-function operator.
+```js
+array.map(f(2, ?));
+array.map($ => f(2, $));
+```
+
+<tr>
+<td>
+
+```js
+const addOne = +> add(1, #);
+addOne(2); // 3
+```
+
+<td>
+
+```js
+const addOne = add(1, ?);
+addOne(2); // 3
+```
+
+<tr>
+<td>
+
+```js
+const addTen = +> add(#, 10);
+addTen(2); // 12
+```
+
+<td>
+
+```js
+const addTen = add(?, 10);
+addTen(2); // 12
+```
+
+<tr>
+<td>
+
+```js
+let newScore = player.score
+|> add(7, #)
+|> clamp(0, 100, #);
+```
+
+<td>
+
+```js
+let newScore = player.score
+|> add(7, ?)
+|> clamp(0, 100, ?);
+```
+
+<tr>
+<td>
+
+```js
+const toSlug = +>
+|> encodeURIComponent
+|> _.split(#, " ")
+|> _.map(#, _.toLower)
+|> _.join(#, "-");
+```
+Additional Feature PF simultaneously handles function composition and
+partial application into unary functions.
+
+<td>
+
+```js
+const toSlug =
+  encodeURIComponent
+  :> _.split(?, " ")
+  :> _.map(?, _.toLower)
+  :> _.join(?, "-");
+```
+From the proposal for [syntactic functional composition by Isiah
+Meadows][isiahmeadows functional composition].
+
+<tr>
+<td>
+
+Many kinds of **method extraction** can be addressed by pipeline functions
+alone, as a natural result of their pipe-operator-like semantics.\
+`+> console.log` is equivalent to `(...$) => console.log(...$)`…
+```js
+Promise.resolve(123)
+  .then(+> console.log);
+```
+
+<td>
+
+```js
+Promise.resolve(123)
+  .then(console.log.bind(console));
+Promise.resolve(123)
+  .then(::console.log);
+```
+
+<tr>
+<td>
+
+```js
+$('.some-link').on('click', +> view.reset);
+```
+
+<td>
+
+```js
+$('.some-link').on('click', ::view.reset);
+```
+
+<tr>
+<td>
+
+Note that this is *not* the same as `console.log.bind(console.log)`, which
+creates an exotic function that always uses whatever value `console.log`
+evaluates into – even if `console.log` is reassigned later.
+```js
+const consoleLog =
+  console.log.bind(console.log);
+const arrayFrom =
+  Array.from.bind(Array.from);
+const arrayMap =
+  Function.bind.call(Function.call,
+    Array.prototype.map);
+…
+input
+|> process
+|> consoleLog;
+input
+|> arrayFrom
+|> arrayMap(#, $ => $ + 1)
+|> consoleLog;
+```
+This [robust method extraction][] is a use case that this proposal leaves to
+another operator, such as prefix `::` or prefix `&`.
+
+<td>
+
+```js
+const consoleLog =
+  console.log.bind(console.log);
+const arrayFrom =
+  Array.from.bind(Array.from);
+const arrayMap =
+  Function.bind.call(Function.call, Array.prototype.map);
+…
+consoleLog(
+  process(input));
+consoleLog(
+  arrayMap(arrayFrom(input), $ => $ + 1));
+```
+
+<tr>
+<td>
+
+```js
+…
+input
+|> process
+|> &console.log;
+input
+|> &Array.from
+|> #::&Array.prototype.map($ => $ + 1)
+|> &console.log;
+```
+Pipeline functions would not preclude adding another operator that addresses
+[robust method extraction][] with [inline caching][method-extraction inline
+caching], such as the hypothetical prefix `&` operators (for cached method
+extraction) and infix `::` operators (for `this` binding) shown here. Such
+hypothetical notations could even be eventually accommodated by a new [bare
+style][] notation, shown here with `… |> &console.log` and `… |> &Array.from`.
+
+<td>
+
+```js
+…
+consoleLog(
+  process(input));
+consoleLog(
+  &Array.from(input)
+  ::&Array.prototype.map($ => $ + 1));
+```
+
+<tr>
+<td>
+
+```js
+const { hasOwnProperty } =
+  Object.prototype;
+const x = { key: 5 };
+x::hasOwnProperty;
+x::hasOwnProperty('key');
+```
+For terse **method calling/binding**, the infix `::` operator would also still
+be required.
+
+<td>
+
+```js
+const { hasOwnProperty } =
+  Object.prototype;
+const x = { key: 5 };
+x::hasOwnProperty;
+x::hasOwnProperty('key');
+```
+
+</table>
+
+### Ramda (Core Proposal + Additional Feature BP+PF)
+[Ramda][] is a utility library focused on [functional programming][] with [pure
+functions][] and [immutable objects][]. Its functions are automatically
+[curried][currying]. Smart pipelines with [Additional Feature PF][]
+would address many of Rambda’s use cases. The examples below were taken from the [Ramda wiki
+cookbook][]. They use smart pipelines with vanilla JavaScript APIs when possible
+(such as `Array.prototype.map` instead of `R.map`), but they also use Ramda
+functions wherever no terse JavaScript equivalent yet exists (such as with
+`R.zipWith` and `R.adjust`).
+
+[Even more of Ramda’s use cases are covered][Ramda + CP + BP + PF + NP] when
+[Additional Feature NP][] syntax is supported.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+const pickIndexes = +> R.values |> R.pickAll;
+['a', 'b', 'c'] |> pickIndexes([0, 2], #);
+// ['a', 'c']
+```
+
+<td>
+
+```js
+const pickIndexes = R.compose(
+  R.values, R.pickAll);
+pickIndexes([0, 2], ['a', 'b', 'c']);
+// ['a', 'c']
+```
+
+<tr>
+<td>
+
+```js
+const list = +> [...];
+list(1, 2, 3);
+// [1, 2, 3]
+```
+
+<td>
+
+```js
+const list = R.unapply(R.identity);
+list(1, 2, 3);
+// [1, 2, 3]
+```
+
+<tr>
+<td>
+
+```js
+const getNewTitles = async +>
+|> await fetch
+|> parseJSON
+|> #.flatten()
+|> #.map(+> #.items)
+|> #.map(+> #.filter(+> #))
+|> #.map(+> #.title);
+
+try {
+  '/products.json'
+  |> getNewTitles
+  |> console.log;
+}
+catch
+|> console.error;
+
+const fetchDependent = async +>
+|> await fetch
+|> JSON.parse
+|> #.flatten()
+|> #.map(+> #.url)
+|> #.map(fetch)
+|> #.flatten();
+
+try {
+  'urls.json'
+  |> fetchDependent
+  |> console.log;
+}
+catch
+|> console.error;
+```
+This example also uses [Additional Feature TS][] for terse `catch` clauses
+and [Additional Feature BA][] for terse awaited function calls.
+
+<td>
+
+```js
+const getNewTitles = R.compose(
+  R.map(R.pluck('title')),
+  R.map(R.filter(R.prop('new'))),
+  R.pluck('items'),
+  R.chain(JSON.parse),
+  fetch
+);
+
+getNewTitles('/products.json')
+  .fork(console.error, console.log);
+
+const fetchDependent = R.compose(
+  R.chain(fetch),
+  R.pluck('url'),
+  R.chain(parseJSON),
+  fetch
+);
+
+fetchDependent('urls.json')
+  .fork(console.error, console.log);
+```
+
+<tr>
+<td>
+
+```js
+number
+|> R.repeat(Math.random, #)
+|> #.map(+> #());
+```
+
+<td>
+
+```js
+R.map(R.call,
+  R.repeat(Math.random, number));
+```
+
+<tr>
+<td>
+
+```js
+const renameBy = (fn, obj) =>
+  [...obj]
+  |> #.map(R.adjust(fn, 0)),
+  |> ({...#});
+{ A: 1, B: 2, C: 3 };
+|> renameBy(+> `a${#}`));
+// { aA: 1, aB: 2, aC: 3 }
+```
+
+<td>
+
+```js
+const renameBy = R.curry((fn, obj) =>
+  R.pipe(
+    R.toPairs,
+    R.map(R.adjust(fn, 0)),
+    R.fromPairs
+  )(obj)
+);
+renameBy(R.concat('a'), { A: 1, B: 2, C: 3 });
+// { aA: 1, aB: 2, aC: 3 }
+```
+
+</table>
+
+### WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF)
+The [WHATWG Streams Standard][] provides an efficient, standardized stream API,
+inspired by Node.js’s Streams API, but also applicable to the DOM. The
+specification contains numerous usage examples that would become more readable
+with smart pipelines. The Core Proposal alone would untangle much of this code,
+and the additional features would further improve its terseness.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+class LipFuzzTransformer {
+  constructor(substitutions) {
+    this.substitutions = substitutions;
+    this.partialChunk = "";
+    this.lastIndex = undefined;
+  }
+
+  transform (chunk, controller) {
+    this.partialChunk = ""
+    this.lastIndex = 0
+    const partialAtEndRegexp =
+      /\{(\{([a-zA-Z0-9_-]+(\})?)?)?$/g
+    partialAtEndRegexp.lastIndex =
+      this.lastIndex
+    this.lastIndex = undefined
+    chunk
+    |> this.partialChunk + #
+    |> #.replace(
+        /\{\{([a-zA-Z0-9_-]+)\}\}/g,
+        +> this.replaceTag)
+    |> partialAtEndRegexp.exec
+    |> {
+      if (#) {
+        this.partialChunk =
+        |> #.index
+        |> chunk.substring;
+        #
+        |> #.index
+        |> chunk.substring(0, #);
+      }
+      else
+        chunk;
+    }
+    |> controller.enqueue;
+  }
+
+  flush (controller) {
+    this.partialChunk |> {
+      if (#.length > 0) {
+      |> controller.enqueue;
+      }
+    };
+  }
+
+  replaceTag (match, p1, offset) {
+    return this.substitutions
+    |> #[p1]
+    |> # === undefined ? '' : #
+    |> {
+        this.lastIndex =
+        |> #.length
+        |> offset + #;
+        #;
+    };
+  }
+}
+```
+
+<td>
+
+```js
+class LipFuzzTransformer {
+  constructor (substitutions) {
+    this.substitutions = substitutions;
+    this.partialChunk = "";
+    this.lastIndex = undefined;
+  }
+
+  transform (chunk, controller) {
+    chunk = this.partialChunk + chunk;
+    this.partialChunk = "";
+    this.lastIndex = 0;
+    chunk = chunk.replace(
+      /\{\{([a-zA-Z0-9_-]+)\}\}/g,
+      this.replaceTag.bind(this));
+    const partialAtEndRegexp =
+      /\{(\{([a-zA-Z0-9_-]+(\})?)?)?$/g;
+    partialAtEndRegexp.lastIndex =
+      this.lastIndex;
+    this.lastIndex = undefined;
+    const match =
+      partialAtEndRegexp.exec(chunk);
+    if (match) {
+      this.partialChunk =
+        chunk.substring(match.index);
+      chunk =
+        chunk.substring(0, match.index);
+    }
+    controller.enqueue(chunk);
+  }
+
+  flush (controller) {
+    if (this.partialChunk.length > 0) {
+      controller.enqueue(
+        this.partialChunk);
+    }
+  }
+
+  replaceTag (match, p1, offset) {
+    let replacement = this.substitutions[p1];
+    if (replacement === undefined) {
+      replacement = "";
+    }
+    this.lastIndex =
+      offset + replacement.length;
+    return replacement;
+  }
+}
+```
+
+</table>
+
 [“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 [“don’t break my code”]: ./goals.md#dont-break-my-code
 [“don’t make me overthink”]: ./goals.md#dont-make-me-overthink
