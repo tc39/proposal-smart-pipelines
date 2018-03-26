@@ -13,17 +13,16 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 
 
 - [Motivation](#motivation)
-  - [Core Proposal](#core-proposal)
     - [WHATWG Fetch Standard (Core Proposal only)](#whatwg-fetch-standard-core-proposal-only)
     - [jQuery (Core Proposal only)](#jquery-core-proposal-only)
     - [Underscore.js (Core Proposal only)](#underscorejs-core-proposal-only)
     - [Lodash (Core Proposal only)](#lodash-core-proposal-only)
+- [Smart step syntax](#smart-step-syntax)
+  - [Bare style](#bare-style)
+  - [Topic style](#topic-style)
+  - [Practical consequences](#practical-consequences)
+- [Operator precedence and associativity](#operator-precedence-and-associativity)
 - [Appendices](#appendices)
-  - [Smart step syntax](#smart-step-syntax)
-    - [Bare style](#bare-style)
-    - [Topic style](#topic-style)
-    - [Practical consequences](#practical-consequences)
-  - [Operator precedence and associativity](#operator-precedence-and-associativity)
   - [Additional Feature BC](#additional-feature%C2%A0bc)
   - [Additional Feature BA](#additional-feature%C2%A0ba)
   - [Additional Feature BP](#additional-feature-bp)
@@ -133,6 +132,9 @@ this is **not set** in stone. In particular, **`@` or `?`** could also be used.
 been occurring on GitHub at [tc39/proposal-pipeline-operator
 issue #91][topic-token bikeshedding].
 
+The Core Proposal is [**formally specified in in the draft
+specification**][formal CP].
+
 # Motivation
 This section gives a brief overview of the motivations behind the smart pipe
 operator’s Core Proposal, as well the additional features listed above.
@@ -142,10 +144,6 @@ lines, removing semicolons), in order to fit their horizontal widths into this
 table. **Examples that use additional features** are included **only to
 illustrate** the power of the pipeline/topic concept and are always simply
 **rewritable** into forms that use **only the Core Proposal**.
-
-## Core Proposal
-The Core Proposal is [**formally specified in in the draft
-specification**][formal CP].
 
 <table>
 <thead>
@@ -1759,8 +1757,7 @@ function castPath (value, object) {
 
 </table>
 
-# Appendices
-## Smart step syntax
+# Smart step syntax
 Most pipeline steps will use topic references in their steps. This style of
 pipeline step is called **[topic style][]**.
 
@@ -1827,7 +1824,7 @@ With [Additional Feature BA][]:
 |`… \|> await o.make()(#)`|`const af = o.make(); … \|> await af`     | `… \|> await o.make()` 🚫
 |`… \|> await new o.make()(#)`|`const af = new o.make(); … \|> await af`| `… \|> new await o.make()` 🚫
 
-### Bare style
+## Bare style
 The **bare style** supports using simple identifiers, possibly with chains of
 simple property identifiers. If there are any operators, parentheses (including
 for method calls), brackets, or anything other than identifiers and dot
@@ -1869,7 +1866,7 @@ or **_topic_ `|>` `await` _identifier0_`.`_identifier1_`.`_identifier2_**\
 or so forth,\
 then the pipeline is a bare async function call.
 
-### Topic style
+## Topic style
 The presence or absence of topic tokens (`#`, `##`, `###`) is *not* used in the
 grammar to distinguish topic style from bare style to fulfill the goal of
 [syntactic locality][]. Instead, **if a pipeline step** of the form
@@ -1887,7 +1884,7 @@ A pipeline step that is a block `{` … `}` containing a list of statements is
 **topic block**. The last statement in the block is used as the result of the
 whole pipeline, similarly to [`do` expressions][].
 
-### Practical consequences
+## Practical consequences
 Therefore, a pipeline step in **[bare style][] *never*** contains **parentheses `(…)` or
 brackets `[…]`**. Neither `… |> object.method()` nor
 `… |> object.method(arg)` nor `… |> object[symbol]` nor `… |> object.createFunction()`
@@ -1898,7 +1895,7 @@ are in bare style (in fact, they all are Syntax Errors, due to their being in
 and instead **use a topic reference** in the step ([topic style][])…or **assign
 the step to a variable**, then **use that variable as a bare-style step**.
 
-## Operator precedence and associativity
+# Operator precedence and associativity
 As a infix operation forming compound expressions, the [operator precedence and
 associativity][MDN operator precedence] of pipelining must be determined, relative
 to other operations.
