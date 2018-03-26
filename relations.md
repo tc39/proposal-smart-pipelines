@@ -1522,6 +1522,7 @@ proposals in a uniform manner.
 [other browsers’ console variables]: https://www.andismith.com/blogs/2011/11/25-dev-tool-secrets/
 [other ECMAScript proposals]: ./relations.md#other-ecmascript-proposals
 [other goals]: ./readme.md#other-goals
+[pattern matching]: ./relations.md#pattern-matching
 [partial function application]: ./goals.md#partial-function-application
 [PEP 20]: https://www.python.org/dev/peps/pep-0020/
 [Perl 6 pipe]: https://docs.perl6.org/language/operators#infix_==&gt;
@@ -1548,6 +1549,7 @@ proposals in a uniform manner.
 [robust method extraction]: https://github.com/tc39/proposal-pipeline-operator/issues/110#issuecomment-374367888
 [Ron Buckton]: https://github.com/rbuckton
 [secondary topic]: ./additional-feature-np.md
+[semantic clarity]: ./goals.md#semantic-clarity
 [simonstaton functional composition]: https://github.com/simonstaton/Function.prototype.compose-TC39-Proposal
 [simple scoping]: ./goals.md#simple-scoping
 [sindresorhus]: https://github.com/sindresorhus

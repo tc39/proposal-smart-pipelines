@@ -7,10 +7,10 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Additional Feature BA
-Another additional feature – **bare awaited calls** – makes async function calls
-terser. It adds another mode to bare style: if a bare-style pipeline step is
-preceded by a `await`, then instead of a mere function call, it is an awaited
-function call. `value |> await object.asyncFunction` is equivalent to `await
+An feature – **bare awaited calls** – makes async function calls terser. It adds
+another mode to bare style: if a bare-style pipeline step is preceded by a
+`await`, then instead of a mere function call, it is an awaited function call.
+`value |> await object.asyncFunction` is equivalent to `await
 object.asyncFunction(value)`. This is backwards compatible with the [Core
 Proposal][] as well as all other [additional features][].
 
@@ -208,6 +208,7 @@ console.log(
 [other browsers’ console variables]: https://www.andismith.com/blogs/2011/11/25-dev-tool-secrets/
 [other ECMAScript proposals]: ./relations.md#other-ecmascript-proposals
 [other goals]: ./readme.md#other-goals
+[pattern matching]: ./relations.md#pattern-matching
 [partial function application]: ./goals.md#partial-function-application
 [PEP 20]: https://www.python.org/dev/peps/pep-0020/
 [Perl 6 pipe]: https://docs.perl6.org/language/operators#infix_==&gt;
@@ -234,6 +235,7 @@ console.log(
 [robust method extraction]: https://github.com/tc39/proposal-pipeline-operator/issues/110#issuecomment-374367888
 [Ron Buckton]: https://github.com/rbuckton
 [secondary topic]: ./additional-feature-np.md
+[semantic clarity]: ./goals.md#semantic-clarity
 [simonstaton functional composition]: https://github.com/simonstaton/Function.prototype.compose-TC39-Proposal
 [simple scoping]: ./goals.md#simple-scoping
 [sindresorhus]: https://github.com/sindresorhus

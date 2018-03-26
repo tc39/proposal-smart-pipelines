@@ -24,6 +24,59 @@ ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
     - [Topic style](#topic-style)
     - [Practical consequences](#practical-consequences)
   - [Operator precedence and associativity](#operator-precedence-and-associativity)
+  - [Additional Feature BC](#additional-feature%C2%A0bc)
+  - [Additional Feature BA](#additional-feature%C2%A0ba)
+  - [Additional Feature BP](#additional-feature-bp)
+    - [WHATWG Fetch Standard (Core Proposal + Additional Feature BP)](#whatwg-fetch-standard-core-proposal--additional-feature-bp)
+    - [jQuery (Core Proposal + Additional Feature BP)](#jquery-core-proposal--additional-feature-bp)
+    - [Lodash (Core Proposal + Additional Feature BP)](#lodash-core-proposal--additional-feature-bp)
+  - [Additional Feature TS](#additional-feature-ts)
+  - [Additional Feature PF](#additional-feature-pf)
+    - [Ramda (Core Proposal + Additional Feature BP+PF)](#ramda-core-proposal--additional-feature-bppf)
+    - [WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF)](#whatwg-streams-standard-core-proposal--additional-features-bppppf)
+  - [Additional Feature NP](#additional-feature-np)
+    - [Lodash (Core Proposal + Additional Features BP+PP+PF+NP)](#lodash-core-proposal--additional-features-bppppfnp)
+    - [Ramda (Core Proposal + Additional Features BP+PF+NP)](#ramda-core-proposal--additional-features-bppfnp)
+    - [WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF+NP)](#whatwg-streams-standard-core-proposal--additional-features-bppppfnp)
+  - [Goals](#goals)
+    - [“Don’t break my code.”](#dont-break-my-code)
+      - [Backward compatibility](#backward-compatibility)
+      - [Zero runtime cost](#zero-runtime-cost)
+      - [Forward compatibility](#forward-compatibility)
+    - [“Don’t shoot me in the foot.”](#dont-shoot-me-in-the-foot)
+      - [Opt-in behavior](#opt-in-behavior)
+      - [Simple scoping](#simple-scoping)
+      - [Static analyzability](#static-analyzability)
+    - [“Don’t make me overthink.”](#dont-make-me-overthink)
+      - [Syntactic locality](#syntactic-locality)
+      - [Semantic clarity](#semantic-clarity)
+      - [Expressive versatility](#expressive-versatility)
+      - [Cyclomatic simplicity](#cyclomatic-simplicity)
+    - [“Make my code easier to read.”](#make-my-code-easier-to-read)
+      - [Untangled flow](#untangled-flow)
+      - [Distinguishable punctuators](#distinguishable-punctuators)
+      - [Terse parentheses](#terse-parentheses)
+      - [Terse variables](#terse-variables)
+      - [Terse function calls](#terse-function-calls)
+      - [Terse composition](#terse-composition)
+      - [Terse partial application](#terse-partial-application)
+    - [Other Goals](#other-goals)
+      - [Conceptual generality](#conceptual-generality)
+      - [Human writability](#human-writability)
+      - [Novice learnability](#novice-learnability)
+  - [Relations to other work](#relations-to-other-work)
+    - [Pipelines in other programming languages](#pipelines-in-other-programming-languages)
+    - [Topic references in other programming languages](#topic-references-in-other-programming-languages)
+    - [`do` expressions](#do-expressions)
+    - [Function binding](#function-binding)
+    - [Function composition](#function-composition)
+    - [Partial function application](#partial-function-application)
+    - [Optional `catch` binding](#optional-catch-binding)
+    - [Pattern matching](#pattern-matching)
+    - [Block parameters](#block-parameters)
+    - [`do` expressions](#do-expressions-1)
+  - [Explanation of nomenclature](#explanation-of-nomenclature)
+  - [Term rewriting](#term-rewriting)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 </details></nav>
@@ -1972,6 +2025,166 @@ to loosest**. Each level may contain the parse types listed for that level –
 | Root           | Script                  |                | Root                     |
 | ″″             | Module                  |                | ″″                       |
 
+# Appendices
+## Additional Feature BC
+See [Additional Feature BC][].
+
+## Additional Feature BA
+See [Additional Feature BA][].
+
+## Additional Feature BP
+See [Additional Feature BP][].
+
+### WHATWG Fetch Standard (Core Proposal + Additional Feature BP)
+See [Additional Feature BP][].
+
+### jQuery (Core Proposal + Additional Feature BP)
+See [Additional Feature BP][].
+
+### Lodash (Core Proposal + Additional Feature BP)
+See [Additional Feature BP][].
+
+## Additional Feature TS
+See [Additional Feature TS][].
+
+## Additional Feature PF
+See [Additional Feature PF][].
+
+### Ramda (Core Proposal + Additional Feature BP+PF)
+See [Additional Feature PF][].
+
+### WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF)
+See [Additional Feature PF][].
+
+## Additional Feature NP
+See [Additional Feature NP][].
+
+### Lodash (Core Proposal + Additional Features BP+PP+PF+NP)
+See [Additional Feature NP][].
+
+### Ramda (Core Proposal + Additional Features BP+PF+NP)
+See [Additional Feature NP][].
+
+### WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF+NP)
+See [Additional Feature NP][].
+
+## Goals
+See [Goals][].
+
+### “Don’t break my code.”
+See [“Don’t break my code”][].
+
+#### Backward compatibility
+See [Backward compatibility][].
+
+#### Zero runtime cost
+See [Zero runtime cost][].
+
+#### Forward compatibility
+See [Forward compatibility][].
+
+### “Don’t shoot me in the foot.”
+See [“Don’t shoot me in the foot”][].
+
+#### Opt-in behavior
+See [Opt-in behavior][].
+
+#### Simple scoping
+See [Simple scoping][].
+
+#### Static analyzability
+See [Static analyzability][].
+
+### “Don’t make me overthink.”
+See [“Don’t make me overthink”][].
+
+#### Syntactic locality
+See [Syntactic locality][].
+
+#### Semantic clarity
+See [Semantic clarity][].
+
+#### Expressive versatility
+See [Expressive versatility][].
+
+#### Cyclomatic simplicity
+See [Cyclomatic simplicity][].
+
+### “Make my code easier to read.”
+See [“Make my code easier to read”][].
+
+#### Untangled flow
+See [Untangled flow][].
+
+#### Distinguishable punctuators
+See [Distinguishable punctuators][].
+
+#### Terse parentheses
+See [Terse parentheses][].
+
+#### Terse variables
+See [Terse variables][].
+
+#### Terse function calls
+See [Terse function calls][].
+
+#### Terse composition
+See [Terse composition][].
+
+#### Terse partial application
+See [Terse partial application][].
+
+### Other Goals
+See [Other Goals][].
+
+#### Conceptual generality
+See [Conceptual generality][].
+
+#### Human writability
+See [Human writability][].
+
+#### Novice learnability
+See [Novice learnability][].
+
+## Relations to other work
+See [Relations to other work][].
+
+### Pipelines in other programming languages
+See [Relations to other work][].
+
+### Topic references in other programming languages
+See [Topic references in other programming languages][].
+
+### `do` expressions
+See [`do` expressions][].
+
+### Function binding
+See [Function binding][].
+
+### Function composition
+See [Function composition][].
+
+### Partial function application
+See [Partial function application][].
+
+### Optional `catch` binding
+See [Optional `catch` binding][].
+
+### Pattern matching
+See [Pattern matching][].
+
+### Block parameters
+See [Block parameters][].
+
+### `do` expressions
+See [`do` expressions][].
+
+## Explanation of nomenclature
+See [Nomenclature][].
+
+## Term rewriting
+See [Term rewriting][].
+
 [“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 [“don’t break my code”]: ./goals.md#dont-break-my-code
 [“don’t make me overthink”]: ./goals.md#dont-make-me-overthink
@@ -2131,6 +2344,7 @@ to loosest**. Each level may contain the parse types listed for that level –
 [other browsers’ console variables]: https://www.andismith.com/blogs/2011/11/25-dev-tool-secrets/
 [other ECMAScript proposals]: ./relations.md#other-ecmascript-proposals
 [other goals]: ./readme.md#other-goals
+[pattern matching]: ./relations.md#pattern-matching
 [partial function application]: ./goals.md#partial-function-application
 [PEP 20]: https://www.python.org/dev/peps/pep-0020/
 [Perl 6 pipe]: https://docs.perl6.org/language/operators#infix_==&gt;
@@ -2157,6 +2371,7 @@ to loosest**. Each level may contain the parse types listed for that level –
 [robust method extraction]: https://github.com/tc39/proposal-pipeline-operator/issues/110#issuecomment-374367888
 [Ron Buckton]: https://github.com/rbuckton
 [secondary topic]: ./additional-feature-np.md
+[semantic clarity]: ./goals.md#semantic-clarity
 [simonstaton functional composition]: https://github.com/simonstaton/Function.prototype.compose-TC39-Proposal
 [simple scoping]: ./goals.md#simple-scoping
 [sindresorhus]: https://github.com/sindresorhus
