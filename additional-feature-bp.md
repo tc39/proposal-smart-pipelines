@@ -1,3 +1,620 @@
+## Additional Feature BP
+There is a TC39 proposal for [`do` expressions][] at Stage 1. Smart pipelines do
+**not** require `do` expressions. However, if [`do` expressions][] also become
+part of JavaScript, then, as with **any** other type of expression, a pipeline
+step in [topic style][] may be `do` expression, as long as the `do` expression
+contains the topic reference `#`. The topic reference `#` is bound to the input
+value, the `do` expression is evaluated, then the result of the `do` block
+becomes the result of that pipeline step, and the lexical environment is reset –
+all as usual.
+
+In this manner, pipelines with `do` expressions act as a way to create a
+“topic-context block”, similarly to [Perl 6’s given block][]. Within this block,
+statements may use the topic reference may be used as an abbreviation for the
+same value. This can be useful for embedding side effects, `if` `else`
+statements, `try` statements, and `switch` statements within pipelines.
+They may be made even pithier with [Additional Feature BP][], explained later.
+
+[`do` expressions][] as [topic-style][topic style] pipeline steps might be so
+useful, in fact, that it might be worth building them into the pipe operator
+`|>` itself as an add-on feature. This additional feature – **block pipelines**
+– adds an additional [topic-style pipeline step syntax][smart step syntax],
+using blocks to stand for `do` expressions.
+
+[Additional Feature BP is **formally specified in in the draft
+specification**][formal BP].
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+x = input
+|> f
+|> { sideEffect(); #; }
+|> g;
+```
+Side effects may easily be embedded within block pipeline steps.
+
+<td>
+
+```js
+const $ = f(input);
+sideEffect();
+x = g($);
+```
+
+<tr>
+<td>
+
+```js
+x = input
+|> f
+|> {
+  if (typeof # === 'number')
+    # + 1;
+  else
+    { data: # };
+}
+|> g;
+```
+`if` `else` statements may also be used within block pipeline steps, as an
+alternative to the ternary conditional operator `?` `:`.
+
+<td>
+
+```js
+const _1 = f(input);
+let _2;
+if (typeof $ === 'number')
+  _2 = $ + 1;
+else
+  _2 = { data: $ };
+x = g(_2);
+```
+
+<tr>
+<td>
+
+```js
+x = input
+|> f
+|> {
+  try {
+    #|> JSON.parse;
+    catch (error) {
+      { message: error.message };
+    }
+  }
+}
+|> g;
+```
+`try` statements would also be useful to embed in pipelines with block steps.
+This example becomes even pithier with [Additional Feature TS][].
+
+<td>
+
+```js
+const _1 = f(input);
+let _2;
+try {
+  _2 = JSON.parse(_1);
+  catch (error) {
+    _2 = { message: error.message };
+  }
+}
+x = g(_2);
+```
+
+<tr>
+<td>
+
+```js
+input
+|> await f(#, 5)
+|> {
+  if (x > 20)
+    x + 30;
+  else
+    x - 10;
+}
+|> g;
+// 🚫 Syntax Error:
+// Pipeline step `|> { if (…) … else … }`
+// binds topic but contains
+// no topic reference.
+```
+The same [early error rules][] that apply to any topic-style pipeline step apply
+also to topic-style steps that are `do` expressions.
+
+<tr>
+<td>
+
+As with all other [additional features][], Additional Feature BP is [forward
+compatible][] with the [Core Proposal][]. This compatibility includes pipeline
+steps that are object literals, which must be parenthesized.
+```js
+input |> f |> { x: #, y: # } |> g;
+input |> f |> { if (#) { x: #, y: # }; } |> g;
+```
+Of course, object literals do not have to be parenthesized inside blocks.
+
+<td>
+
+```j
+
+{
+  const _1 = f(input);
+  let _2;
+  if ($) _2 = { x: $, y: $ };
+  g(_2);
+}
+```
+
+</table>
+
+### WHATWG Fetch Standard (Core Proposal + Additional Feature BP)
+Revisiting an [example above from the WHATWG Fetch Standard][WHATWG Fetch + CP]
+shows how human comprehensibility could be further improved with [Additional
+Feature BP][].
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+
+<tr>
+<td>
+
+```js
+'https://pk.example/berlin-calling'
+|> await fetch(#, { mode: 'cors' })
+|> (
+  #.headers.get('content-type')
+  |> # && #
+    .toLowerCase()
+    .indexOf('application/json')
+    >= 0
+  )
+  ? #
+  : throw new TypeError()
+|> await #.json()
+|> processJSON;
+```
+This pipeline version uses [Core Proposal][] syntax only.
+
+<td>
+
+```js
+fetch('https://pk.example/berlin-calling',
+  { mode: 'cors' }
+).then(response => {
+  if (response.headers.get('content-type')
+    && response.headers.get('content-type')
+      .toLowerCase()
+      .indexOf('application/json') >= 0
+  )
+    return response.json();
+  else
+    throw new TypeError();
+}).then(processJSON);
+```
+
+<tr>
+<td>
+
+And this pipeline version also uses [Additional Feature BP][]. This allows the
+use of an `if` `else` statement instead of a ternary `?` `:` expression.
+```js
+'https://pk.example/berlin-calling'
+|> await fetch(#, { mode: 'cors' })
+|> {
+  const contentTypeIsJSON =
+    #.headers.get('content-type')
+    |> # && #
+      .toLowerCase()
+      .indexOf('application/json')
+      >= 0;
+  if (contentTypeIsJSON) #;
+  else throw new TypeError();
+}
+|> await #.json()
+|> processJSON;
+```
+It also allows the judicious use of variable/constant assignment where it would
+make the meaning of code clearer, rather than [requiring unnecessary variables
+redundant with the names of functions][terse variables].
+
+<td>
+
+```js
+fetch('https://pk.example/berlin-calling',
+  { mode: 'cors' }
+).then(response => {
+  if (response.headers.get('content-type')
+    && response.headers.get('content-type')
+      .toLowerCase()
+      .indexOf('application/json') >= 0
+  )
+    return response.json();
+  else
+    throw new TypeError();
+}).then(processJSON);
+```
+
+</table>
+
+### jQuery (Core Proposal + Additional Feature BP)
+Revisiting the [examples above from jQuery][jQuery + CP] with [Additional
+Feature BP][] shows how terseness could be further improved.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+match
+|> context[#]
+|> (this[match] |> isFunction)
+  ? this[match](#);
+  : this.attr(match, #);
+```
+This pipeline version uses [Core Proposal][] syntax.
+
+<td>
+
+```js
+if (isFunction(this[match])) {
+  this[match](context[match]);
+} else
+  this.attr(match, context[match]);
+}
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+match
+|> context[#]
+|> {
+  if (this[match] |> isFunction)
+    this[match](#);
+  else
+    this.attr(match, #);
+}
+```
+With [Additional Feature BP][], an `if` `else` statement can be used instead of
+a ternary `?` `:` expression.
+
+<td>
+
+```js
+if (isFunction(this[match])) {
+  this[match](context[match]);
+} else
+  this.attr(match, context[match]);
+}
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+// Handle HTML strings
+if (…)
+  …
+// Handle $(expr, $(...))
+else if (!# || #.jquery)
+  return context
+  |> # || root
+  |> #.find(selector);
+// Handle $(expr, context)
+else
+  return context
+  |> this.constructor
+  |> #.find(selector);
+```
+This pipeline version uses [Core Proposal][] syntax only. Note that both
+statements are of the form `return context |> something |> #.find(selector)`.
+
+<td>
+
+```js
+// Handle HTML strings
+if (…) {
+  …
+// Handle $(expr, $(...))
+} else if (!context || context.jquery) {
+  return (context || root).find(selector);
+// Handle $(expr, context)
+} else {
+  return this.constructor(context)
+    .find(selector);
+}
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+return context
+|> {
+  // Handle HTML strings
+  if (…)
+    …
+  // Handle $(expr, $(...))
+  else if (!# || #.jquery)
+    # || root;
+  // Handle $(expr, context)
+  else
+    #|> this.constructor;
+}
+|> #.find(selector);
+```
+This pipeline version uses [Additional Feature BP][]. The common phrases `return
+context |>` and `|> #.find(selector)` have moved out of the `if` `else if` `else`,
+into its own statement. The `if` `else if` `else` itself was moved into a block in
+the middle of the new unified pipeline. This emphasizes the unity of the common
+path through which content data flow in this code.
+
+<td>
+
+```js
+// Handle HTML strings
+if (…) {
+  …
+// Handle $(expr, $(...))
+} else if (!context || context.jquery) {
+  return (context || root).find(selector);
+// Handle $(expr, context)
+} else {
+  return this.constructor(context)
+    .find(selector);
+}
+```
+From [jquery/src/core/init.js][].
+
+<tr>
+<td>
+
+```js
+return selector |> {
+  if (typeof # === 'string')
+    …
+  else if (#|> isFunction)
+    root.ready !== undefined
+      ? root.ready(#)
+      : #(jQuery);
+  else
+    jQuery.makeArray(#, this);
+};
+```
+This is a example from jQuery’s codebase on which pipelines would not have been
+worth using without [Additional Feature BP][].
+
+<td>
+
+```js
+if (typeof selector === 'string') {
+  …
+} else if (isFunction(selector)) {
+  return root.ready !== undefined
+    ? root.ready(selector)
+    : selector(jQuery);
+}
+return jQuery.makeArray(selector, this);
+```
+From [jquery/src/core/access.js][].
+
+</table>
+
+### Lodash (Core Proposal + Additional Feature BP)
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+function hashGet (key) {
+  return this.__data__
+  |> nativeCreate
+    ? (#[key]
+      |> # === HASH_UNDEFINED
+      ? undefined : #)
+    : hashOwnProperty.call(#, key)
+    ? #[key]
+    : undefined;
+}
+```
+This pipeline version uses [Core Proposal][] syntax only.
+
+<td>
+
+```js
+function hashGet (key) {
+  var data = this.__data__;
+  if (nativeCreate) {
+    var result = data[key];
+    return result === HASH_UNDEFINED
+      ? undefined : result;
+  }
+  return hasOwnProperty.call(data, key)
+    ? data[key] : undefined;
+}
+```
+
+<tr>
+<td>
+
+```js
+function hashGet (key) {
+  return this.__data__ |> {
+    if (nativeCreate) {
+      if (#[key] === HASH_UNDEFINED)
+        undefined;
+      else
+        #;
+    } else if (hashOwnProperty.call(#, key))
+      #[key];
+  };
+}
+```
+This pipeline version also uses [Additional Feature BP][].
+
+<td>
+
+```js
+function hashGet (key) {
+  var data = this.__data__;
+  if (nativeCreate) {
+    var result = data[key];
+    return result === HASH_UNDEFINED
+      ? undefined : result;
+  }
+  return hasOwnProperty.call(data, key)
+    ? data[key] : undefined;
+}
+```
+
+<tr>
+<td>
+
+```js
+function mapCacheDelete (key) {
+  const result = key
+  |> getMapData(this, #)
+  |> #['delete']
+  |> #(key);
+  this.size -= result ? 1 : 0;
+  return result;
+}
+```
+This pipeline version uses [Core Proposal][] syntax only.
+
+<td>
+
+```js
+function mapCacheDelete (key) {
+  var result =
+    getMapData(this, key)['delete'](key);
+  this.size -= result ? 1 : 0;
+  return result;
+}
+```
+
+<tr>
+<td>
+
+```js
+function mapCacheDelete (key) {
+  return key
+  |> getMapData(this, #)
+  |> #['delete']
+  |> #(key)
+  |> {
+    this.size -= # ? 1 : 0;
+    #;
+  };
+}
+```
+This pipeline version also uses [Additional Feature BP][].
+
+<td>
+
+```js
+function mapCacheDelete (key) {
+  var result =
+    getMapData(this, key)['delete'](key);
+  this.size -= result ? 1 : 0;
+  return result;
+}
+```
+
+<tr>
+<td>
+
+```js
+function castPath (value, object) {
+  return value |>
+    #|> isArray
+    ? #
+    : (#|> isKey(#, object))
+    ? [#]
+    : #|> toString |> stringToPath;
+}
+```
+This pipeline version uses [Core Proposal][] syntax only.
+
+<td>
+
+```js
+function castPath (value, object) {
+  if (isArray(value)) {
+    return value;
+  }
+  return isKey(value, object)
+    ? [value]
+    : stringToPath(toString(value));
+}
+```
+
+<tr>
+<td>
+
+```js
+function castPath (value, object) {
+  return value |> {
+    if (#|> isArray)
+      #;
+    else if (#|> isKey(#, object))
+      [#];
+    else #
+    |> toString |> stringToPath;
+  };
+}
+```
+This pipeline version also uses [Additional Feature BP][].
+
+<td>
+
+```js
+function castPath (value, object) {
+  if (isArray(value)) {
+    return value;
+  }
+  return isKey(value, object)
+    ? [value]
+    : stringToPath(toString(value));
+}
+```
+
+</table>
+
 [“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 [“don’t break my code”]: ./goals.md#dont-break-my-code
 [“don’t make me overthink”]: ./goals.md#dont-make-me-overthink
