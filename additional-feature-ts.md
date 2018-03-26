@@ -1,3 +1,251 @@
+## Additional Feature TS
+With the [Core Proposal][] only, all `try` statements’ `catch` clauses would
+prohibit the use of the topic reference within their steps, except where the
+topic reference `#` is inside an inner pipeline inside the `catch` clause: this
+is one of the Core Proposal’s [early errors][] mentioned above.
+
+The next additional feature – **Pipeline `try` Statements** – adds new forms of
+the `try` statement, the `catch` clause, and the `finally` clause, in the form
+of `try |> …`, `catch |> …`, and `finally |> …`, each followed by a [pipeline
+with the same smart step syntax][smart step syntax].
+
+The developer must **[opt into this behavior][opt-in behavior]** by using a
+pipeline token `|>`, followed by the pipeline. No existing code would be
+affected. Any, some, or none of the three clauses in a `try` statement may be in
+a pipeline form versus the regular block form.
+
+A pipeline `try |> …` statement or a `finally |> …` clause would apply the outer
+context’s topic to their pipelines. As usual, it would be an [early error][] if
+the outer context has no topic binding.
+
+A pipeline `catch |> …` clause would treat its caught error as if it were the
+pipeline’s head value.
+
+With [Additional Feature BP][], this syntax which would naturally allow the form
+`catch |> { … }`, except, within the block, the error would be `#`.
+
+In addition, a bare `catch` form, completely lacking a parenthesized antecedent,
+has already been proposed as [optional `catch` binding][]. This bare form is
+mutually compatible with Additional Feature TS.
+
+[Additional Feature TS is **formally specified in in the draft
+specification**][formal TS].
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+The example below also uses [Additional Feature BP][].
+
+The `try` clause is in the pipeline form using the [topic style][]. It applies
+the expression `1 / #` to the outer context’s topic (in this case, `f(value)`).
+
+The `catch` clause is also in the pipeline form using the [bare style][]. It
+applies the function `processError` to the caught error.
+
+```js
+value
+|> f
+|> {
+  try |> 1 / #;
+  catch |> processError;
+}
+|> g;
+```
+The semicolons after `1 / #` and after `processError` are optional. There is no
+ASI hazard here because pipeline steps may never contain a `catch` or `finally`
+clause, unless the clause is inside a block.
+
+<td>
+
+```js
+let _1;
+try {
+  _1 = 1 / f(value);
+}
+catch (error) {
+  _1 = processError(error);
+}
+g (_1, 1);
+```
+
+<tr>
+<td>
+
+```js
+value
+|> f
+|> {
+  try |> 1 / #;
+  catch |> #.message;
+}
+|> g(#, 1);
+```
+Now the `catch` clause is also in topic style, applying apply `console.error` as
+a method call to the caught error.
+
+<td>
+
+```js
+let _1;
+try {
+  _1 = 1 / f(value);
+}
+catch (error) {
+  _1 = error.message;
+}
+g (_1, 1);
+```
+
+<tr>
+<td>
+
+```js
+value
+|> f
+|> {
+  try
+  |> 1 / #;
+  catch
+  |> #.message |> capitalize;
+}
+|> g(#, 1);
+```
+Pipeline `try` statements and their clauses may be chained as usual. This
+pipeline `catch` clause is in [topic style][] (`|> #.message`) followed by [bare
+style][] (`|> capitalize`).
+
+<td>
+
+```js
+let _1;
+try {
+  _1 = 1 / f(value);
+}
+catch (error) {
+  _1 = capitalize(error.message);
+}
+g (_1, 1);
+```
+
+<tr>
+<td>
+
+This pipeline `try` statement’s `catch` clause is using the topic-block style
+from [Additional Feature BP][].
+```js
+value
+|> f
+|> {
+  try |> 1 / #;
+  catch |> {
+    #.message |> capitalize;
+  }
+}
+|> g;
+```
+A `|>` between `try` and its block `{ |> 1 / # }` is unnecessary, because the
+outer topic does not need to be rebound. However, it is necessary between
+`catch` and its block in order to opt into binding the topic reference to the
+caught errors.
+
+<td>
+
+```js
+let _1;
+try {
+  _1 = 1 / f(value);
+}
+catch (error) {
+  _1 = capitalize(error.message);
+}
+g (_1, 1);
+```
+
+<tr>
+<td>
+
+If the developer includes the parenthesized parameter (like `(error)` in this
+example) or if they leave out the `|>` after the `catch`, then no topic binding
+is established. As per the [early error rules][] in [Core Proposal][], topic
+references are not allowed in regular `catch` blocks.
+```js
+value
+|> f
+|> {
+  try { 1 / #; }
+  catch (error) {
+    #.message |> capitalize;
+  }
+}
+|> g(#, 1);
+// 🚫 Syntax Error:
+// Lexical context `catch { … }`
+// contains a topic reference
+// but has no topic binding.
+```
+This sort of [opt-in behavior][] is a goal of this proposal and helps ensure
+that the developer does not [shoot themselves in the foot][“don’t shoot me in
+the foot”] by accidentally using the topic value from an unexpected outer
+environment.
+
+<tr>
+<td>
+
+```js
+value
+|> f
+|> {
+  try { 1 / #; }
+  catch {
+    #.message |> capitalize;
+  }
+}
+|> g(#, 1);
+// 🚫 Syntax Error:
+// Lexical context `catch { … }`
+// contains a topic reference
+// but has no topic binding.
+```
+This opt-in behavior is mutually compatible with the proposal for [optional
+`catch` binding][].
+
+<td>
+
+<tr>
+<td>
+
+```js
+value
+|> f
+|> {
+  try |> JSON.parse;
+  catch |> { message: #.message };
+}
+|> g(#, 1);
+```
+
+<td>
+
+```js
+let _1;
+try {
+  _1 = 1 / f(value);
+}
+catch (error) {
+  _1 = { message: error.message };
+}
+g (_1, 1);
+```
+
+</table>
+
 [“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 [“don’t break my code”]: ./goals.md#dont-break-my-code
 [“don’t make me overthink”]: ./goals.md#dont-make-me-overthink
