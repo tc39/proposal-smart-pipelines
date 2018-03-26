@@ -1,4 +1,4 @@
-## Additional Feature BA
+# Additional Feature BA
 Another additional feature – **bare awaited calls** – makes async function calls
 terser. It adds another mode to bare style: if a bare-style pipeline step is
 preceded by a `await`, then instead of a mere function call, it is an awaited

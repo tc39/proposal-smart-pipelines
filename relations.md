@@ -1,3 +1,25 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Relations to other work](#relations-to-other-work)
+  - [Pipelines in other programming languages](#pipelines-in-other-programming-languages)
+  - [Topic references in other programming languages](#topic-references-in-other-programming-languages)
+  - [`do` expressions](#do-expressions)
+  - [Function binding](#function-binding)
+  - [Function composition](#function-composition)
+  - [Partial function application](#partial-function-application)
+  - [Optional `catch` binding](#optional-catch-binding)
+  - [Pattern matching](#pattern-matching)
+  - [Block parameters](#block-parameters)
+    - [Topic metaprogramming references](#topic-metaprogramming-references)
+  - [`do` expressions](#do-expressions-1)
+  - [Private class fields, class decorators, nullish coalescing, and optional chaining](#private-class-fields-class-decorators-nullish-coalescing-and-optional-chaining)
+  - [Alternative pipeline Babel plugin](#alternative-pipeline-babel-plugin)
+  - [Alternative pipeline proposals](#alternative-pipeline-proposals)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Relations to other work
 ## Pipelines in other programming languages
 The concept of a pipe operator appears in numerous other languages, variously

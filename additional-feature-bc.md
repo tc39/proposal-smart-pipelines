@@ -1,4 +1,4 @@
-## Additional Feature BC
+# Additional Feature BC
 An additional feature – **bare constructor calls** – makes constructor calls
 terser. It adds a mode to bare style: if a bare-style pipeline step is preceded
 by a `new`, then instead of a function call, it is a constructor call. `value |>

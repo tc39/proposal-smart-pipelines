@@ -1,5 +1,5 @@
-## Term rewriting
-### Core Proposal
+# Term rewriting
+## Core Proposal
 Pipelines can be rewritten into a nested [`do` expression][]. There are
 many ways to illustrate this equivalency. (It can also be less simply rewritten
 without `do` expressions.) The simplest way is to use a single `do` expression
@@ -79,7 +79,7 @@ With this notation, then in general, given a pipeline:\
 * If 𝑃 is in [topic style][] – then sub(𝑃, #) is 𝑃 but in which all unshadowed
   instances of the topic reference `#` are replaced by #.
 
-### Additional Feature BP
+## Additional Feature BP
 Using the same notation from the first subsection, then in general:
 
 * If 𝑃 is a [bare function call][] – then sub(𝑃, #) is 𝑃 `(` # `)`.
@@ -91,7 +91,7 @@ Using the same notation from the first subsection, then in general:
 * **If 𝑃 is in the form `{` 𝑆₀ `;` 𝑆₁ `;` … `;` 𝑆ᵥ₋₂ `;` 𝑆ᵥ₋₁ `;` `}` – then sub(𝑃, #) is
   `do {` sub(𝑆₀, #) `;` sub(𝑆₁, #) `;` … `;` sub(𝑆ᵥ₋₂, #) `;` sub(𝑆ᵥ₋₁, #) `;` `}`**.
 
-### Additional Feature NP
+## Additional Feature NP
 Adapted from a [previous example][Additional Feature NP]:
 ```js
 x = (a, b, ...c, d, e)
@@ -265,7 +265,7 @@ The pipeline is therefore equivalent to:\
   replaced by #[2], and unshadowed instances of the rest topic reference `...`
   are replaced by `...` #ₛ.
 
-## Smart body syntax
+# Smart body syntax
 This is a legacy section for old links. This section has been renamed to
 **“[smart step syntax][]”**.
 

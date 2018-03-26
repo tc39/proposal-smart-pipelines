@@ -1,4 +1,4 @@
-## Additional Feature PF
+# Additional Feature PF
 **More than any other** possible extension in this table, this additional
 feature – **Pipeline Functions** – would dramatically increase the usefulness of
 pipelines. It introduces just one additional operator that solves:\
@@ -585,7 +585,7 @@ x::hasOwnProperty('key');
 
 </table>
 
-### Ramda (Core Proposal + Additional Feature BP+PF)
+## Ramda (Core Proposal + Additional Feature BP+PF)
 [Ramda][] is a utility library focused on [functional programming][] with [pure
 functions][] and [immutable objects][]. Its functions are automatically
 [curried][currying]. Smart pipelines with [Additional Feature PF][]
@@ -749,7 +749,7 @@ renameBy(R.concat('a'), { A: 1, B: 2, C: 3 });
 
 </table>
 
-### WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF)
+## WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF)
 The [WHATWG Streams Standard][] provides an efficient, standardized stream API,
 inspired by Node.js’s Streams API, but also applicable to the DOM. The
 specification contains numerous usage examples that would become more readable

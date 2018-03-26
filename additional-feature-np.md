@@ -1,4 +1,4 @@
-## Additional Feature NP
+# Additional Feature NP
 Another Additional Feature – **n-ary pipelines** – enables the passing of
 multiple arguments into a pipeline’s steps. `(a, b) |> f` is equivalent to
 `f(a, b)`, and `a |> (f(#), g(#)) |> h` is equivalent to `h(f(a), g(a))`.
@@ -629,7 +629,7 @@ h(f(a), g(b));
 <td>
 
 The elements in an N-ary pipeline step must be in topic style (like the `# ** c +
-##` here).
+#` here).
 ```js
 (a, b)
 |> (f(#), # ** c + ##)
@@ -929,7 +929,7 @@ These two lines of code are also equivalent.
 
 </table>
 
-### Lodash (Core Proposal + Additional Features BP+PP+PF+NP)
+## Lodash (Core Proposal + Additional Features BP+PP+PF+NP)
 
 <table>
 <thead>
@@ -1016,7 +1016,7 @@ function createRound (methodName) {
 
 </table>
 
-### Ramda (Core Proposal + Additional Features BP+PF+NP)
+## Ramda (Core Proposal + Additional Features BP+PF+NP)
 [Many examples above using Ramda][Ramda + CP + BP + PF] benefited from pipeline
 functions with Additional Feature PF. Even more use cases are covered by
 pipeline functions when [Additional Feature NP][] syntax is supported.
@@ -1113,7 +1113,7 @@ propsDotPath(['a.b.c', 'x'], obj);
 
 </table>
 
-### WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF+NP)
+## WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF+NP)
 [Many examples above using WHATWG Streams][WHATWG Streams + CP + BP + PF]
 benefited from pipeline functions with Additional Features CP + PF. Even more
 use cases are covered by pipeline functions with [Additional Feature NP][].

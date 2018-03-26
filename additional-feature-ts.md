@@ -1,4 +1,4 @@
-## Additional Feature TS
+# Additional Feature TS
 With the [Core Proposal][] only, all `try` statements’ `catch` clauses would
 prohibit the use of the topic reference within their steps, except where the
 topic reference `#` is inside an inner pipeline inside the `catch` clause: this

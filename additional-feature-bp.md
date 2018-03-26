@@ -1,4 +1,4 @@
-## Additional Feature BP
+# Additional Feature BP
 There is a TC39 proposal for [`do` expressions][] at Stage 1. Smart pipelines do
 **not** require `do` expressions. However, if [`do` expressions][] also become
 part of JavaScript, then, as with **any** other type of expression, a pipeline
@@ -159,7 +159,7 @@ Of course, object literals do not have to be parenthesized inside blocks.
 
 </table>
 
-### WHATWG Fetch Standard (Core Proposal + Additional Feature BP)
+## WHATWG Fetch Standard (Core Proposal + Additional Feature BP)
 Revisiting an [example above from the WHATWG Fetch Standard][WHATWG Fetch + CP]
 shows how human comprehensibility could be further improved with [Additional
 Feature BP][].
@@ -253,7 +253,7 @@ fetch('https://pk.example/berlin-calling',
 
 </table>
 
-### jQuery (Core Proposal + Additional Feature BP)
+## jQuery (Core Proposal + Additional Feature BP)
 Revisiting the [examples above from jQuery][jQuery + CP] with [Additional
 Feature BP][] shows how terseness could be further improved.
 
@@ -427,7 +427,7 @@ From [jquery/src/core/access.js][].
 
 </table>
 
-### Lodash (Core Proposal + Additional Feature BP)
+## Lodash (Core Proposal + Additional Feature BP)
 
 <table>
 <thead>

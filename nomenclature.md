@@ -1,4 +1,4 @@
-## Explanation of nomenclature
+# Explanation of nomenclature
 The term [“**topic**” comes from linguistics][topic and comment] and have
 precedent in prior programming languages’ use of “topic variables”.
 
