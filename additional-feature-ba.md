@@ -1,3 +1,46 @@
+## Additional Feature BA
+Another additional feature – **bare awaited calls** – makes async function calls
+terser. It adds another mode to bare style: if a bare-style pipeline step is
+preceded by a `await`, then instead of a mere function call, it is an awaited
+function call. `value |> await object.asyncFunction` is equivalent to `await
+object.asyncFunction(value)`. This is backwards compatible with the [Core
+Proposal][] as well as all other [additional features][].
+
+[Additional Feature BA is **formally specified in in the draft
+specification**][formal BC].
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+value
+|> # + '!'
+|> new User.Message(#)
+|> await stream.write
+|> console.log;
+```
+
+<td>
+
+```js
+console.log(
+  await stream.write(
+    new User.Message(
+      value + '!'
+    )
+  )
+);
+```
+
+</table>
+
 [“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 [“don’t break my code”]: ./goals.md#dont-break-my-code
 [“don’t make me overthink”]: ./goals.md#dont-make-me-overthink
