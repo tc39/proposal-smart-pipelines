@@ -1,3 +1,11 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Additional Feature TS](#additional-feature-ts)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Additional Feature TS
 With the [Core Proposal][] only, all `try` statements’ `catch` clauses would
 prohibit the use of the topic reference within their steps, except where the

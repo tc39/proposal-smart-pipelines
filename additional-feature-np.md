@@ -1,3 +1,14 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Additional Feature NP](#additional-feature-np)
+  - [Lodash (Core Proposal + Additional Features BP+PP+PF+NP)](#lodash-core-proposal--additional-features-bppppfnp)
+  - [Ramda (Core Proposal + Additional Features BP+PF+NP)](#ramda-core-proposal--additional-features-bppfnp)
+  - [WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF+NP)](#whatwg-streams-standard-core-proposal--additional-features-bppppfnp)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Additional Feature NP
 Another Additional Feature – **n-ary pipelines** – enables the passing of
 multiple arguments into a pipeline’s steps. `(a, b) |> f` is equivalent to

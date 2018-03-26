@@ -1,3 +1,36 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Goals](#goals)
+  - [“Don’t break my code.”](#dont-break-my-code)
+    - [Backward compatibility](#backward-compatibility)
+    - [Zero runtime cost](#zero-runtime-cost)
+    - [Forward compatibility](#forward-compatibility)
+  - [“Don’t shoot me in the foot.”](#dont-shoot-me-in-the-foot)
+    - [Opt-in behavior](#opt-in-behavior)
+    - [Simple scoping](#simple-scoping)
+    - [Static analyzability](#static-analyzability)
+  - [“Don’t make me overthink.”](#dont-make-me-overthink)
+    - [Syntactic locality](#syntactic-locality)
+    - [Semantic clarity](#semantic-clarity)
+    - [Expressive versatility](#expressive-versatility)
+    - [Cyclomatic simplicity](#cyclomatic-simplicity)
+  - [“Make my code easier to read.”](#make-my-code-easier-to-read)
+    - [Untangled flow](#untangled-flow)
+    - [Distinguishable punctuators](#distinguishable-punctuators)
+    - [Terse parentheses](#terse-parentheses)
+    - [Terse variables](#terse-variables)
+    - [Terse function calls](#terse-function-calls)
+    - [Terse composition](#terse-composition)
+    - [Terse partial application](#terse-partial-application)
+  - [Other Goals](#other-goals)
+    - [Conceptual generality](#conceptual-generality)
+    - [Human writability](#human-writability)
+    - [Novice learnability](#novice-learnability)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Goals
 There are seventeen ordered goals that the smart step syntax tries to fulfill,
 which may be summarized,\

@@ -1,3 +1,14 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Additional Feature BP](#additional-feature-bp)
+  - [WHATWG Fetch Standard (Core Proposal + Additional Feature BP)](#whatwg-fetch-standard-core-proposal--additional-feature-bp)
+  - [jQuery (Core Proposal + Additional Feature BP)](#jquery-core-proposal--additional-feature-bp)
+  - [Lodash (Core Proposal + Additional Feature BP)](#lodash-core-proposal--additional-feature-bp)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Additional Feature BP
 There is a TC39 proposal for [`do` expressions][] at Stage 1. Smart pipelines do
 **not** require `do` expressions. However, if [`do` expressions][] also become

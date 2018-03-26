@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Term rewriting](#term-rewriting)
+  - [Core Proposal](#core-proposal)
+  - [Additional Feature BP](#additional-feature-bp)
+  - [Additional Feature NP](#additional-feature-np)
+- [Smart body syntax](#smart-body-syntax)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Term rewriting
 ## Core Proposal
 Pipelines can be rewritten into a nested [`do` expression][]. There are

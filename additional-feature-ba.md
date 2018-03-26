@@ -1,3 +1,11 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Additional Feature BA](#additional-feature-ba)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Additional Feature BA
 Another additional feature – **bare awaited calls** – makes async function calls
 terser. It adds another mode to bare style: if a bare-style pipeline step is

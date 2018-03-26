@@ -1,3 +1,11 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Explanation of nomenclature](#explanation-of-nomenclature)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Explanation of nomenclature
 The term [“**topic**” comes from linguistics][topic and comment] and have
 precedent in prior programming languages’ use of “topic variables”.
