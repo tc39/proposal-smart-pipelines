@@ -116,11 +116,11 @@ array.map($ => $ + 2);
 <td>
 
 ```js
-array.map(+> f |> # + 2);
+array.map(+> f);
 ```
 This pipeline function starts in **bare mode**. This means it is a variadic function.
 (As an aside, with [Additional Feature NP][], this would also be expressible as:
-`array.map((...$) => ...$ |> f |> # + 2)`.)
+`array.map((...$) => ...$ |> f)`.)
 
 <td>
 
