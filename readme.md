@@ -1,5 +1,5 @@
 # Smart pipelines
-ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
+ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-12.
 
 This proposal introduces a new binary pipe operator `|>` to JavaScript. It's similar
 to the [pipe operators of other languages](relations.html) such as Unix shells and
