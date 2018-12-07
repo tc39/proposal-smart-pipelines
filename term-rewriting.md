@@ -318,6 +318,7 @@ The pipeline is therefore equivalent to:\
 [concatenative programming]: https://en.wikipedia.org/wiki/Concatenative_programming_language
 [conceptual generality]: ./goals.md#conceptual-generality
 [Core Proposal]: ./readme.md
+[core-real-examples.md]: ./core-real-examples.md
 [currying]: https://en.wikipedia.org/wiki/Currying
 [cyclomatic complexity]: https://en.wikipedia.org/wiki/Cyclomatic_complexity#Applications
 [cyclomatic simplicity]: ./goals.md#cyclomatic-simplicity
@@ -398,7 +399,7 @@ The pipeline is therefore equivalent to:\
 [intro]: readme.md
 [isiahmeadows functional composition]: https://github.com/isiahmeadows/function-composition-proposal
 [jashkenas]: https://github.com/jashkenas
-[jQuery + CP]: ./readme.md#jquery-core-proposal-only
+[jQuery + CP]: ./core-real-examples.md#jquery
 [jQuery]: https://jquery.com/
 [jquery/src/core/access.js]: https://github.com/jquery/jquery/blob/2.2-stable/src/core/access.js
 [jquery/src/core/init.js]: https://github.com/jquery/jquery/blob/2.2-stable/src/core/init.js
@@ -412,7 +413,7 @@ The pipeline is therefore equivalent to:\
 [LiveScript pipe]: http://livescript.net/#operators-piping
 [Lodash + CP + BP + PF]: ./additional-feature-pf.md#lodash-core-proposal--additional-feature-bppf
 [Lodash + CP + BP + PP + PF + NP]: ./additional-feature-np.md#lodash-core-proposal--additional-features-bppppfmt
-[Lodash + CP]: ./readme.md#lodash-core-proposal-only
+[Lodash + CP]: ./core-real-examples.md#lodash
 [Lodash]: https://lodash.com/
 [mAAdhaTTah]: https://github.com/mAAdhaTTah/
 [make my code easier to read]: ./goals.md#make-my-code-easier-to-read
@@ -497,13 +498,13 @@ The pipeline is therefore equivalent to:\
 [topic variables in other languages]: https://rosettacode.org/wiki/Topic_variable
 [topic-token bikeshedding]: https://github.com/tc39/proposal-pipeline-operator/issues/91
 [Underscore.js + CP + BP + PP]: ./additional-feature-pp.md#underscorejs-core-proposal--additional-feature-bppp
-[Underscore.js + CP]: ./readme.md#underscorejs-core-proposal-only
+[Underscore.js + CP]: ./core-real-examples.md#underscorejs
 [Underscore.js]: http://underscorejs.org
 [Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
 [untangled flow]: ./goals.md#untangled-flow
 [Visual Basic’s `select` statement]: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/select-case-statement
 [WebKit console variables]: https://webkit.org/blog/829/web-inspector-updates/
-[WHATWG Fetch + CP]: ./readme.md#whatwg-fetch-standard-core-proposal-only
+[WHATWG Fetch + CP]: ./core-real-examples.md#whatwg-fetch-standard
 [WHATWG Fetch Standard]: https://fetch.spec.whatwg.org/
 [WHATWG Streams + CP + BP + PF + NP]: ./additional-feature-np.md#whatwg-streams-standard-core-proposal--additional-features-bppfmt
 [WHATWG Streams + CP + BP + PF]: ./additional-feature-pf.md#whatwg-streams-standard-core-proposal--additional-feature-bppf

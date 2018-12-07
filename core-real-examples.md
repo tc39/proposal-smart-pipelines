@@ -1,49 +1,9 @@
-|Name                     | Status  | Features                                                               | Purpose                                                                                                         |
-| ----------------------- | ------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-|[Core Proposal][]        | Stage 0 | Infix pipelines `… \|> …`<br>Lexical topic `#`                         | **Unary** function/expression **application**                                                                   |
-|[Additional Feature BC][]| None    | Bare constructor calls `… \|> new …`                                   | Tacit application of **constructors**                                                                           |
-|[Additional Feature BA][]| None    | Bare awaited calls `… \|> await …`                                     | Tacit application of **async functions**                                                                        |
-|[Additional Feature BP][]| None    | Block pipeline steps `… \|> {…}`                                       | Application of **statement blocks**                                                                             |
-|[Additional Feature PF][]| None    | Pipeline functions `+>  `                                              | **Partial** function/expression **application**<br>Function/expression **composition**<br>**Method extraction** |
-|[Additional Feature TS][]| None    | Pipeline `try` statements                                              | Tacit application to **caught errors**                                                                          |
-|[Additional Feature NP][]| None    | N-ary pipelines `(…, …) \|> …`<br>Lexical topics `##`, `###`, and `...`| **N-ary** function/expression **application**                                                                   |
+# Core Proposal real-world examples
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-
-- [Additional Feature BP](#additional-feature-bp)
-  - [WHATWG Fetch Standard (Core Proposal + Additional Feature BP)](#whatwg-fetch-standard-core-proposal--additional-feature-bp)
-  - [jQuery (Core Proposal + Additional Feature BP)](#jquery-core-proposal--additional-feature-bp)
-  - [Lodash (Core Proposal + Additional Feature BP)](#lodash-core-proposal--additional-feature-bp)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-# Additional Feature BP
-There is a TC39 proposal for [`do` expressions][] at Stage 1. Smart pipelines do
-**not** require `do` expressions. However, if [`do` expressions][] also become
-part of JavaScript, then, as with **any** other type of expression, a pipeline
-step in [topic style][] may be `do` expression, as long as the `do` expression
-contains the topic reference `#`. The topic reference `#` is bound to the input
-value, the `do` expression is evaluated, then the result of the `do` block
-becomes the result of that pipeline step, and the lexical environment is reset –
-all as usual.
-
-In this manner, pipelines with `do` expressions act as a way to create a
-“topic-context block”, similarly to [Perl 6’s given block][]. Within this block,
-statements may use the topic reference may be used as an abbreviation for the
-same value. This can be useful for embedding side effects, `if` `else`
-statements, `try` statements, and `switch` statements within pipelines.
-They may be made even pithier with [Additional Feature BP][], explained later.
-
-[`do` expressions][] as [topic-style][topic style] pipeline steps might be so
-useful, in fact, that it might be worth building them into the pipe operator
-`|>` itself as an add-on feature. This additional feature – **block pipelines**
-– adds an additional [topic-style pipeline step syntax][smart step syntax],
-using blocks to stand for `do` expressions.
-
-[Additional Feature BP is **formally specified in in the draft
-specification**][formal BP].
+### WHATWG Fetch Standard
+The [WHATWG Fetch Standard][] contains several examples of using the DOM `fetch`
+function, resolving its promises into values, then processing the values in
+various ways. These examples may become more easily readable with smart pipelines.
 
 <table>
 <thead>
@@ -56,142 +16,93 @@ specification**][formal BP].
 <td>
 
 ```js
-x = input
-|> f
-|> { sideEffect(); #; }
-|> g;
+'/music/pk/altes-kamuffel'
+|> await fetch(#)
+|> await #.blob()
+|> playBlob;
 ```
-Side effects may easily be embedded within block pipeline steps.
 
 <td>
 
 ```js
-const $ = f(input);
-sideEffect();
-x = g($);
+fetch('/music/pk/altes-kamuffel')
+  .then(res => res.blob())
+  .then(playBlob);
+```
+
+<tr>
+<td>
+[Equivalent to above.]
+
+<td>
+
+```js
+playBlob(
+  await (
+    await fetch('/music/pk/altes-kamuffel')
+  ).blob()
+);
 ```
 
 <tr>
 <td>
 
 ```js
-x = input
-|> f
-|> {
-  if (typeof # === 'number')
-    # + 1;
-  else
-    { data: # };
-}
-|> g;
+'https://example.com/'
+|> await fetch(#, { method: 'HEAD' })
+|> #.headers.get('content-type')
+|> console.log;
 ```
-`if` `else` statements may also be used within block pipeline steps, as an
-alternative to the ternary conditional operator `?` `:`.
 
 <td>
 
 ```js
-const _1 = f(input);
-let _2;
-if (typeof $ === 'number')
-  _2 = $ + 1;
-else
-  _2 = { data: $ };
-x = g(_2);
+fetch('https://example.com/',
+  { method: 'HEAD' }
+).then(response =>
+  console.log(
+    response.headers.get('content-type'))
+);
 ```
 
 <tr>
 <td>
 
 ```js
-x = input
-|> f
-|> {
-  try {
-    #|> JSON.parse;
-    catch (error) {
-      { message: error.message };
-    }
-  }
-}
-|> g;
+'https://example.com/'
+|> await fetch(#, { method: 'HEAD' })
+|> #.headers.get('content-type')
+|> console.log;
 ```
-`try` statements would also be useful to embed in pipelines with block steps.
-This example becomes even pithier with [Additional Feature TS][].
 
 <td>
 
 ```js
-const _1 = f(input);
-let _2;
-try {
-  _2 = JSON.parse(_1);
-  catch (error) {
-    _2 = { message: error.message };
-  }
-}
-x = g(_2);
+console.log(
+  (await
+    fetch('https://example.com/',
+      { method: 'HEAD' }
+    )
+  ).headers.get('content-type')
+);
 ```
 
 <tr>
 <td>
-
-```js
-input
-|> await f(#, 5)
-|> {
-  if (x > 20)
-    x + 30;
-  else
-    x - 10;
-}
-|> g;
-// 🚫 Syntax Error:
-// Pipeline step `|> { if (…) … else … }`
-// binds topic but contains
-// no topic reference.
-```
-The same [early error rules][] that apply to any topic-style pipeline step apply
-also to topic-style steps that are `do` expressions.
-
-<tr>
-<td>
-
-As with all other [additional features][], Additional Feature BP is [forward
-compatible][] with the [Core Proposal][]. This compatibility includes pipeline
-steps that are object literals, which must be parenthesized.
-```js
-input |> f |> { x: #, y: # } |> g;
-input |> f |> { if (#) { x: #, y: # }; } |> g;
-```
-Of course, object literals do not have to be parenthesized inside blocks.
+[Equivalent to above.]
 
 <td>
 
-```j
-
+```js
 {
-  const _1 = f(input);
-  let _2;
-  if ($) _2 = { x: $, y: $ };
-  g(_2);
+  const url = 'https://example.com/';
+  const response =
+    await fetch(url, { method: 'HEAD' });
+  const contentType =
+    response.headers.get('content-type');
+  console.log(contentType);
 }
 ```
-
-</table>
-
-## WHATWG Fetch Standard (Core Proposal + Additional Feature BP)
-Revisiting an [example above from the WHATWG Fetch Standard][WHATWG Fetch + CP]
-shows how human comprehensibility could be further improved with [Additional
-Feature BP][].
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
 
 <tr>
 <td>
@@ -199,61 +110,21 @@ Feature BP][].
 ```js
 'https://pk.example/berlin-calling'
 |> await fetch(#, { mode: 'cors' })
-|> (
-  #.headers.get('content-type')
-  |> # && #
-    .toLowerCase()
-    .indexOf('application/json')
-    >= 0
-  )
-  ? #
-  : throw new TypeError()
-|> await #.json()
-|> processJSON;
-```
-This pipeline version uses [Core Proposal][] syntax only.
-
-<td>
-
-```js
-fetch('https://pk.example/berlin-calling',
-  { mode: 'cors' }
-).then(response => {
-  if (response.headers.get('content-type')
-    && response.headers.get('content-type')
+|> do {
+  if (#.headers.get('content-type')
+    && #.headers.get('content-type')
       .toLowerCase()
       .indexOf('application/json') >= 0
-  )
-    return response.json();
-  else
-    throw new TypeError();
-}).then(processJSON);
-```
-
-<tr>
-<td>
-
-And this pipeline version also uses [Additional Feature BP][]. This allows the
-use of an `if` `else` statement instead of a ternary `?` `:` expression.
-```js
-'https://pk.example/berlin-calling'
-|> await fetch(#, { mode: 'cors' })
-|> {
-  const contentTypeIsJSON =
-    #.headers.get('content-type')
-    |> # && #
-      .toLowerCase()
-      .indexOf('application/json')
-      >= 0;
-  if (contentTypeIsJSON) #;
-  else throw new TypeError();
+   )
+     return #.json();
+   else
+     throw new TypeError();
 }
 |> await #.json()
 |> processJSON;
 ```
-It also allows the judicious use of variable/constant assignment where it would
-make the meaning of code clearer, rather than [requiring unnecessary variables
-redundant with the names of functions][terse variables].
+This example uses [`do` expressions][], which come from another ES proposal,
+and which work well with smart pipelines--in this case to embed `if`–`else` statements.
 
 <td>
 
@@ -274,9 +145,12 @@ fetch('https://pk.example/berlin-calling',
 
 </table>
 
-## jQuery (Core Proposal + Additional Feature BP)
-Revisiting the [examples above from jQuery][jQuery + CP] with [Additional
-Feature BP][] shows how terseness could be further improved.
+### jQuery
+As the single most-used JavaScript library in the world, [jQuery][] has provided
+an alternative human-ergonomic API to the DOM since 2006. jQuery is under the
+stewardship of the [JS Foundation][], a member organization of TC39 through which
+jQuery’s developers are represented in TC39. jQuery’s API requires complex data
+processing that becomes more readable with smart pipelines.
 
 <table>
 <thead>
@@ -285,6 +159,102 @@ Feature BP][] shows how terseness could be further improved.
 <th>Status quo
 
 <tbody>
+<tr>
+<td>
+
+```js
+return data
+|> buildFragment([#], context, scripts)
+|> #.childNodes
+|> jQuery.merge([], #);
+```
+The path that a reader’s eyes must trace while reading this pipeline moves
+straight down, with some movement toward the right then back: from `data` to
+`buildFragment` (and its arguments), then `.childNodes`, then `jQuery.merge`.
+Here, no one-off-variable assignment is necessary.
+
+<td>
+
+```js
+parsed = buildFragment(
+  [ data ], context, scripts
+);
+return jQuery.merge(
+  [], parsed.childNodes
+);
+```
+From [jquery/src/core/parseHTML.js][]. In this code, the eyes first must look
+for `data` – then upwards to `parsed = buildFragment` (and then back for
+`buildFragment`’s other arguments) – then down, searching for the location of
+the `parsed` variable in the next statement – then right when noticing its
+`.childNodes` postfix – then back upward to `return jQuery.merge`.
+
+<tr>
+<td>
+
+```js
+(key |> toType) === 'object';
+```
+```js
+key |> toType |> # === 'object';
+```
+`|>` has a looser precedence than most operators, including `===`. (Only
+assignment operators, arrow function `=>`, yield operators, and the comma
+operator are any looser.)
+
+<td>
+
+```js
+toType(key) === 'object';
+```
+From [jquery/src/core/access.js][].
+
+<tr>
+<td>
+
+```js
+context = context
+|> # instanceof jQuery
+    ? #[0] : #;
+```
+
+<td>
+
+```js
+context =
+  context instanceof jQuery
+    ? context[0] : context;
+```
+From [jquery/src/core/access.js][].
+
+<tr>
+<td>
+
+```js
+context
+|> # && #.nodeType
+  ? #.ownerDocument || #
+  : document
+|> jQuery.parseHTML(match[1], #, true)
+|> jQuery.merge;
+```
+
+<td>
+
+```js
+jQuery.merge(
+  this, jQuery.parseHTML(
+    match[1],
+    context && context.nodeType
+      ? context.ownerDocument
+        || context
+      : document,
+    true
+  )
+);
+```
+From [jquery/src/core/init.js][].
+
 <tr>
 <td>
 
@@ -295,7 +265,8 @@ match
   ? this[match](#);
   : this.attr(match, #);
 ```
-This pipeline version uses [Core Proposal][] syntax.
+Note how, in this version, the parallelism between the two clauses is very
+clear: they both share the form `match |> context[#] |> something(match, #)`.
 
 <td>
 
@@ -306,32 +277,22 @@ if (isFunction(this[match])) {
   this.attr(match, context[match]);
 }
 ```
-From [jquery/src/core/init.js][].
+From [jquery/src/core/init.js][]. Here, the parallelism between the clauses
+is somewhat less clear: the common expression `context[match]` is at the end
+of both clauses, at a different offset from the margin.
 
 <tr>
 <td>
 
 ```js
-match
-|> context[#]
-|> {
-  if (this[match] |> isFunction)
-    this[match](#);
-  else
-    this.attr(match, #);
-}
+elem = match[2]
+|> document.getElementById;
 ```
-With [Additional Feature BP][], an `if` `else` statement can be used instead of
-a ternary `?` `:` expression.
 
 <td>
 
 ```js
-if (isFunction(this[match])) {
-  this[match](context[match]);
-} else
-  this.attr(match, context[match]);
-}
+elem = document.getElementById(match[2]);
 ```
 From [jquery/src/core/init.js][].
 
@@ -353,102 +314,170 @@ else
   |> this.constructor
   |> #.find(selector);
 ```
-This pipeline version uses [Core Proposal][] syntax only. Note that both
-statements are of the form `return context |> something |> #.find(selector)`.
+The parallelism between the final two clauses becomes clearer here too.
+They both are of the form `return context |> something |> #.find(selector)`.
 
 <td>
 
 ```js
 // Handle HTML strings
-if (…) {
+if (…)
   …
 // Handle $(expr, $(...))
-} else if (!context || context.jquery) {
+else if (!context || context.jquery)
   return (context || root).find(selector);
 // Handle $(expr, context)
-} else {
+else
   return this.constructor(context)
     .find(selector);
-}
 ```
-From [jquery/src/core/init.js][].
-
-<tr>
-<td>
-
-```js
-return context
-|> {
-  // Handle HTML strings
-  if (…)
-    …
-  // Handle $(expr, $(...))
-  else if (!# || #.jquery)
-    # || root;
-  // Handle $(expr, context)
-  else
-    #|> this.constructor;
-}
-|> #.find(selector);
-```
-This pipeline version uses [Additional Feature BP][]. The common phrases `return
-context |>` and `|> #.find(selector)` have moved out of the `if` `else if` `else`,
-into its own statement. The `if` `else if` `else` itself was moved into a block in
-the middle of the new unified pipeline. This emphasizes the unity of the common
-path through which content data flow in this code.
-
-<td>
-
-```js
-// Handle HTML strings
-if (…) {
-  …
-// Handle $(expr, $(...))
-} else if (!context || context.jquery) {
-  return (context || root).find(selector);
-// Handle $(expr, context)
-} else {
-  return this.constructor(context)
-    .find(selector);
-}
-```
-From [jquery/src/core/init.js][].
-
-<tr>
-<td>
-
-```js
-return selector |> {
-  if (typeof # === 'string')
-    …
-  else if (#|> isFunction)
-    root.ready !== undefined
-      ? root.ready(#)
-      : #(jQuery);
-  else
-    jQuery.makeArray(#, this);
-};
-```
-This is a example from jQuery’s codebase on which pipelines would not have been
-worth using without [Additional Feature BP][].
-
-<td>
-
-```js
-if (typeof selector === 'string') {
-  …
-} else if (isFunction(selector)) {
-  return root.ready !== undefined
-    ? root.ready(selector)
-    : selector(jQuery);
-}
-return jQuery.makeArray(selector, this);
-```
-From [jquery/src/core/access.js][].
+From [jquery/src/core/init.js][]. The parallelism is much less clear here.
 
 </table>
 
-## Lodash (Core Proposal + Additional Feature BP)
+### Underscore.js
+[Underscore.js][] is another utility library very widely used since 2009,
+providing numerous functions that manipulate arrays, objects, and other
+functions. It too has a codebase that transforms values through many expressions
+– a codebase whose readability would therefore benefit from smart pipelines.
+
+<table>
+<thead>
+<tr>
+<th>With smart pipelines
+<th>Status quo
+
+<tbody>
+<tr>
+<td>
+
+```js
+function (obj, pred, context) {
+  return obj
+  |> isArrayLike
+  |> # ? _.findIndex : _.findKey
+  |> #(obj, pred, context)
+  |> (# !== void 0 && # !== -1)
+      ? obj[#] : undefined;
+}
+```
+
+<td>
+
+```js
+function (obj, pred, context) {
+  var key;
+  if (isArrayLike(obj)) {
+    key = _.findIndex(obj, pred, context);
+  } else {
+    key = _.findKey(obj, pred, context);
+  }
+  if (key !== void 0 && key !== -1)
+    return obj[key];
+}
+```
+
+<tr>
+<td>
+
+```js
+function (obj, pred, context) {
+  return pred
+  |> cb
+  |> _.negate
+  |> _.filter(obj, #, context);
+}
+```
+
+<td>
+
+```js
+function (obj, pred, context) {
+  return _.filter(obj,
+    _.negate(cb(pred)),
+    context
+  );
+}
+```
+
+<tr>
+<td>
+
+```js
+function (
+  srcFn, boundFn, ctxt, callingCtxt, args
+) {
+  if (!(callingCtxt instanceof boundFn))
+    return srcFn.apply(ctxt, args);
+  var self = srcFn
+  |> #.prototype |> baseCreate;
+  return self
+  |> srcFn.apply(#, args)
+  |> _.isObject(#) ? # : self;
+}
+```
+
+<td>
+
+```js
+function (
+  srcFn, boundFn,
+  ctxt, callingCtxt, args
+) {
+  if (!(callingCtxt instanceof boundFn))
+    return srcFn.apply(ctxt, args);
+  var self = baseCreate(srcFn.prototype);
+  var result = srcFn.apply(self, args);
+  if (_.isObject(result)) return result;
+  return self;
+}
+```
+
+<tr>
+<td>
+
+```js
+function (obj) {
+  return obj
+  |>  # == null
+    ? 0
+    : #|> isArrayLike
+    ? #|> #.length
+    : #|> _.keys |> #.length;
+  };
+}
+```
+Smart pipelines make parallelism between all three clauses becomes clearer:\
+`0` if it is nullish,\
+`#|> #.length` if it is array-like, and\
+`#|> something |> #.length` otherwise.\
+(Technically, `#|> #.length` could simply be `#.length`, but it is written in
+this redundant form in order to emphasis its parallelism with the other branch.)
+
+[This particular example becomes even clearer][Underscore.js + CP + BP + PP]
+when paired with [Additional Feature BP][].
+
+<td>
+
+```js
+function (obj) {
+  if (obj == null) return 0;
+  return isArrayLike(obj)
+    ? obj.length
+    : _.keys(obj).length;
+}
+```
+
+</table>
+
+### Lodash
+[Lodash][] is a fork of [Underscore.js][] that remains under rapid active
+development. Along with Underscore.js’ other utility functions, Lodash provides
+many other high-order functions that attempt to make [functional programming][]
+more ergonomic. Like [jQuery][], Lodash is under the stewardship of the
+[JS Foundation][], a member organization of TC39, through which Lodash’s developers
+also have TC39 representation. And like jQuery and Underscore.js, Lodash’s API
+involves complex data processing that becomes more readable with smart pipelines.
 
 <table>
 <thead>
@@ -464,15 +493,13 @@ From [jquery/src/core/access.js][].
 function hashGet (key) {
   return this.__data__
   |> nativeCreate
-    ? (#[key]
-      |> # === HASH_UNDEFINED
+    ? (#[key] === HASH_UNDEFINED
       ? undefined : #)
     : hashOwnProperty.call(#, key)
     ? #[key]
     : undefined;
 }
 ```
-This pipeline version uses [Core Proposal][] syntax only.
 
 <td>
 
@@ -493,32 +520,19 @@ function hashGet (key) {
 <td>
 
 ```js
-function hashGet (key) {
-  return this.__data__ |> {
-    if (nativeCreate) {
-      if (#[key] === HASH_UNDEFINED)
-        undefined;
-      else
-        #;
-    } else if (hashOwnProperty.call(#, key))
-      #[key];
-  };
+function listCacheHas (key) {
+  return this.__data__
+  |> assocIndexOf(#, key)
+  |> # > -1;
 }
 ```
-This pipeline version also uses [Additional Feature BP][].
 
 <td>
 
 ```js
-function hashGet (key) {
-  var data = this.__data__;
-  if (nativeCreate) {
-    var result = data[key];
-    return result === HASH_UNDEFINED
-      ? undefined : result;
-  }
-  return hasOwnProperty.call(data, key)
-    ? data[key] : undefined;
+function listCacheHas (key) {
+  return assocIndexOf(this.__data__, key)
+    > -1;
 }
 ```
 
@@ -535,35 +549,6 @@ function mapCacheDelete (key) {
   return result;
 }
 ```
-This pipeline version uses [Core Proposal][] syntax only.
-
-<td>
-
-```js
-function mapCacheDelete (key) {
-  var result =
-    getMapData(this, key)['delete'](key);
-  this.size -= result ? 1 : 0;
-  return result;
-}
-```
-
-<tr>
-<td>
-
-```js
-function mapCacheDelete (key) {
-  return key
-  |> getMapData(this, #)
-  |> #['delete']
-  |> #(key)
-  |> {
-    this.size -= # ? 1 : 0;
-    #;
-  };
-}
-```
-This pipeline version also uses [Additional Feature BP][].
 
 <td>
 
@@ -589,37 +574,6 @@ function castPath (value, object) {
     : #|> toString |> stringToPath;
 }
 ```
-This pipeline version uses [Core Proposal][] syntax only.
-
-<td>
-
-```js
-function castPath (value, object) {
-  if (isArray(value)) {
-    return value;
-  }
-  return isKey(value, object)
-    ? [value]
-    : stringToPath(toString(value));
-}
-```
-
-<tr>
-<td>
-
-```js
-function castPath (value, object) {
-  return value |> {
-    if (#|> isArray)
-      #;
-    else if (#|> isKey(#, object))
-      [#];
-    else #
-    |> toString |> stringToPath;
-  };
-}
-```
-This pipeline version also uses [Additional Feature BP][].
 
 <td>
 

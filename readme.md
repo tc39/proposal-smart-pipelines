@@ -1070,597 +1070,11 @@ input
 
 </table>
 
-### WHATWG Fetch Standard (Core Proposal only)
-The [WHATWG Fetch Standard][] contains several examples of using the DOM `fetch`
-function, resolving its promises into values, then processing the values in
-various ways. These examples may become more easily readable with smart pipelines.
+## Real-world examples
 
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
+See [core-real-examples.md][].
 
-<tbody>
-<tr>
-<td>
-
-```js
-'/music/pk/altes-kamuffel'
-|> await fetch(#)
-|> await #.blob()
-|> playBlob;
-```
-
-<td>
-
-```js
-fetch('/music/pk/altes-kamuffel')
-  .then(res => res.blob())
-  .then(playBlob);
-```
-
-<tr>
-<td>
-[Equivalent to above.]
-
-<td>
-
-```js
-playBlob(
-  await (
-    await fetch('/music/pk/altes-kamuffel')
-  ).blob()
-);
-```
-
-<tr>
-<td>
-
-```js
-'https://example.com/'
-|> await fetch(#, { method: 'HEAD' })
-|> #.headers.get('content-type')
-|> console.log;
-```
-
-<td>
-
-```js
-fetch('https://example.com/',
-  { method: 'HEAD' }
-).then(response =>
-  console.log(
-    response.headers.get('content-type'))
-);
-```
-
-<tr>
-<td>
-
-```js
-'https://example.com/'
-|> await fetch(#, { method: 'HEAD' })
-|> #.headers.get('content-type')
-|> console.log;
-```
-
-<td>
-
-```js
-console.log(
-  (await
-    fetch('https://example.com/',
-      { method: 'HEAD' }
-    )
-  ).headers.get('content-type')
-);
-```
-
-<tr>
-<td>
-[Equivalent to above.]
-
-<td>
-
-```js
-{
-  const url = 'https://example.com/';
-  const response =
-    await fetch(url, { method: 'HEAD' });
-  const contentType =
-    response.headers.get('content-type');
-  console.log(contentType);
-}
-```
-
-<tr>
-<td>
-
-```js
-'https://pk.example/berlin-calling'
-|> await fetch(#, { mode: 'cors' })
-|> do {
-  if (#.headers.get('content-type')
-    && #.headers.get('content-type')
-      .toLowerCase()
-      .indexOf('application/json') >= 0
-   )
-     return #.json();
-   else
-     throw new TypeError();
-}
-|> await #.json()
-|> processJSON;
-```
-This example uses [`do` expressions][], which come from another ES proposal,
-and which work well with smart pipelines—in this case to embed `if`–`else` statements.
-
-<td>
-
-```js
-fetch('https://pk.example/berlin-calling',
-  { mode: 'cors' }
-).then(response => {
-  if (response.headers.get('content-type')
-    && response.headers.get('content-type')
-      .toLowerCase()
-      .indexOf('application/json') >= 0
-  )
-    return response.json();
-  else
-    throw new TypeError();
-}).then(processJSON);
-```
-
-</table>
-
-### jQuery (Core Proposal only)
-As the single most-used JavaScript library in the world, [jQuery][] has provided
-an alternative human-ergonomic API to the DOM since 2006. jQuery is under the
-stewardship of the [JS Foundation][], a member organization of TC39 through which
-jQuery’s developers are represented in TC39. jQuery’s API requires complex data
-processing that becomes more readable with smart pipelines.
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-return data
-|> buildFragment([#], context, scripts)
-|> #.childNodes
-|> jQuery.merge([], #);
-```
-The path that a reader’s eyes must trace while reading this pipeline moves
-straight down, with some movement toward the right then back: from `data` to
-`buildFragment` (and its arguments), then `.childNodes`, then `jQuery.merge`.
-Here, no one-off-variable assignment is necessary.
-
-<td>
-
-```js
-parsed = buildFragment(
-  [ data ], context, scripts
-);
-return jQuery.merge(
-  [], parsed.childNodes
-);
-```
-From [jquery/src/core/parseHTML.js][]. In this code, the eyes first must look
-for `data` – then upwards to `parsed = buildFragment` (and then back for
-`buildFragment`’s other arguments) – then down, searching for the location of
-the `parsed` variable in the next statement – then right when noticing its
-`.childNodes` postfix – then back upward to `return jQuery.merge`.
-
-<tr>
-<td>
-
-```js
-(key |> toType) === 'object';
-```
-```js
-key |> toType |> # === 'object';
-```
-`|>` has a looser precedence than most operators, including `===`. (Only
-assignment operators, arrow function `=>`, yield operators, and the comma
-operator are any looser.)
-
-<td>
-
-```js
-toType(key) === 'object';
-```
-From [jquery/src/core/access.js][].
-
-<tr>
-<td>
-
-```js
-context = context
-|> # instanceof jQuery
-    ? #[0] : #;
-```
-
-<td>
-
-```js
-context =
-  context instanceof jQuery
-    ? context[0] : context;
-```
-From [jquery/src/core/access.js][].
-
-<tr>
-<td>
-
-```js
-context
-|> # && #.nodeType
-  ? #.ownerDocument || #
-  : document
-|> jQuery.parseHTML(match[1], #, true)
-|> jQuery.merge;
-```
-
-<td>
-
-```js
-jQuery.merge(
-  this, jQuery.parseHTML(
-    match[1],
-    context && context.nodeType
-      ? context.ownerDocument
-        || context
-      : document,
-    true
-  )
-);
-```
-From [jquery/src/core/init.js][].
-
-<tr>
-<td>
-
-```js
-match
-|> context[#]
-|> (this[match] |> isFunction)
-  ? this[match](#);
-  : this.attr(match, #);
-```
-Note how, in this version, the parallelism between the two clauses is very
-clear: they both share the form `match |> context[#] |> something(match, #)`.
-
-<td>
-
-```js
-if (isFunction(this[match])) {
-  this[match](context[match]);
-} else
-  this.attr(match, context[match]);
-}
-```
-From [jquery/src/core/init.js][]. Here, the parallelism between the clauses
-is somewhat less clear: the common expression `context[match]` is at the end
-of both clauses, at a different offset from the margin.
-
-<tr>
-<td>
-
-```js
-elem = match[2]
-|> document.getElementById;
-```
-
-<td>
-
-```js
-elem = document.getElementById(match[2]);
-```
-From [jquery/src/core/init.js][].
-
-<tr>
-<td>
-
-```js
-// Handle HTML strings
-if (…)
-  …
-// Handle $(expr, $(...))
-else if (!# || #.jquery)
-  return context
-  |> # || root
-  |> #.find(selector);
-// Handle $(expr, context)
-else
-  return context
-  |> this.constructor
-  |> #.find(selector);
-```
-The parallelism between the final two clauses becomes clearer here too.
-They both are of the form `return context |> something |> #.find(selector)`.
-
-<td>
-
-```js
-// Handle HTML strings
-if (…)
-  …
-// Handle $(expr, $(...))
-else if (!context || context.jquery)
-  return (context || root).find(selector);
-// Handle $(expr, context)
-else
-  return this.constructor(context)
-    .find(selector);
-```
-From [jquery/src/core/init.js][]. The parallelism is much less clear here.
-
-</table>
-
-### Underscore.js (Core Proposal only)
-[Underscore.js][] is another utility library very widely used since 2009,
-providing numerous functions that manipulate arrays, objects, and other
-functions. It too has a codebase that transforms values through many expressions
-– a codebase whose readability would therefore benefit from smart pipelines.
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-function (obj, pred, context) {
-  return obj
-  |> isArrayLike
-  |> # ? _.findIndex : _.findKey
-  |> #(obj, pred, context)
-  |> (# !== void 0 && # !== -1)
-      ? obj[#] : undefined;
-}
-```
-
-<td>
-
-```js
-function (obj, pred, context) {
-  var key;
-  if (isArrayLike(obj)) {
-    key = _.findIndex(obj, pred, context);
-  } else {
-    key = _.findKey(obj, pred, context);
-  }
-  if (key !== void 0 && key !== -1)
-    return obj[key];
-}
-```
-
-<tr>
-<td>
-
-```js
-function (obj, pred, context) {
-  return pred
-  |> cb
-  |> _.negate
-  |> _.filter(obj, #, context);
-}
-```
-
-<td>
-
-```js
-function (obj, pred, context) {
-  return _.filter(obj,
-    _.negate(cb(pred)),
-    context
-  );
-}
-```
-
-<tr>
-<td>
-
-```js
-function (
-  srcFn, boundFn, ctxt, callingCtxt, args
-) {
-  if (!(callingCtxt instanceof boundFn))
-    return srcFn.apply(ctxt, args);
-  var self = srcFn
-  |> #.prototype |> baseCreate;
-  return self
-  |> srcFn.apply(#, args)
-  |> _.isObject(#) ? # : self;
-}
-```
-
-<td>
-
-```js
-function (
-  srcFn, boundFn,
-  ctxt, callingCtxt, args
-) {
-  if (!(callingCtxt instanceof boundFn))
-    return srcFn.apply(ctxt, args);
-  var self = baseCreate(srcFn.prototype);
-  var result = srcFn.apply(self, args);
-  if (_.isObject(result)) return result;
-  return self;
-}
-```
-
-<tr>
-<td>
-
-```js
-function (obj) {
-  return obj
-  |>  # == null
-    ? 0
-    : #|> isArrayLike
-    ? #|> #.length
-    : #|> _.keys |> #.length;
-  };
-}
-```
-Smart pipelines make parallelism between all three clauses becomes clearer:\
-`0` if it is nullish,\
-`#|> #.length` if it is array-like, and\
-`#|> something |> #.length` otherwise.\
-(Technically, `#|> #.length` could simply be `#.length`, but it is written in
-this redundant form in order to emphasis its parallelism with the other branch.)
-
-[This particular example becomes even clearer][Underscore.js + CP + BP + PP]
-when paired with [Additional Feature BP][].
-
-<td>
-
-```js
-function (obj) {
-  if (obj == null) return 0;
-  return isArrayLike(obj)
-    ? obj.length
-    : _.keys(obj).length;
-}
-```
-
-</table>
-
-### Lodash (Core Proposal only)
-[Lodash][] is a fork of [Underscore.js][] that remains under rapid active
-development. Along with Underscore.js’ other utility functions, Lodash provides
-many other high-order functions that attempt to make [functional programming][]
-more ergonomic. Like [jQuery][], Lodash is under the stewardship of the
-[JS Foundation][], a member organization of TC39, through which Lodash’s developers
-also have TC39 representation. And like jQuery and Underscore.js, Lodash’s API
-involves complex data processing that becomes more readable with smart pipelines.
-
-<table>
-<thead>
-<tr>
-<th>With smart pipelines
-<th>Status quo
-
-<tbody>
-<tr>
-<td>
-
-```js
-function hashGet (key) {
-  return this.__data__
-  |> nativeCreate
-    ? (#[key] === HASH_UNDEFINED
-      ? undefined : #)
-    : hashOwnProperty.call(#, key)
-    ? #[key]
-    : undefined;
-}
-```
-
-<td>
-
-```js
-function hashGet (key) {
-  var data = this.__data__;
-  if (nativeCreate) {
-    var result = data[key];
-    return result === HASH_UNDEFINED
-      ? undefined : result;
-  }
-  return hasOwnProperty.call(data, key)
-    ? data[key] : undefined;
-}
-```
-
-<tr>
-<td>
-
-```js
-function listCacheHas (key) {
-  return this.__data__
-  |> assocIndexOf(#, key)
-  |> # > -1;
-}
-```
-
-<td>
-
-```js
-function listCacheHas (key) {
-  return assocIndexOf(this.__data__, key)
-    > -1;
-}
-```
-
-<tr>
-<td>
-
-```js
-function mapCacheDelete (key) {
-  const result = key
-  |> getMapData(this, #)
-  |> #['delete']
-  |> #(key);
-  this.size -= result ? 1 : 0;
-  return result;
-}
-```
-
-<td>
-
-```js
-function mapCacheDelete (key) {
-  var result =
-    getMapData(this, key)['delete'](key);
-  this.size -= result ? 1 : 0;
-  return result;
-}
-```
-
-<tr>
-<td>
-
-```js
-function castPath (value, object) {
-  return value |>
-    #|> isArray
-    ? #
-    : (#|> isKey(#, object))
-    ? [#]
-    : #|> toString |> stringToPath;
-}
-```
-
-<td>
-
-```js
-function castPath (value, object) {
-  if (isArray(value)) {
-    return value;
-  }
-  return isKey(value, object)
-    ? [value]
-    : stringToPath(toString(value));
-}
-```
-
-</table>
-
-## Additional Features
+## Additional features
 This document is an **explainer for** the [**formal specification** of a proposed
 **smart pipe operator `|>`**][formal pipeline specification] in
 **JavaScript**, along with several other additional features. The specification
@@ -1691,6 +1105,21 @@ are all tersely expressible with the same simple pipeline/topic concept.
 
 # Legacy link anchors
 This explainer used to be a single long document before it was split up into separate appendices. These sections are to point links to subsections of the older versions of the explainer—toward the new appendices.
+
+## Core Proposal real-world examples
+See [core-real-examples.md][].
+
+### WHATWG Fetch Standard (Core Proposal only)
+See [WHATWG Fetch + CP][].
+
+### jQuery (Core Proposal only)
+See [jQuery + CP][].
+
+### Underscore.js (Core Proposal only)
+See [Underscore.js + CP][].
+
+### Lodash (Core Proposal only)
+See [Lodash + CP][].
 
 ## Smart pipe style
 See [core syntax](core-syntax.md).
@@ -1901,6 +1330,7 @@ See [Term rewriting][].
 [concatenative programming]: https://en.wikipedia.org/wiki/Concatenative_programming_language
 [conceptual generality]: ./goals.md#conceptual-generality
 [Core Proposal]: ./readme.md
+[core-real-examples.md]: ./core-real-examples.md
 [currying]: https://en.wikipedia.org/wiki/Currying
 [cyclomatic complexity]: https://en.wikipedia.org/wiki/Cyclomatic_complexity#Applications
 [cyclomatic simplicity]: ./goals.md#cyclomatic-simplicity
@@ -1981,7 +1411,7 @@ See [Term rewriting][].
 [intro]: readme.md
 [isiahmeadows functional composition]: https://github.com/isiahmeadows/function-composition-proposal
 [jashkenas]: https://github.com/jashkenas
-[jQuery + CP]: ./readme.md#jquery-core-proposal-only
+[jQuery + CP]: ./core-real-examples.md#jquery
 [jQuery]: https://jquery.com/
 [jquery/src/core/access.js]: https://github.com/jquery/jquery/blob/2.2-stable/src/core/access.js
 [jquery/src/core/init.js]: https://github.com/jquery/jquery/blob/2.2-stable/src/core/init.js
@@ -1995,7 +1425,7 @@ See [Term rewriting][].
 [LiveScript pipe]: http://livescript.net/#operators-piping
 [Lodash + CP + BP + PF]: ./additional-feature-pf.md#lodash-core-proposal--additional-feature-bppf
 [Lodash + CP + BP + PP + PF + NP]: ./additional-feature-np.md#lodash-core-proposal--additional-features-bppppfmt
-[Lodash + CP]: ./readme.md#lodash-core-proposal-only
+[Lodash + CP]: ./core-real-examples.md#lodash
 [Lodash]: https://lodash.com/
 [mAAdhaTTah]: https://github.com/mAAdhaTTah/
 [make my code easier to read]: ./goals.md#make-my-code-easier-to-read
@@ -2080,13 +1510,13 @@ See [Term rewriting][].
 [topic variables in other languages]: https://rosettacode.org/wiki/Topic_variable
 [topic-token bikeshedding]: https://github.com/tc39/proposal-pipeline-operator/issues/91
 [Underscore.js + CP + BP + PP]: ./additional-feature-pp.md#underscorejs-core-proposal--additional-feature-bppp
-[Underscore.js + CP]: ./readme.md#underscorejs-core-proposal-only
+[Underscore.js + CP]: ./core-real-examples.md#underscorejs
 [Underscore.js]: http://underscorejs.org
 [Unix pipe]: https://en.wikipedia.org/wiki/Pipeline_(Unix
 [untangled flow]: ./goals.md#untangled-flow
 [Visual Basic’s `select` statement]: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/select-case-statement
 [WebKit console variables]: https://webkit.org/blog/829/web-inspector-updates/
-[WHATWG Fetch + CP]: ./readme.md#whatwg-fetch-standard-core-proposal-only
+[WHATWG Fetch + CP]: ./core-real-examples.md#whatwg-fetch-standard
 [WHATWG Fetch Standard]: https://fetch.spec.whatwg.org/
 [WHATWG Streams + CP + BP + PF + NP]: ./additional-feature-np.md#whatwg-streams-standard-core-proposal--additional-features-bppfmt
 [WHATWG Streams + CP + BP + PF]: ./additional-feature-pf.md#whatwg-streams-standard-core-proposal--additional-feature-bppf
