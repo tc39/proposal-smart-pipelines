@@ -1717,7 +1717,18 @@ issue #91][topic-token bikeshedding].
 The Core Proposal is [**formally specified in in the draft
 specification**][formal CP].
 
-# Appendices
+# Legacy link anchors
+This explainer used to be a single long document before it was split up into separate appendices. These sections are to point links to subsections of the older versions of the explainer—toward the new appendices.
+
+## Smart pipe style
+See [core syntax](core-syntax.md).
+
+### Bare style
+See [core syntax, bare style][bare style].
+
+### Topic style
+See [core syntax, topic style][topic style].
+
 ## Additional Feature BC
 See [Additional Feature BC][].
 
