@@ -14,7 +14,7 @@ value
 |> # + '!'
 |> new User.Message(#)
 |> await #
-|> console.log // This is a method call.
+|> console.log; // This is a method call.
 
 // (The # token isn't final; it might instead be @ or ? or %.)
 ```
