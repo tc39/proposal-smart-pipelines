@@ -251,8 +251,8 @@ promise
 This pipeline is also relatively flat, with only one level of indentation, and
 with each transformation step on its own line.
 
-`… |> capitalize` uses a special shortcut called the [bare style][], explained further below.
-In this case, it is a bare unary function call equivalent to `… |> capitalize(#)`.
+`… |> capitalize` uses a special **shortcut** called the [**bare style**][], explained further below.
+It is a bare unary function call that is, in this case, equivalent to `… |> capitalize(#)`.
 
 <td>
 
