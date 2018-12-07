@@ -243,6 +243,10 @@ operations, logical operations, bitwise operations, `typeof`, `instanceof`,
 <tr>
 <td>
 
+There is a **shortcut** for the very common case of **unary function calls** on
+variables or variables' methods. In these cases, the topic reference can be left out.
+(This is the **[bare style][]** of the pipe operator.)
+
 ```js
 promise
 |> await #
@@ -254,10 +258,9 @@ promise
 |> await stream.write(#)
 |> console.log;
 ```
-Note that, in the example above, it is **not necessary** to include the
-**parenthesized argument (`#`)** for `capitalize` and `console.log`. They were
-**tacitly implied**, forming a **tacit unary function call**. In other words,
-the example above is equivalent to the version in the next row.
+In this example, it is **not necessary** to include the **parenthesized argument (`#`)**
+for `capitalize` and `console.log`. They were **tacitly implied**, forming **tacit unary
+function calls**. In other words, the example above is equivalent to the version in the next row.
 
 <td>
 
@@ -345,8 +348,8 @@ const object = input
 This pipeline is a very flat expression, with only one level of indentation, and
 with each transformation step on its own line.
 
-Note that `… |> f` is a bare unary function call. This is the same as `… |> f(#)`,
-but the topic reference `#` is unnecessary; it is invisibly, tacitly implied. The
+As with the previous examples, the `… |> f` is a bare unary function call, equivalent
+to `… |> f(#)`. The topic reference `#` is unnecessary; it is invisibly, tacitly implied. The
 same goes for `o.unaryMethod`, which is a unary function call on `o.unaryMethod`.
 
 This is the [**smart** part of the smart pipe operator][smart step syntax],
@@ -374,7 +377,7 @@ const object =
     )
   );
 ```
-In contrast to the version with pipes, this code is deeply nested, not flat.
+In contrast to the version with pipes, this code without pipes is deeply nested, not flat.
 
 The expression has two levels of indentation instead of one.
 Reading its data flow requires checking both the beginning and end of each
