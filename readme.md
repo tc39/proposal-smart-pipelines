@@ -159,29 +159,22 @@ forming another easy-to-miss “postfix” argument.
 <tr>
 <td>
 
-A pipeline is made of a **head** expression, followed by a chain of postfix
-expressions called **pipeline stages**. Each stage has its own **inner lexical
-scope**, within which a special topic reference `#` is defined. This `#` is a
-reference to the **[lexical topic][]** of the pipeline (`#` itself is called a
-**topic reference**).
+Each **step** of a pipeline creates its own lexical scope, within which the `#`
+token (the **topic reference**) is immutably to the result of the previous
+step (the **topic**). In this way, it acts as a placeholder for each step’s input.
+
 ```js
-input
+input // step 0
 |> # + 1 // step 1
 |> f(x, #, y) // step 2
 |> await g(#, z) // step 3
 |> console.log(`${#}!`); // step 4
 ```
-0. The **head** expression to the left of the pipeline steps is **first evaluated**.
-1. It then is inputted into **pipeline step 1**, becoming that step’s **lexical
-   topic**. A **new lexical environment** is created, scoped only to pipeline
-   step 1, and within which `#` is immutably **bound to the topic**. Using that
-   topic binding, the first pipeline step is then **evaluated**; the current
-   lexical environment is then reset back to before.
-2. The result of the first pipeline step becomes the input to step 1.
-   A new lexical environment is created, scoped only to pipeline step 2, and
-   whose topic binding is the result of evaluating step 1.
-3. And so forth, until step 4 is evaluated, with the result of step 3 as its input.
-   The result of step 4 is the result of the entire pipeline.
+
+Please note that `#` is **not set** in stone. In particular, **`@` or `?`**
+could also be used. **Bikeshedding discussions** over what characters to use for the
+topic token has been occurring on GitHub at [tc39/proposal-pipeline-operator
+issue #91][topic-token bikeshedding].
 
 <td>
 
@@ -203,7 +196,7 @@ input |> (# = 50);
 // 🚫 Reference Error:
 // Cannot assign to topic reference.
 ```
-The topic binding is immutable, established only once per lexical environment.
+The topic binding is immutable, established only once per pipeline step.
 It is an error to attempt to assign a value to it using `=`, whether inside or
 outside a pipeline step.
 
