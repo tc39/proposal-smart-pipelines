@@ -1920,15 +1920,15 @@ See [Term rewriting][].
 [Core Proposal]: ./readme.md
 [currying]: https://en.wikipedia.org/wiki/Currying
 [cyclomatic complexity]: https://en.wikipedia.org/wiki/Cyclomatic_complexity#Applications
-[cyclomatic simplicity]: ./readme.md#cyclomatic-simplicity
+[cyclomatic simplicity]: ./goals.md#cyclomatic-simplicity
 [dataflow programming]: https://en.wikipedia.org/wiki/Dataflow_programming
-[distinguishable punctuators]: ./readme.md#distinguishable-punctuators
-[don’t break my code]: ./readme.md#dont-break-my-code
+[distinguishable punctuators]: ./goals.md#distinguishable-punctuators
+[don’t break my code]: ./goals.md#dont-break-my-code
 [DSLs]: https://en.wikipedia.org/wiki/Domain-specific_language
-[early error rule]: ./readme.md#static-analyzability
-[early error rules]: ./readme.md#static-analyzability
-[early error]: ./readme.md#static-analyzability
-[early errors]: ./readme.md#static-analyzability
+[early error rule]: ./goals.md#static-analyzability
+[early error rules]: ./goals.md#static-analyzability
+[early error]: ./goals.md#static-analyzability
+[early errors]: ./goals.md#static-analyzability
 [ECMAScript _Identifier Name_]: https://tc39.github.io/ecma262/#prod-IdentifierName
 [ECMAScript _Identifier Reference_]: https://tc39.github.io/ecma262/#prod-IdentifierReference
 [ECMAScript _Member Expression_]: https://tc39.github.io/ecma262/#prod-MemberExpression
@@ -1965,7 +1965,7 @@ See [Term rewriting][].
 [Elm pipe]: http://elm-lang.org/docs/syntax#infix-operators
 [essential complexity]: https://en.wikipedia.org/wiki/Essential_complexity
 [expressions and operators (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
-[expressive versatility]: ./readme.md#expressive-versatility
+[expressive versatility]: ./goals.md#expressive-versatility
 [F# pipe]: https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining
 [first pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
 [footguns]: https://en.wiktionary.org/wiki/footgun
@@ -1977,8 +1977,8 @@ See [Term rewriting][].
 [formal PF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pf
 [formal pipeline specification]: https://jschoi.org/18/es-smart-pipelines/spec
 [formal TS]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-ts
-[forward compatibility]: ./readme.md#forward-compatibility
-[forward compatible]: ./readme.md#forward-compatibility
+[forward compatibility]: ./goals.md#forward-compatibility
+[forward compatible]: ./goals.md#forward-compatibility
 [function bind operator `::`]: ./relations.md#function-bind-operator
 [function binding]: ./relations.md#function-binding
 [function composition]: ./relations.md#function-composition
@@ -2035,7 +2035,7 @@ See [Term rewriting][].
 [optional-chaining syntax proposal]: https://github.com/tc39/proposal-optional-chaining
 [other browsers’ console variables]: https://www.andismith.com/blogs/2011/11/25-dev-tool-secrets/
 [other ECMAScript proposals]: ./relations.md#other-ecmascript-proposals
-[other goals]: ./readme.md#other-goals
+[other goals]: ./goals.md#other-goals
 [pattern matching]: ./relations.md#pattern-matching
 [partial function application]: ./goals.md#partial-function-application
 [PEP 20]: https://www.python.org/dev/peps/pep-0020/
