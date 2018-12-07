@@ -1668,7 +1668,19 @@ This document is an **explainer for** the [**formal specification** of a propose
 **smart pipe operator `|>`**][formal pipeline specification] in
 **JavaScript**, along with several other additional features. The specification
 is divided into **one Stage-0 Core Proposal** plus **six** mutually
-independent-but-compatible **Additional Features**:
+independent-but-compatible **Additional Features**.
+
+The **Core Proposal** is currently at **Stage 0** of the [TC39 process][TC39
+process] and is planned to be presented, along with a [competing
+proposal][Pipeline Proposal 1], to TC39 by [Daniel "**littledan**" Ehrenberg of
+Igalia][littledan]. 
+
+There are also **additional features** are **not part of the Stage-0 Core Proposal**.
+They are included to illustrate possible **separate follow-up proposals** for the case
+in which the Core Proposal advances past Stage 1. Together, the Core Proposal
+and the additional features demonstrate a **unified vision** of a future in
+which composition, partial application, method extraction, and error handling
+are all tersely expressible with the same simple pipeline/topic concept.
 
 |Name                     | Status  | Features                                                               | Purpose                                                                                                         |
 | ----------------------- | ------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
@@ -1679,43 +1691,6 @@ independent-but-compatible **Additional Features**:
 |[Additional Feature PF][]| None    | Pipeline functions `+>  `                                              | **Partial** function/expression **application**<br>Function/expression **composition**<br>**Method extraction** |
 |[Additional Feature TS][]| None    | Pipeline `try` statements                                              | Tacit application to **caught errors**                                                                          |
 |[Additional Feature NP][]| None    | N-ary pipelines `(…, …) \|> …`<br>Lexical topics `##`, `###`, and `...`| **N-ary** function/expression **application**                                                                   |
-
-The **Core Proposal** is currently at **Stage 0** of the [TC39 process][TC39
-process] and is planned to be presented, along with a [competing
-proposal][Pipeline Proposal 1], to TC39 by [Daniel "**littledan**" Ehrenberg of
-Igalia][littledan]. The Core Proposal is a **variant** of the [first
-pipe-operator proposal][] also championed by Ehrenberg; this variant is
-listed as [**Proposal 4: Smart Mix** in the pipe-proposal wiki][Pipeline
-Proposal 4]. The variant resulted from [previous discussions in the previous
-pipe-operator proposal][previous pipeline-placeholder discussions],
-discussions which culminated in an [invitation by Ehrenberg to try writing a
-specification draft][littledan invitation].
-
-The **additional features** are **not part of the Stage-0 Core Proposal**. They
-are included to illustrate possible **separate follow-up proposals** for the case
-in which the Core Proposal advances past Stage 1. Together, the Core Proposal
-and the additional features demonstrate a **unified vision** of a future in
-which composition, partial application, method extraction, and error handling
-are all tersely expressible with the same simple pipeline/topic concept.
-
-An [**update** to the existing pipeline **Babel plugin**][Babel plugin] is also
-being developed jointly between the author of this proposal and [James
-DiGioia][mAAdhaTTah], the author of the [competing proposal][Pipeline
-Proposal 1]. The [update will support both this proposal and the other proposal,
-configurable with a flag][Babel update summary].
-
-You can take part in discussions on the **[GitHub issue tracker][]**. When you
-file an issue, please note in it that you are talking **specifically** about
-**["Proposal 4: Smart Mix"][Pipeline Proposal 4]**.
-
-**This specification uses `#`** as its [topic reference][nomenclature]. However,
-this is **not set** in stone. In particular, **`@` or `?`** could also be used.
-**Bikeshedding discussions** over what characters to use for the topic token has
-been occurring on GitHub at [tc39/proposal-pipeline-operator
-issue #91][topic-token bikeshedding].
-
-The Core Proposal is [**formally specified in in the draft
-specification**][formal CP].
 
 # Legacy link anchors
 This explainer used to be a single long document before it was split up into separate appendices. These sections are to point links to subsections of the older versions of the explainer—toward the new appendices.
