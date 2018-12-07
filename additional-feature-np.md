@@ -1233,11 +1233,11 @@ function readInto(buffer, offset = 0) {
 
 </table>
 
-[“data-to-ink” visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
-[“don’t break my code”]: ./goals.md#dont-break-my-code
-[“don’t make me overthink”]: ./goals.md#dont-make-me-overthink
-[“don’t shoot me in the foot”]: ./goals.md#dont-shoot-me-in-the-foot
-[“make my code easier to read”]: ./goals.md#make-my-code-easier-to-read
+["data-to-ink" visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
+["don’t break my code"]: ./goals.md#dont-break-my-code
+["don’t make me overthink"]: ./goals.md#dont-make-me-overthink
+["don’t shoot me in the foot"]: ./goals.md#dont-shoot-me-in-the-foot
+["make my code easier to read"]: ./goals.md#make-my-code-easier-to-read
 [`??:`]: https://github.com/tc39/proposal-nullish-coalescing/pull/23
 [`do` expression]: ./relations.md#do-expressions
 [`do` expressions]: ./relations.md#do-expressions
@@ -1251,7 +1251,7 @@ function readInto(buffer, offset = 0) {
 [Additional Feature NP]: ./additional-feature-np.md
 [Additional Feature PF]: ./additional-feature-pf.md
 [Additional Feature TS]: ./additional-feature-ts.md
-[additional features]: ./readme.md
+[additional features]: ./readme.md#additional-features
 [annevk]: https://github.com/annevk
 [antecedent]: https://en.wikipedia.org/wiki/Antecedent_(grammar)
 [arbitrary associativity]: ./goals.md#arbitrary-associativity
@@ -1262,29 +1262,29 @@ function readInto(buffer, offset = 0) {
 [Babel update summary]: https://github.com/babel/proposals/issues/29#issuecomment-372828328
 [background]: ./readme.md
 [backward compatibility]: ./goals.md#backward-compatibility
-[bare awaited function call]: ./readme.md#bare-style
-[bare constructor call]: ./readme.md#bare-style
-[bare function call]: ./readme.md#bare-style
-[bare style]: ./readme.md#bare-style
+[bare awaited function call]: ./core-syntax.md#bare-style
+[bare constructor call]: ./core-syntax.md#bare-style
+[bare function call]: ./core-syntax.md#bare-style
+[bare style]: ./core-syntax.md#bare-style
 [binding]: https://en.wikipedia.org/wiki/Binding_(linguistics)
 [block parameters]: ./relations.md#block-parameters
 [Clojure compact function]: https://clojure.org/reference/reader#_dispatch
 [Clojure pipe]: https://clojuredocs.org/clojure.core/as-%3E
 [completion records]: https://timothygu.me/es-howto/#completion-records-and-shorthands
 [concatenative programming]: https://en.wikipedia.org/wiki/Concatenative_programming_language
-[conceptual generality]: ./readme.md#conceptual-generality
+[conceptual generality]: ./goals.md#conceptual-generality
 [Core Proposal]: ./readme.md
 [currying]: https://en.wikipedia.org/wiki/Currying
 [cyclomatic complexity]: https://en.wikipedia.org/wiki/Cyclomatic_complexity#Applications
-[cyclomatic simplicity]: ./readme.md#cyclomatic-simplicity
+[cyclomatic simplicity]: ./goals.md#cyclomatic-simplicity
 [dataflow programming]: https://en.wikipedia.org/wiki/Dataflow_programming
-[distinguishable punctuators]: ./readme.md#distinguishable-punctuators
-[don’t break my code]: ./readme.md#dont-break-my-code
+[distinguishable punctuators]: ./goals.md#distinguishable-punctuators
+[don’t break my code]: ./goals.md#dont-break-my-code
 [DSLs]: https://en.wikipedia.org/wiki/Domain-specific_language
-[early error rule]: ./readme.md#static-analyzability
-[early error rules]: ./readme.md#static-analyzability
-[early error]: ./readme.md#static-analyzability
-[early errors]: ./readme.md#static-analyzability
+[early error rule]: ./goals.md#static-analyzability
+[early error rules]: ./goals.md#static-analyzability
+[early error]: ./goals.md#static-analyzability
+[early errors]: ./goals.md#static-analyzability
 [ECMAScript _Identifier Name_]: https://tc39.github.io/ecma262/#prod-IdentifierName
 [ECMAScript _Identifier Reference_]: https://tc39.github.io/ecma262/#prod-IdentifierReference
 [ECMAScript _Member Expression_]: https://tc39.github.io/ecma262/#prod-MemberExpression
@@ -1321,7 +1321,7 @@ function readInto(buffer, offset = 0) {
 [Elm pipe]: http://elm-lang.org/docs/syntax#infix-operators
 [essential complexity]: https://en.wikipedia.org/wiki/Essential_complexity
 [expressions and operators (MDN)]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
-[expressive versatility]: ./readme.md#expressive-versatility
+[expressive versatility]: ./goals.md#expressive-versatility
 [F# pipe]: https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining
 [first pipe-operator proposal]: https://github.com/tc39/proposal-pipeline-operator/blob/37119110d40226476f7af302a778bc981f606cee/README.md
 [footguns]: https://en.wiktionary.org/wiki/footgun
@@ -1333,8 +1333,8 @@ function readInto(buffer, offset = 0) {
 [formal PF]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-pf
 [formal pipeline specification]: https://jschoi.org/18/es-smart-pipelines/spec
 [formal TS]: https://jschoi.org/18/es-smart-pipelines/spec#sec-additional-feature-ts
-[forward compatibility]: ./readme.md#forward-compatibility
-[forward compatible]: ./readme.md#forward-compatibility
+[forward compatibility]: ./goals.md#forward-compatibility
+[forward compatible]: ./goals.md#forward-compatibility
 [function bind operator `::`]: ./relations.md#function-bind-operator
 [function binding]: ./relations.md#function-binding
 [function composition]: ./relations.md#function-composition
@@ -1377,7 +1377,7 @@ function readInto(buffer, offset = 0) {
 [method-extraction inline caching]: https://github.com/tc39/proposal-bind-operator/issues/46
 [mindeavor]: https://github.com/gilbert
 [mode errors]: https://en.wikipedia.org/wiki/Mode_(computer_interface)#Mode_errors
-[motivation]: ./readme.md#motivation
+[motivation]: ./readme.md
 [Node-stream piping]: https://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
 [Node.js `util.promisify`]: https://nodejs.org/api/util.html#util_util_promisify_original
 [nomenclature]: ./nomenclature.md
@@ -1385,13 +1385,13 @@ function readInto(buffer, offset = 0) {
 [nullish coalescing proposal]: https://github.com/tc39/proposal-nullish-coalescing/
 [object initializers’ Computed Property Contains rule]: https://tc39.github.io/ecma262/#sec-object-initializer-static-semantics-computedpropertycontains
 [OCaml pipe]: http://blog.shaynefletcher.org/2013/12/pipelining-with-operator-in-ocaml.html
-[operator precedence]: ./readme.md#operator-precedence
+[operator precedence]: ./core-syntax.md#operator-precedence-and-associativity
 [opt-in behavior]: ./goals.md#opt-in-behavior
 [optional `catch` binding]: ./relations.md#optional-catch-binding
 [optional-chaining syntax proposal]: https://github.com/tc39/proposal-optional-chaining
 [other browsers’ console variables]: https://www.andismith.com/blogs/2011/11/25-dev-tool-secrets/
 [other ECMAScript proposals]: ./relations.md#other-ecmascript-proposals
-[other goals]: ./readme.md#other-goals
+[other goals]: ./goals.md#other-goals
 [pattern matching]: ./relations.md#pattern-matching
 [partial function application]: ./goals.md#partial-function-application
 [PEP 20]: https://www.python.org/dev/peps/pep-0020/
@@ -1401,7 +1401,7 @@ function readInto(buffer, offset = 0) {
 [pipeline functions]: ./additional-feature-pf.md
 [Pipeline Proposal 1]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-1-f-sharp-only
 [Pipeline Proposal 4]: https://github.com/tc39/proposal-pipeline-operator/wiki#proposal-4-smart-mix
-[pipeline syntax]: ./readme.md#pipeline-syntax
+[pipeline syntax]: ./core-syntax.md
 [pipelines]: ./readme.md
 [previous pipeline-placeholder discussions]: https://github.com/tc39/proposal-pipeline-operator/issues?q=placeholder
 [primary topic]: ./readme.md
@@ -1423,7 +1423,7 @@ function readInto(buffer, offset = 0) {
 [simonstaton functional composition]: https://github.com/simonstaton/Function.prototype.compose-TC39-Proposal
 [simple scoping]: ./goals.md#simple-scoping
 [sindresorhus]: https://github.com/sindresorhus
-[smart step syntax]: ./readme.md#smart-step-syntax
+[smart step syntax]: ./core-syntax.md
 [smart pipelines]: ./readme.md#smart-pipelines
 [Standard Style]: https://standardjs.com/
 [static analyzability]: ./goals.md#static-analyzability
@@ -1467,3 +1467,4 @@ function readInto(buffer, offset = 0) {
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
 [Wikipedia: term rewriting]: https://en.wikipedia.org/wiki/Term_rewriting
 [zero runtime cost]: ./goals.md#zero-runtime-cost
+        
