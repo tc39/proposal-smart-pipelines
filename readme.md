@@ -42,7 +42,7 @@ When you file an issue, please note in it that you are talking **specifically** 
 
 **This specification uses `#`** as its [topic reference][nomenclature]. However,
 this is **not set** in stone. In particular, **`@` or `?`** could also be used.
-**Bikeshedding discussions** over what characters to use for the topic token has
+**Bikeshedding discussions** over what characters to use for the topic token have
 been occurring on GitHub at [tc39/proposal-pipeline-operator
 issue #91][topic-token bikeshedding].
 
@@ -158,7 +158,7 @@ input // step 0
 
 Please note that `#` is **not set** in stone. In particular, **`@` or `?`**
 could also be used. **Bikeshedding discussions** over what characters to use for the
-topic token has been occurring on GitHub at [tc39/proposal-pipeline-operator
+topic token have been occurring on GitHub at [tc39/proposal-pipeline-operator
 issue #91][topic-token bikeshedding].
 
 <td>
