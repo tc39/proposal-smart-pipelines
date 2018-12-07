@@ -94,8 +94,8 @@ promise
 |> await stream.write(#)
 |> console.log;
 ```
-With smart pipelines, the code above becomes **terser** and, literally, more
-**straightforward**. Prefix, infix, and postfix expressions would be less
+With smart pipelines, code becomes **terser** and, literally, more **straightforward**.
+Prefix, infix, and postfix expressions would be less
 tangled together in threads of spaghetti. Instead, data values would be **piped
 from left to right** through a **single flat thread of postfix expressions**,
 with a [**single** level of **indentation**][untangled flow] and [**four fewer**
@@ -128,7 +128,7 @@ console.log(
   )
 );
 ```
-Compared with the pipeline version, the original code requires **additional
+Compared with the pipeline version, this non-pipeline version requires **additional
 indentation and grouping** on each step. This requires four more levels of
 indentation and four more pairs of parentheses.
 
