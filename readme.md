@@ -407,7 +407,7 @@ requires editing the variable names in the following step.
 <td>
 
 There is a **shortcut** for the very common case of **unary function calls** on
-variables or variables' methods. In these cases, the topic reference can be left out.
+variables or variables’ methods. In these cases, the topic reference can be left out.
 (This is the **[bare style][]** of the pipe operator.)
 
 ```js
@@ -461,7 +461,8 @@ promise
 This version is equivalent to the version above, except that the
 `|> capitalize(#)` and `|> console.log(#)` pipeline steps explicitly include
 optional topic references `#`, making the expressions slightly wordier than
-necessary.
+necessary. (**Any** pipeline step that **isn’t** in bare style is in **topic
+style**, because it uses the topic reference somewhere in its expression.)
 
 <td>
 
