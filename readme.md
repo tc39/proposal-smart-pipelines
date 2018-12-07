@@ -70,23 +70,8 @@ transformations become [**untangled** into **short steps**][untangled flow].
 
 <td>
 
-```js
-console.log(
-  await stream.write(
-    new User.Message(
-      capitalize(
-        doubledSay(
-          await promise
-            || throw new TypeError(
-              `Invalid value from ${promise}`)
-        ), ', '
-      ) + '!'
-    )
-  )
-);
-```
-**Nested, deeply composed** expressions occur often in JavaScript. They occur
-whenever any single value must be processed by a **series of data
+**Nested, deeply composed** expressions occur often in [real-world JavaScript][core-real-examples.md].
+They occur whenever any single value must be processed by a **series of data
 transformations**, whether they be **operations, functions, or constructors**.
 Unfortunately, these deeply nested expressions often result in **messy
 spaghetti** code, due to their mixing of **prefix, infix, and postfix**
