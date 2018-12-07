@@ -1106,6 +1106,13 @@ fetch('/music/pk/altes-kamuffel')
   .then(res => res.blob())
   .then(playBlob);
 ```
+
+<tr>
+<td>
+[Equivalent to above.]
+
+<td>
+
 ```js
 playBlob(
   await (
@@ -1159,13 +1166,7 @@ console.log(
 
 <tr>
 <td>
-
-```js
-'https://example.com/'
-|> await fetch(#, { method: 'HEAD' })
-|> #.headers.get('content-type')
-|> console.log;
-```
+[Equivalent to above.]
 
 <td>
 
@@ -1186,18 +1187,21 @@ console.log(
 ```js
 'https://pk.example/berlin-calling'
 |> await fetch(#, { mode: 'cors' })
-|> (
-  #.headers.get('content-type')
-  |> # && #
-    .toLowerCase()
-    .indexOf('application/json')
-    >= 0
-  )
-  ? #
-  : throw new TypeError()
+|> do {
+  if (#.headers.get('content-type')
+    && #.headers.get('content-type')
+      .toLowerCase()
+      .indexOf('application/json') >= 0
+   )
+     return #.json();
+   else
+     throw new TypeError();
+}
 |> await #.json()
 |> processJSON;
 ```
+This example uses [`do` expressions][], which come from another ES proposal,
+and which work well with smart pipelines—in this case to embed `if`–`else` statements.
 
 <td>
 
@@ -1680,7 +1684,7 @@ They are included to illustrate possible **separate follow-up proposals** for th
 in which the Core Proposal advances past Stage 1. Together, the Core Proposal
 and the additional features demonstrate a **unified vision** of a future in
 which composition, partial application, method extraction, and error handling
-are all tersely expressible with the same simple pipeline/topic concept.
+are all tersely expressible with the same simple pipeline/topic concept. 
 
 |Name                     | Status  | Features                                                               | Purpose                                                                                                         |
 | ----------------------- | ------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
