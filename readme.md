@@ -219,8 +219,8 @@ The syntax is [**statically term rewritable** into already valid code][term
 rewriting] in this way, with [theoretically **zero runtime cost**][zero runtime
 cost].
 
-Similar use cases appear **numerous times** in JavaScript code, whenever any input
-is transformed by **[expressions of any type][expressive versatility]**:
+Similar use cases appear **numerous times** in [real-world JavaScript code][core-real-examples.md]:
+whenever any input is transformed by **[expressions of any type][expressive versatility]**:
 function calls, property calls, method calls, object constructions, arithmetic
 operations, logical operations, bitwise operations, `typeof`, `instanceof`,
 `await`, `yield` and `yield *`, and `throw` expressions.
