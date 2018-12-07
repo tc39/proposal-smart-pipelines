@@ -1580,7 +1580,7 @@ proposals in a uniform manner.
 [TheNavigateur functional composition]: https://github.com/TheNavigateur/proposal-pipeline-operator-for-function-composition
 [topic and comment]: https://en.wikipedia.org/wiki/Topic_and_comment
 [topic references in other programming languages]: ./relations.md#topic-references-in-other-programming-languages
-[topic style]: ./goals.md#topic-style
+[topic style]: ./core-syntax.md#topic-style
 [topic variables in other languages]: https://rosettacode.org/wiki/Topic_variable
 [topic-token bikeshedding]: https://github.com/tc39/proposal-pipeline-operator/issues/91
 [Underscore.js + CP + BP + PP]: ./additional-feature-pp.md#underscorejs-core-proposal--additional-feature-bppp

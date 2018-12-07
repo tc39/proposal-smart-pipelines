@@ -251,7 +251,7 @@ promise
 This pipeline is also relatively flat, with only one level of indentation, and
 with each transformation step on its own line.
 
-`… |> capitalize` uses a special **shortcut** called the [**bare style**][], explained further below.
+`… |> capitalize` uses a special **shortcut** called the **[bare style][]**, explained further below.
 It is a bare unary function call that is, in this case, equivalent to `… |> capitalize(#)`.
 
 <td>
@@ -461,8 +461,8 @@ promise
 This version is equivalent to the version above, except that the
 `|> capitalize(#)` and `|> console.log(#)` pipeline steps explicitly include
 optional topic references `#`, making the expressions slightly wordier than
-necessary. (**Any** pipeline step that **isn’t** in bare style is in **topic
-style**, because it uses the topic reference somewhere in its expression.)
+necessary. (**Any** pipeline step that **isn’t** in bare style is said to be
+in **[topic style][]**, because it uses the topic reference somewhere in its expression.)
 
 <td>
 
@@ -1496,7 +1496,7 @@ See [Term rewriting][].
 [TheNavigateur functional composition]: https://github.com/TheNavigateur/proposal-pipeline-operator-for-function-composition
 [topic and comment]: https://en.wikipedia.org/wiki/Topic_and_comment
 [topic references in other programming languages]: ./relations.md#topic-references-in-other-programming-languages
-[topic style]: ./goals.md#topic-style
+[topic style]: ./core-syntax.md#topic-style
 [topic variables in other languages]: https://rosettacode.org/wiki/Topic_variable
 [topic-token bikeshedding]: https://github.com/tc39/proposal-pipeline-operator/issues/91
 [Underscore.js + CP + BP + PP]: ./additional-feature-pp.md#underscorejs-core-proposal--additional-feature-bppp
