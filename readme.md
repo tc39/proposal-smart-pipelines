@@ -243,6 +243,183 @@ operations, logical operations, bitwise operations, `typeof`, `instanceof`,
 <tr>
 <td>
 
+```js
+function doubleSay (str, separator) {
+  return `${str}${separator}${string}`;
+}
+
+function capitalize (str) {
+  return str[0].toUpperCase()
+    + str.substring(1);
+}
+
+promise
+|> await #
+|> # || throw new TypeError()
+|> doubleSay(#, ', ')
+|> capitalize
+|> # + '!'
+|> new User.Message(#)
+|> await stream.write(#)
+|> console.log;
+```
+This pipeline is also relatively flat, with only one level of indentation, and
+with each transformation step on its own line.
+
+`… |> capitalize` is a bare unary function call equivalent to `… |> capitalize(#)`.
+
+<td>
+
+```js
+function doubleSay (str, separator) {
+  return `${str}${separator}${str}`;
+}
+
+function capitalize (str) {
+  return str[0].toUpperCase()
+    + str.substring(1);
+}
+
+console.log(
+  await stream.write(
+    new User.Message(
+      capitalize(
+        doubledSay(
+          await promise
+            || throw new TypeError(
+              `Invalid value from ${promise}`)
+        ), ', '
+      ) + '!'
+    )
+  )
+);
+```
+This deeply nested expression has four levels of indentation instead of two.
+Reading its data flow requires checking both the beginning of each expression
+(`new User.Message`, `capitalizedString`, `doubledSay`, `await promise` and
+end of each expression (`|| throw new TypeError()`, `, ', '`, ` + '!'`)).
+
+<tr>
+<td>
+
+```js
+x = … |> f(#, #);
+```
+```js
+x = … |> [#, # * 2, # * 3];
+```
+The topic reference may be used multiple times in a pipeline step. Each use
+refers to the same value (wherever the topic reference is not overridden by
+another, inner pipeline’s topic scope). Because it is bound to the result of the
+topic, the topic is still only ever evaluated once.
+
+<td>
+
+```js
+{
+  const $ = …;
+  x = f($, $);
+}
+```
+```js
+{
+  const $ = …;
+  x = [$, $ * 2, $ * 3];
+}
+```
+This is equivalent to assigning the topic value to a [unique variable][lexically
+hygienic], then using that variable multiple times in an expression.
+
+<tr>
+<td>
+
+```js
+promise
+|> await #
+|> # || throw new TypeError()
+|> `${#}, ${#}`
+|> #[0].toUpperCase() + #.substring(1)
+|> # + '!'
+|> new User.Message(#)
+|> stream.write
+|> console.log;
+```
+When tiny functions are only used once, and when their bodies would be obvious and
+self-documenting in meaning, then they might be ritual boilerplate that a developer
+may prefer to inline: trading off self-documentation for localization of code.
+
+<td>
+
+```js
+{
+  const promiseValue = await promise
+    || throw new TypeError();
+  const doubledValue =
+    `${promiseValue}, ${promiseValue}`;
+  const capitalizedValue
+    = doubledValue[0].toUpperCase()
+      + doubledValue.substring(1);
+  const exclaimedValue
+    = capitalizedValue + '!';
+  const userMessage =
+    new User.Message(exclaimedValue);
+  const writeValue =
+    stream.write(userMessage);
+  console.log(writeValue);
+}
+```
+Using a sequence of variables instead has both advantages and disadvantages. The
+variable names may be self-documenting. But they also are verbose. They visually
+distract from the crucial data transformations (overemphasizing the expressions’
+nouns over their verbs), and it is easy to typo their names.
+
+<tr>
+<td>
+
+```js
+promise
+|> await #
+|> # || throw new TypeError()
+|> normalize
+|> `${#}, ${#}`
+|> #[0].toUpperCase() + #.substring(1)
+|> # + '!'
+|> new User.Message(#)
+|> await stream.write(#)
+|> console.log;
+```
+With a pipeline, there are no unnecessary variable identifiers. Inserting a new
+step in between two steps (or deleting a step) only touches one new line. Here,
+a call of a function `normalize` was inserted between the second and third steps.
+
+<td>
+
+```js
+{
+  const promiseValue = await promise
+    || throw new TypeError();
+  const normalizedValue = normalize();
+  const doubledValue =
+    `${normalizedValue}, ${normalizedValue}`;
+  const capitalizedValue =
+    doubledValue[0].toUpperCase()
+      + doubledValue.substring(1);
+  const exclaimedValue =
+    capitalizedValue + '!';
+  const userMessage =
+    new User.Message(exclaimedValue);
+  const writeValue =
+    stream.write(userMessage);
+  console.log(writeValue);
+}
+```
+This code underwent a similar insertion of `normalize`. With a series of
+variables, inserting a new step in between two other steps (or deleting a step)
+requires editing the variable names in the following step.
+
+<tr>
+<td>
+
 There is a **shortcut** for the very common case of **unary function calls** on
 variables or variables' methods. In these cases, the topic reference can be left out.
 (This is the **[bare style][]** of the pipe operator.)
@@ -562,183 +739,6 @@ await object.method(x, y, input);
 await object.method(x, y)(input);
 (await object.method(x, y))(input);
 ```
-
-<tr>
-<td>
-
-```js
-function doubleSay (str, separator) {
-  return `${str}${separator}${string}`;
-}
-
-function capitalize (str) {
-  return str[0].toUpperCase()
-    + str.substring(1);
-}
-
-promise
-|> await #
-|> # || throw new TypeError()
-|> doubleSay(#, ', ')
-|> capitalize
-|> # + '!'
-|> new User.Message(#)
-|> await stream.write(#)
-|> console.log;
-```
-This pipeline is also relatively flat, with only one level of indentation, and
-with each transformation step on its own line.
-
-`… |> capitalize` is a bare unary function call equivalent to `… |> capitalize(#)`.
-
-<td>
-
-```js
-function doubleSay (str, separator) {
-  return `${str}${separator}${str}`;
-}
-
-function capitalize (str) {
-  return str[0].toUpperCase()
-    + str.substring(1);
-}
-
-console.log(
-  await stream.write(
-    new User.Message(
-      capitalize(
-        doubledSay(
-          await promise
-            || throw new TypeError(
-              `Invalid value from ${promise}`)
-        ), ', '
-      ) + '!'
-    )
-  )
-);
-```
-This deeply nested expression has four levels of indentation instead of two.
-Reading its data flow requires checking both the beginning of each expression
-(`new User.Message`, `capitalizedString`, `doubledSay`, `await promise` and
-end of each expression (`|| throw new TypeError()`, `, ', '`, ` + '!'`)).
-
-<tr>
-<td>
-
-```js
-x = … |> f(#, #);
-```
-```js
-x = … |> [#, # * 2, # * 3];
-```
-The topic reference may be used multiple times in a pipeline step. Each use
-refers to the same value (wherever the topic reference is not overridden by
-another, inner pipeline’s topic scope). Because it is bound to the result of the
-topic, the topic is still only ever evaluated once.
-
-<td>
-
-```js
-{
-  const $ = …;
-  x = f($, $);
-}
-```
-```js
-{
-  const $ = …;
-  x = [$, $ * 2, $ * 3];
-}
-```
-This is equivalent to assigning the topic value to a [unique variable][lexically
-hygienic], then using that variable multiple times in an expression.
-
-<tr>
-<td>
-
-```js
-promise
-|> await #
-|> # || throw new TypeError()
-|> `${#}, ${#}`
-|> #[0].toUpperCase() + #.substring(1)
-|> # + '!'
-|> new User.Message(#)
-|> stream.write
-|> console.log;
-```
-When tiny functions are only used once, and when their bodies would be obvious and
-self-documenting in meaning, then they might be ritual boilerplate that a developer
-may prefer to inline: trading off self-documentation for localization of code.
-
-<td>
-
-```js
-{
-  const promiseValue = await promise
-    || throw new TypeError();
-  const doubledValue =
-    `${promiseValue}, ${promiseValue}`;
-  const capitalizedValue
-    = doubledValue[0].toUpperCase()
-      + doubledValue.substring(1);
-  const exclaimedValue
-    = capitalizedValue + '!';
-  const userMessage =
-    new User.Message(exclaimedValue);
-  const writeValue =
-    stream.write(userMessage);
-  console.log(writeValue);
-}
-```
-Using a sequence of variables instead has both advantages and disadvantages. The
-variable names may be self-documenting. But they also are verbose. They visually
-distract from the crucial data transformations (overemphasizing the expressions’
-nouns over their verbs), and it is easy to typo their names.
-
-<tr>
-<td>
-
-```js
-promise
-|> await #
-|> # || throw new TypeError()
-|> normalize
-|> `${#}, ${#}`
-|> #[0].toUpperCase() + #.substring(1)
-|> # + '!'
-|> new User.Message(#)
-|> await stream.write(#)
-|> console.log;
-```
-With a pipeline, there are no unnecessary variable identifiers. Inserting a new
-step in between two steps (or deleting a step) only touches one new line. Here,
-a call of a function `normalize` was inserted between the second and third steps.
-
-<td>
-
-```js
-{
-  const promiseValue = await promise
-    || throw new TypeError();
-  const normalizedValue = normalize();
-  const doubledValue =
-    `${normalizedValue}, ${normalizedValue}`;
-  const capitalizedValue =
-    doubledValue[0].toUpperCase()
-      + doubledValue.substring(1);
-  const exclaimedValue =
-    capitalizedValue + '!';
-  const userMessage =
-    new User.Message(exclaimedValue);
-  const writeValue =
-    stream.write(userMessage);
-  console.log(writeValue);
-}
-```
-This code underwent a similar insertion of `normalize`. With a series of
-variables, inserting a new step in between two other steps (or deleting a step)
-requires editing the variable names in the following step.
 
 <tr>
 <td>
