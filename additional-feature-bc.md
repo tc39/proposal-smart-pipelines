@@ -59,6 +59,17 @@ console.log(
 
 </table>
 
+If a pipeline step starts with `new`, followed by a mere identifier, optionally
+with a chain of properties, and with no parentheses or brackets, then that
+identifier is interpreted to be a **bare constructor**.
+
+That is: **if a pipeline** is of the form\
+**_topic_ `|>` `new` _identifier_**\
+or **_topic_ `|>` `new` _identifier0_`.`_identifier1_**\
+or **_topic_ `|>` `new` _identifier0_`.`_identifier1_`.`_identifier2_**\
+or so forth,\
+then the pipeline is a bare constructor call.
+
 | Valid [topic style][]   | Valid [bare style][]                     | Invalid pipeline
 | ----------------------- | ---------------------------------------- | --------------------
 |`… \|> new C(#)`         |`… \|> new C`                             | `… \|> new C()` 🚫
