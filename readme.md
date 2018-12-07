@@ -1,14 +1,27 @@
 # Smart pipelines
 ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 
-This proposal introduces a new operator `|>` to JavaScript. It's similar to the
-[pipeline operators of other languages](relations.html) such as Unix shells and
+This proposal introduces a new binary pipe operator `|>` to JavaScript. It's similar
+to the [pipe operators of other languages](relations.html) such as Unix shells and
 PowerShell, Elixir, Erlang, Julia, LiveScript, Elm, OCaml, Julia, F#, Hack, R
 with magrittr, Perl 6, and Clojure.
 
+```js
+value
+|> await #
+|> doubleSay(#, ', ')
+|> capitalize // This is a function call.
+|> # + '!'
+|> new User.Message(#)
+|> await #
+|> console.log // This is a method call.
+
+// (The # token isn't final; it might instead be @ or ? or %.)
+```
+
 The proposal is currently at **Stage 0** of the [TC39 process][TC39
-process] and is planned to be presented, along with a [competing
-proposal][Pipeline Proposal 1], to TC39 by [Daniel “**littledan**” Ehrenberg of
+process] and is planned to be presented, along with a [**competing
+proposal**][Pipeline Proposal 1], to TC39 by [Daniel “**littledan**” Ehrenberg of
 Igalia][littledan]. The Core Proposal is a **variant** of the [first
 pipe-operator proposal][] also championed by Ehrenberg; this variant is
 listed as [**Proposal 4: Smart Mix** in the pipe-proposal wiki][Pipeline
@@ -33,7 +46,7 @@ this is **not set** in stone. In particular, **`@` or `?`** could also be used.
 been occurring on GitHub at [tc39/proposal-pipeline-operator
 issue #91][topic-token bikeshedding].
 
-This proposal makes [many other **trade-offs]** that are **also not set in stone**.
+This proposal makes [many other **trade-offs**] that are **also not set in stone**.
 The proposal can and will **change** in response to **feedback** once the Babel plugin
 is implemented. The Babel plugin is planned to be configurable, allowing hands-on
 experimentation with these trade-offs.
