@@ -59,6 +59,29 @@ console.log(
 
 </table>
 
+If a pipeline step starts with `await`, followed by a mere identifier, optionally with
+a chain of properties, and with no parentheses or brackets, then that identifier
+is interpreted to be a **bare awaited function call**.
+
+That is: **if a pipeline** is of the form\
+**_topic_ `|>` `await` _identifier_**\
+or **_topic_ `|>` `await` _identifier0_`.`_identifier1_**\
+or **_topic_ `|>` `await` _identifier0_`.`_identifier1_`.`_identifier2_**\
+or so forth,\
+then the pipeline is a bare async function call.
+
+| Valid [topic style][]   | Valid [bare style][]                     | Invalid pipeline
+| ----------------------- | ---------------------------------------- | --------------------
+|`… \|> await af(#)`      |`… \|> await af`                          | `… \|> await af()` 🚫
+| ″″                      | ″″                                       | `… \|> (await f)` 🚫
+| ″″                      | ″″                                       | `… \|> (await f())` 🚫
+| ″″                      | ″″                                       | `… \|> await (f)` 🚫
+| ″″                      | ″″                                       | `… \|> await (f())` 🚫
+|`… \|> af \|> await #`   | ″″                                       |  `… \|> af \|> await` 🚫
+|`… \|> await o.f(#)`     |`… \|> await o.f`                         | `… \|> await o.f()` 🚫
+|`… \|> await o.make()(#)`|`const af = o.make(); … \|> await af`     | `… \|> await o.make()` 🚫
+|`… \|> await new o.make()(#)`|`const af = new o.make(); … \|> await af`| `… \|> new await o.make()` 🚫
+
 ["data-to-ink" visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 ["don’t break my code"]: ./goals.md#dont-break-my-code
 ["don’t make me overthink"]: ./goals.md#dont-make-me-overthink

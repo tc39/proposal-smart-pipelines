@@ -7,24 +7,15 @@ constructors – you may omit the topic reference from the pipeline step. This i
 called **[bare style][]**.
 
 When a pipe is in bare style, we refer to the pipeline as a **bare function
-call**. (If [Additional Feature BC][] or [Additional Feature BA][] are used,
-then a bare-style pipeline step may instead be a **bare awaited function call**,
-or a **bare constructor call**, depending on the rules of bare style.) The step
-acts as just a simple reference to a function, such as with `… |> capitalize` or
+call**.  The step acts as just a simple reference to a function, such as with `… |> capitalize` or
 with `… |> console.log`. The step’s value would then be called as a unary
 function, without having to use the topic reference as an explicit argument.
 
 The two bare-style productions require no parameters, because they can only be
-**simple references**, made up of identifiers and dots `.`. (If [Additional
-Feature BC][] is used, then the simple reference may optionally be preceded by
-`new`: `… |> new o.C`. If [Additional Feature BA][] is used, then the simple
-reference may optionally be preceded by `await`: `… |> new o.af`. Even with
-Additional Features BC or BA, `new` and `await` may not be used on their own
-without a simple reference: `… |> o.C |> new` 🚫 and `… |> o.af |> await` 🚫 are
-invalid pipelines. Instead, use either the bare style `… |> new o.C` and
-`… |> await o.af`, or use topic style: `… |> af |> await #`.
-
-With the [Core Proposal][] only:
+**simple references**, made up of identifiers and dots `.`. (There are optional
+[Additional Features](./readme.md#additional-features) that extend these style in
+limited ways for further convenience. These Additional Features are not part of this
+Core Proposal but rather show possible future extensions.)
 
 | Valid [topic style][]   | Valid [bare style][]                     | Invalid pipeline
 | ----------------------- | ---------------------------------------- | --------------------
@@ -35,35 +26,6 @@ With the [Core Proposal][] only:
 |`… \|> o.f(arg, #)`      |`const f = $ => o::f(arg, $); … \|> f`    | `… \|> o.f(arg)` 🚫
 |`… \|> o.make()(#)`      |`const f = o.make(); … \|> f`             | `… \|> o.make()` 🚫
 |`… \|> o[symbol](#)`     |`const f = o[symbol]; … \|> f`            | `… \|> o[symbol]` 🚫
-
-With [Additional Feature BC][]:
-
-| Valid [topic style][]   | Valid [bare style][]                     | Invalid pipeline
-| ----------------------- | ---------------------------------------- | --------------------
-|`… \|> new C(#)`         |`… \|> new C`                             | `… \|> new C()` 🚫
-| ″″                      | ″″                                       | `… \|> (new C)` 🚫
-| ″″                      | ″″                                       | `… \|> (new C())` 🚫
-| ″″                      | ″″                                       | `… \|> new (C)` 🚫
-| ″″                      | ″″                                       | `… \|> new (C())` 🚫
-|`… \|> new o.C(#)`       |`… \|> new o.C`                           | `… \|> new o.f()` 🚫
-|`… \|> new o.C(arg, #)`  |`const f = $ => new o::C(arg, $); … \|> f`| `… \|> new o.C(arg)` 🚫
-|`… \|> new o.make()(#)`  |`const C = o.make(); … \|> new C`         | `… \|> new o.make()` 🚫
-|`… \|> new o[symbol](#)` |`const f = new o[symbol]; … \|> f`        | `… \|> new o[symbol]` 🚫
-|`… \|> await new o.make()(#)`|`const af = new o.make(); … \|> await af`| `… \|> new await o.make()` 🚫
-
-With [Additional Feature BA][]:
-
-| Valid [topic style][]   | Valid [bare style][]                     | Invalid pipeline
-| ----------------------- | ---------------------------------------- | --------------------
-|`… \|> await af(#)`      |`… \|> await af`                          | `… \|> await af()` 🚫
-| ″″                      | ″″                                       | `… \|> (await f)` 🚫
-| ″″                      | ″″                                       | `… \|> (await f())` 🚫
-| ″″                      | ″″                                       | `… \|> await (f)` 🚫
-| ″″                      | ″″                                       | `… \|> await (f())` 🚫
-|`… \|> af \|> await #`   | ″″                                       |  `… \|> af \|> await` 🚫
-|`… \|> await o.f(#)`     |`… \|> await o.f`                         | `… \|> await o.f()` 🚫
-|`… \|> await o.make()(#)`|`const af = o.make(); … \|> await af`     | `… \|> await o.make()` 🚫
-|`… \|> await new o.make()(#)`|`const af = new o.make(); … \|> await af`| `… \|> new await o.make()` 🚫
 
 ## Bare style
 The **bare style** supports using simple identifiers, possibly with chains of
@@ -83,30 +45,6 @@ or **_topic_ `|>` _identifier0_`.`_identifier1_`.`_identifier2_**\
 or so forth,\
 then the pipeline is a bare function call.
 
-**With [Additional Feature BC][]:**\
-If a pipeline step starts with `new`, followed by a mere identifier, optionally
-with a chain of properties, and with no parentheses or brackets, then that
-identifier is interpreted to be a **bare constructor**.
-
-That is: **if a pipeline** is of the form\
-**_topic_ `|>` `new` _identifier_**\
-or **_topic_ `|>` `new` _identifier0_`.`_identifier1_**\
-or **_topic_ `|>` `new` _identifier0_`.`_identifier1_`.`_identifier2_**\
-or so forth,\
-then the pipeline is a bare constructor call.
-
-**With [Additional Feature BA][]:**\
-If a pipeline step starts with `await`, followed by a mere identifier, optionally with
-a chain of properties, and with no parentheses or brackets, then that identifier
-is interpreted to be a **bare awaited function call**.
-
-That is: **if a pipeline** is of the form\
-**_topic_ `|>` `await` _identifier_**\
-or **_topic_ `|>` `await` _identifier0_`.`_identifier1_**\
-or **_topic_ `|>` `await` _identifier0_`.`_identifier1_`.`_identifier2_**\
-or so forth,\
-then the pipeline is a bare async function call.
-
 ## Topic style
 The presence or absence of topic tokens (`#`, `##`, `###`) is *not* used in the
 grammar to distinguish topic style from bare style to fulfill the goal of
@@ -119,11 +57,6 @@ reference in the pipeline step; otherwise it is an [early error][].
 A pipeline step that is not in bare style is usually a **topic expression**.
 This is any expression at the [precedence level once tighter than pipeline-level
 expressions][operator precedence] – that is, any conditional-level expression.
-
-**With [Additional Feature BA][]:**\
-A pipeline step that is a block `{` … `}` containing a list of statements is a
-**topic block**. The last statement in the block is used as the result of the
-whole pipeline, similarly to [`do` expressions][].
 
 ## Practical consequences
 Therefore, a pipeline step in **[bare style][] *never*** contains **parentheses `(…)` or

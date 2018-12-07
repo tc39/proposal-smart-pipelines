@@ -59,6 +59,19 @@ console.log(
 
 </table>
 
+| Valid [topic style][]   | Valid [bare style][]                     | Invalid pipeline
+| ----------------------- | ---------------------------------------- | --------------------
+|`… \|> new C(#)`         |`… \|> new C`                             | `… \|> new C()` 🚫
+| ″″                      | ″″                                       | `… \|> (new C)` 🚫
+| ″″                      | ″″                                       | `… \|> (new C())` 🚫
+| ″″                      | ″″                                       | `… \|> new (C)` 🚫
+| ″″                      | ″″                                       | `… \|> new (C())` 🚫
+|`… \|> new o.C(#)`       |`… \|> new o.C`                           | `… \|> new o.f()` 🚫
+|`… \|> new o.C(arg, #)`  |`const f = $ => new o::C(arg, $); … \|> f`| `… \|> new o.C(arg)` 🚫
+|`… \|> new o.make()(#)`  |`const C = o.make(); … \|> new C`         | `… \|> new o.make()` 🚫
+|`… \|> new o[symbol](#)` |`const f = new o[symbol]; … \|> f`        | `… \|> new o[symbol]` 🚫
+|`… \|> await new o.make()(#)`|`const af = new o.make(); … \|> await af`| `… \|> new await o.make()` 🚫
+
 ["data-to-ink" visual ratio]: https://www.darkhorseanalytics.com/blog/data-looks-better-naked
 ["don’t break my code"]: ./goals.md#dont-break-my-code
 ["don’t make me overthink"]: ./goals.md#dont-make-me-overthink
