@@ -1,104 +1,12 @@
 # Smart pipelines
 ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-02.
 
-<nav><details>
-<summary>
+This proposal introduces a new operator `|>` to JavaScript. It's similar to the
+[pipeline operators of other languages](relations.html) such as Unix shells and
+PowerShell, Elixir, Erlang, Julia, LiveScript, Elm, OCaml, Julia, F#, Hack, R
+with magrittr, Perl 6, and Clojure.
 
-📖 **Table of Contents**
-
-</summary>
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-
-- [Motivation](#motivation)
-    - [WHATWG Fetch Standard (Core Proposal only)](#whatwg-fetch-standard-core-proposal-only)
-    - [jQuery (Core Proposal only)](#jquery-core-proposal-only)
-    - [Underscore.js (Core Proposal only)](#underscorejs-core-proposal-only)
-    - [Lodash (Core Proposal only)](#lodash-core-proposal-only)
-- [Smart step syntax](#smart-step-syntax)
-  - [Bare style](#bare-style)
-  - [Topic style](#topic-style)
-  - [Practical consequences](#practical-consequences)
-- [Operator precedence and associativity](#operator-precedence-and-associativity)
-- [Appendices](#appendices)
-  - [Additional Feature BC](#additional-feature%C2%A0bc)
-  - [Additional Feature BA](#additional-feature%C2%A0ba)
-  - [Additional Feature BP](#additional-feature-bp)
-    - [WHATWG Fetch Standard (Core Proposal + Additional Feature BP)](#whatwg-fetch-standard-core-proposal--additional-feature-bp)
-    - [jQuery (Core Proposal + Additional Feature BP)](#jquery-core-proposal--additional-feature-bp)
-    - [Lodash (Core Proposal + Additional Feature BP)](#lodash-core-proposal--additional-feature-bp)
-  - [Additional Feature TS](#additional-feature-ts)
-  - [Additional Feature PF](#additional-feature-pf)
-    - [Ramda (Core Proposal + Additional Feature BP+PF)](#ramda-core-proposal--additional-feature-bppf)
-    - [WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF)](#whatwg-streams-standard-core-proposal--additional-features-bppppf)
-  - [Additional Feature NP](#additional-feature-np)
-    - [Lodash (Core Proposal + Additional Features BP+PP+PF+NP)](#lodash-core-proposal--additional-features-bppppfnp)
-    - [Ramda (Core Proposal + Additional Features BP+PF+NP)](#ramda-core-proposal--additional-features-bppfnp)
-    - [WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF+NP)](#whatwg-streams-standard-core-proposal--additional-features-bppppfnp)
-  - [Goals](#goals)
-    - [“Don’t break my code.”](#dont-break-my-code)
-      - [Backward compatibility](#backward-compatibility)
-      - [Zero runtime cost](#zero-runtime-cost)
-      - [Forward compatibility](#forward-compatibility)
-    - [“Don’t shoot me in the foot.”](#dont-shoot-me-in-the-foot)
-      - [Opt-in behavior](#opt-in-behavior)
-      - [Simple scoping](#simple-scoping)
-      - [Static analyzability](#static-analyzability)
-    - [“Don’t make me overthink.”](#dont-make-me-overthink)
-      - [Syntactic locality](#syntactic-locality)
-      - [Semantic clarity](#semantic-clarity)
-      - [Expressive versatility](#expressive-versatility)
-      - [Cyclomatic simplicity](#cyclomatic-simplicity)
-    - [“Make my code easier to read.”](#make-my-code-easier-to-read)
-      - [Untangled flow](#untangled-flow)
-      - [Distinguishable punctuators](#distinguishable-punctuators)
-      - [Terse parentheses](#terse-parentheses)
-      - [Terse variables](#terse-variables)
-      - [Terse function calls](#terse-function-calls)
-      - [Terse composition](#terse-composition)
-      - [Terse partial application](#terse-partial-application)
-    - [Other Goals](#other-goals)
-      - [Conceptual generality](#conceptual-generality)
-      - [Human writability](#human-writability)
-      - [Novice learnability](#novice-learnability)
-  - [Relations to other work](#relations-to-other-work)
-    - [Pipelines in other programming languages](#pipelines-in-other-programming-languages)
-    - [Topic references in other programming languages](#topic-references-in-other-programming-languages)
-    - [`do` expressions](#do-expressions)
-    - [Function binding](#function-binding)
-    - [Function composition](#function-composition)
-    - [Partial function application](#partial-function-application)
-    - [Optional `catch` binding](#optional-catch-binding)
-    - [Pattern matching](#pattern-matching)
-    - [Block parameters](#block-parameters)
-    - [`do` expressions](#do-expressions-1)
-  - [Explanation of nomenclature](#explanation-of-nomenclature)
-  - [Term rewriting](#term-rewriting)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-</details></nav>
-
-***
-
-This document is an **explainer for** the [**formal specification** of a proposed
-**smart pipe operator `|>`**][formal pipeline specification] in
-**JavaScript**, along with several other additional features. The specification
-is divided into **one Stage-0 Core Proposal** plus **six** mutually
-independent-but-compatible **Additional Features**:
-
-|Name                     | Status  | Features                                                               | Purpose                                                                                                         |
-| ----------------------- | ------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-|[Core Proposal][]        | Stage 0 | Infix pipelines `… \|> …`<br>Lexical topic `#`                         | **Unary** function/expression **application**                                                                   |
-|[Additional Feature BC][]| None    | Bare constructor calls `… \|> new …`                                   | Tacit application of **constructors**                                                                           |
-|[Additional Feature BA][]| None    | Bare awaited calls `… \|> await …`                                     | Tacit application of **async functions**                                                                        |
-|[Additional Feature BP][]| None    | Block pipeline steps `… \|> {…}`                                       | Application of **statement blocks**                                                                             |
-|[Additional Feature PF][]| None    | Pipeline functions `+>  `                                              | **Partial** function/expression **application**<br>Function/expression **composition**<br>**Method extraction** |
-|[Additional Feature TS][]| None    | Pipeline `try` statements                                              | Tacit application to **caught errors**                                                                          |
-|[Additional Feature NP][]| None    | N-ary pipelines `(…, …) \|> …`<br>Lexical topics `##`, `###`, and `...`| **N-ary** function/expression **application**                                                                   |
-
-The **Core Proposal** is currently at **Stage 0** of the [TC39 process][TC39
+The proposal is currently at **Stage 0** of the [TC39 process][TC39
 process] and is planned to be presented, along with a [competing
 proposal][Pipeline Proposal 1], to TC39 by [Daniel “**littledan**” Ehrenberg of
 Igalia][littledan]. The Core Proposal is a **variant** of the [first
@@ -109,21 +17,14 @@ pipe-operator proposal][previous pipeline-placeholder discussions],
 discussions which culminated in an [invitation by Ehrenberg to try writing a
 specification draft][littledan invitation].
 
-The **additional features** are **not part of the Stage-0 Core Proposal**. They
-are included to illustrate possible **separate follow-up proposals** for the case
-in which the Core Proposal advances past Stage 1. Together, the Core Proposal
-and the additional features demonstrate a **unified vision** of a future in
-which composition, partial application, method extraction, and error handling
-are all tersely expressible with the same simple pipeline/topic concept.
-
 An [**update** to the existing pipeline **Babel plugin**][Babel plugin] is also
 being developed jointly between the author of this proposal and [James
 DiGioia][mAAdhaTTah], the author of the [competing proposal][Pipeline
 Proposal 1]. The [update will support both this proposal and the other proposal,
 configurable with a flag][Babel update summary].
 
-You can take part in discussions on the **[GitHub issue tracker][]**. When you
-file an issue, please note in it that you are talking **specifically** about
+You can take part in discussions on the original proposal's **[GitHub issue tracker][]**.
+When you file an issue, please note in it that you are talking **specifically** about
 **[“Proposal 4: Smart Mix”][Pipeline Proposal 4]**.
 
 **This specification uses `#`** as its [topic reference][nomenclature]. However,
@@ -132,18 +33,10 @@ this is **not set** in stone. In particular, **`@` or `?`** could also be used.
 been occurring on GitHub at [tc39/proposal-pipeline-operator
 issue #91][topic-token bikeshedding].
 
-The Core Proposal is [**formally specified in in the draft
-specification**][formal CP].
-
-# Motivation
-This section gives a brief overview of the motivations behind the smart pipe
-operator’s Core Proposal, as well the additional features listed above.
-**Examples from real-world libraries** are juxtaposed with their original
-versions. The original versions have been lightly edited (e.g., breaking up
-lines, removing semicolons), in order to fit their horizontal widths into this
-table. **Examples that use additional features** are included **only to
-illustrate** the power of the pipeline/topic concept and are always simply
-**rewritable** into forms that use **only the Core Proposal**.
+This proposal makes [many other **trade-offs]** that are **also not set in stone**.
+The proposal can and will **change** in response to **feedback** once the Babel plugin
+is implemented. The Babel plugin is planned to be configurable, allowing hands-on
+experimentation with these trade-offs.
 
 <table>
 <thead>
@@ -2022,6 +1915,60 @@ to loosest**. Each level may contain the parse types listed for that level –
 | Root           | Script                  |                | Root                     |
 | ″″             | Module                  |                | ″″                       |
 
+## Additional Features
+This document is an **explainer for** the [**formal specification** of a proposed
+**smart pipe operator `|>`**][formal pipeline specification] in
+**JavaScript**, along with several other additional features. The specification
+is divided into **one Stage-0 Core Proposal** plus **six** mutually
+independent-but-compatible **Additional Features**:
+
+|Name                     | Status  | Features                                                               | Purpose                                                                                                         |
+| ----------------------- | ------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+|[Core Proposal][]        | Stage 0 | Infix pipelines `… \|> …`<br>Lexical topic `#`                         | **Unary** function/expression **application**                                                                   |
+|[Additional Feature BC][]| None    | Bare constructor calls `… \|> new …`                                   | Tacit application of **constructors**                                                                           |
+|[Additional Feature BA][]| None    | Bare awaited calls `… \|> await …`                                     | Tacit application of **async functions**                                                                        |
+|[Additional Feature BP][]| None    | Block pipeline steps `… \|> {…}`                                       | Application of **statement blocks**                                                                             |
+|[Additional Feature PF][]| None    | Pipeline functions `+>  `                                              | **Partial** function/expression **application**<br>Function/expression **composition**<br>**Method extraction** |
+|[Additional Feature TS][]| None    | Pipeline `try` statements                                              | Tacit application to **caught errors**                                                                          |
+|[Additional Feature NP][]| None    | N-ary pipelines `(…, …) \|> …`<br>Lexical topics `##`, `###`, and `...`| **N-ary** function/expression **application**                                                                   |
+
+The **Core Proposal** is currently at **Stage 0** of the [TC39 process][TC39
+process] and is planned to be presented, along with a [competing
+proposal][Pipeline Proposal 1], to TC39 by [Daniel "**littledan**" Ehrenberg of
+Igalia][littledan]. The Core Proposal is a **variant** of the [first
+pipe-operator proposal][] also championed by Ehrenberg; this variant is
+listed as [**Proposal 4: Smart Mix** in the pipe-proposal wiki][Pipeline
+Proposal 4]. The variant resulted from [previous discussions in the previous
+pipe-operator proposal][previous pipeline-placeholder discussions],
+discussions which culminated in an [invitation by Ehrenberg to try writing a
+specification draft][littledan invitation].
+
+The **additional features** are **not part of the Stage-0 Core Proposal**. They
+are included to illustrate possible **separate follow-up proposals** for the case
+in which the Core Proposal advances past Stage 1. Together, the Core Proposal
+and the additional features demonstrate a **unified vision** of a future in
+which composition, partial application, method extraction, and error handling
+are all tersely expressible with the same simple pipeline/topic concept.
+
+An [**update** to the existing pipeline **Babel plugin**][Babel plugin] is also
+being developed jointly between the author of this proposal and [James
+DiGioia][mAAdhaTTah], the author of the [competing proposal][Pipeline
+Proposal 1]. The [update will support both this proposal and the other proposal,
+configurable with a flag][Babel update summary].
+
+You can take part in discussions on the **[GitHub issue tracker][]**. When you
+file an issue, please note in it that you are talking **specifically** about
+**["Proposal 4: Smart Mix"][Pipeline Proposal 4]**.
+
+**This specification uses `#`** as its [topic reference][nomenclature]. However,
+this is **not set** in stone. In particular, **`@` or `?`** could also be used.
+**Bikeshedding discussions** over what characters to use for the topic token has
+been occurring on GitHub at [tc39/proposal-pipeline-operator
+issue #91][topic-token bikeshedding].
+
+The Core Proposal is [**formally specified in in the draft
+specification**][formal CP].
+
 # Appendices
 ## Additional Feature BC
 See [Additional Feature BC][].
@@ -2416,3 +2363,4 @@ See [Term rewriting][].
 [WHATWG-stream piping]: https://streams.spec.whatwg.org/#pipe-chains
 [Wikipedia: term rewriting]: https://en.wikipedia.org/wiki/Term_rewriting
 [zero runtime cost]: ./goals.md#zero-runtime-cost
+        
