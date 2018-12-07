@@ -8,15 +8,9 @@
 |[Additional Feature TS][]| None    | Pipeline `try` statements                                              | Tacit application to **caught errors**                                                                          |
 |[Additional Feature NP][]| None    | N-ary pipelines `(…, …) \|> …`<br>Lexical topics `##`, `###`, and `...`| **N-ary** function/expression **application**                                                                   |
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-
-- [Additional Feature BA](#additional-feature-ba)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # Additional Feature BA
+ECMAScript No-Stage Proposal. Living Document. J. S. Choi, 2018-12.
+
 An feature – **bare awaited calls** – makes async function calls terser. It adds
 another mode to bare style: if a bare-style pipeline step is preceded by a
 `await`, then instead of a mere function call, it is an awaited function call.

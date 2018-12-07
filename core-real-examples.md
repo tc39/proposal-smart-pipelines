@@ -1,4 +1,5 @@
 # Core Proposal real-world examples
+Living Document. J. S. Choi, 2018-12.
 
 ### WHATWG Fetch Standard
 The [WHATWG Fetch Standard][] contains several examples of using the DOM `fetch`

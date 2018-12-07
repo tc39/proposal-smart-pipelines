@@ -1,3 +1,9 @@
+# Relations to other work
+Living Document. J. S. Choi, 2018-12.
+
+<details>
+<summary>Table of contents</summary>
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
@@ -20,7 +26,8 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# Relations to other work
+</details>
+
 ## Pipelines in other programming languages
 The concept of a pipe operator appears in numerous other languages, variously
 called “pipeline”, “threading”, and “feed” operators. This is because developers

@@ -1,4 +1,6 @@
 # Core-proposal syntax
+ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-12.
+
 Most pipeline steps will use topic references in their steps. This style of
 pipeline step is called **[topic style][]**.
 

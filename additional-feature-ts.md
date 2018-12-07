@@ -8,15 +8,9 @@
 |[Additional Feature TS][]| None    | Pipeline `try` statements                                              | Tacit application to **caught errors**                                                                          |
 |[Additional Feature NP][]| None    | N-ary pipelines `(…, …) \|> …`<br>Lexical topics `##`, `###`, and `...`| **N-ary** function/expression **application**                                                                   |
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-
-- [Additional Feature TS](#additional-feature-ts)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # Additional Feature TS
+ECMAScript No-Stage Proposal. Living Document. J. S. Choi, 2018-12.
+
 With the [Core Proposal][] only, all `try` statements’ `catch` clauses would
 prohibit the use of the topic reference within their steps, except where the
 topic reference `#` is inside an inner pipeline inside the `catch` clause: this

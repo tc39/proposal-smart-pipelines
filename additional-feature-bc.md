@@ -8,15 +8,9 @@
 |[Additional Feature TS][]| None    | Pipeline `try` statements                                              | Tacit application to **caught errors**                                                                          |
 |[Additional Feature NP][]| None    | N-ary pipelines `(…, …) \|> …`<br>Lexical topics `##`, `###`, and `...`| **N-ary** function/expression **application**                                                                   |
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-
-- [Additional Feature BC](#additional-feature-bc)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # Additional Feature BC
+ECMAScript No-Stage Proposal. Living Document. J. S. Choi, 2018-12.
+
 An additional feature – **bare constructor calls** – makes constructor calls
 terser. It adds a mode to bare style: if a bare-style pipeline step is preceded
 by a `new`, then instead of a function call, it is a constructor call. `value |>

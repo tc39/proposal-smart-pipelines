@@ -8,17 +8,9 @@
 |[Additional Feature TS][]| None    | Pipeline `try` statements                                              | Tacit application to **caught errors**                                                                          |
 |[Additional Feature NP][]| None    | N-ary pipelines `(…, …) \|> …`<br>Lexical topics `##`, `###`, and `...`| **N-ary** function/expression **application**                                                                   |
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-
-- [Additional Feature PF](#additional-feature-pf)
-  - [Ramda (Core Proposal + Additional Feature BP+PF)](#ramda-core-proposal--additional-feature-bppf)
-  - [WHATWG Streams Standard (Core Proposal + Additional Features BP+PP+PF)](#whatwg-streams-standard-core-proposal--additional-features-bppppf)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # Additional Feature PF
+ECMAScript No-Stage Proposal. Living Document. J. S. Choi, 2018-12.
+
 **More than any other** possible extension in this table, this additional
 feature – **Pipeline Functions** – would dramatically increase the usefulness of
 pipelines. It introduces just one additional operator that solves:\
