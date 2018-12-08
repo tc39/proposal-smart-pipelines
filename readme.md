@@ -406,6 +406,158 @@ requires editing the variable names in the following step.
 <tr>
 <td>
 
+```js
+input |> f |> [0, 1, 2, ...#] |> g;
+```
+A pipeline step may contain array literals.
+
+<td>
+
+```js
+g([0, 1, 2, ...f(input)]);
+```
+
+<tr>
+<td>
+
+A topic-style pipeline step may also contain object literals. However, pipeline
+steps that are entirely object literals must be parenthesized. It is similar to
+how arrow functions distinguish between object literals and blocks.
+```js
+input |> f |> ({ x: #, y: # }) |> g;
+```
+This is for [forward compatibility][] with [Additional Feature BP][], which
+introduces block pipeline steps. (It is expected that block pipelines would
+eventually be much more common than pipelines with object literals.) This restriction
+could be dropped, although that would make Additional Feature BP impossible forever.
+```js
+input |> f |> { x: #, y: # } |> g;
+// 🚫 Syntax Error:
+// Unexpected token `{`.
+// Cannot parse base expression.
+```
+
+<td>
+
+```js
+{
+  const $ = f(input);
+  g({ x, $: y: f($) });
+}
+```
+
+<tr>
+<td>
+
+```js
+f = input
+|> f
+|> (x => # + x);
+```
+A topic-style pipeline step may contain an inner arrow function. Both versions
+of this example result in an arrow function in a closure on the previous
+pipeline’s result `input |> f`.
+
+<td>
+
+```js
+{
+  const $ = f(input);
+  x => $ + x;
+}
+```
+The arrow function lexically closes over the topic value, takes one parameter,
+and returns the sum of the topic value and the parameter.
+
+<tr>
+<td>
+
+```js
+input
+|> f
+|> settimeout(() => # * 5)
+|> processIntervalID;
+```
+This ability to create arrow functions, which do not lexically shadow the topic,
+can be useful for using callbacks in a pipeline.
+
+<td>
+
+```js
+{
+  const $ = f(input);
+  const intervalID = settimeout(() => $ * 5);
+  processIntervalID(intervalID);
+}
+```
+The topic value of the second pipeline step (here represented by a normal
+variable `$`) is still lexically accessible within its body, an arrow function,
+in both examples.
+
+<tr>
+<td>
+
+```js
+input
+|> f
+|> (() => # * 5)
+|> settimeout
+|> processIntervalID;
+```
+The arrow function can also be created on a separate pipeline step.
+
+<td>
+
+```js
+{
+  const $ = f(input);
+  const callback = () => $ * 5;
+  const intervalID = settimeout(callback);
+  processIntervalID(intervalID);
+}
+```
+The result here is the same.
+
+<tr>
+<td>
+
+```js
+input
+|> f
+|> () => # * 5
+|> settimeout
+|> processIntervalID;
+// 🚫 Syntax Error:
+// Unexpected token `=>`.
+// Cannot parse base expression.
+```
+Note, however, that arrow functions have looser precedence than the pipe
+operator. This means that if a pipeline creates an arrow function alone in one
+of its steps, then the arrow-function expression must be parenthesized.
+(The same applies to assignment and yield operators, which are also looser than
+the pipe operator.) The example above is being parsed as if it were:
+```js
+(input |> f |> ()) =>
+  (# * 5 |> settimeout |> processIntervalID);
+// 🚫 Syntax Error:
+// Unexpected token `=>`.
+// Cannot parse base expression.
+```
+The arrow function must be parenthesized, as with any other looser-precedence
+expression:
+```js
+input
+|> (f, g)
+|> (() => # * 5)
+|> settimeout
+|> processIntervalID;
+```
+
+<td>
+
+<tr>
+<td>
+
 There is a **shortcut** for the very common case of **unary function calls** on
 variables or variables’ methods. In these cases, the topic reference can be left out.
 (This is the **[bare style][]** of the pipe operator.)
@@ -726,159 +878,6 @@ await object.method(x, y, input);
 await object.method(x, y)(input);
 (await object.method(x, y))(input);
 ```
-
-<tr>
-<td>
-
-```js
-input |> f |> [0, 1, 2, ...#] |> g;
-```
-A topic-style pipeline step may contain array literals. These may be flattened,
-just like any other sort of expression.
-
-<td>
-
-```js
-g([0, 1, 2, ...f(input)]);
-```
-
-<tr>
-<td>
-
-A topic-style pipeline step may also contain object literals. However, pipeline
-steps that are entirely object literals must be parenthesized. It is similar to
-how arrow functions distinguish between object literals and blocks.
-```js
-input |> f |> ({ x: #, y: # }) |> g;
-```
-This fulfills the goal of [forward compatibility][] with [Additional
-Feature BP][], which introduces block pipeline steps. (It is expected that
-block pipelines would eventually be much more common than pipelines with object
-literals.)
-```js
-input |> f |> { x: #, y: # } |> g;
-// 🚫 Syntax Error:
-// Unexpected token `{`.
-// Cannot parse base expression.
-```
-
-<td>
-
-```js
-{
-  const $ = f(input);
-  g({ x, $: y: f($) });
-}
-```
-
-<tr>
-<td>
-
-```js
-f = input
-|> f
-|> (x => # + x);
-```
-A topic-style pipeline step may contain an inner arrow function. Both versions
-of this example result in an arrow function in a closure on the previous
-pipeline’s result `input |> f`.
-
-<td>
-
-```js
-{
-  const $ = f(input);
-  x => $ + x;
-}
-```
-The arrow function lexically closes over the topic value, takes one parameter,
-and returns the sum of the topic value and the parameter.
-
-<tr>
-<td>
-
-```js
-input
-|> f
-|> settimeout(() => # * 5)
-|> processIntervalID;
-```
-This ability to create arrow functions, which do not lexically shadow the topic,
-can be useful for using callbacks in a pipeline.
-
-<td>
-
-```js
-{
-  const $ = f(input);
-  const intervalID = settimeout(() => $ * 5);
-  processIntervalID(intervalID);
-}
-```
-The topic value of the second pipeline step (here represented by a normal
-variable `$`) is still lexically accessible within its body, an arrow function,
-in both examples.
-
-<tr>
-<td>
-
-```js
-input
-|> f
-|> (() => # * 5)
-|> settimeout
-|> processIntervalID;
-```
-The arrow function can also be created on a separate pipeline step.
-
-<td>
-
-```js
-{
-  const $ = f(input);
-  const callback = () => $ * 5;
-  const intervalID = settimeout(callback);
-  processIntervalID(intervalID);
-}
-```
-The result here is the same.
-
-<tr>
-<td>
-
-```js
-input
-|> f
-|> () => # * 5
-|> settimeout
-|> processIntervalID;
-// 🚫 Syntax Error:
-// Unexpected token `=>`.
-// Cannot parse base expression.
-```
-Note, however, that arrow functions have looser precedence than the pipe
-operator. This means that if a pipeline creates an arrow function alone in one
-of its steps, then the arrow-function expression must be parenthesized.
-(The same applies to assignment and yield operators, which are also looser than
-the pipe operator.) The example above is being parsed as if it were:
-```js
-(input |> f |> ()) =>
-  (# * 5 |> settimeout |> processIntervalID);
-// 🚫 Syntax Error:
-// Unexpected token `=>`.
-// Cannot parse base expression.
-```
-The arrow function must be parenthesized, as with any other looser-precedence
-expression:
-```js
-input
-|> (f, g)
-|> (() => # * 5)
-|> settimeout
-|> processIntervalID;
-```
-
-<td>
 
 <tr>
 <td>
