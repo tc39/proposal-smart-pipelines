@@ -46,7 +46,7 @@ this is **not set** in stone. In particular, **`@` or `?`** could also be used.
 been occurring on GitHub at [tc39/proposal-pipeline-operator
 issue #91][topic-token bikeshedding].
 
-This proposal makes [many other **trade-offs**] that are **also not set in stone**.
+This proposal makes [many other **trade-offs**][goals] that are **also not set in stone**.
 The proposal can and will **change** in response to **feedback** once the Babel plugin
 is implemented. The Babel plugin is planned to be configurable, allowing hands-on
 experimentation with these trade-offs.
