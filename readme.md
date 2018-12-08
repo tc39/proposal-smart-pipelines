@@ -97,16 +97,16 @@ promise
 With smart pipelines, code becomes **terser** and, literally, more **straightforward**.
 Prefix, infix, and postfix expressions would be less
 tangled together in threads of spaghetti. Instead, data values would be **piped
-from left to right** through a **single flat thread of postfix expressions**,
+from left to right** through a **single linear thread of postfix expressions**,
 with a [**single** level of **indentation**][untangled flow] and [**four fewer**
 pairs of **parentheses**][terse parentheses]  – essentially forming a [reverse
 Polish notation][].
 
-The resulting code’s [**terseness** and **flatness**][make my code easier to
+The resulting code’s [**terseness** and **linearity**][make my code easier to
 read] may be both easier for the JavaScript developer to **read** and to
 **edit**. This uniform postfix notation preserves locality between related code;
 the reader may **follow the flow** of data more easily through this [single
-flattened thread of postfix operations][untangled flow]. And the developer may
+linear thread of postfix operations][untangled flow]. And the developer may
 [more easily **add or remove operations**][human writability] at the beginning,
 end, or middle of the thread, **without changing** the **indentation** of
 unrelated lines.
@@ -248,7 +248,7 @@ promise
 |> await stream.write(#)
 |> console.log;
 ```
-This pipeline is also relatively flat, with only one level of indentation, and
+This pipeline is also relatively linear, with only one level of indentation, and
 with each transformation step on its own line.
 
 `… |> capitalize` uses a special **shortcut** called the **[bare style][]**, explained further below.
@@ -661,7 +661,7 @@ const object = input
 |> await o.asyncMethod(#)
 |> new Constructor(#);
 ```
-This pipeline is a very flat expression, with only one level of indentation, and
+This pipeline is a very linear expression, with only one level of indentation, and
 with each transformation step on its own line.
 
 As with the previous examples, the `… |> f` is a bare unary function call, equivalent
@@ -693,7 +693,7 @@ const object =
     )
   );
 ```
-In contrast to the version with pipes, this code without pipes is deeply nested, not flat.
+In contrast to the version with pipes, this code without pipes is deeply nested, not linear.
 
 The expression has two levels of indentation instead of one.
 Reading its data flow requires checking both the beginning and end of each
