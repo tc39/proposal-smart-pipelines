@@ -11,7 +11,10 @@
 # Additional Feature NP
 ECMAScript No-Stage Proposal. Living Document. J. S. Choi, 2018-12.
 
-An Additional Feature – **n-ary pipelines** – enables the passing of
+This document is not yet intended to be officially proposed to TC39 yet; it merely shows a possible
+extension of the [Core Proposal][] in the event that the Core Proposal is accepted.
+
+An Additional Feature – **n-ary pipelines** – would enable the passing of
 multiple arguments into a pipeline’s steps. `(a, b) |> f` is equivalent to
 `f(a, b)`, and `a |> (f(#), g(#)) |> h` is equivalent to `h(f(a), g(a))`.
 

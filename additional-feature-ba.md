@@ -11,11 +11,14 @@
 # Additional Feature BA
 ECMAScript No-Stage Proposal. Living Document. J. S. Choi, 2018-12.
 
-An feature – **bare awaited calls** – makes async function calls terser. It adds
+This document is not yet intended to be officially proposed to TC39 yet; it merely shows a possible
+extension of the [Core Proposal][] in the event that the Core Proposal is accepted.
+
+An additional feature – **bare awaited calls** – would make async function calls terser. It adds
 another mode to bare style: if a bare-style pipeline step is preceded by a
 `await`, then instead of a mere function call, it is an awaited function call.
 `value |> await object.asyncFunction` is equivalent to `await
-object.asyncFunction(value)`. This is backwards compatible with the [Core
+object.asyncFunction(value)`. This would be backwards compatible with the [Core
 Proposal][] as well as all other [additional features][].
 
 [Additional Feature BA is **formally specified in in the draft

@@ -11,6 +11,9 @@
 # Additional Feature BP
 ECMAScript No-Stage Proposal. Living Document. J. S. Choi, 2018-12.
 
+This document is not yet intended to be officially proposed to TC39 yet; it merely shows a possible
+extension of the [Core Proposal][] in the event that the Core Proposal is accepted.
+
 There is a TC39 proposal for [`do` expressions][] at Stage 1. Smart pipelines do
 **not** require `do` expressions. However, if [`do` expressions][] also become
 part of JavaScript, then, as with **any** other type of expression, a pipeline

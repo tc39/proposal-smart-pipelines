@@ -11,12 +11,15 @@
 # Additional Feature TS
 ECMAScript No-Stage Proposal. Living Document. J. S. Choi, 2018-12.
 
+This document is not yet intended to be officially proposed to TC39 yet; it merely shows a possible
+extension of the [Core Proposal][] in the event that the Core Proposal is accepted.
+
 With the [Core Proposal][] only, all `try` statements’ `catch` clauses would
 prohibit the use of the topic reference within their steps, except where the
 topic reference `#` is inside an inner pipeline inside the `catch` clause: this
 is one of the Core Proposal’s [early errors][] mentioned above.
 
-The next additional feature – **Pipeline `try` Statements** – adds new forms of
+This additional feature – **Pipeline `try` Statements** – would add new forms of
 the `try` statement, the `catch` clause, and the `finally` clause, in the form
 of `try |> …`, `catch |> …`, and `finally |> …`, each followed by a [pipeline
 with the same smart step syntax][smart step syntax].

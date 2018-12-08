@@ -11,8 +11,10 @@
 # Additional Feature PF
 ECMAScript No-Stage Proposal. Living Document. J. S. Choi, 2018-12.
 
-**More than any other** possible extension in this table, this additional
-feature – **Pipeline Functions** – would dramatically increase the usefulness of
+This document is not yet intended to be officially proposed to TC39 yet; it merely shows a possible
+extension of the [Core Proposal][] in the event that the Core Proposal is accepted.
+
+This additional feature – **Pipeline Functions** – would dramatically increase the usefulness of
 pipelines. It introduces just one additional operator that solves:\
 tacit unary **functional composition**,\
 tacit unary functional **partial application**,\

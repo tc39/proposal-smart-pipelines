@@ -11,7 +11,10 @@
 # Additional Feature BC
 ECMAScript No-Stage Proposal. Living Document. J. S. Choi, 2018-12.
 
-An additional feature – **bare constructor calls** – makes constructor calls
+This document is not yet intended to be officially proposed to TC39 yet; it merely shows a possible
+extension of the [Core Proposal][] in the event that the Core Proposal is accepted.
+
+An additional feature – **bare constructor calls** – would make constructor calls
 terser. It adds a mode to bare style: if a bare-style pipeline step is preceded
 by a `new`, then instead of a function call, it is a constructor call. `value |>
 object.Constructor` is equivalent to `object.Constructor(value)`. This is
