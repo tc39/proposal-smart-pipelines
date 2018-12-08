@@ -39,8 +39,8 @@ You can take part in discussions on the original proposal's **[GitHub issue trac
 When you file an issue, please note in it that you are talking **specifically** about
 **[“Proposal 4: Smart Mix”][Pipeline Proposal 4]**.
 
-**This specification uses `#`** as its [topic reference][nomenclature]. However,
-this is **not set** in stone. In particular, **`@` or `?`** could also be used.
+This specification currently uses `#` as a “topic reference”, but that choice is
+**not set** in stone. **`@`, `?`, `%`,** or many other symbols could also be used.
 **Bikeshedding discussions** over what characters to use for the topic token have
 been occurring on GitHub at [tc39/proposal-pipeline-operator
 issue #91][topic-token bikeshedding].
