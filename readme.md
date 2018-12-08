@@ -156,9 +156,9 @@ input // step 0
 |> console.log(`${#}!`); // step 4
 ```
 
-Please note that `#` is **not set** in stone. In particular, **`@` or `?`**
-could also be used. **Bikeshedding discussions** over what characters to use for the
-topic token have been occurring on GitHub at [tc39/proposal-pipeline-operator
+The use of `#` as the topic reference is **not set** in stone. **`@`, `?`, `%`,** or
+many other symbols could also be used. **Bikeshedding discussions** over what characters
+to use for the topic token have been occurring on GitHub at [tc39/proposal-pipeline-operator
 issue #91][topic-token bikeshedding].
 
 <td>
