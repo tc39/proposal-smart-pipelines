@@ -720,8 +720,8 @@ input |> x + 50 |> f |> g(x, 2);
 ```
 In order to fulfill the [goal][goals] of [“don’t shoot me in the foot”][],
 when a **pipeline step is in [topic style][]** but it **contains no topic
-reference**, that is an **[early error][]**. Such a degenerate pipeline step has
-a very good chance of actually being an accidental bug. (Note that the
+reference**, that is currently an **[early error][]**. Such a degenerate
+pipeline step has a very good chance of actually being an accidental bug. (The
 bare-style pipeline step `|> f` is *not* an error. The [bare style][] is not
 supposed to contain any topic references `#`.)
 
@@ -889,6 +889,8 @@ x = input
   # + x |> g |> # * 2)
 |> #.toString();
 ```
+However, just as with any other syntax, nested pipelines can quickly become
+complicated if not used judiciously; they are discouraged otherwise.
 
 <td>
 
@@ -929,11 +931,11 @@ x = input
 <tr>
 <td>
 
-**Four kinds of statements cannot** use an **outside context’s topic** in their
-expressions. These are:
+Currently, **four kinds of statements cannot** use an **outside context’s topic**
+in their expressions. These are:
 
 * `function` definitions (including those for async functions, generators, and
-  async generators; but not arrow functions, as explained above),
+  async generators; but **not** arrow functions, as explained above),
 * `class` definitions,
 * `for` and `while` statements,
 * `catch` clauses (but see [Additional Feature TS][]), and
@@ -957,8 +959,7 @@ difficult to find. It also fulfills the goal of [forward compatibility][] with
 future [additional features][].
 
 However, this behavior is subject to change, depending on feedback after the
-proposal is implemented in the [Babel plugin][]. For instance, it may be the case
-that using outside topics in `function` definitions is useful
+proposal is implemented in the [Babel plugin][].
 
 <td>
 
