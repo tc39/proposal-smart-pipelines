@@ -954,7 +954,7 @@ x = input |> function () { return #; };
 ```
 
 This behavior is in order to fulfill the [goals][] of [simple scoping][] and of
-["don’t shoot me in the foot"][]: it prevents the origin of any topic from being
+[“don’t shoot me in the foot”][]: it prevents the origin of any topic from being
 difficult to find. It also fulfills the goal of [forward compatibility][] with
 future [additional features][].
 
