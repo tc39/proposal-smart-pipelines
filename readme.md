@@ -129,12 +129,12 @@ console.log(
 );
 ```
 Compared with the pipeline version, this non-pipeline version requires **additional
-indentation and grouping** on each step. This requires four more levels of
+indentation and grouping** on each **step**. This requires four more levels of
 indentation and four more pairs of parentheses.
 
 In addition, much related code is here separated by unrelated code. Rather than
 a **uniform** postfix chain, operations appear **either before** the previous
-step’s expression (`await stream.write(…)`,`new User.Message(…)`,
+**step**’s expression (`await stream.write(…)`,`new User.Message(…)`,
 `capitalize(…)`, `doubledSay(…)`, `await …`) but also **after** (`… || throw
 new TypeError()`, `… + '!'`). An additional argument to function calls (such as
 `, ` in `doubledSay(…, ', ')`) is also separated from its function calls,
