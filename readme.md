@@ -2,9 +2,8 @@
 ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-12.
 
 This proposal introduces a new binary pipe operator `|>` to JavaScript. It's similar
-to the [pipe operators of other languages](relations.html) such as Unix shells and
-PowerShell, Elixir, Erlang, Julia, LiveScript, Elm, OCaml, Julia, F#, Hack, R
-with magrittr, Perl 6, and Clojure.
+to the [pipe operators of other languages](relations.html): Clojure, Elixir and Erlang,
+Elm, F#, Hack, Julia, LiveScript, OCaml, Perl 6, R with magrittr, and Unix shells and PowerShell.
 
 ```js
 value
