@@ -939,11 +939,6 @@ expressions. These are:
 * `catch` clauses (but see [Additional Feature TS][]), and
 * `with` statements.
 
-This behavior is in order to fulfill the [goals][] of [simple scoping][] and of
-[“don’t shoot me in the foot”][]: it prevents the origin of any topic from being
-difficult to find. It also fulfills the goal of [forward compatibility][] with
-future [additional features][].
-
 ```js
 x = input |> function () { return #; };
 // 🚫 Syntax Error:
@@ -955,6 +950,16 @@ x = input |> function () { return #; };
 // binds topic but contains
 // no topic reference.
 ```
+
+This behavior is in order to fulfill the [goals][] of [simple scoping][] and of
+["don’t shoot me in the foot"][]: it prevents the origin of any topic from being
+difficult to find. It also fulfills the goal of [forward compatibility][] with
+future [additional features][].
+
+However, this behavior is subject to change, depending on feedback after the
+proposal is implemented in the [Babel plugin][]. For instance, it may be the case
+that using outside topics in `function` definitions is useful
+
 <td>
 
 <tr>
