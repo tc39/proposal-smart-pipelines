@@ -144,7 +144,7 @@ forming another easy-to-miss “postfix” argument.
 <td>
 
 Each **step** of a pipeline creates its own lexical scope, within which the `#`
-token (the **topic reference**) is immutably to the result of the previous
+token (the **topic reference**) is immutably tied to the result of the previous
 step (the **topic**). In this way, it acts as a placeholder for each step’s input.
 
 ```js
