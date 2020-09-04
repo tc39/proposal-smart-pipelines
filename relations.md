@@ -19,7 +19,6 @@ Living Document. J. S. Choi, 2018-12.
   - [Pattern matching](#pattern-matching)
   - [Block parameters](#block-parameters)
     - [Topic metaprogramming references](#topic-metaprogramming-references)
-  - [`do` expressions](#do-expressions-1)
   - [Private class fields, class decorators, nullish coalescing, and optional chaining](#private-class-fields-class-decorators-nullish-coalescing-and-optional-chaining)
   - [Alternative pipeline Babel plugin](#alternative-pipeline-babel-plugin)
   - [Alternative pipeline proposals](#alternative-pipeline-proposals)
@@ -219,7 +218,7 @@ same value. This can be useful for embedding side effects, `if` `else`
 statements, `try` statements, and `switch` statements within pipelines.
 They may be made even pithier with [Additional Feature BP][], explained later.
 
-However, smart pipelines do not depend on `do` expressions, with the exception
+Smart pipelines do not depend on `do` expressions, with the exception
 of [Additional Feature BP][].
 
 ## Function binding
@@ -1243,14 +1242,6 @@ select ('world') {
 };
 ```
 
-## `do` expressions
-Because pipeline [topic style][] supports [arbitrary expressions][expressive
-versatility], when [`do` expressions][] are added to JavaScript they too will be
-supported within pipeline steps. When this occurs, topic references would be
-allowed within inner `do` expressions, along with arrow functions and `if` and
-`try` statements. [Additional Feature BP][] would extend this further, also
-supporting pipeline-step blocks that act nearly identically to `do` expressions.
-
 ## Private class fields, class decorators, nullish coalescing, and optional chaining
 This proposal’s compatibility with these four proposals depends on its choice of
 tokens for its topic references, such as `#`/`##`/`###`/`...`, `@`/`@@`/`@@@`,
@@ -1376,8 +1367,7 @@ proposals in a uniform manner.
 ["don’t shoot me in the foot"]: ./goals.md#dont-shoot-me-in-the-foot
 ["make my code easier to read"]: ./goals.md#make-my-code-easier-to-read
 [`??:`]: https://github.com/tc39/proposal-nullish-coalescing/pull/23
-[`do` expression]: ./relations.md#do-expressions
-[`do` expressions]: ./relations.md#do-expressions
+[`do` expressions]:<https://github.com/tc39/proposal-do-expressions>
 [`for` iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
 [`in` relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
 [`match` expressions]: ./relations.md#pattern-matching
