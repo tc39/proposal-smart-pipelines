@@ -1,3 +1,7 @@
+**This proposal has been archived in favor of a [simpler Hack-pipes proposal][Hack pipes], which is a subset of this proposal.**
+
+[Hack pipes]: https://github.com/js-choi/proposal-hack-pipes/
+
 # Smart pipelines
 ECMAScript Stage-0 Proposal. Living Document. J. S. Choi, 2018-12.
 
