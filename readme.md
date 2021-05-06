@@ -1293,7 +1293,6 @@ See [Term rewriting][].
 [“don’t shoot me in the foot”]: ./goals.md#dont-shoot-me-in-the-foot
 [“make my code easier to read”]: ./goals.md#make-my-code-easier-to-read
 [`??:`]: https://github.com/tc39/proposal-nullish-coalescing/pull/23
-[`do` expression]: ./relations.md#do-expressions
 [`do` expressions]: ./relations.md#do-expressions
 [`for` iteration statements]: https://tc39.github.io/ecma262/#sec-iteration-statements
 [`in` relational operator]: https://tc39.github.io/ecma262/#sec-relational-operators
