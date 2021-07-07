@@ -241,7 +241,7 @@ value
 |> f
 |> {
   try |> JSON.parse;
-  catch |> { message: #.message };
+  catch |> ({ message: #.message });
 }
 |> g(#, 1);
 ```
